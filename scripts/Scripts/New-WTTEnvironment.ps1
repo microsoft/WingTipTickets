@@ -273,7 +273,9 @@ function New-WTTEnvironment
                         #Enable Auditing on Azure SQL Database Server
                         #-EventType DataChanges is being deprecated and currently this cmdlet only supports ASM based storage account
                         #Need to be fixed once the new cmdlets are available which support ARM based Storage accounts
-                        $setPrimaryAzureSqlDatabaseServerAuditingPolicy = Set-AzureSqlDatabaseServerAuditingPolicy -ResourceGroupName $azureResourceGroupName -ServerName $azureSqlDatabaseServerPrimaryName -StorageAccountName $azureStorageAccountName -EventType DataChanges -WarningVariable null -WarningAction SilentlyContinue
+                        #Breaking change introduced in the 7/20 release ... -EventType DataChanges has been deprecated
+                        #$setPrimaryAzureSqlDatabaseServerAuditingPolicy = Set-AzureSqlDatabaseServerAuditingPolicy -ResourceGroupName $azureResourceGroupName -ServerName $azureSqlDatabaseServerPrimaryName -StorageAccountName $azureStorageAccountName -EventType DataChanges -WarningVariable null -WarningAction SilentlyContinue
+                        $setPrimaryAzureSqlDatabaseServerAuditingPolicy = Set-AzureSqlDatabaseServerAuditingPolicy -ResourceGroupName $azureResourceGroupName -ServerName $azureSqlDatabaseServerPrimaryName -StorageAccountName $azureStorageAccountName -EventType PlainSQL_Success, PlainSQL_Failure, ParameterizedSQL_Success, ParameterizedSQL_Failure, StoredProcedure_Success, StoredProcedure_Success -WarningVariable null -WarningAction SilentlyContinue
                     }
 
                     if ($azureSqlDatabaseServerPrimaryNameExists.Count -gt 0)
@@ -293,7 +295,9 @@ function New-WTTEnvironment
                         #Enable Auditing on Azure SQL Database Server
                         #-EventType DataChanges is being deprecated and currently this cmdlet only supports ASM based storage account
                         #Need to be fixed once the new cmdlets are available which support ARM based Storage accounts
-                        $setSecondaryAzureSqlDatabaseServerAuditingPolicy = Set-AzureSqlDatabaseServerAuditingPolicy -ResourceGroupName $azureResourceGroupName -ServerName $azureSqlDatabaseServerSecondaryName -StorageAccountName $azureStorageAccountName -EventType DataChanges -WarningVariable null -WarningAction SilentlyContinue
+                        #Breaking change introduced in the 7/20 release ... -EventType DataChanges has been deprecated
+                        #$setSecondaryAzureSqlDatabaseServerAuditingPolicy = Set-AzureSqlDatabaseServerAuditingPolicy -ResourceGroupName $azureResourceGroupName -ServerName $azureSqlDatabaseServerSecondaryName -StorageAccountName $azureStorageAccountName -EventType DataChanges -WarningVariable null -WarningAction SilentlyContinue
+                        $setSecondaryAzureSqlDatabaseServerAuditingPolicy = Set-AzureSqlDatabaseServerAuditingPolicy -ResourceGroupName $azureResourceGroupName -ServerName $azureSqlDatabaseServerSecondaryName -StorageAccountName $azureStorageAccountName -EventType PlainSQL_Success, PlainSQL_Failure, ParameterizedSQL_Success, ParameterizedSQL_Failure, StoredProcedure_Success, StoredProcedure_Success -WarningVariable null -WarningAction SilentlyContinue
                     }
                     
                     if ($WTTEnvironmentPrimaryServerLocation -notcontains "" -and $wTTEnvironmentSecondaryServerLocation -notcontains "")                 
