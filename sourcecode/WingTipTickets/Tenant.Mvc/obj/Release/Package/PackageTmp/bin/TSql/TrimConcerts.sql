@@ -1,0 +1,1 @@
+Delete From Concerts Where ConcertId>12

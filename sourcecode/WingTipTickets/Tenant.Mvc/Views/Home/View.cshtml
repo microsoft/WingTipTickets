@@ -1,0 +1,91 @@
+﻿@model Tenant.Mvc.Models.ConcertTicketDB.PurchasedTicket
+
+@{
+    ViewBag.Title = "View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>View</h2>
+
+<div>
+    <h4>PurchasedTicket</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ConcertId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ConcertId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PerformerName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PerformerName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PerformerId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PerformerId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.VenueName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.VenueName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.VenueId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.VenueId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TicketQuantity)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TicketQuantity)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SectionName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SectionName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SeatName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SeatName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EventDateTime)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EventDateTime)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

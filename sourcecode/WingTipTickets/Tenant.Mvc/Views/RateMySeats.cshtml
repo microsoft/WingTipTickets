@@ -1,0 +1,57 @@
+﻿@model WingTipTickets.Models.MyEventRating
+
+@{
+    ViewBag.Title = "RateMySeats";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="middle-strip">
+    <div class="container">
+        <div class="row">
+            <h1 class="seattle_ultramode">My Event:</h1>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-sm-12 col-md-8 column">
+            <div class="left-panel scroll-pane for-ticket">
+                @if (Model != null)                    
+                {
+                    <div class="cons-info econs-info">
+                        <div class="cons-text">                            
+                            <p class="for-desktop">@Model.PurchasedTicket.PerformerName @@ @Model.PurchasedTicket.VenueName</p>
+                            <p class="for-desktop">@Model.PurchasedTicket.EventDateTime.ToString("ddd, dd MMMM yyyy")</p>
+                            <p class="for-desktop">@Model.PurchasedTicket.SectionName</p>
+                            <hr/>
+                        </div>
+                    </div>
+                    <div class="form-horizontal">   
+                        <form method="POST" action="~/Home/SubmitReview">
+                            @Html.HiddenFor(model => model.PurchasedTicket.ConcertId)
+                            @Html.HiddenFor(model => model.PurchasedTicket.PerformerId)
+                            @Html.HiddenFor(model => model.PurchasedTicket.VenueId)
+                            @Html.HiddenFor(model => model.PurchasedTicket.SectionName)                 
+                            <div class="form-group">
+                                <label class="control-label col-md-2">Section Score</label>
+                                <div id="score"></div>                          
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-2">Comments</label>
+                                <div class="col-md-7">
+                                    @Html.EditorFor(model => model.Comments, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-7">
+                                    <input type="submit" value="Submit" class="btn btn-default" />
+                                </div>
+                            </div>
+                        </form>    
+                    </div>
+                }   
+            </div>
+        </div>
+    </div>
+</div>

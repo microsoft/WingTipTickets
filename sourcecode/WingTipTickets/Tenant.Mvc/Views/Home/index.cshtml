@@ -1,0 +1,117 @@
+﻿@model Tenant.Mvc.Models.EventListView
+@{
+    ViewBag.Title = "Home";
+}
+
+
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-sm-12 col-md-12 column">
+            <div class="banner">
+                <img src="~/img/@WingtipTicketApp.Config.TenantEventTypeGenre/mbanner-01.jpg" class="for-mobile img-responsive">
+                <img src="~/img/@WingtipTicketApp.Config.TenantEventTypeGenre/banner-01.jpg" class="for-desktop img-responsive">
+                @if (Model != null && Model.ConcertsList != null && Model.ConcertsList.Count > 0)
+                {
+                    <div class="bfind-seats"><a href="/Home/FindSeats?concertId=@Model.ConcertsList[0].ConcertId">Find Seats <span class="pull-right">></span></a></div>
+                }
+                else
+                { 
+                    <div class="bfind-seats"><a href="/Home/FindSeats?concertId=0">Find Seats <span class="pull-right">></span></a></div>
+                }
+                <div class="bcaption-bg"></div>
+                @{
+                    if (Model != null && Model.ConcertsList != null && Model.ConcertsList.Count > 0)
+                    {
+                        <div class="banner-caption"><span class="b-right">@Model.ConcertsList[0].Performer.ShortName</span> @Model.ConcertsList[0].ConcertName</div>
+                    }
+                    else
+                    {
+                        <div class="banner-caption"><span class="b-right"></span></div>
+                    }
+
+                }
+            </div>
+        </div>
+    </div>
+    <div class="row clearfix">
+        <div class="col-sm-12 col-md-8 column">
+            <div class="left-panel scroll-pane">
+                @if (Model != null && Model.ConcertsList != null && Model.ConcertsList.Count > 0)
+                { 
+                    for (int i = 0; i < Model.ConcertsList.Count; i++)
+                    {
+                        var concertEvent = Model.ConcertsList[i];
+                        if (concertEvent == null)
+                        {
+                            continue;
+                        }
+                        <div class="cons-info">
+                            <div class="@(((i % 2) == 0) ? "cons-date" : "cons-date cons-date-darkbg")">
+                                <span class="cons-mon"> @concertEvent.ConcertDate.ToString("MMM").ToUpper()</span>
+                                <span class="date-num">@concertEvent.ConcertDate.Day</span>
+                                <span class="cons-day for-desktop">@concertEvent.ConcertDate.DayOfWeek.ToString().ToUpper().Substring(0, 3)</span>
+                                <span class="cons-fullday for-mobile">@concertEvent.ConcertDate.DayOfWeek.ToString().ToUpper().Substring(0, 3)</span>
+                            </div>
+                            <div class="cons-text">
+                                <h3>@(((concertEvent.Performer != null) && (concertEvent.Performer != null)) ? (concertEvent.Performer.ShortName) : "???")</h3>
+                                <p>@(((concertEvent.Venue != null) && (concertEvent.Venue.VenueName != null)) ? (concertEvent.Venue.VenueName) : "???")</p>
+                            </div>
+                            <div class="find-seat">
+                                @Html.ActionLink("Find Seats", "FindSeats", "Home", new { concertId = concertEvent.ConcertId }, new { @class = "find-seats-link" })
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+        <div class="col-sm-4 col-md-4 column for-desktop">
+            <div class="create-acbox height247">
+                <!--<h3><span class="mytext">my</span><span class="tickettext">wingtip</span><span class="maestrotext">tickets</span></h3>-->
+                <h3><span class="mytext">my</span><span class="tickettext">@WingtipTicketApp.Config.TenantName.ToLower()</span></h3>
+                <p>Update your list of favorites and never miss an event!</p>
+                @using Tenant.Mvc                @using Tenant.Mvc.Models.CustomersDB
+                @{
+                    var user = Session["SessionUser"] as Customer;
+                    if (user != null && Startup.SessionUsers.Contains(user))
+                    {
+                        @Html.ActionLink("Sign Off", "Logout", "Home", new { }, new { @class = "orange-btn" })
+                    }
+                    else
+                    {
+                        <a href="#" class="orange-btn" data-toggle="modal" data-target=".modal-user-login">Sign In</a>
+                        <a href="#" class="orange-btn" data-toggle="modal" data-target=".modal-user-login">Create Account</a>
+                    }
+                }
+            </div>
+            <div class="venues-box height160 scroll-pane">
+                <h3 style="margin-left:14px;margin-top:7px">Local Venues</h3>
+                <ul style="margin-left:14px">
+                    @{
+                        if (Model != null && Model.VenuesList != null && Model.VenuesList.Count > 0)
+                        { 
+                            foreach (var venueInList in Model.VenuesList.OrderBy(a => a.VenueName).GroupBy(a => a.VenueId).Select(a => a.First()).Take(2))
+                            {
+                                <li><a href="#">@venueInList.VenueName - @Model.ConcertsList.Count(a => a.VenueId == venueInList.VenueId) Event(s)</a></li>
+                            }
+                        }
+                    }
+                    <li><a href="@Url.Action("ViewVenue", "Home")" class="see_all">See All Venues ></a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row clearfix">
+        <div class="col-md-4 column">
+        </div>
+        <div class="col-md-4 column">
+        </div>
+        <div class="col-md-4 column">
+        </div>
+    </div>
+    <div class="row clearfix">
+        <div class="col-md-6 column">
+        </div>
+        <div class="col-md-6 column">
+        </div>
+    </div>
+</div>

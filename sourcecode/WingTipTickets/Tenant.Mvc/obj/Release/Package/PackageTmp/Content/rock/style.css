@@ -1,0 +1,1415 @@
+﻿html{color:#000;height:100%;}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td{margin:0;padding:0; font-weight:normal; color:#FFF;}table{border-collapse:collapse;border-spacing:0}fieldset,img{border:0; outline:none;}address,caption,cite,code,dfn,em,th,var{font-weight:normal}li{list-style:none}caption,th{text-align:left}
+h1,h2,h3,h4,h5,h6{/*font-weight:normal*/}
+q:before,q:after{content:''}abbr,acronym{border:0;font-variant:normal}sup{vertical-align:text-top}sub{vertical-align:text-bottom}input,textarea,select{font-family:inherit;font-size:inherit;font-weight:inherit}input,textarea,select{*font-size:100%}legend{color:#000}
+body{*font-size:small;*font:x-small;height:100%;}select,input,button,textarea{font:99% }table{font-size:inherit;font:100%}pre,code,kbd,samp,tt{font-family:monospace;*font-size:108%;line-height:100%; background-color: #505050;}
+a{ text-decoration:none; }
+:active{ outline:0 none;}
+:focus{ outline:0 none;}
+:hover{ outline:0 none;}
+div{ font-size:14px; font-weight:normal;}
+.btn:focus { outline-style: none !important; }
+a:focus { outline-style: none !important; }
+
+@font-face {
+    font-family: 'MyriadProRegular';
+    src: url('../../fonts/myriadpro-regular.eot');
+    src: url('../../fonts/myriadpro-regular.eot') format('embedded-opentype'),
+         url('../../fonts/myriadpro-regular.woff2') format('woff2'),
+         url('../../fonts/myriadpro-regular.woff') format('woff'),
+         url('../../fonts/myriadpro-regular.ttf') format('truetype'),
+	 url('../../fonts/myriadpro-regular.otf') format('otf'),
+         url('../../fonts/myriadpro-regular.svg#MyriadProRegular') format('svg');
+		 font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+	font-family: 'Conv_MyriadPro-Regular';
+	src: url('../../fonts/MyriadPro-Regular.eot');
+	src: local('☺'), url('../../fonts/MyriadPro-Regular.woff') format('woff'), url('../../fonts/MyriadPro-Regular.ttf') format('truetype'), url('../../fonts/MyriadPro-Regular.svg') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Conv_segoeui';
+	src: url('../../fonts/segoeui.eot');
+	src: local('☺'), url('../../fonts/segoeui.woff') format('woff'), url('../../fonts/segoeui.ttf') format('truetype'), url('../../fonts/segoeui.svg') format('svg');
+	font-weight: lighter;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Conv_segoeuil';
+	src: url('../../fonts/segoeuil.eot');
+	src: local('☺'), url('../../fonts/segoeuil.woff') format('woff'), url('../../fonts/segoeuil.ttf') format('truetype'), url('../../fonts/segoeuil.svg') format('svg');
+	font-weight: lighter;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Conv_segoeuib';
+	src: url('../../fonts/segoeuib.eot');
+	src: local('☺'), url('../../fonts/segoeuib.woff') format('woff'), url('../../fonts/segoeuib.ttf') format('truetype'), url('../../fonts/segoeuib.svg') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'Conv_seguisb';
+	src: url('../../fonts/seguisb.eot');
+	src: local('☺'), url('../../fonts/seguisb.woff') format('woff'), url('../../fonts/seguisb.ttf') format('truetype'), url('../../fonts/seguisb.svg') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+a {
+	outline: none !important;
+}
+a img {
+	border:none;
+}
+a:hover {
+	text-decoration:none;
+	color:#fff;
+}
+.marginb-20 {
+	margin-bottom: 20px;
+}
+header { 
+	background: #333333;
+	padding-bottom: 10px;
+}
+.nav-menu {
+	margin:0;
+	padding: 0;
+	background: #333333;
+}
+.nav-menu li {
+	float: left;
+	list-style: none;
+}
+.nav-menu li a {
+	float: left;
+	display: block;
+	padding: 5px 38px 5px 0 !important;
+	margin-right: 38px;
+	text-align: center;
+	color: #ffffff !important;
+	border-right: 2px solid #ffffff;
+	font-family: 'Conv_MyriadPro-Regular';
+	font-size: 19px;
+}
+.nav-menu li a:hover {
+	text-decoration: none;
+	color: #f0af04 !important;
+}
+#navMenu .nav-menu-selected {
+	text-decoration: none;
+	color: #f0af04 !important;
+	background: #333333;
+}
+.navbar-default .navbar-nav li a.account-signin {
+	color: #ffffff;
+	padding: 5px 15px 5px 0px;
+	font-size: 19px;
+	font-weight: normal;
+	font-family: "Conv_MyriadPro-Regular";
+	background: #333333;
+}
+.navbar-default .navbar-nav li a.account-signin:hover {
+	text-decoration: underline;
+}
+.nomargin {
+	margin: 0 !important;
+}
+.noborder {
+	border: none !important;
+}
+.menu-bar {
+	background:none;
+	padding-left:0;
+	background: #333333;
+}
+.menu-bar-default {
+	background:none;
+	border:none;
+	margin-top:0px;
+	margin-bottom:0;
+	min-height: 30px;
+}
+.search-box {
+	float: right;
+    height: 50x;
+    background: red;
+}
+.search {
+	border: none;
+	background: #f2f2f2;
+	float: left;
+	padding: 14px 0px 8px 15px;
+	width: 300px;
+	font-family: 'Conv_MyriadPro-Regular';
+	font-size: 20px;
+	border-radius: 0;
+    height: 50px;
+	color: #666;
+}
+.ui-menu-item 
+{
+    color: #555;
+}
+.icon-maginfire {
+	background: url("../../img/rock/icon-magnifier.jpg") no-repeat center center;
+	height: 50px;
+	width: 50px;
+	padding: 2px;
+	display: block;
+	float: left;
+	background-color: #999999;
+    border: none;
+}
+.sign-in-link {
+	color: #333;
+	font-weight: bold;
+	margin-top: 50px;
+	display: block;
+	float: right;
+}
+.body-content {
+	background-color: #505050;
+}
+.banner {
+	display: block;
+	/*height: 404px;*/
+	width: 100%;
+	position: relative;
+}
+.left-panel {
+	margin-top: 35px;
+}
+.cons-info {
+	clear:both;
+	margin-bottom:30px;
+	overflow:hidden;
+	display:block;
+	font-family: 'Conv_segoeuil';
+}
+.cons-date {
+	float: left;
+	width: 130px;
+	text-align: center;
+	padding: 5px 10px;
+	color: #fff;
+	font-size: 26px;
+	line-height: 26px;
+	font-weight: lighter;
+	margin-right: 10px;
+	font-family: 'Conv_segoeuil';
+	background: #777777;
+}
+.cons-date-darkbg {
+	font-family: 'Conv_segoeuil';
+	background: #999;
+}
+.cons-mon {
+	display: block;
+	font-family: 'Conv_segoeuil';
+}
+.date-num {
+	font-size: 40px;
+	line-height: 40px;
+	display: block;
+	margin: 10px 0px;
+	font-size: 60px;
+	font-family: 'Conv_segoeuil';
+}
+.cons-text {
+	padding: 15px 0 0;
+	float: left;
+	font-weight: lighter;
+	font-family: 'Conv_segoeuil';
+	color: #FFF;
+}
+.cons-text h3 {
+	font-size: 40px;
+	font-weight: lighter;
+	margin: 0 0 10px 0;
+	font-family: "Conv_segoeuil";
+	color: #FFF;
+}
+.find-seat {
+	float: right;
+	margin-right: 10px;
+}
+.find-seats-link {
+	background: #FFB900 no-repeat;
+	display: block;
+	padding: 3px 30px 5px 10px;
+	text-align: center;
+	color: #fff;
+	background-position: 100px 14px;
+	font-family: "Conv_seguisb";
+	font-size: 18px;
+}
+.create-acbox {
+	background:#757575;
+	padding:15px;
+	margin-top:35px;
+}
+.create-acbox h3 {
+	margin-top:0;
+	font-size: 30px;
+	margin-top: 0px;
+	color: #FFB900;
+	font-weight: normal;
+	font-family: 'Conv_segoeui';
+	margin-bottom: 15px;
+}
+.create-acbox p {
+	margin: 10px 0px;
+	font-size: 18px;
+	font-family: "Conv_MyriadPro-Regular";
+	font-weight: normal;
+	color: #FFF;
+}
+.orange-btn {
+	font-family: "Conv_segoeui";
+	width:100%;
+	background: #FFB900;
+	color: #fff;
+	display: block;
+	padding: 10px 0 10px 45px;
+	margin-bottom:10px;
+	font-size: 20px;
+}
+.venues-box {
+	background:#4d4d4d;
+	padding:10px 15px;
+	margin-top:30px;
+	color:#fff;
+	font-family: 'Conv_MyriadPro-Regular';
+}
+.venues-box h3 {
+	font-size:30px;
+	font-weight:normal;
+	margin-top:0;
+	color: #FFB900;
+	font-weight: normal;
+	font-family: 'Conv_segoeui';
+	margin-bottom: 15px;
+}
+.venues-box ul {
+	margin:0;
+	padding: 0;
+}
+.venues-box ul li {
+	list-style: none;
+	margin-bottom: 5px;
+	font-size: 15px;
+}
+.venues-box a {
+	color:#fff;
+	font-weight:bold;
+	font-size: 18px;
+}
+.venues-box a:hover {
+	text-decoration: underline;
+}
+.scroll-pane {
+	width: 100%;
+	height: 438px;
+	overflow: auto;
+}
+.jspVerticalBar {
+	width:19px;
+	background:none;
+}
+.jspArrowUp {
+	background: url("../../img/rock/arrowup.jpg") no-repeat;
+	width:19px;
+	height:16px;
+}
+.jspArrowDown {
+	background: url("../../img/rock/arrowdown.jpg") no-repeat;
+	width:19px;
+	height:20px !important;
+}
+.jspDrag {
+	background:#2e4243;
+}
+.jspTrack {
+	background:#F2F2F2;
+	margin: 3px 0;
+}
+.for-mobile {
+	display: none;
+}
+.for-desktop {
+	display: block;
+}
+.jspArrow.jspArrowUp.jspDisabled {
+	background: url("../../img/rock/arrowup.jpg") no-repeat;
+}
+.jspArrow.jspArrowDown.jspDisabled {
+	background: url("../../img/rock/arrowdown.jpg") no-repeat;
+}
+.navbar-collapse {
+	padding-right: 0;
+}
+.cons-text p {
+    font-family: 'Conv_segoeui';
+	font-size: 25px;
+	color: #FFF;
+}
+.fpara {
+	font-family: 'Conv_MyriadPro-Regular';
+	color: #575757;
+}
+.bfind-seats {
+	position: absolute;
+	height: 91px;
+	width: 24%;
+	bottom: 0;
+	right: 0px;
+	background: #FFB900;
+	font-family: "Conv_MyriadPro-Regular";
+	font-size: 35px;
+	padding: 20px;
+	font-weight: bold !important;
+	line-height: 60px;
+}
+.bfind-seats a {
+	display: block;
+	height: 100%;
+	width: 100%;
+	color: #fff;
+}
+.bcaption-bg {
+	background: #333;
+	position: absolute;
+	height: 91px;
+	width: 73%;
+	bottom: 0;
+	left: 0px;
+	opacity: 0.7;
+}
+.banner-caption {
+	position: absolute;
+	height: 91px;
+	width: 73%;
+	bottom: 0;
+	left: 0px;
+	color: #fff;
+	font-family: "Conv_segoeui";
+	font-size: 41px;
+	padding: 20px;
+	line-height: 43px;
+}
+.mytext {
+	border-right:2px solid #FFB900; 
+	padding-right:2px;
+	margin-right: 2px;
+}
+/*.tickettext {
+	font-family: "Conv_seguisb"
+}*/
+.nav-menu li a.nopadr {
+	padding-right: 0 !important;
+}
+footer{width:100%;background: #505050; padding-top: 30px; }
+.top-footer{background:#363636;padding:20px 0;}
+.top-footer h2{margin:10px 0px 0px ; }
+.top-footer h2 a{font-family: 'Conv_segoeuil';color:#FFF;font-size:30px; font-weight:normal}
+.top-footer h3{ margin:0 0px 18px 0px;}
+.top-footer h3 a{font-family:'Conv_segoeuib';color:#FFF;font-size:20px; font-weight:bold; background-image: url(../../img/rock/arrow-whitebg.jpg); background-repeat:no-repeat;background-position:right 10px; padding-right:20px;}
+.top-footer h3 a:hover { text-decoration: underline;}
+.top-footer p{color:#FFF; font-size:19px;line-height: 23px;}
+
+.btm-footer{background:#1a1a1a;padding:50px 0;color:#fff; }
+.btm-footer .footerLinks{padding:0px; margin:30px 0px 0px 0px; float:right; }
+.btm-footer .footerLinks ul{float:right; width:100%;}
+.btm-footer .footerLinks li{list-style:none;float:left; font-size:16px; padding-right:34px; padding-left:34px;border-right:1px solid #fff; }
+.btm-footer .footerLinks li a{ color:#fff; }
+.btm-footer .footerLinks li a:hover {text-decoration: underline;}
+.btm-footer .footerLinks li:last-child{padding-right:0px; padding-left:35px;border-right:0px solid #fff;}
+.btm-footer .copyright{font-size:12px; float:right;clear: both !important; margin-top: 10px;}
+.inline-blk { display: inline-block !important;}
+
+.label-name{
+	color: #FFF;
+}
+
+/* My Account Form css */
+.gray-bg {
+	background:#666;
+}
+.my-account-form {
+	position: relative;
+}
+.bg-opcity {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	background: #333;
+	opacity: 0.6;
+	top: 0;
+}
+.blue-btn {
+	font-family: "Conv_seguisb";
+    font-weight:lighter;
+	background: #FFB900;
+	color: #666;
+	border-radius: 0;
+	border: none;
+	text-align: left;
+	padding: 8px 10px;
+	font-size: 16px;
+}
+.blue-btn:hover {
+	background: #FFB900 !important;
+	color: #FFF !important;
+}
+.input-box {
+	border-radius: 0;
+}
+.my-ac-hdng {
+	color: #FFF;
+	font-size: 30px;
+	font-family: "Conv_segoeui" !important;
+	font-weight: normal !important;
+	margin: 0px 20px 0px 0px;
+	line-height: 30px;
+}
+.form-hdng {
+	font-size: 30px;
+	font-family: "Conv_segoeui";
+	font-weight: normal;
+	margin: 0 0 25px;
+	color: #666;
+}
+.f-pass {
+	font-size: 12px;
+	color: #333;
+	margin-top: -10px !important;
+	display: block;
+	margin-left: 15px;
+}
+.f-pass:hover {
+	color: #333;
+	text-decoration: underline;
+}
+.custom-header {
+	padding: 0 15px;
+}
+.nopad {
+	padding: 0;
+}
+.nopadL {
+    padding: 0 !important;
+}
+.no-radius {
+	border-radius: 0;
+}
+.font-16 {
+	font-size: 18px !important;
+}
+.left-panel.for-ticket{
+	height:760px;
+}
+.near_cities {
+	margin-top:10px;
+}
+.near_cities li {
+	margin-bottom:5px;
+}
+.near_cities li a {
+	color: #FFFFFF;
+	font-size:18px;
+}
+.middle-strip {
+	position:relative;
+	height: 97px;
+	background:#4d4d4d;
+}
+.seattle_ultramode{
+	color: #fff;
+    margin-left: 15px;
+    margin-top: 33px;
+	font-family: 'Conv_MyriadPro-Regular';
+}
+.orange-text {
+	color: #FFB900;
+	font-weight: bold;
+}
+.eventinfo {
+	float: right;
+	font-family: 'Conv_MyriadPro-Regular';
+}
+.einfo-text {
+	float: left;
+	margin: 0 30px 20px 0;
+	font-size: 16px;
+}
+.cboth {
+	clear: both;
+}
+.nopadr {
+	padding-right: 0 !important;
+}
+.nopadD {
+	padding: 0;
+}
+.width100 {
+	width: 100%;
+}
+.ptickethdng h3 {
+	font-size: 30px;
+	font-family: "Conv_segoeui";
+	margin: 20px 0 10px 0;
+}
+.ptickethdng p {
+	font-family: "Conv_segoeui";font-family: "Conv_MyriadPro-Regular";
+	font-size: 25px;
+	margin-bottom: 30px;
+}
+.ticket-bcaption-bg, .ticket-bcaption {
+    bottom: 0px !important;
+    top: auto !important;
+}
+.modal-backdrop {
+	height: 100%;
+}
+.logo-heading {
+	padding: 25px 25px 25.5px 25px;
+	float: left;
+	font-family: "Conv_segoeuil";
+	color: #fff;
+	background: #626262;
+	height:91px;
+}
+.logo-footer {
+	padding: 25px 25px 25.5px 25px;
+	float: left;
+	font-family: "Conv_segoeuil";
+	color: #fff;
+	background: #4D4D4D;
+}
+/*.logo-heading span {
+	font-family: "Conv_seguisb";
+}*/
+.f-logo-heading {
+	background: #4D4D4D;
+}
+.b-right {
+	border-right: 3px solid #fff;
+	padding-right: 15px;
+}
+.height247 {
+	height: 247px;
+}
+.height160 {
+	height: 160px;
+	overflow-y: auto; 
+}
+.height260 {
+	height: 260px;
+	overflow-y: auto; 
+}
+.height220 {
+	height: 220px;
+	overflow-y: auto; 
+}
+.height135 {
+	height: 135px;
+	overflow-y: auto; 
+}
+.msearch-input {
+	position: absolute;
+	width: 0%;
+	right: -44px;
+}
+
+/*style starts for Administration portal */
+
+/* paddings none */
+.PLN
+{
+    padding-left: 0px;
+}
+/* only padding left none */
+.PRN
+{
+    padding-right: 0px;
+}
+/* only  padding right none */
+.PTN
+{
+    padding-top: 0px;
+}
+/* only  padding top none */
+.PBN
+{
+    padding-bottom: 0px;
+}
+/* only  padding bottom none */
+/*PADDINGS NONE*/
+
+/*MARGINS NONE*/
+.MNONE
+{
+    margin: 0px;
+}
+/* margins none */
+.MLN
+{
+    margin-left: 0px;
+}
+/* only margin left none */
+.MRN
+{
+    margin-right: 0px;
+}
+/* only margin right none */
+.MTN
+{
+    margin-top: 0px;
+}
+/* only margin top none */
+.MBN
+{
+    margin-bottom: 0px;
+}
+/* only margin bottom none */
+/*MARGINS NONE*/
+
+
+/*MARGIN TOP WITH VALUES*/
+.MRT-lg
+{
+    margin-top: 20px;
+}
+/* margin TOP large */
+.MRT-md
+{
+    margin-top: 15px;
+}
+/* margin TOP medium */
+.MRT-sm
+{
+    margin-top: 10px;
+}
+/* margin TOP small */
+.MRT-xs
+{
+    margin-top: 5px;
+}
+/* margin TOP extra small */
+/*MARGIN TOP WITH VALUES*/
+
+/*MARGIN RIGHT  WITH VALUES*/
+.MRR-lg
+{
+    margin-right: 20px;
+}
+/* margin RIGHT large */
+.MRR-md
+{
+    margin-right: 15px;
+}
+/* margin RIGHT medium */
+.MRR-sm
+{
+    margin-right: 10px;
+}
+/* margin RIGHT small */
+.MRR-xs
+{
+    margin-right: 5px;
+}
+/* margin RIGHT extra small */
+/*MARGIN RIGHT  WITH VALUES*/
+
+
+/*MARGIN BOTTOM WITH VALUES*/
+.MRB-val	
+{
+    margin-bottom: 20px;
+}
+/* margin BOTTOM large */
+.MRB-md
+{
+    margin-bottom: 15px;
+}
+/* margin BOTTOM medium */
+.MRB-sm
+{
+    margin-bottom: 10px;
+}
+/* margin BOTTOM small */
+.MRB-xs
+{
+    margin-bottom: 5px;
+}
+/* margin BOTTOM extra small */
+/*MARGIN BOTTOM WITH VALUES*/
+
+
+/*MARGIN LEFT  WITH VALUES*/
+.MRL-lg
+{
+    margin-left: 20px;
+}
+/* margin LEFT large */
+.MRL-md
+{
+    margin-left: 15px;
+}
+/* margin LEFT medium */
+.MRL-sm
+{
+    margin-left: 10px;
+}
+/* margin LEFT small */
+.MRL-xs
+{
+    margin-left: 5px;
+}
+/* margin LEFT extra small */
+/*MARGIN LEFT  WITH VALUES*/
+
+
+/*PADDING TOP WITH VALUES*/
+.PT-lg
+{
+    padding-top: 20px;
+}
+/* padding TOP large */
+.PT-md
+{
+    padding-top: 15px;
+}
+/* padding TOP medium */
+.PT-sm
+{
+    padding-top: 10px;
+}
+/* padding TOP small */
+.PT-xs
+{
+    padding-top: 5px;
+}
+/* padding TOP extra small */
+/*PADDING TOP WITH VALUES*/
+
+/*PADDING RIGHT  WITH VALUES*/
+.PR-lg
+{
+    padding-right: 20px;
+}
+/* padding RIGHT large */
+.PR-md
+{
+    padding-right: 15px;
+}
+/* padding RIGHT medium */
+.PR-sm{padding-right:10px;} 	
+.PR-xs
+{
+    padding-right: 5px;
+}
+/* padding RIGHT extra small */
+/*PADDING RIGHT  WITH VALUES*/
+
+
+/*PADDING BOTTOM WITH VALUES*/
+.PB-lg
+{
+    padding-bottom: 20px;
+}
+/* padding BOTTOM large */
+.PB-md
+{
+    padding-bottom: 15px;
+}
+/* padding BOTTOM medium */
+.PB-sm
+{
+    padding-bottom: 10px;
+}
+/* padding BOTTOM small */
+.PB-xs
+{
+    padding-bottom: 5px;
+}
+/* padding BOTTOM extra small */
+/*PADDING BOTTOM WITH VALUES*/
+
+
+/*PADDING LEFT  WITH VALUES*/
+.PL-lg
+{
+    padding-left: 20px;
+}
+/* padding LEFT large */
+.PL-md
+{
+    padding-left: 15px;
+}
+/* padding LEFT medium */
+.PL-sm
+{
+    padding-left: 10px;
+}
+/* padding LEFT small */
+.PL-xs
+{
+    padding-left: 5px;
+}
+/* padding LEFT extra small */
+/*PADDING LEFT  WITH VALUES*/
+
+
+.MRT-lg-desk
+{
+    margin-top: 20px;
+}
+/* margin TOP large for desktops */
+::-webkit-input-placeholder {
+   color: #555;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+   color: #555 !important; 
+	opacity:  1;
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+   color: #555 !important;  
+   opacity:  1;
+}
+
+:-ms-input-placeholder {  
+   color: #555;  
+}
+.textarea-style::-webkit-input-placeholder {
+   color: #555;
+}
+
+.textarea-style:-moz-placeholder { /* Firefox 18- */
+   color: #555 !important; 
+	opacity:  1;
+}
+
+.textarea-style::-moz-placeholder {  /* Firefox 19+ */
+   color: #555 !important;  
+   opacity:  1;
+}
+
+.textarea-style:-ms-input-placeholder {  
+   color: #555;  
+}
+.custom-image > button{padding:0px !important;padding-left: 8px !important;border:2px solid #B5B5B5;border-radius:0px; height:39px;
+}
+.custom-image {
+	width:100% !important;
+}
+.custom-image .dropdown-menu{z-index:999999 !important;}
+.custom-image span:nth-child(1){width:93%;color: #555;font-size: 18px;font-family: "Conv_MyriadPro-Regular";}
+.custom-image span:nth-child(2){ background: url("~/img/dropbtn.jpg") no-repeat scroll right center transparent;
+height: 35px;width: 32px;z-index: 999;position: absolute !important; top:0 !important; right: 0;border-style: none;margin-top:0px !important;right: 0 !important;}
+.clear-div{clear:both;}
+.admin-form input{border-radius:0px;border:2px solid #B5B5B5;font-size:18px;height: 40px;font-family: "Conv_MyriadPro-Regular";}	
+.add-button , .btn1{padding: 6px 108px 6px 16px;font-size: 18px;border-radius:0px;background:#FFB900;color:#fff;
+ border medium none;font-family: "Conv_segoeuib";}
+ .add-button:hover , .btn1:hover{background:#FFB900;color:#fff;}	
+ .btn1{padding: 6px 89px 6px 16px;}
+ .pad-left{padding-left:35px;font-size: 18px;}
+ .font{font-size: 18px;}
+ .horizontal-line{height:8px;width:100%;background:#000;position: relative;background:#666666;}
+ .horizontal-line-other{background:#CCCCCC;}
+ .textarea-style{resize:none;border:2px solid #B5B5B5;border-radius:0px;font-size: 18px;font-family: "Conv_MyriadPro-Regular";}
+ .custom-wdth{width:28%;}
+ .head{color:#999999 !important;clear:both;font-family:'Conv_segoeui';font-size: 36px;margin-top:30px;margin-bottom:20px;}
+ 
+ .bg-color{background: none repeat scroll 0% 0% #4D4D4D;height:7px;width:100%;margin:10px 0;}
+ .purchase-btn{padding: 5px 73px 6px 16px;border:none;font-size: 18px;border-radius:0px;background-color: #FFB900;color:#fff;
+ border medium none;font-family: "Conv_segoeuib";margin-top: 26px;}
+ .purchase-btn:hover{background-color: #FFB900;color:#fff;}
+ .img-div{text-align:center;clear: both;padding: 6% 0px 3% 0px;}
+ .img-div img{margin:0 auto;}
+ .floor-plan-form label{font-family: "Conv_MyriadPro-Regular";}
+ .seat-map-label{color:#ACACAC;font-size:16px;}
+
+.list1{margin-bottom: 50px;}
+.list1 li ,.list2 li{margin:5px 0;font-size:18px; color:#666;}
+ .margin-top-div{margin-top: 26px;}
+.blue-btn1{padding: 5px 10px;}
+.label-style label{font-family: "Conv_MyriadPro-Regular";
+font-size: 11px;
+font-weight: normal;}
+
+.close {
+    font-size: 30px;
+    opacity: 0.5;
+}
+.label-name {
+    font-size: 18px;
+    font-family: "Conv_MyriadPro-Regular";
+    color: #FFF !important;
+    margin: 0;
+    padding-top: 7px;
+}
+textarea.form-control {
+    height: 100px;
+}
+.modal-header .close {
+    margin-top: 2px;
+    margin-right: 2px;
+}
+
+.modal-body {
+	color:#666;
+}
+
+div.selectDropdn, .selectDropdn select {  
+		Width:40%; font-size:18px; padding:5px;
+		font-family: "Conv_MyriadPro-Regular";
+		color: #666;
+		}
+div.selectDropdn, .selectDropdn select, 	input[type="file"]:after {
+		background: white url(../../img/rock/dropbtn.png) no-repeat center right;
+		border:2px solid #b5b5b5;
+		}	
+div.selectDropdn { overflow:hidden; padding:0;  }
+.ie7 div.selectDropdn {border:none;}
+
+div.selectDropdn select {	
+		width:100%; background-color:transparent; background-image:none;
+		-webkit-appearance: none; border:none; box-shadow:none;}
+		
+.ie7 div.selectDropdn select {
+			width:100%; background-color:#fff; border: solid 1px #ccc; 
+			padding:0.3em 0.5em;}	
+
+select::-ms-expand
+{
+    display: none;
+}
+
+select:focus::-ms-value {background: #fff; width:90%; color:#000;}
+
+@media screen and (max-width: 767px){
+	footer { margin-top: 0;}
+	.btm-footer .footerLinks li a {
+		text-transform: uppercase;
+	}
+	.inline-blk { display: none !important;}
+	.top-footer{padding:0px; border-top:2px solid #cccccc}
+	.top-footer img{width:100%;}
+	.top-footer h2 { font-size:12px;}
+	.top-footer h2 a{ font-size:12px;}
+	.btm-footer{padding:0px;}
+	.btm-footer .footerLinks{float:none;margin:25px 0px 25px 0px; float:left; width:100%;}
+	.btm-footer .footerLinks ul{padding:0px;}
+	.btm-footer .footerLinks li{list-style:none;float:left;text-align:center; font-size:12px; padding-right:5%; padding-left:5%;border-right:0px solid #fff; }
+	.btm-footer .footerLinks li:last-child{padding-right:0px; padding-left:7%;border-right:0px solid #fff;}
+	.btm-footer .copyright{font-size:11px; float:none; float:left; text-align:center;width:100%;margin-bottom:20px;}
+	.PNONE{border-right: 2px solid #ccc; padding: 10px 8px; text-align: center;}
+	.nopadD {
+		padding-right: 15px;
+		padding-left: 15px;
+	}
+	.PNONE1 {
+		padding: 0px;
+}
+	.pad-left{padding-left: 0px;}
+	.add-button-div{padding-right:0px;}
+	.add-button{padding: 7px 28px 7px 16px;}
+	.btn1{padding: 7px 10px 7px 16px;}
+	.pad-left {
+	    padding-left: 0px;
+	}
+	.pad-right{padding-right:0px;}
+	.custom-wdth {
+	    width: 48%;
+	}
+
+	.admin-head h1 {
+	margin: 16px 0px;
+	color: #FFF;
+	font-size: 24px;;
+	}
+	.btn1,.add-button{background-color:#FFB900; border: none;}
+	.add-button:hover , .btn1:hover{background-color:#FFB900;color:#fff;}	
+	.custom-pad{padding-left:15px;}
+	.custom-pad1{padding-left:15px;padding-right:15px;float: right;}
+	.purchase-btn{padding: 11px 7px 10px 7px;font-size: 12px;}
+	.img-div{padding: 6% 4.7% 3% 4.7%;}
+	.seat-map-label{font-size: 14px;}
+	.form-hdng {
+		font-size:18px;
+		font-weight:bold;
+		margin-bottom:10px;
+		
+	}
+	.t-cost {
+		color:#FFB900;
+		font-weight:bold;
+		margin-bottom:30px;
+		display:block;
+	}
+	.margin-top-div{margin-top:0px;}
+	.m-form-group {
+		margin: 20px 0 0;
+	}
+	.b-right {
+	    border-right: 2px solid #FFF;
+	    padding-right: 5px;
+	}
+	.head {
+		font-size: 25px;
+		margin-top: 10px;
+	}
+	.custom-image span:nth-child(1) {
+		font-size: 13px;
+	}
+}
+
+@media only screen and (min-width : 320px) and (max-width : 568px) {
+.MRR-lg{margin-right:14px;}
+	.logo {
+		background:#666;
+		width: 100% !important;
+		display: block !important;
+		overflow: hidden;
+	}
+	.logo-heading {
+	    font-size: 24px;
+	    padding: 13px;
+	}
+	.logo img {
+		width: 17%;
+	}
+	.container {
+	    width: 100%;
+	}
+	.column {
+		padding: 0;
+		margin: 0;
+	}	
+	.banner {
+		display: block;
+		height: auto;
+		width: 100%;
+	}
+	.for-desktop {
+		display: none;
+	}
+	.for-mobile {
+		display: block;
+	}
+	.menu-bar-default {
+		margin-top: 0;
+	}
+	.navbar-default .navbar-toggle .icon-bar {
+		background-color: #333;
+	}
+	.navbar-default .navbar-toggle {
+		border: none;
+	}
+	.search-box {
+		display: none;
+	}
+	.navbar-toggle {
+		float: left;
+		margin: 0px 5px;
+		background:none !important;
+	}
+	header {
+		padding-bottom: 0;
+	}
+	.down-arrow {
+		background: url("../../img/rock/down.png") no-repeat;
+		width:35px;
+		margin-top: 9px;
+		display: block;
+		float: left;
+		height: 21px;
+	}
+	.up-arrow {
+		background: url("../../img/rock/up.png") no-repeat;
+		width:35px;
+		margin-top: 9px;
+		display: block;
+		float: left;
+		height: 21px;
+	}
+	.msearch-icon {
+		display: block;
+		float: right;
+		background: url("../../img/rock/micon-magnifier.png") no-repeat;
+		width: 27px;
+		height: 27px;
+		margin-top: 7px;
+		background-size: 20px;
+		margin-right:10px;
+	}
+	.msearch-icon1 {
+		display: none;
+		float: right;
+		background: url("../../img/rock/micon-magnifier.png") no-repeat;
+		width: 27px;
+		height: 27px;
+		margin-top: 7px;
+		background-size: 20px;
+		margin-right:10px;
+	}
+	.user-link {
+		height: 25px;
+		width: 25px;
+		margin-top: 7px;
+		float: right;
+		display: block;
+		background: url("../../img/rock/icon-user.png") no-repeat;	
+		margin-right: 20px;
+	}
+	.navbar-collapse {
+		padding-right: 0;
+	}
+	.nav-menu li {
+		float: none;
+		list-style: none;
+	}
+	.nav-menu li a {
+		float: none;
+		display: block;
+		padding: 12px 0px 12px 10px !important;
+		margin-right: 0px;
+		text-align: center;
+		color: #575757 !important;
+		border-right: none;
+		border-left: 5px solid #FFB900 !important;
+		border-bottom: 1px solid #e6e6e6;
+		font-weight: bold;
+		background-color: #fff;
+		text-align: left;
+		font-size: 15px;
+	}
+	.container {
+		padding:0;
+	}
+	.row {
+		margin:0;
+	}
+	.left-panel {
+		margin-top: 30px;
+		padding: 0 10px;
+	}
+	.navbar-toggle .icon-bar {
+	    display: block;
+	    width: 30px;
+	    height: 4px;
+	    border-radius: 4px;
+	}
+	.cons-info {
+		padding-bottom: 15px;
+		border-bottom: 1px solid #F2F2F2;
+		margin-bottom: 15px;
+		position: relative;
+		overflow: hidden !important;
+		display: block;
+    	font-family: 'Conv_segoeuil';
+		/*height: 24%;*/
+	}
+	.econs-info {
+    	font-family: 'Conv_segoeuil';
+		padding-bottom: 40px;
+	}
+	.cons-date {
+		padding: 10px;
+		width: 100px;
+	}
+	.cons-mon {
+		font-size: 20px;
+		line-height: normal;
+		font-weight: bold;
+		display: inline-block;
+		color: #ffffff;
+	}
+	.date-num {
+		font-size: 20px;
+		line-height: normal;
+		font-weight: bold;
+		margin: 0;
+		display: inline-block;
+		color: #ffffff;
+	}
+	.cons-fullday {
+		font-size: 13px;
+    	font-family: 'Conv_segoeuil';
+		color: #ffffff;
+	}
+	.cons-text h3 {
+        font-family: 'Conv_segoeuil';
+		font-size: 20px;
+		margin-bottom: 5px;
+	}
+	.cons-text p {
+        font-family: 'Conv_segoeuil';
+		font-size: 14px;
+	}
+	.find-seat {
+		position: absolute;
+		bottom: 15px;
+		right: 0px;
+		margin-right: 0;
+	}
+	.find-seats-link {
+		padding: 3px 25px 5px 10px;
+		background-position: 80px 10px;
+		font-size: 14px;
+	}
+	.e-find-seat {
+		top: 0;
+	}
+	.cons-text {
+        font-family: 'Conv_segoeuil';
+		padding-top: 0;
+	}
+	.scroll-pane {
+		height: auto;
+		overflow: auto;
+	}
+	.bfind-seats {
+	    position: relative;
+		height: 35px;
+		width: 100%;
+		bottom: 0px;
+		font-size: 18px;
+		line-height: 38px;
+		padding: 0px 10px;
+	}
+	.custom-header {
+	    padding: 0px;
+	    background: #FFB900;
+	}
+	.m-ac-hdng {
+		text-align: center;
+		color: #fff;
+		font-family: "Conv_segoeui";
+		font-weight: normal;
+		margin:10px 0 12px;
+	}
+	.meventinfo {
+		font-family: "Conv_MyriadPro-Regular";
+	}
+	.meventinfo ul li {
+		float: left;
+		border-right: 1px solid #333;
+		padding-right: 3px;
+		margin-right: 3px;
+		font-size: 11px;
+	}
+	.middle-strip {
+		height: 60px;
+	}
+	.seattle_ultramode {
+		margin-top: 20px;
+		font-size: 25px;
+	}
+	.left-panel.for-ticket {
+		height: auto;
+	}
+	.bcaption-bg, .banner-caption {
+		top: 0px;
+		width: 100%;
+		font-size: 16px;
+		height: 50px;
+		padding: 10px;
+		line-height: 27px;
+	}
+	.ptickethdng h3 {
+		font-size: 18px;
+	}
+	.ptickethdng p {
+		font-size: 14px;
+	}
+	.border-bottom {
+		border-bottom: 1px solid #ccc;
+	}
+	.ticket-bcaption {
+		bottom: 0;
+	}
+    .radio-inline, .checkbox-inline {
+        font-family: "Conv_MyriadPro-Regular";
+        color: #555 !important;
+    }
+    .MnopadL {
+        padding: 0 !important;
+    }
+    .add-dlt-ev, .add-dlt-ev:hover {
+        font-size: 17.8px;
+        background: #FFB900;
+    }
+    .label-name {
+        padding-top: 0;
+    }
+
+	div.selectDropdn, .selectDropdn select {  
+		Width:100%;}
+}
+
+@media only screen and (min-width : 768px) and (max-width : 1023px) {
+.MRR-md{margin-right:0px;}
+	.bcaption-bg {
+		height: 70px;
+	}
+	.banner-caption {
+		font-size: 30px;
+		height: 70px;
+		line-height: 28px;
+	}
+	.bfind-seats {
+		height: 70px;
+		font-size: 24px;
+		line-height: 36px;
+	}
+	.logo-heading {
+	    padding: 25px 15px 25px;
+	}
+	.purchase-btn {
+		padding: 6px 12px ;
+	}
+	.nav-menu li a {
+		padding-right: 30px !important;
+		margin-right: 30px !important;
+	}
+	.btm-footer .footerLinks li {
+	    padding-right: 22px;
+	    padding-left: 22px;
+	}
+	.my-ac-hdng {
+		font-size: 28px;
+	}
+	.top-footer p {
+		font-size: 16px;
+	}
+}
+
+/************************************  IPAD PORTRAIT STARTS *******************************/
+@media (min-width: 1025px) {
+	.container {
+	    width: 1018px;
+	  }
+	.modal-lg {
+		width: 990px;
+	}
+}
+
+ @media only screen and (min-width : 320px) and (max-width : 568px) and (orientation:landscape) {
+	.logo img {
+	    width: 12%;
+	}
+	.logo-heading {
+	    font-size: 28px;
+	}
+	.btm-footer .footerLinks li {
+	    padding-right: 8%;
+	    padding-left: 8%;
+	}
+}

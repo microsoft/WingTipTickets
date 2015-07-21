@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="Root" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+  <xs:complexType name="TableColumnType">
+    <xs:sequence>
+      <xs:element name="Name" type="xs:string" />
+      <xs:element name="DataType" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ColumnsType" >
+    <xs:sequence>
+      <xs:element name="TableColumn" type="TableColumnType" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="FieldsType">
+    <xs:sequence>
+      <xs:element name="Field" type="xs:string" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="TableRowType">
+    <xs:sequence>
+      <xs:element name="Fields" type="FieldsType" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="RowsType">
+    <xs:sequence>
+      <xs:element name="TableRow" type="TableRowType" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="TabularData">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Columns" type="ColumnsType" minOccurs="0" maxOccurs="1" />
+        <xs:element name="Rows" type="RowsType" minOccurs="0" maxOccurs="1" />
+      </xs:sequence>
+      <xs:attribute name="version" type="xs:string" use="optional" default="1.0"/>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>
+

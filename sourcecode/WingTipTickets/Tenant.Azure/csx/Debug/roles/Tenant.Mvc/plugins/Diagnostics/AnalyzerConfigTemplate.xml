@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AnalyzerConfig xmlns="http://tempuri.org/XMLSchema.xsd">
+	<Sources>
+		<Tsf id="maeventtable" fullname="{0}"/>
+	</Sources>
+	<Groups>
+		<Group source="maeventtable" code="-1001" message="Invalid storage key length">
+			<Rule id="r1">
+				<Query>	where Message.StartsWith("Encrypted string length does not match decoded length")</Query>
+			</Rule>
+		</Group>
+		<Group source="maeventtable" code ="-1002" message="Invalid storage key">
+			<Rule id="r1">
+				<Query>	where Message="CryptDecryptMessage for message size failed"</Query>
+			</Rule>
+		</Group>
+		<Group source="maeventtable" code ="-1003" message="Invalid storage key">
+			<Rule id="r1">
+				<Query>	where Message="CryptDecryptMessage of message failed"</Query>
+			</Rule>
+		</Group>
+		<Group source="maeventtable" code ="-1004" message="Invalid storage account name">
+			<Rule id="r1">
+				<Query>	where Message.StartsWith("WinHttpSendRequest failed with ERROR_INTERNET_NAME_NOT_RESOLVED")</Query>
+			</Rule>
+		</Group>
+		<Group source="maeventtable" code ="-1005" message="Certificate not in store or wrong store specified">
+			<Rule id="r1">
+				<Query>	where Message="CryptDecryptMessage of message failed" and ErrorCode=-2146885620</Query>
+			</Rule>
+		</Group>
+		<Group source="maeventtable" code ="-1006" message="Overall quota is too low">
+			<Rule id="r1">
+				<Query>	where ErrorCode=-2147352554 and Message.StartsWith("The configured MA table quota is")</Query>
+			</Rule>
+		</Group>
+		<Group source="maeventtable" code ="-1007" message="Bad counter name">
+			<Rule id="r1">
+				<Query>	where MDRESULT=-1073738812 and Message.StartsWith("PdhExpandWildCardPath")</Query>
+			</Rule>
+		</Group>
+		<Group source="maeventtable" code ="-1008" message="Invalid character in configuration file">
+			<Rule id="r1">
+				<Query>	where ErrorCode=-2147467259 and Message.StartsWith("Parsing failed for file")</Query>
+			</Rule>
+		</Group>
+		<Group source="maeventtable" code ="-1009" message="Failed to initialize the MA identity">
+			<Rule id="r1">
+				<Query>	where Message == "Failed to initialize the MA identity"</Query>
+			</Rule>
+		</Group>
+		<Group source="maeventtable" code ="-1010" message="Failed to start performance counter">
+			<Rule id="r1">
+				<Query>	where Message == "Failed to start listener thread for SysCounterListener.dll"</Query>
+			</Rule>
+		</Group>
+		<Group source="maeventtable" code ="-1011" message="Failed to start file monitor">
+			<Rule id="r1">
+				<Query>	where Message == "Failed to start listener thread for FileListener.dll"</Query>
+			</Rule>
+		</Group>
+		<Group source="maeventtable" code ="-1012" message="Failed to start windows event logs monitor">
+			<Rule id="r1">
+				<Query>	where Message == "Failed to start listener thread for SystemEventsListener.dll"</Query>
+			</Rule>
+		</Group>
+		<Group source="maeventtable" code ="-1013" message="Failed to start the crash dump monitor">
+			<Rule id="r1">
+				<Query>	where Message == "Failed to start the crash dump events listener"</Query>
+			</Rule>
+		</Group>
+		<Group source="maeventtable" code ="-1014" message="Failed to start the IIS log monitor">
+			<Rule id="r1">
+				<Query>	where Message == "Failed to start the IIS log listener"</Query>
+			</Rule>
+		</Group>
+		<Group source="maeventtable" code ="-1015" message="Cannot find the configuration file">
+			<Rule id="r1">
+				<Query>	where RegexCount(Message, "Configuration file(.*)not found") == 1</Query>
+			</Rule>
+		</Group>
+	</Groups>
+</AnalyzerConfig>

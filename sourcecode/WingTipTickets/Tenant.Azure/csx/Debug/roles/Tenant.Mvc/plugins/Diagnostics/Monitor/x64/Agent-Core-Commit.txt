@@ -1,0 +1,4 @@
+<AgentPackageManifestConfig>
+   <PackageType>AgentCore</PackageType>
+   <Version>29.00.04</Version>
+</AgentPackageManifestConfig>

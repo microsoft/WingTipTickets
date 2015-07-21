@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:simpleType name="OnErrorPolicyType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Continue"/>
+      <xs:enumeration value="LimitedReplay"/>
+      <xs:enumeration value="Replay"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="InitializeHistoryPolicyType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Parallel"/>
+      <xs:enumeration value="Serial"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="StateMapUpdatePolicyType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="DownloadMatchingRows"/>
+      <xs:enumeration value="DownloadAllRows"/>
+      <xs:enumeration value="DownloadNoRows"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="VolumeLevelType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Low"/>
+      <xs:enumeration value="Medium"/>
+      <xs:enumeration value="High"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="MapType">
+    <xs:sequence>
+      <xs:element name="Key" type="xs:string"/>
+      <xs:element name="Value" type="xs:string"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:ID" use="required"/>
+    <xs:attribute name="entryLifetime" type="xs:duration"/>
+  </xs:complexType>
+
+  <xs:complexType name="StateMapType">
+    <xs:complexContent>
+      <xs:extension base="MapType">
+        <!-- gcThresholdInDays is obsolete; use entryLifetime instead -->
+        <xs:attribute name="gcThresholdInDays" type="xs:double" default="5"/>
+        <xs:attribute name="entryLifetimeDefault" type="xs:duration" fixed="P5D"/>
+        <xs:attribute name="parentId" type="xs:IDREF"/>
+        <xs:attribute name="component" type="xs:string"/>
+        <xs:attribute name="moniker" type="xs:string"/>
+        <xs:attribute name="updatePolicy" type="StateMapUpdatePolicyType" default="DownloadMatchingRows" />
+        <xs:attribute name="useValueChangeTimestamp" type="xs:boolean" default="false"/>
+        <xs:attribute name="changesTableRetentionInDays" type="xs:int" default="90"/>
+        <xs:attribute name="keepHistoryForUnchangedValues" type="xs:boolean" default="false"/>
+        <xs:attribute name="volumeLevel" type="VolumeLevelType" default="Low"/>
+        <xs:anyAttribute processContents="skip"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="InMemoryMapType">
+    <xs:complexContent>
+      <xs:extension base="MapType">
+        <xs:attribute name="entryLifetimeDefault" type="xs:duration" fixed="PT0M"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+
+  <xs:complexType name="OutputExtensionsType">
+    <xs:sequence>
+      <xs:element name="OutputExtension" type="OutputExtensionType" minOccurs="1" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SettingType">
+    <xs:attribute name="Name" type="xs:string" use="required"/>
+    <xs:attribute name="Value" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="OutputExtensionType">
+    <xs:sequence>
+      <xs:element name="Setting" type="SettingType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:ID" use="required"/>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:attribute name="package" type="xs:string" />
+  </xs:complexType>
+
+  <xs:complexType name="RuleType" mixed="true">
+    <xs:attribute name="id" use="required" type="xs:ID"/>
+    <xs:attribute name="output" type="xs:string"/>
+    <xs:attribute name="windowHopSize" type="xs:duration"/>
+    <xs:attribute name="windowSize" type="xs:duration"/>
+    <xs:attribute name="queryDelay" type="xs:duration"/>
+    <xs:attribute name="skipUntil" type="xs:string"/>
+    <xs:attribute name="groupId" type="xs:int" />
+  </xs:complexType>
+
+  <xs:complexType name="ConfigurationType">
+    <xs:sequence>
+      <xs:element name="StateMap" type="StateMapType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="InMemoryMap" type="InMemoryMapType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="OutputExtensions" type="OutputExtensionsType" minOccurs="0" maxOccurs="1" />
+      <xs:element name="GlobalQuery" type="xs:string" minOccurs="0"/>
+      <xs:element name="GlobalDefinitions" type="xs:string" minOccurs="0"/>
+      <xs:element name="Rule" type="RuleType" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="defaultWindowHopSize" type="xs:duration" default="PT1M"/>
+    <xs:attribute name="defaultWindowSize" type="xs:duration"/>
+    <xs:attribute name="defaultQueryDelay" type="xs:duration" default="PT3M"/>
+    <xs:attribute name="initializeHistoryPolicy" type="InitializeHistoryPolicyType" default="Parallel" />
+    <xs:attribute name="onErrorPolicy" type="OnErrorPolicyType" default="Replay"/>
+    <xs:attribute name="acceptableRuleScheduleDelay" type="xs:duration" use="optional"/>
+  </xs:complexType>
+
+  <xs:element name="Configuration" type="ConfigurationType"/>
+
+</xs:schema>
