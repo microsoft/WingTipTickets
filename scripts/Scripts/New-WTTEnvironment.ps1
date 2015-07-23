@@ -140,12 +140,12 @@ function New-WTTEnvironment
             $global:VerbosePreference = "SilentlyContinue"
 
             ### Check installed PowerShell Version ###
-            Write-Host "### Checking whether installed Azure PowerShell Version is at least 0.9.3. ###" -foregroundcolor "yellow"
+            Write-Host "### Checking whether installed Azure PowerShell Version is at least 0.9.5. ###" -foregroundcolor "yellow"
 
             $installedAzurePowerShellVersion = CheckInstalledPowerShellVersion
             if ($installedAzurePowerShellVersion -ge 0)
             {
-                Write-Host "### Installed Azure PowerShell Version is at least 0.9.3. ###" -foregroundcolor "yellow"
+                Write-Host "### Installed Azure PowerShell Version is at least 0.9.5. ###" -foregroundcolor "yellow"
 
                 ### Check if both ASM and ARM are provisioned ###
                 Write-Host "### Checking whether Azure Service Model (ASM) and Azure Resource Model (ARM) are provisioned. ###" -foregroundcolor "yellow"
@@ -248,56 +248,34 @@ function New-WTTEnvironment
                         New-WTTAzureResourceGroup -AzureResourceGroupName $azureResourceGroupName -AzureResourceGroupLocation $WTTEnvironmentPrimaryServerLocation
                     }
             
-                    #Create Storage Account
-                    #For the 2.1 release, the ARM based Storage Account is switched back to an ASM based Storage Account as the Auditing team will be releasing new cmdlets in an upcoming release
-                    #of Azure PowerShell that will support ARM based Storage Accounts.  Until then, they only support ASM based Storage Accounts.
-                    #New-WTTAzureStorageAccount -AzureStorageAccountResourceGroupName $azureResourceGroupName -AzureStorageAccountName $azureStorageAccountName -AzureStorageAccountType "Standard_GRS" -AzureStorageLocation $WTTEnvironmentPrimaryServerLocation
-                    Switch-AzureMode AzureServiceManagement -WarningVariable null -WarningAction SilentlyContinue
-                    New-WTTAzureStorageAccountASM -AzureStorageAccountName $azureStorageAccountName -AzureStorageLocation $WTTEnvironmentPrimaryServerLocation 
-                    Switch-AzureMode AzureResourceManager -WarningVariable null -WarningAction SilentlyContinue                  
+                    #Create Storage Account                    
+                    New-WTTAzureStorageAccount -AzureStorageAccountResourceGroupName $azureResourceGroupName -AzureStorageAccountName $azureStorageAccountName -AzureStorageAccountType "Standard_GRS" -AzureStorageLocation $WTTEnvironmentPrimaryServerLocation
                     
                     #If a WTTEnvironmentPrimaryServerLocation value was specified, Get Secondary Server Datacenter Location
                     if ($wTTEnvironmentSecondaryServerLocation -eq "")
-                    {
-                        #Switching from ARM to ASM based Storage Accounts
-                        #$wTTEnvironmentSecondaryServerLocation = (Get-AzureStorageAccount -ResourceGroupName $azureResourceGroupName -StorageAccountName $azureStorageAccountName).SecondaryLocation
-                        $wTTEnvironmentSecondaryServerLocation = (Get-AzureStorageAccount -StorageAccountName $azureStorageAccountName).GeoSecondaryLocation                    
+                    {                        
+                        $wTTEnvironmentSecondaryServerLocation = (Get-AzureStorageAccount -ResourceGroupName $azureResourceGroupName -StorageAccountName $azureStorageAccountName).SecondaryLocation                     
                     }
                                         
                     if ($azureSqlDatabaseServerPrimaryNameExists.Count -eq 0)
                     {
                         #Create Primary Azure SQL Database Server if it doesn't already exist
                         New-WTTAzureSqlDatabaseServer -AzureSqlDatabaseServerName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerLocation $WTTEnvironmentPrimaryServerLocation -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseServerVersion $AzureSqlDatabaseServerVersion -AzureSqlDatabaseServerResourceGroupName $azureResourceGroupName                        
-                        $azureSqlDatabaseServerPrimaryNameExists = Get-AzureSqlServer -ServerName $azureSqlDatabaseServerPrimaryName -ResourceGroupName $azureResourceGroupName -ErrorVariable azureSqlDatabaseServerPrimaryNameExistsErrors -ErrorAction SilentlyContinue                        
-                                                
-                        #Enable Auditing on Azure SQL Database Server
-                        #-EventType DataChanges is being deprecated and currently this cmdlet only supports ASM based storage account
-                        #Need to be fixed once the new cmdlets are available which support ARM based Storage accounts
-                        #Breaking change introduced in the 7/20 release ... -EventType DataChanges has been deprecated
-                        #$setPrimaryAzureSqlDatabaseServerAuditingPolicy = Set-AzureSqlDatabaseServerAuditingPolicy -ResourceGroupName $azureResourceGroupName -ServerName $azureSqlDatabaseServerPrimaryName -StorageAccountName $azureStorageAccountName -EventType DataChanges -WarningVariable null -WarningAction SilentlyContinue
-                        $setPrimaryAzureSqlDatabaseServerAuditingPolicy = Set-AzureSqlDatabaseServerAuditingPolicy -ResourceGroupName $azureResourceGroupName -ServerName $azureSqlDatabaseServerPrimaryName -StorageAccountName $azureStorageAccountName -EventType PlainSQL_Success, PlainSQL_Failure, ParameterizedSQL_Success, ParameterizedSQL_Failure, StoredProcedure_Success, StoredProcedure_Success -WarningVariable null -WarningAction SilentlyContinue
+                        $azureSqlDatabaseServerPrimaryNameExists = Get-AzureSqlServer -ServerName $azureSqlDatabaseServerPrimaryName -ResourceGroupName $azureResourceGroupName -ErrorVariable azureSqlDatabaseServerPrimaryNameExistsErrors -ErrorAction SilentlyContinue                                                
                     }
 
                     if ($azureSqlDatabaseServerPrimaryNameExists.Count -gt 0)
                     {   
-                        Switch-AzureMode AzureServiceManagement -WarningVariable null -WarningAction SilentlyContinue
+                        Switch-AzureMode AzureServiceManagement -WarningVariable null -WarningAction SilentlyContinue                        
                         Deploy-DBSchema -ServerName $azureSqlDatabaseServerPrimaryName -DatabaseEdition "Basic" -UserName $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -ServerLocation $WTTEnvironmentPrimaryServerLocation -DatabaseName $AzureSqlDatabaseName            
-                        Populate-DBSchema -ServerName $azureSqlDatabaseServerPrimaryName -Username $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -DatabaseName $AzureSqlDatabaseName
-                    
+                        Populate-DBSchema -ServerName $azureSqlDatabaseServerPrimaryName -Username $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -DatabaseName $AzureSqlDatabaseName                    
                     }
                                                             
                     if ($azureSqlDatabaseServerSecondaryNameExists.Count -eq 0)
                     {
                         Switch-AzureMode AzureResourceManager -WarningVariable null -WarningAction SilentlyContinue
                         #Create Secondary Azure SQL Database Server if it doesn't already exist
-                        New-WTTAzureSqlDatabaseServer -AzureSqlDatabaseServerName $azureSqlDatabaseServerSecondaryName -AzureSqlDatabaseServerLocation $wTTEnvironmentSecondaryServerLocation -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseServerVersion $AzureSqlDatabaseServerVersion -AzureSqlDatabaseServerResourceGroupName $azureResourceGroupName            
-                        
-                        #Enable Auditing on Azure SQL Database Server
-                        #-EventType DataChanges is being deprecated and currently this cmdlet only supports ASM based storage account
-                        #Need to be fixed once the new cmdlets are available which support ARM based Storage accounts
-                        #Breaking change introduced in the 7/20 release ... -EventType DataChanges has been deprecated
-                        #$setSecondaryAzureSqlDatabaseServerAuditingPolicy = Set-AzureSqlDatabaseServerAuditingPolicy -ResourceGroupName $azureResourceGroupName -ServerName $azureSqlDatabaseServerSecondaryName -StorageAccountName $azureStorageAccountName -EventType DataChanges -WarningVariable null -WarningAction SilentlyContinue
-                        $setSecondaryAzureSqlDatabaseServerAuditingPolicy = Set-AzureSqlDatabaseServerAuditingPolicy -ResourceGroupName $azureResourceGroupName -ServerName $azureSqlDatabaseServerSecondaryName -StorageAccountName $azureStorageAccountName -EventType PlainSQL_Success, PlainSQL_Failure, ParameterizedSQL_Success, ParameterizedSQL_Failure, StoredProcedure_Success, StoredProcedure_Success -WarningVariable null -WarningAction SilentlyContinue
+                        New-WTTAzureSqlDatabaseServer -AzureSqlDatabaseServerName $azureSqlDatabaseServerSecondaryName -AzureSqlDatabaseServerLocation $wTTEnvironmentSecondaryServerLocation -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseServerVersion $AzureSqlDatabaseServerVersion -AzureSqlDatabaseServerResourceGroupName $azureResourceGroupName                                    
                     }
                     
                     if ($WTTEnvironmentPrimaryServerLocation -notcontains "" -and $wTTEnvironmentSecondaryServerLocation -notcontains "")                 
@@ -371,7 +349,18 @@ function New-WTTEnvironment
                         #Add Azure WebSite Endpoints to Traffic Manager Profile 
                         Add-WTTAzureTrafficManagerEndpoint -AzureTrafficManagerProfileName $WTTEnvironmentApplicationName -AzureWebSiteName $azureSqlDatabaseServerPrimaryName -AzureTrafficManagerEndpointStatus "Enabled"
                         Add-WTTAzureTrafficManagerEndpoint -AzureTrafficManagerProfileName $WTTEnvironmentApplicationName -AzureWebSiteName $azureSqlDatabaseServerSecondaryName -AzureTrafficManagerEndpointStatus "Disabled"
-                    
+
+                        Switch-AzureMode AzureResourceManager -WarningVariable null -WarningAction SilentlyContinue
+                        #Enable Auditing on Azure SQL Database Server
+                        #Appears to be a name resolution issue if Auditing is enabled, as Azure Search will not redirect to the database server
+                        if ($azureSqlDatabaseServerPrimaryNameExists.Count -gt 0)
+                        {   
+                            #$setPrimaryAzureSqlDatabaseServerAuditingPolicy = Set-AzureSqlDatabaseServerAuditingPolicy -ResourceGroupName $azureResourceGroupName -ServerName $azureSqlDatabaseServerPrimaryName -StorageAccountName $azureStorageAccountName -EventType PlainSQL_Success, PlainSQL_Failure, ParameterizedSQL_Success, ParameterizedSQL_Failure, StoredProcedure_Success, StoredProcedure_Success -WarningVariable null -WarningAction SilentlyContinue                                                 
+                        }
+                        if ($azureSqlDatabaseServerSecondaryNameExists.Count -gt 0)
+                        {
+                            #$setSecondaryAzureSqlDatabaseServerAuditingPolicy = Set-AzureSqlDatabaseServerAuditingPolicy -ResourceGroupName $azureResourceGroupName -ServerName $azureSqlDatabaseServerSecondaryName -StorageAccountName $azureStorageAccountName -EventType PlainSQL_Success, PlainSQL_Failure, ParameterizedSQL_Success, ParameterizedSQL_Failure, StoredProcedure_Success, StoredProcedure_Success -WarningVariable null -WarningAction SilentlyContinue
+                        }
                     }                    
                     
                 }
@@ -387,7 +376,7 @@ function New-WTTEnvironment
             else
             {
                 ### Error if installed Azure PowerShell Version is older than minimum required version ###
-                Write-Host "### Error: Installed Azure PowerShell Version is older than 0.9.3.  Please install the latest version from: ###" -foregroundcolor "red"
+                Write-Host "### Error: Installed Azure PowerShell Version is older than 0.9.5.  Please install the latest version from: ###" -foregroundcolor "red"
                 Write-Host "### http://azure.microsoft.com/en-us/downloads/, under Command-line tools, under Windows PowerShell, click Install ###" -foregroundcolor "red"
             }
             
@@ -431,7 +420,7 @@ function CheckInstalledPowerShellVersion()
         Switch-AzureMode AzureServiceManagement -WarningVariable null -WarningAction SilentlyContinue
 
         $installedVersion = ((Get-Module Azure).Version.Major -as [string]) +'.'+ ((Get-Module Azure).Version.Minor -as [string]) +'.'+ ((Get-Module Azure).Version.Build -as [string])        
-        $minimumRequiredVersion = '0.9.3'        
+        $minimumRequiredVersion = '0.9.5'        
         $ver1 = GetVersionStringAsArray $installedVersion
         $ver2 = GetVersionStringAsArray $minimumRequiredVersion
         if ($ver1[0] -lt $ver2[0]) 

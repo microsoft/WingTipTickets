@@ -146,25 +146,35 @@ function New-WTTAzureSearchService
             $azureSearchServiceIndexerDatasourceURL = "https://$wTTEnvironmentApplicationName.search.windows.net/datasources?api-version=2015-02-28"
             $azureSearchServiceIndexerURL = "https://$wTTEnvironmentApplicationName.search.windows.net/indexers?api-version=2015-02-28"
             $azureSearchServiceIndexURL = "https://$wTTEnvironmentApplicationName.search.windows.net/indexes?api-version=2015-02-28"
-            $azureResourceProvidersURL = "https://management.azure.com/subscriptions/$azureSubscriptionID/providers?api-version=2015-01-01"            
+            $azureResourceProvidersURL = "https://management.azure.com/subscriptions/$azureSubscriptionID/providers?api-version=2015-01-01" 
             [string]$azureSearchResourceProviderNamespace = "Microsoft.Search"            
-
-            # retrieve the List of Azure Resource Providers via the REST API            
-            $listAzureResourceProviders = @()            
-            $listAzureResourceProviders = Invoke-RestMethod -Uri $azureResourceProvidersURL -Method "GET" -Headers $headers
+            $azureSearchResourceProviderURL = "https://management.azure.com/subscriptions/$azureSubscriptionID/providers/$azureSearchResourceProviderNamespace" + "?api-version=2015-01-01"           
             
-            for ([int]$i = 0; $i -le $listAzureResourceProviders.value.Count; $i++)
+            # retrieve the Azure Search Resource Provider Status via the REST API                   
+            $azureSearchResourceProviderStatus = Invoke-RestMethod -Uri $azureSearchResourceProviderURL -Method "GET" -Headers $headers
+            
+            if ($azureSearchResourceProviderStatus.registrationState -eq "NotRegistered" -or "Unregistered")            
             {
-                if($listAzureResourceProviders.value[$i].namespace -eq $azureSearchResourceProviderNamespace)                
-                {                    
-                    if ($listAzureResourceProviders.value[$i].registrationState -eq "NotRegistered")
-                    {
-                        $azureResourceProviderNamespace = $azureSearchResourceProviderNamespace
-                        $azureResourceProviderRegistrationURL = "https://management.azure.com/subscriptions/$azureSubscriptionID/providers/$azureResourceProviderNamespace/register?api-version=2015-01-01"
-                        $null = Invoke-RestMethod -Uri $azureResourceProviderRegistrationURL -Method "POST" -Headers $headers
+                # if not already registered, register the Azure Search Resource Provider via the REST API
+                $azureResourceProviderNamespace = $azureSearchResourceProviderNamespace
+                $azureResourceProviderRegistrationURL = "https://management.azure.com/subscriptions/$azureSubscriptionID/providers/$azureResourceProviderNamespace/register?api-version=2015-01-01"
+                $null = Invoke-RestMethod -Uri $azureResourceProviderRegistrationURL -Method "POST" -Headers $headers
+                
+                # wait for the Azure Search resource provider to register
+                $retry = "true"
+                if ($retry -eq "true")
+                {                
+                    $azureSearchResourceProviderStatus = Invoke-RestMethod -Uri $azureSearchResourceProviderURL -Method "GET" -Headers $headers
+                    if ($azureSearchResourceProviderStatus.registrationState -eq "Registering")
+                    {                 
+                        Start-Sleep -s 5
                     }
-                }
-            }
+                    elseif ($azureSearchResourceProviderStatus.registrationState -eq "Registered")
+                    {                     
+                        $retry = "false"
+                    }                    
+                }                
+            }                
             
             # retrieve the List of Azure Search Services via the REST API
             $listSearchServices = @()
@@ -248,16 +258,14 @@ function New-WTTAzureSearchService
                                                                     ""sourceFields"": [""FullTitle""]
                                                                 }
                                                                                 ] 
-                                                            }"
+                                                            }"                                
                 #Write-Host "create index"                    
                 $createSearchServiceIndex = Invoke-RestMethod -Uri $azureSearchServiceIndexURL -Method "POST" -Body $newSearchServiceIndexerDatasourceJsonBody -Headers $headers -ContentType "application/json"
-                
-
-                
+                                                
                 $newSearchServiceIndexerDatasourceJsonBody = "{ 
                                         ""name"": ""concertssql"", 
                                         ""type"": ""azuresql"",
-                                        ""credentials"": { ""connectionString"": ""Server=tcp:$AzureSqlDatabaseServerPrimaryName.database.windows.net,1433;Database=$AzureSqlDatabaseName;User ID=$AzureSqlDatabaseServerAdministratorUserName;Password=$AzureSqlDatabaseServerAdministratorPassword;Trusted_Connection=False;Encrypt=True;Connection Timeout=30;"" },
+                                        ""credentials"": { ""connectionString"": ""Server=tcp:$AzureSqlDatabaseServerPrimaryName.database.windows.net,1433;Database=$AzureSqlDatabaseName;User ID=$AzureSqlDatabaseServerAdministratorUserName@$AzureSqlDatabaseServerPrimaryName;Password=$AzureSqlDatabaseServerAdministratorPassword;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"" },
                                         ""container"": { ""name"": ""ConcertSearch"" },
                                         ""dataChangeDetectionPolicy"": {
                                                                         ""@odata.type"": ""#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy"",
@@ -274,9 +282,10 @@ function New-WTTAzureSearchService
                                                     ""targetIndexName"": ""concerts"",
                                                     ""schedule"": { ""interval"": ""PT5M"", ""startTime"" : ""2015-01-01T00:00:00Z"" }
                                                     }"
-                
+                                
                 #Write-Host "create indexer"                                     
                 $createSearchServiceIndexer = Invoke-RestMethod -Uri $azureSearchServiceIndexerURL -Method "POST" -Body $newSearchServiceIndexerJsonBody -Headers $headers -ContentType "application/json"
+                #Write-Host ($createSearchServiceIndexer)
                 
                 #Write-Host "get indexer status"
                 #$azureSearchServiceIndexersURL = "https://$wTTEnvironmentApplicationName.search.windows.net/indexers/fromsql/status?api-version=2015-02-28"
