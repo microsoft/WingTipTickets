@@ -80,11 +80,11 @@ function New-WTTAzureSqlDatabaseServer
                         Write-Host "### Success: New Azure SQL Server '$AzureSqlDatabaseServerName' created. ###" -foregroundcolor "green"
 
                         Write-Host "### Adding firewall rule to allow access from ALL IP addresses ###" -foregroundcolor "yellow"
-                        $newAzureSqlFirewallRule1 = New-AzureSqlServerFirewallRule -FirewallRuleName AllOpen -StartIPAddress 0.0.0.0 -EndIPAddress 255.255.255.255 -ServerName $AzureSqlDatabaseServerName -ResourceGroup $AzureSqlDatabaseServerResourceGroupName -ErrorVariable newAzureSqlFirewallRule1Errors -ErrorAction SilentlyContinue
+                        $newAzureSqlFirewallRule1 = New-AzureSqlServerFirewallRule -FirewallRuleName AllOpen -StartIPAddress 0.0.0.0 -EndIPAddress 255.255.255.255 -ServerName $AzureSqlDatabaseServerName -ResourceGroup $AzureSqlDatabaseServerResourceGroupName -WarningVariable newAzureSqlFirewallRule1Errors -WarningAction SilentlyContinue
                         #Write-Host "Success: Firewall rule updated..." -foregroundcolor "green"
 
                         Write-Host "### Adding firewall rule to allow ALL Azure Services access ###" -foregroundcolor "yellow"                    
-                        $newAzureSqlFirewallRule2 = New-AzureSqlServerFirewallRule -AllowAllAzureIPs -ServerName $AzureSqlDatabaseServerName -ResourceGroup $AzureSqlDatabaseServerResourceGroupName -ErrorVariable newAzureSqlFirewallRule2Errors -ErrorAction SilentlyContinue
+                        $newAzureSqlFirewallRule2 = New-AzureSqlServerFirewallRule -AllowAllAzureIPs -ServerName $AzureSqlDatabaseServerName -ResourceGroup $AzureSqlDatabaseServerResourceGroupName -WarningVariable newAzureSqlFirewallRule2Errors -WarningAction SilentlyContinue
                         #Write-Host "Success: Firewall rule updated..." -foregroundcolor "green"
                     }
 
