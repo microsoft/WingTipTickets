@@ -131,6 +131,7 @@ function New-WTTEnvironment
 
         $azureSqlDatabaseServerPrimaryNameExists = $null
         $azureSqlDatabaseServerSecondaryNameExists = $null
+        $wTTEnvironmentSecondaryServerLocation = "" 
 
         Try 
         {
