@@ -122,16 +122,20 @@ function New-WTTEnvironment
         }
     	
         $localPath = (Get-Item -Path ".\" -Verbose).FullName
-        $azureStorageAccountName = $WTTEnvironmentApplicationName
-        $azureSqlDatabaseServerPrimaryName = $WTTEnvironmentApplicationName + "primary"
-        $azureSqlDatabaseServerSecondaryName = $WTTEnvironmentApplicationName + "secondary"        
-        $azureResourceGroupName = $WTTEnvironmentApplicationName
-        $azureCloudServicePrimaryName = $WTTEnvironmentApplicationName + "primary"
-        $azureCloudServiceSecondaryName = $WTTEnvironmentApplicationName + "secondary"      
+
+        $wTTEnvironmentApplicationName = $WTTEnvironmentApplicationName.ToLower()
+
+        $azureStorageAccountName = $wTTEnvironmentApplicationName
+        $azureSqlDatabaseServerPrimaryName = $wTTEnvironmentApplicationName + "primary"
+        $azureSqlDatabaseServerSecondaryName = $wTTEnvironmentApplicationName + "secondary"        
+        $azureResourceGroupName = $wTTEnvironmentApplicationName
+        $azureCloudServicePrimaryName = $wTTEnvironmentApplicationName + "primary"
+        $azureCloudServiceSecondaryName = $wTTEnvironmentApplicationName + "secondary"      
 
         $azureSqlDatabaseServerPrimaryNameExists = $null
         $azureSqlDatabaseServerSecondaryNameExists = $null
-        $wTTEnvironmentSecondaryServerLocation = "" 
+
+        $wTTEnvironmentSecondaryServerLocation = ""
 
         Try 
         {
@@ -213,11 +217,11 @@ function New-WTTEnvironment
                         Write-Host "### Finding a Datacenter that has Azure SQL Database Server version 12.0 capacity for your subscription. ###" -foregroundcolor "yellow"
                         if($AzureActiveDirectoryTenantName -eq "")
                         {
-                            $azureSqlDatabaseServerV12RegionAvailability = Get-WTTSqlDatabaseServerV12RegionAvailability -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName
+                            $azureSqlDatabaseServerV12RegionAvailability = Get-WTTSqlDatabaseServerV12RegionAvailability -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName
                         }
                         else
                         {
-                            $azureSqlDatabaseServerV12RegionAvailability = Get-WTTSqlDatabaseServerV12RegionAvailability -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -AzureActiveDirectoryTenantName $AzureActiveDirectoryTenantName
+                            $azureSqlDatabaseServerV12RegionAvailability = Get-WTTSqlDatabaseServerV12RegionAvailability -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -AzureActiveDirectoryTenantName $AzureActiveDirectoryTenantName
                         }
 
                         if ($azureSqlDatabaseServerV12RegionAvailability.Count -eq 2)
@@ -284,32 +288,32 @@ function New-WTTEnvironment
                     if ($WTTEnvironmentPrimaryServerLocation -notcontains "" -and $wTTEnvironmentSecondaryServerLocation -notcontains "")                 
 
                     {
-                        if ($WTTEnvironmentApplicationName.Length -gt 15)
+                        if ($wTTEnvironmentApplicationName.Length -gt 15)
                         {
-                            $azureSearchServiceName = $WTTEnvironmentApplicationName.Substring(0,15)
+                            $azureSearchServiceName = $wTTEnvironmentApplicationName.Substring(0,15)
                         }
                         else
                         {
-                            $azureSearchServiceName = $WTTEnvironmentApplicationName
+                            $azureSearchServiceName = $wTTEnvironmentApplicationName
                         }
                         Write-Host "### Creating Azure Search Service '$azureSearchServiceName' in Primary Datacenter Region '$WTTEnvironmentPrimaryServerLocation' if it doesn't already exist. ###" -foregroundcolor "yellow"
                         
                         if($AzureActiveDirectoryTenantName -eq "")
                         {
-                            $azureSearchService = New-WTTAzureSearchService -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -WTTEnvironmentResourceGroupName $azureResourceGroupName -AzureSearchServiceLocation $WTTEnvironmentPrimaryServerLocation -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseName $AzureSqlDatabaseName
+                            $azureSearchService = New-WTTAzureSearchService -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -WTTEnvironmentResourceGroupName $azureResourceGroupName -AzureSearchServiceLocation $WTTEnvironmentPrimaryServerLocation -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseName $AzureSqlDatabaseName
                             if($azureSearchService.Count -eq 0)
                             {
                                 Start-Sleep -s 30
-                                $azureSearchService = New-WTTAzureSearchService -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -WTTEnvironmentResourceGroupName $azureResourceGroupName -AzureSearchServiceLocation $WTTEnvironmentPrimaryServerLocation -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseName $AzureSqlDatabaseName
+                                $azureSearchService = New-WTTAzureSearchService -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -WTTEnvironmentResourceGroupName $azureResourceGroupName -AzureSearchServiceLocation $WTTEnvironmentPrimaryServerLocation -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseName $AzureSqlDatabaseName
                             }
                         }
                         else
                         {
-                            $azureSearchService = New-WTTAzureSearchService -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -WTTEnvironmentResourceGroupName $azureResourceGroupName -AzureSearchServiceLocation $WTTEnvironmentPrimaryServerLocation -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseName $AzureSqlDatabaseName -AzureActiveDirectoryTenantName $AzureActiveDirectoryTenantName
+                            $azureSearchService = New-WTTAzureSearchService -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -WTTEnvironmentResourceGroupName $azureResourceGroupName -AzureSearchServiceLocation $WTTEnvironmentPrimaryServerLocation -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseName $AzureSqlDatabaseName -AzureActiveDirectoryTenantName $AzureActiveDirectoryTenantName
                             if($azureSearchService.Count -eq 0)
                             {
                                 Start-Sleep -s 30
-                                $azureSearchService = New-WTTAzureSearchService -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -WTTEnvironmentResourceGroupName $azureResourceGroupName -AzureSearchServiceLocation $WTTEnvironmentPrimaryServerLocation -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseName $AzureSqlDatabaseName -AzureActiveDirectoryTenantName $AzureActiveDirectoryTenantName
+                                $azureSearchService = New-WTTAzureSearchService -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -WTTEnvironmentResourceGroupName $azureResourceGroupName -AzureSearchServiceLocation $WTTEnvironmentPrimaryServerLocation -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseName $AzureSqlDatabaseName -AzureActiveDirectoryTenantName $AzureActiveDirectoryTenantName
                             }
                         }
                         
@@ -318,9 +322,9 @@ function New-WTTEnvironment
                             $searchServicePrimaryManagementKey = $azureSearchService
                             
                             Write-Host "### Setting the appSettings Values in the web.config for the '$azureWebSitePrimaryWebDeployPackageName' Azure WebSites WebDeploy Package. ###" -foregroundcolor "yellow"
-                            Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -AzureWebSiteWebDeployPackagePath $azureWebSitePrimaryWebDeployPackagePath -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey
+                            Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -AzureWebSiteWebDeployPackagePath $azureWebSitePrimaryWebDeployPackagePath -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey
                             Write-Host "### Setting the appSettings Values in the web.config for the '$azureWebSiteSecondaryWebDeployPackageName' Azure WebSites WebDeploy Package. ###" -foregroundcolor "yellow"
-                            Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -AzureWebSiteWebDeployPackagePath $azureWebSiteSecondaryWebDeployPackagePath -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerSecondaryName -AzureSqlDatabaseServerSecondaryName $azureSqlDatabaseServerPrimaryName
+                            Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -AzureWebSiteWebDeployPackagePath $azureWebSiteSecondaryWebDeployPackagePath -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerSecondaryName -AzureSqlDatabaseServerSecondaryName $azureSqlDatabaseServerPrimaryName
                         }
 
                         Switch-AzureMode AzureResourceManager -WarningVariable null -WarningAction SilentlyContinue
@@ -345,13 +349,13 @@ function New-WTTEnvironment
                     
                         #Create Traffic Manager Profile
                         #ARM - currently having an issue with the ARM preview cmdlets.  Working ps1s are in the 2.2 folder
-                        #New-WTTAzureTrafficManagerProfile -AzureTrafficManagerProfileName $WTTEnvironmentApplicationName -AzureTrafficManagerResourceGroupName $azureResourceGroupName
+                        #New-WTTAzureTrafficManagerProfile -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -AzureTrafficManagerResourceGroupName $azureResourceGroupName
                         #ASM
-                        New-WTTAzureTrafficManagerProfile -AzureTrafficManagerProfileName $WTTEnvironmentApplicationName
+                        New-WTTAzureTrafficManagerProfile -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName
 
                         #Add Azure WebSite Endpoints to Traffic Manager Profile 
-                        Add-WTTAzureTrafficManagerEndpoint -AzureTrafficManagerProfileName $WTTEnvironmentApplicationName -AzureWebSiteName $azureSqlDatabaseServerPrimaryName -AzureTrafficManagerEndpointStatus "Enabled"
-                        Add-WTTAzureTrafficManagerEndpoint -AzureTrafficManagerProfileName $WTTEnvironmentApplicationName -AzureWebSiteName $azureSqlDatabaseServerSecondaryName -AzureTrafficManagerEndpointStatus "Disabled"
+                        Add-WTTAzureTrafficManagerEndpoint -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -AzureWebSiteName $azureSqlDatabaseServerPrimaryName -AzureTrafficManagerEndpointStatus "Enabled"
+                        Add-WTTAzureTrafficManagerEndpoint -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -AzureWebSiteName $azureSqlDatabaseServerSecondaryName -AzureTrafficManagerEndpointStatus "Disabled"
 
                         Switch-AzureMode AzureResourceManager -WarningVariable null -WarningAction SilentlyContinue
                         #Enable Auditing on Azure SQL Database Server

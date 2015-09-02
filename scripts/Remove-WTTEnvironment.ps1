@@ -1,4 +1,4 @@
-<#
+﻿<#
 .Synopsis
     WingtipTickets (WTT) Demo Environment.
  .DESCRIPTION
@@ -20,12 +20,15 @@ function Remove-WTTEnvironment
     { 
     	#Add-AzureAccount
         $localPath = (Get-Item -Path ".\" -Verbose).FullName
-        $azureStorageAccountName = $WTTEnvironmentApplicationName
-        $azureSqlDatabaseServerPrimaryName = $WTTEnvironmentApplicationName + "primary"
-        $azureSqlDatabaseServerSecondaryName = $WTTEnvironmentApplicationName + "secondary"        
-        $azureResourceGroupName = $WTTEnvironmentApplicationName
-        $azureCloudServicePrimaryName = $WTTEnvironmentApplicationName + "primary"
-        $azureCloudServiceSecondaryName = $WTTEnvironmentApplicationName + "secondary"      
+
+        $wTTEnvironmentApplicationName = $WTTEnvironmentApplicationName.ToLower()
+
+        $azureStorageAccountName = $wTTEnvironmentApplicationName
+        $azureSqlDatabaseServerPrimaryName = $wTTEnvironmentApplicationName + "primary"
+        $azureSqlDatabaseServerSecondaryName = $wTTEnvironmentApplicationName + "secondary"        
+        $azureResourceGroupName = $wTTEnvironmentApplicationName
+        $azureCloudServicePrimaryName = $wTTEnvironmentApplicationName + "primary"
+        $azureCloudServiceSecondaryName = $wTTEnvironmentApplicationName + "secondary"      
 
         
         Try 
@@ -53,12 +56,12 @@ function Remove-WTTEnvironment
                     Switch-AzureMode AzureResourceManager -WarningVariable null -WarningAction SilentlyContinue
                                                                         
                     #Remove Azure Resource Group
-                    Write-Host "### Removing Azure Resource Group '$WTTEnvironmentApplicationName'. ###" -foregroundcolor "yellow"
+                    Write-Host "### Removing Azure Resource Group '$wTTEnvironmentApplicationName'. ###" -foregroundcolor "yellow"
                     $azureResourceGroupRemoved = (Remove-AzureResourceGroup -Name $azureResourceGroupName -Force -PassThru -ErrorAction SilentlyContinue -ErrorVariable azureResourceGroupRemovedErrors)
                     
                     if ($azureResourceGroupRemoved)
                     {
-                        Write-Host "### Success: Azure Resource Group '$WTTEnvironmentApplicationName' removed. ###" -foregroundcolor "green"
+                        Write-Host "### Success: Azure Resource Group '$wTTEnvironmentApplicationName' removed. ###" -foregroundcolor "green"
                     }
                     else
                     {
@@ -67,11 +70,11 @@ function Remove-WTTEnvironment
                             [string]$exception = $error.Exception
                             if($exception.Contains("does not exist"))
                             {
-                                Write-Host "### Azure Resource Group '$WTTEnvironmentApplicationName' doesn't exist. ###" -foregroundcolor "yellow"
+                                Write-Host "### Azure Resource Group '$wTTEnvironmentApplicationName' doesn't exist. ###" -foregroundcolor "yellow"
                             }                    
                                 else
                             {
-                                Write-Host "### Error: Azure Resource Group '$WTTEnvironmentApplicationName' was not removed because: '$error'. ###" -foregroundcolor "red"                                                        
+                                Write-Host "### Error: Azure Resource Group '$wTTEnvironmentApplicationName' was not removed because: '$error'. ###" -foregroundcolor "red"                                                        
                             }
                         }
                     }
@@ -79,12 +82,12 @@ function Remove-WTTEnvironment
                     Switch-AzureMode AzureServiceManagement -WarningVariable null -WarningAction SilentlyContinue
                     
                     #Remove Traffic Manager Profile
-                    Write-Host "### Removing Azure Traffic Manager Profile '$WTTEnvironmentApplicationName'. ###" -foregroundcolor "yellow"
-                    $azureTrafficManagerProfileRemoved = (Remove-AzureTrafficManagerProfile -Name $WTTEnvironmentApplicationName -Force -PassThru -ErrorAction SilentlyContinue -ErrorVariable azureTrafficManagerProfileRemovedErrors)
+                    Write-Host "### Removing Azure Traffic Manager Profile '$wTTEnvironmentApplicationName'. ###" -foregroundcolor "yellow"
+                    $azureTrafficManagerProfileRemoved = (Remove-AzureTrafficManagerProfile -Name $wTTEnvironmentApplicationName -Force -PassThru -ErrorAction SilentlyContinue -ErrorVariable azureTrafficManagerProfileRemovedErrors)
                                         
                     if ($azureTrafficManagerProfileRemoved)
                     {
-                        Write-Host "### Success: Azure Traffic Manager Profile '$WTTEnvironmentApplicationName' removed. ###" -foregroundcolor "green"
+                        Write-Host "### Success: Azure Traffic Manager Profile '$wTTEnvironmentApplicationName' removed. ###" -foregroundcolor "green"
                     }
                     else
                     {
@@ -93,7 +96,7 @@ function Remove-WTTEnvironment
                             [string]$exception = $error.Exception
                             if($exception.Contains("does not exist"))
                             {
-                                Write-Host "### Azure Traffic Manager Profile '$WTTEnvironmentApplicationName' doesn't exist. ###" -foregroundcolor "yellow"
+                                Write-Host "### Azure Traffic Manager Profile '$wTTEnvironmentApplicationName' doesn't exist. ###" -foregroundcolor "yellow"
                             }                    
                                 else
                             {
