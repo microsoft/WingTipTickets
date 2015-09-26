@@ -128,3 +128,64 @@ function Remove-WTTEnvironment
         }  	    
    }
  }
+
+ #Check Installed Azure PowerShell Version
+# Bitwise left shift
+function Lsh([UInt32] $n, [Byte] $bits) 
+    {
+        $n * [Math]::Pow(2, $bits)
+    }
+
+# Returns a version number "a.b.c.d" as a two-element numeric
+# array. The first array element is the most significant 32 bits,
+# and the second element is the least significant 32 bits.
+function GetVersionStringAsArray([String] $version) 
+{
+    $parts = $version.Split(".")
+    if ($parts.Count -lt 4) 
+    {
+        for ($n = $parts.Count; $n -lt 4; $n++) 
+        {
+            $parts += "0"
+        }
+    }
+    [UInt32] ((Lsh $parts[0] 16) + $parts[1])
+    [UInt32] ((Lsh $parts[2] 16) + $parts[3])
+}
+
+ # Compares two version numbers "a.b.c.d". If $version1 < $version2,
+# returns -1. If $version1 = $version2, returns 0. If
+# $version1 > $version2, returns 1.
+function CheckInstalledPowerShellVersion() 
+    {
+        Switch-AzureMode AzureServiceManagement -WarningVariable null -WarningAction SilentlyContinue
+
+        $installedVersion = ((Get-Module Azure).Version.Major -as [string]) +'.'+ ((Get-Module Azure).Version.Minor -as [string]) +'.'+ ((Get-Module Azure).Version.Build -as [string])        
+        $minimumRequiredVersion = '0.9.7'        
+        $ver1 = GetVersionStringAsArray $installedVersion
+        $ver2 = GetVersionStringAsArray $minimumRequiredVersion
+        if ($ver1[0] -lt $ver2[0]) 
+        {
+            $out = -1
+        }
+        elseif ($ver1[0] -eq $ver2[0]) 
+        {
+            if ($ver1[1] -lt $ver2[1]) 
+            {
+                $out = -1
+            }
+            elseif ($ver1[1] -eq $ver2[1]) 
+            {
+                $out = 0
+            }
+            else 
+            {
+                $out = 1
+            }
+        }
+        else 
+            {
+                $out = 1
+            }
+        return $out
+}
