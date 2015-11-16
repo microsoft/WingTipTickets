@@ -215,11 +215,8 @@ function registerDataFactoryProvider
 
             # Get Service Admin Live Email Id since we don't have native access to the Azure Active Directory Tenant Name from within Azure PowerShell
             [string]$adTenantAdminEmailId = (Get-AzureSubscription -Current -ExtendedDetails).AccountAdminLiveEmailId
-            $AzureActiveDirectoryTenantName = ""
-            $userid = (Get-AzureSubscription -Current -ExtendedDetails).Accounts
-            $id = $userid.id
-            $user = $id.Split('@')[-1] 
-         
+            $AzureActiveDirectoryTenantName = $AzureActiveDirectoryTenantName
+                     
             if ($AzureActiveDirectoryTenantName -eq "")
             {
                 if ($adTenantAdminEmailId.Contains("@microsoft.com"))
@@ -242,10 +239,6 @@ function registerDataFactoryProvider
                 $adTenant = $adTenantName
             }
             
-            if ($adTenant -ne $user)
-            {
-                    $adTenant = $user
-            } 
     
             # Get subscription information
             $azureSubscription = (Get-AzureSubscription -Current -ExtendedDetails)
