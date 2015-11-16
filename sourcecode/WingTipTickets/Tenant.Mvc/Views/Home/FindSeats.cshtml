@@ -1,5 +1,5 @@
 ﻿@model Tenant.Mvc.Models.ConcertsDB.Concert
-
+@using Newtonsoft.Json;
 @using Tenant.Mvc.Models.CustomersDB
 @{
     ViewBag.Title = "Find Seats";
@@ -11,7 +11,15 @@
 <style>
     ratingsPane {
         width: 200px;
-        margin:0 auto;
+        margin: 0 auto;
+    }
+
+    .labelModel {
+        padding-top: 7px;
+        font-size: 18px;
+        margin: 0;
+        color: #999999 !important;
+        font-weight: normal;
     }
 </style>
 
@@ -61,9 +69,9 @@
                 <div class="selectDropdn col-sm-5 col-xs-12  MRR-md MRB-sm" style="width:20%;">
                     <select id="slctQuantity" name="slctQuantity">
                         @for (int i = 1; i <= 5; i++)
-                            {
+                        {
                             <option value="@i.ToString()">@i.ToString()</option>
-                            }
+                        }
                     </select>
                 </div>
                 <div class="clearfix"></div>
@@ -73,26 +81,26 @@
                 <div class="selectDropdn col-sm-5 col-xs-12  MRR-md MRB-sm" style="width:40%;">
                     <select id="slctPriceSection" name="slctPriceSection">
                         @foreach (var seatLevels in Model.Venue.VenueSeatSections)
-                            {
+                        {
                             <option value="@(seatLevels.TicketPrice + "|" + seatLevels.TicketLevelId)">$@seatLevels.TicketPrice: @seatLevels.TicketLevelDescription</option>
-                            }
+                        }
                     </select>
                 </div>
                 <div class="pull-right">
                     @if ((Session["SessionUser"] as Customer) != null)
-                        {
+                    {
                         <button id="puchaseTicket" type="button" class="find-seats-link btn btn-default pull-right purchase-btn"
                                 data-toggle="modal" data-target=".modal-tickets" data-backdrop="static" data-keyboard="false">
                             Purchase tickets &#62;
                         </button>
-                        }
-                        else
-                        {
+                    }
+                    else
+                    {
                         <button id="loginUser" type="button" class="find-seats-link btn btn-default pull-right purchase-btn"
                                 data-toggle="modal" data-target=".bs-example-modal-lg" data-backdrop="static" data-keyboard="false">
                             Sign in to purchase tickets &#62;
                         </button>
-                        }
+                    }
                 </div>
             </form>
         </div>
@@ -102,7 +110,114 @@
                     <ul id="ratingsList"></ul>
                 </div>
             </div>
-            <img class="img-responsive" src="~/img/@WingtipTicketApp.Config.TenantEventTypeGenre/floor-plan.jpg" />
+            <div class="col-xs-12 col-sm-6 col-md-6 col-g-6">
+                <img class="img-responsive" src="~/img/@WingtipTicketApp.Config.TenantEventTypeGenre/floor-plan.jpg" />
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-6 col-g-6">
+
+                <h2 class="head pull-left">Venue</h2>
+                <div class="row clearfix"></div>
+                <div class="row">
+                    <div class="col-xs-5">
+                        <label class="label-name  pull-left">Name</label>
+                    </div>
+                    <div class="col-xs-7">
+                        <label class="pull-right labelModel"> @Model.Venue.VenueName</label>
+                    </div>
+                </div>
+
+                @if (ViewBag.VenueMetaData != null)
+                {
+
+                    if (ViewBag.VenueMetaData.Parking > 0)
+                    {
+                        <div class="row clearfix"></div>
+                        <div class="row">
+                            <div class="col-xs-5">
+                                <label class="label-name  pull-left">Parking Spaces</label>
+                            </div>
+                            <div class="col-xs-7">
+                                <label class="pull-right labelModel">@ViewBag.VenueMetaData.Parking</label>
+                            </div>
+                        </div>
+                    }
+                    if (ViewBag.VenueMetaData.ArtistCollection != null && ViewBag.VenueMetaData.ArtistCollection.Artists != null && ViewBag.VenueMetaData.ArtistCollection.Artists.Count > 0)
+                    {
+                        <div class="row clearfix"></div>
+                        <div class="row">
+                            <div class="col-xs-5">
+                                <label class="label-name  pull-left">Performing Artists</label>
+                            </div>
+                            <div class="col-xs-7">
+                                @foreach (var artist in ViewBag.VenueMetaData.ArtistCollection.Artists)
+                                {
+                                    <label class="pull-right labelModel">@artist.Name @artist.Genre</label>
+                                    <div class="row clearfix"></div>
+                                }
+                            </div>
+                        </div>
+                    }
+                    if (ViewBag.VenueMetaData.HasCamping)
+                    {
+                        <div class="row clearfix"></div>
+                        <div class="row">
+                            <div class="col-xs-5">
+                                <label class="label-name pull-left">Has Camping</label>
+                            </div>
+                            <div class="col-xs-7">
+                                <label class="labelModel pull-right">Yes</label>
+                            </div>
+                        </div>
+                    }
+                    if (ViewBag.VenueMetaData.MultipleStages)
+                    {
+                        <div class="row clearfix"></div>
+                        <div class="row">
+                            <div class="col-xs-5">
+                                <label class="label-name  pull-left">Multiple Stages</label>
+                            </div>
+                            <div class="col-xs-7">
+                                <label class="labelModel pull-right">Yes</label>
+                            </div>
+                        </div>
+                    }
+                    if (ViewBag.VenueMetaData.AdditionalInfo != null && ViewBag.VenueMetaData.AdditionalInfo.Length > 0)
+                    {
+                        <div class="row clearfix"></div>
+                        <div class="row">
+                            <div class="col-xs-5">
+                                <label class="label-name pull-left">Additional Information</label>
+                            </div>
+                            <div class="col-xs-7">
+                                <label class="labelModel pull-right">@ViewBag.VenueMetaData.AdditionalInfo</label>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="row clearfix" style="padding-top:10px"></div>
+                    <div class="row">
+                        <input type="button" value=" Display JSON &#62;" class="btn btn-default pull-right btn1" data-toggle="modal" data-target="#myModal" />
+                    </div>
+                }
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            @if (ViewBag.VenueMetaData != null)
+                            {
+                                <pre style="text-align:left">@Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.VenueMetaData, Formatting.Indented).ToString()</pre>
+                            }
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -165,10 +280,10 @@
                                 <select class="selectpicker custom-image">
                                     <option>Month</option>
                                     @{
-                                    for (int i = 1; i < 13; i++)
-                                    {
-                                        <option>@i</option>
-                                    }
+                                        for (int i = 1; i < 13; i++)
+                                        {
+                                            <option>@i</option>
+                                        }
                                     }
                                 </select>
                             </div>
@@ -176,10 +291,10 @@
                                 <select class="selectpicker custom-image">
                                     @{
                                         <option>Year</option>
-                                    for (int i = 2015; i < 2021; i++)
-                                    {
-                                        <option>@i</option>
-                                    }
+                                        for (int i = 2015; i < 2021; i++)
+                                        {
+                                            <option>@i</option>
+                                        }
                                     }
                                 </select>
                             </div>

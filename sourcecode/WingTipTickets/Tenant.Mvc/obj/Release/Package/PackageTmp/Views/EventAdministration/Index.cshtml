@@ -1,0 +1,206 @@
+﻿@model Tenant.Mvc.Models.DataForAdminPortalPage
+
+@using Tenant.Mvc.Models.ConcertsDB
+@using Tenant.Mvc.Models.VenuesDB
+
+@{
+    ViewBag.Title = "AdminPortal";
+}
+
+<div class="page-heading">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <h1>Event Administration Portal</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <fieldset>
+        <div class="row row-underline-light">
+            <h2>Event</h2>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-12 ">
+                @using (Html.BeginForm("Index", "EventAdministration", FormMethod.Post, new { @class = "form-horizontal" }))
+                {
+                    <div class="form-group">
+                        <label for="slctCity" class="control-label col-xs-1">City</label>
+                        <div class="col-xs-11">
+                            <div class="col-xs-5">
+                                <select id="slctCity" name="slctCity" class="form-control">
+                                    @foreach (City city in Model.Cities)
+                                    {
+                                        <option value="@city.CityId" @(Model.SelectedCity == city.CityId ? "selected" : "")>@city.CityName</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="col-xs-7">
+                                <input class="form-control" id="eventCity" placeholder="New City" type="text" @(Model.SelectedCity == -1 ? "" : "disabled") name="eventCity">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="slctVenue" class="control-label col-xs-1">Venue</label>
+                        <div class="col-xs-11">
+                            <div class="col-xs-5">
+                                <select id="slctVenue" name="slctvenue" class="form-control">
+                                    @foreach (Venue venue in Model.Venues)
+                                    {
+                                        <option value="@venue.VenueId" @(Model.SelectedVenue == venue.VenueId ? "selected" : "")>@venue.VenueName</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="col-xs-7">
+                                <input class="form-control" id="eventVenueName" placeholder="New Venue" type="text" @(Model.SelectedVenue == -1 ? "" : "disabled") name="eventVenueName">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="slctEvent" class="control-label col-xs-1">Event</label>
+                        <div class="col-xs-11">
+                            <div class="col-xs-5">
+                                <select id="slctEvent" name="slctEvent" class="form-control">
+                                    @foreach (Concert concert in Model.Events)
+                                    {
+                                        <option value="@concert.ConcertId" @(Model.SelectedEvent.ConcertId == concert.ConcertId ? "selected" : "")>@concert.ConcertName</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class=" col-xs-7">
+                                <input class="form-control" id="eventName" placeholder="New Event Name" type="text" @(Model.SelectedEvent.ConcertId == -1 ? "" : "disabled") name="eventName" value="@Model.SelectedEvent.ConcertName">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="slctArtist" class="control-label col-xs-1">Artist</label>
+                        <div class="col-xs-11">
+                            <div class="col-xs-5">
+                                <select id="slctArtist" name="slctArtist" class="form-control">
+                                    @foreach (Performer artist in Model.Artists)
+                                    {
+                                        <option value="@artist.PerformerId" @(Model.SelectedArtist == artist.PerformerId ? "selected" : "")>@artist.ShortName</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="col-xs-7">
+                                <input class="form-control" id="eventArtist" placeholder="New Artist" type="text" @(Model.SelectedArtist == -1 ? "" : "disabled") name="eventArtist" value="@(Model.SelectedArtist == -1 ? "" : Model.Artists.FirstOrDefault(ar => ar.PerformerId == Model.SelectedArtist).ShortName)">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="eventMonth" class="control-label col-xs-1">Date</label>
+                        <div class="col-xs-11">
+                            <div class="col-xs-5">
+                                <div class="col-xs-5">
+                                    <select name="eventMonth" id="eventMonth" class="form-control">
+                                        <option selected>Month</option>
+                                        @for (int i = 1; i <= 12; i++)
+                                        {
+                                            <option value="@i" @(Model.SelectedEvent.ConcertDate != DateTime.MinValue ? (Model.SelectedEvent.ConcertDate.Month == i ? "selected" : "") : "")>@(new DateTime(2014, i, 1).ToString("MMMM"))</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="col-xs-3">
+                                    <select id="eventDay" name="eventDay" class="form-control">
+                                        <option selected>Day</option>
+                                        @for (int i = 1; i <= 31; i++)
+                                        {
+                                            <option value="@i" @(Model.SelectedEvent.ConcertDate != DateTime.MinValue ? (Model.SelectedEvent.ConcertDate.Day == i ? "selected" : "") : "")>@i</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="col-xs-4">
+                                    <select id="eventYear" name="eventYear" class="form-control">
+                                        <option selected>Year</option>
+                                        @for (int i = 2015; i <= 2020; i++)
+                                        {
+                                            <option value="@i" @(Model.SelectedEvent.ConcertDate != DateTime.MinValue ? (Model.SelectedEvent.ConcertDate.Year == i ? "selected" : "") : "")>@i</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-7">
+                                <textarea class="form-control textarea-style" rows="10" placeholder="Description"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group  col-xs-6 pull-right" style="display: none;">
+                        <label class="radio-inline">
+                            Expected Ticket Sales Rate:
+                        </label>
+                        <br />
+                        <label class="radio-inline">
+                            <input style="height: auto;" name="saveToDatabase" id="saveToDatabase" value="primary" type="radio" @(Model.SelectedEvent == null || Model.SelectedEvent.SaveToDbServer == ShardDbServerTargetEnum.Primary ? "checked" : "")> Small
+                        </label>
+                        <label class="radio-inline">
+                            <input style="height: auto;" name="saveToDatabase" id="saveToDatabase" value="secondary" type="radio" @(Model.SelectedEvent.SaveToDbServer == ShardDbServerTargetEnum.Shard ? "checked" : "")> Medium
+                        </label>
+                        <label class="radio-inline">
+                            <input style="height: auto;" name="saveToDatabase" id="saveToDatabase" value="secondary" type="radio" @(Model.SelectedEvent.SaveToDbServer == ShardDbServerTargetEnum.Shard ? "checked" : "")> Large
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-xs-12">
+                            <div class="btn-group pull-right" style="margin-right: 15px;" role="group">
+                                <button type="submit" class="btn btn-themed" id="deleteEvent" name="deleteEvent" @(((Model.SelectedEvent.ConcertId >= 0) && (Model.SelectedCity >= 0) && (Model.SelectedVenue >= 0)) ? "" : "disabled")>
+                                    Delete Event &#62;
+                                </button>
+                                <button type="submit" class="btn btn-themed" id="addEvent" name="addEvent" @(((Model.SelectedEvent.ConcertId >= 0) && (Model.SelectedCity >= 0) && (Model.SelectedVenue > 0)) ? "disabled" : "")>
+                                    Add Event &#62;
+                                </button>
+                            </div>    
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>                
+    </fieldset>
+</div>
+
+<!-- -------------------------------------------------------------------------------------------------------------------------- -->
+<!-- SCRIPTS SECTION -->
+<!-- -------------------------------------------------------------------------------------------------------------------------- -->
+
+@section Scripts
+{
+    <script type="text/javascript" language="javascript">
+
+        $('#slctCity').change(function()
+        {
+            window.location.href = 'EventAdministration?artistId=' + $("#slctArtist").val() + '&cityId=' + $(this).val();
+        });
+
+        $('#slctVenue').change(function()
+        {
+            window.location.href = 'EventAdministration?artistId=' + $("#slctArtist").val() + '&cityId=' + $("#slctCity").val() + '&venueId=' + $(this).val();
+        });
+
+        $('#slctEvent').change(function()
+        {
+            window.location.href = 'EventAdministration?cityId=' + $("#slctCity").val() + '&venueId=' + $("#slctVenue").val() + '&eventId=' + $(this).val();
+        });
+
+        $('#slctArtist').change(function()
+        {
+            window.location.href = 'EventAdministration?artistId=' + $(this).val() + '&cityId=' + $("#slctCity").val() + '&venueId=' + $("#slctVenue").val() + '&eventId=' + $("#slctEvent").val()
+        });
+
+    </script>
+}

@@ -1,0 +1,114 @@
+﻿@model Tenant.Mvc.Models.MyEventsView
+@{
+    ViewBag.Title = "ViewMyEvents";
+}
+
+<div class="page-heading">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <h1>My Events:</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    
+    <div class="row spacer-25">
+    </div>
+
+    <div class="row">
+        <div class="col-xs-8 no-padding">
+            <div class="event-panel height-660">
+                @{
+                    if (Model != null && Model.PurchasedTickets != null)
+                    {
+                        var ticketIndex = 0;
+
+                        foreach (var ticket in Model.PurchasedTickets)
+                        {
+                            <div class="event-block">
+                                <div class="@((ticketIndex % 2) == 0 ? "event-date" : "event-date event-date-shaded")">
+                                    <span class="event-date-top">@ticket.EventDateTime.ToString("MMM").ToUpper()</span><br />
+                                    <span class="event-date-mid">@ticket.EventDateTime.Day</span><br />
+                                    <span class="event-date-btm">@ticket.EventDateTime.DayOfWeek.ToString().ToUpper().Substring(0, 3)</span><br />
+                                </div>
+
+                                <div class="event-info">
+                                    <h3 class="event-performer">@ticket.PerformerName</h3>
+                                    <div style="float: left">
+                                        <p class="event-venue">@ticket.VenueName</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="event-detail">
+                                    <ul>
+                                        <li class="event-detail-heading">Quantity:</li>
+                                        <li class="highligted-text">@ticket.TicketQuantity ticket@(ticket.TicketQuantity > 1 ? "s" : "")</li>
+
+                                        <li class="event-detail-heading">Section:</li>
+                                        <li class="highligted-text">@ticket.SectionName</li>
+                                    </ul>
+                                    <ul>
+                                        <li class="event-detail-heading">Time:</li>
+                                        <li class="highligted-text">@ticket.EventDateTime.ToString("t")</li>
+
+                                        <li class="event-detail-heading">Seat:</li>
+                                        <li class="highligted-text">@ticket.SeatName</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            ticketIndex++;
+                        }
+                    }
+                }
+            </div>
+        </div>
+        
+        <div class="col-xs-4">
+
+            <div class="row box-light height-260">
+                <h3>My Venues</h3>
+
+                <ul>
+                    @if (Model != null && Model.MyVenues != null)
+                    {
+                        foreach (var venue in Model.MyVenues.OrderBy(a => a.VenueName))
+                        {
+                            <li>
+                                <a href="@Url.Action("Index", "Events", new { venueName = venue.VenueName })">@venue.VenueName <span class="highligted-text">(@venue.Capacity)</span></a>
+                            </li>
+                        }
+                    }
+                </ul>
+            </div>
+
+            <div class="row box-dark height-220">
+                <h3>Sort By Date</h3>
+
+                <ul>
+                    <li>
+                        <a href="#">November 2014</a>
+                    </li>
+                    <li>
+                        <a href="#">December 2014</a>
+                    </li>
+                    <li>
+                        <a href="#">January 2015</a>
+                    </li>
+                    <li>
+                        <a href="#">February 2015</a>
+                    </li>
+                    <li>
+                        <a href="#">See All Dates ></a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+

@@ -4,120 +4,128 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="middle-strip">
+<div class="page-heading">
     <div class="container">
         <div class="row">
-            <h1 class="seattle_ultramode"> Search Result@(Model.SelectedVenue > 0 && Model.ConcertsList.Any(a => a.VenueId == Model.SelectedVenue) ? ": " + Model.ConcertsList.First(a => a.VenueId == Model.SelectedVenue).Venue.VenueName : "s")</h1>
+            <div class="col-xs-12">
+                <h1>Search Result@(Model.SelectedVenue > 0 && Model.ConcertsList.Any(a => a.VenueId == Model.SelectedVenue) ? ": " + Model.ConcertsList.First(a => a.VenueId == Model.SelectedVenue).Venue.VenueName : "s")</h1>
+            </div>
         </div>
     </div>
 </div>
 
 <div class="container">
-    <div class="row clearfix for-mobile">
-        <div class="col-xs-6 col-sm-6 col-md-6 form-group m-form-group">
-            <select id="slctCity" name="slctCity" class="custom-image">
-                <option value="0">Sort By City</option>
-                @foreach (var city in Model.VenuesList.OrderBy(a => a.VenueCity.CityName).GroupBy(a => a.VenueCity.CityId).Select(a => a.First()))
-                {
-                    <option value="@city.VenueCity.CityId">@city.VenueCity.CityName, @city.VenueCity.State.StateName</option>
-                }
-            </select>
-        </div>
-        <div class="col-xs-6 col-sm-6 col-md-6 form-group m-form-group">
-            <select id="slctVenue" name="slctVenue" class="custom-image">
-                <option value="0">Sort By Venue</option>
-                @foreach (var venue in Model.VenuesList.OrderBy(a => a.VenueName).GroupBy(a => a.VenueId).Select(a => a.First()))
-                {
-                    <option value="@venue.VenueId">@venue.VenueName - @Model.ConcertsList.Count(a => a.VenueId == venue.VenueId) Event(s)</option>
-                }
-            </select>
-        </div>
+
+    <div class="row spacer-25">
     </div>
-    <div class="row clearfix">
-        <div class="col-sm-12 col-md-8 column">
-            <div class="left-panel scroll-pane for-ticket">
+
+    <div class="row">
+        <div class="col-xs-8 no-padding">
+            <div class="event-panel height-660">
                 @{
-                    int i = 0;
-                    foreach (var concertEvent in (Model.SelectedVenue > 0 ? Model.ConcertsList.Where(a => a.VenueId == Model.SelectedVenue) : Model.ConcertsList))
+                    if (Model != null && Model.ConcertsList != null)
                     {
-                        <div class="cons-info">
-                            <div class="@(((i % 2) == 0) ? "cons-date" : "cons-date cons-date-darkbg")">
-                                <span class="cons-mon">@concertEvent.ConcertDate.ToString("MMM").ToUpper()</span>
-                                <span class="date-num">@concertEvent.ConcertDate.Day</span>
-                                <span class="cons-day for-desktop">@concertEvent.ConcertDate.DayOfWeek.ToString().ToUpper().Substring(0, 3)</span>
-                                <span class="cons-fullday for-mobile">@concertEvent.ConcertDate.DayOfWeek.ToString().ToUpper().Substring(0, 3)</span>
+                        var concerts = Model.SelectedVenue > 0 ? Model.ConcertsList.Where(a => a.VenueId == Model.SelectedVenue) : Model.ConcertsList;
+                        var concertIndex = 0;
+
+                        foreach (var concert in concerts)
+                        {
+                            <div class="event-block">
+                                <div class="@((concertIndex % 2) == 0 ? "event-date" : "event-date event-date-shaded")">
+                                    <span class="event-date-top">@concert.ConcertDate.ToString("MMM").ToUpper()</span><br />
+                                    <span class="event-date-mid">@concert.ConcertDate.Day</span><br />
+                                    <span class="event-date-btm">@concert.ConcertDate.DayOfWeek.ToString().ToUpper().Substring(0, 3)</span><br />
+                                </div>
+
+                                <div class="event-info">
+                                    <h3 class="event-performer">@(((concert.Performer != null) && (concert.Performer != null)) ? (concert.Performer.ShortName) : "???")</h3>
+                                    <p class="event-venue">@(((concert.Venue != null) && (concert.Venue.VenueName != null)) ? (concert.Venue.VenueName) : "???")</p>
+                                </div>
+
+                                <div class="event-button">
+                                    @Html.ActionLink("Find Seats", "Index", "FindSeats", new { concertId = concert.ConcertId }, new { @class = "btn btn-themed-secondary" })
+                                </div>
                             </div>
-                            <div class="cons-text">
-                                <h3>@(((concertEvent.Performer != null) && (concertEvent.Performer.ShortName != null)) ? (concertEvent.Performer.ShortName) : "???")</h3>
-                                <p>@(((concertEvent.Venue != null) && (concertEvent.Venue.VenueName != null)) ? (concertEvent.Venue.VenueName) : "???")</p>
-                            </div>
-                            <div class="find-seat">
-                                @Html.ActionLink("Find Seats", "FindSeats", "Home", new { concertId = concertEvent.ConcertId }, new { @class = "find-seats-link" })
-                            </div>
-                        </div>
-                        i++;
+
+                            concertIndex++;
+                        }
                     }
                 }
             </div>
         </div>
-        <div class="col-sm-12 col-md-4 column for-desktop">
-            <div class="create-acbox height260">
+        
+        <div class="col-xs-4">
+
+            <div class="row box-light height-260">
                 <h3>Nearby Cities</h3>
-                <ul class="near_cities">
-                    @foreach (var city in Model.VenuesList.OrderBy(a => a.VenueCity.CityName).GroupBy(a => a.VenueCity.CityId).Select(a => a.First()).Take(5))
+
+                <ul>
+                    @foreach (var city in Model.VenuesList.OrderBy(a => a.VenueCity.CityName).GroupBy(a => a.VenueCity.CityId).Select(a => a.First()))
                     {
-                        <li><a href="@Url.Action("ViewCity", "Home", new { cityId = city.VenueCity.CityId })">@city.VenueCity.CityName, @city.VenueCity.State.StateName</a></li>
+                        <li>
+                            <a href="@Url.Action("Index", "City", new { cityId = city.VenueCity.CityId })">@city.VenueCity.CityName, @city.VenueCity.State.StateName</a>
+                        </li>
                     }
-                    @if (Model.VenuesList.GroupBy(a => a.VenueCity.CityId).Select(a => a.First()).Count() > 5)
-                    {
-                        <li><a href="@Url.Action("ViewCity", "Home")" class="see_all">See All Cities ></a></li>
-                    }
+
+                    <li>
+                        <a href="@Url.Action("Index", "City")">See All Cities ></a>
+                    </li>
                 </ul>
             </div>
-            <div class="venues-box height160">
+
+            <div class="row box-dark height-160">
                 <h3>Local Venues</h3>
-                <ul class="">
-                    @foreach (var venue in Model.VenuesList.OrderBy(a => a.VenueName).GroupBy(a => a.VenueId).Select(a => a.First()))
-                    {
-                        <li><a href="@Url.Action("ViewVenue", "Home", new { venueId = venue.VenueId })">@venue.VenueName - @Model.ConcertsList.Count(a => a.VenueId == venue.VenueId) Event(s)</a></li>
+
+                <ul>
+                    @{
+                        if (Model.SelectedCity > 0)
+                        {
+                            foreach (var venue in Model.VenuesList.Where(a => a.VenueCity.CityId == Model.SelectedCity).OrderBy(a => a.VenueName).GroupBy(a => a.VenueId).Select(a => a.First()).Take(2))
+                            {
+                                <li>
+                                    <a href="@Url.Action("Index", "Venue", new { venueId = venue.VenueId })">@venue.VenueName - @Model.ConcertsList.Count(a => a.VenueId == venue.VenueId) Event(s)</a>
+                                </li>
+                            }
+                        }
+                        else
+                        {
+                            foreach (var venue in Model.VenuesList.OrderBy(a => a.VenueName).GroupBy(a => a.VenueId).Select(a => a.First()).Take(2))
+                            {
+                                <li>
+                                    <a href="@Url.Action("Index", "Venue", new { venueId = venue.VenueId })">@venue.VenueName - @Model.ConcertsList.Count(a => a.VenueId == venue.VenueId) Event(s)</a>
+                                </li>
+                            }
+                        }
                     }
-                    <li><a href="@Url.Action("ViewVenue", "Home")" class="see_all">See All Venues ></a></li>
+
+                    <li>
+                        <a href="@Url.Action("Index", "Venue")">See All Venues ></a>
+                    </li>
                 </ul>
             </div>
-            <div class="venues-box height220">
+
+            <div class="row box-dark height-220">
                 <h3>Sort By Date</h3>
-                <ul class="">
-                    <li><a href="#">November 2014</a></li>
-                    <li><a href="#">December 2014</a></li>
-                    <li><a href="#">January 2015</a></li>
-                    <li><a href="#">February 2015</a></li>
-                    <li><a href="#" class="see_all">See All Dates ></a></li>
+
+                <ul>
+                    <li>
+                        <a href="#">November 2014</a>
+                    </li>
+                    <li>
+                        <a href="#">December 2014</a>
+                    </li>
+                    <li>
+                        <a href="#">January 2015</a>
+                    </li>
+                    <li>
+                        <a href="#">February 2015</a>
+                    </li>
+                    <li>
+                        <a href="#">See All Dates ></a>
+                    </li>
                 </ul>
             </div>
-        </div>
-    </div>
-    <div class="row clearfix">
-        <div class="col-md-4 column">
-        </div>
-        <div class="col-md-4 column">
-        </div>
-        <div class="col-md-4 column">
-        </div>
-    </div>
-    <div class="row clearfix">
-        <div class="col-md-6 column">
-        </div>
-        <div class="col-md-6 column">
+
         </div>
     </div>
 </div>
-
-<script type="text/javascript" src="~/Scripts/jquery-1.10.2.min.js"></script>
-<script type="text/javascript">
-    $("#slctCity").change(function () {
-        window.location.href = 'ViewCity?cityId=' + $(this).val();
-    });
-    $("#slctVenue").change(function () {
-        window.location.href = 'ViewVenue?venueId=' + $(this).val();
-    });
-</script>

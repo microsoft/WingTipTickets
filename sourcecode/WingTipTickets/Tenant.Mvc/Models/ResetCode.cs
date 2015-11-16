@@ -13,9 +13,10 @@ namespace Tenant.Mvc.Models
             try
             {
                 #region Full Reset - Trim Extra Concerts
+
                 if (FullReset)
                 {
-                    string trimSql = ReadSqlFromFile(HttpContext.Current.Server.MapPath("~/TSql/TrimConcerts.sql"));
+                    string trimSql = ReadSqlFromFile(HttpContext.Current.Server.MapPath("~/SqlScripts/TrimConcerts.sql"));
                     if (!string.IsNullOrEmpty(trimSql))
                         using (SqlConnection conn = new SqlConnection(WingtipTicketApp.ConstructConnection(WingtipTicketApp.Config.PrimaryDatabaseServer, WingtipTicketApp.Config.TenantDbName)))
                         {
@@ -24,10 +25,12 @@ namespace Tenant.Mvc.Models
                                 cmd.ExecuteNonQuery();
                         }
                 }
+
                 #endregion Full Reset - Trim Extra Concerts
 
                 #region Push Concert Dates to Future
-                string resetDatesSql = ReadSqlFromFile(HttpContext.Current.Server.MapPath("~/TSql/ResetConcertDates.sql"));
+
+                string resetDatesSql = ReadSqlFromFile(HttpContext.Current.Server.MapPath("~/SqlScripts/ResetConcertDates.sql"));
                 if (!string.IsNullOrEmpty(resetDatesSql))
                     using (SqlConnection conn = new SqlConnection(WingtipTicketApp.ConstructConnection(WingtipTicketApp.Config.PrimaryDatabaseServer, WingtipTicketApp.Config.TenantDbName)))
                     {
@@ -35,7 +38,9 @@ namespace Tenant.Mvc.Models
                         using (SqlCommand cmd = new SqlCommand(resetDatesSql, conn))
                             cmd.ExecuteNonQuery();
                     }
+
                 #endregion Push Concert Dates to Future
+
                 return true;
             }
             catch { return false; }
@@ -44,11 +49,13 @@ namespace Tenant.Mvc.Models
         #endregion Public Functions
 
         #region Utility Function
+
         private string ReadSqlFromFile(string path)
         {
             try { using (StreamReader sr = new StreamReader(path)) return sr.ReadToEnd(); }
             catch { return string.Empty; }
         }
+
         #endregion Utility Function
     }
 }

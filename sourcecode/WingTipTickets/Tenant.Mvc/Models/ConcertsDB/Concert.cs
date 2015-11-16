@@ -1,6 +1,7 @@
 ﻿using System;
 using Tenant.Mvc.Models.VenuesDB;
 
+
 namespace Tenant.Mvc.Models.ConcertsDB
 {
     //Maps to 'Concert' table in application database schema

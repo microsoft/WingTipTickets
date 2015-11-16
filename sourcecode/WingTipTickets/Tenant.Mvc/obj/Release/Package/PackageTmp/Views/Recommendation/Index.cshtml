@@ -1,0 +1,17 @@
+﻿@model Tenant.Mvc.Models.View.RecommendationModel
+@{  
+    var recommendationSiteUrl = WingtipTicketApp.Config.RecommendationSiteUrl;
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12 no-padding">
+            <iframe class="recommendation-panel height-660" src="@Model.RecommendationSiteUrl">
+               
+            </iframe>
+        </div>
+    </div>
+</div>
+
+
+

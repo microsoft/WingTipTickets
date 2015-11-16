@@ -15,49 +15,55 @@ using Microsoft.Azure.Search;
 
 namespace WingTipTickets
 {
-    public class AppConfig {
+    public class AppConfig
+    {
 
         public string TenantEventTypeGenre { get; set; }
         public string TenantName { get; set; }
         public string DatabaseUserName { get; set; }
         public string DatabaseUserPassword { get; set; }
         public string PrimaryDatabaseServer { get; set; }
-        public string SecondaryDatabaseServer { get; set; }                
-        public string TenantDbName { get; set; }        
-        public bool EnableAuditing { get; set; }        
+        public string SecondaryDatabaseServer { get; set; }
+        public string TenantDbName { get; set; }
+        public bool EnableAuditing { get; set; }
         public string SearchServiceKey { get; set; }
         public string SearchServiceName { get; set; }
+
+        public string DocumentDbServiceEndpointUri { get; set; }
+        public string DocumentDbServiceAuthorizationKey { get; set; }
+
+        public string RecommendationSiteUrl { get; set; }
     }
 
     public class WingtipTicketApp : System.Web.HttpApplication
     {
         #region Application Functionality
-        public static readonly object _lock = new object();        
+        public static readonly object _lock = new object();
         public static AppConfig Config = null;
         public static SearchIndexClient SearchIndexClient;
 
         protected void Application_Start()
         {
-            InitializeConfig(); 
-            
+            InitializeConfig();
+
             AreaRegistration.RegisterAllAreas();
             GlobalConfiguration.Configure(WebApiConfig.Register);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
-            BundleConfig.RegisterBundles(BundleTable.Bundles);           
+            BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             DataConfig.Configure();
         }
         #endregion Application Functionality
 
         #region Web.Config Initialization
-        
+
         public static bool InitializeConfig()
         {
             Config = readAppConfig();
             return true;
-        }       
-        
+        }
+
         #region App Configuration
         private static AppConfig readAppConfig()
         {
@@ -69,7 +75,7 @@ namespace WingTipTickets
             appConfig.DatabaseUserName = ConfigurationManager.AppSettings["DatabaseUserName"].Trim();
             appConfig.DatabaseUserPassword = ConfigurationManager.AppSettings["DatabaseUserPassword"].Trim();
             appConfig.PrimaryDatabaseServer = ConfigurationManager.AppSettings["PrimaryDatabaseServer"].Trim();
-            appConfig.SecondaryDatabaseServer = ConfigurationManager.AppSettings["SecondaryDatabaseServer"].Trim();            
+            appConfig.SecondaryDatabaseServer = ConfigurationManager.AppSettings["SecondaryDatabaseServer"].Trim();
             appConfig.EnableAuditing = string.IsNullOrEmpty(ConfigurationManager.AppSettings["EnableAuditing"]) ? true : Convert.ToBoolean(ConfigurationManager.AppSettings["EnableAuditing"]);
             if (!String.IsNullOrEmpty(appConfig.PrimaryDatabaseServer))
                 if (appConfig.EnableAuditing == true)
@@ -78,10 +84,15 @@ namespace WingTipTickets
             if (!String.IsNullOrEmpty(appConfig.SecondaryDatabaseServer))
                 if (appConfig.EnableAuditing == true)
                     appConfig.SecondaryDatabaseServer += secureDbUrlTextToAppend;
-                else { appConfig.SecondaryDatabaseServer += dbUrlTextToAppend; }                        
-            appConfig.TenantDbName = ConfigurationManager.AppSettings["TenantDbName"].Trim();                                             
+                else { appConfig.SecondaryDatabaseServer += dbUrlTextToAppend; }
+            appConfig.TenantDbName = ConfigurationManager.AppSettings["TenantDbName"].Trim();
             appConfig.SearchServiceKey = ConfigurationManager.AppSettings["SearchServiceKey"].Trim();
             appConfig.SearchServiceName = ConfigurationManager.AppSettings["SearchServiceName"].Trim();
+
+            appConfig.DocumentDbServiceEndpointUri = ConfigurationManager.AppSettings["DocumentDbServiceEndpointUri"].Trim();
+            appConfig.DocumentDbServiceAuthorizationKey = ConfigurationManager.AppSettings["DocumentDbServiceAuthorizationKey"].Trim();
+
+            appConfig.RecommendationSiteUrl = ConfigurationManager.AppSettings["RecommendationSiteUrl"].Trim();
 
             return appConfig;
         }

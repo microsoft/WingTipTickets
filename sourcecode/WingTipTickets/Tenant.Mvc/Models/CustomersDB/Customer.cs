@@ -17,5 +17,6 @@ namespace Tenant.Mvc.Models.CustomersDB
         public String Address { get; set; }
         public City City { get; set; }
         public String Fax { get; set; }
+        public string PhoneNumber { get; set; }
     }
 }

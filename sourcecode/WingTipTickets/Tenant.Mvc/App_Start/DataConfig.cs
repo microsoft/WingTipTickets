@@ -15,8 +15,8 @@ namespace Tenant.Mvc
             var searchServiceClient = new SearchServiceClient(WingtipTicketApp.Config.SearchServiceName,
                                                               new SearchCredentials(WingtipTicketApp.Config.SearchServiceKey));
 
-            CreateIndex(searchServiceClient);
-            CreateIndexer(searchServiceClient);
+            // CreateIndex(searchServiceClient);
+            // CreateIndexer(searchServiceClient);
             //searchServiceClient.Indexers.Run("fromsql");
 
             WingtipTicketApp.SearchIndexClient = searchServiceClient.Indexes.GetClient("concerts");
@@ -57,7 +57,7 @@ namespace Tenant.Mvc
         }
 
         private static void CreateIndexer(SearchServiceClient searchServiceClient)
-        {    
+        {
             if (!searchServiceClient.DataSources.List().Any(d => d.Name == "concertssql"))
             {
                 int test2 = searchServiceClient.DataSources.List().Count();
@@ -77,14 +77,14 @@ namespace Tenant.Mvc
             }
 
             if (!searchServiceClient.Indexers.List().Any(i => i.Name == "fromsql"))
-            {       
-                    searchServiceClient.Indexers.CreateOrUpdate(new Indexer
-                    {
-                        Name = "fromsql",
-                        DataSourceName = "concertssql",
-                        TargetIndexName = "concerts",
-                        Schedule = new IndexingSchedule { Interval = TimeSpan.FromMinutes(5), StartTime = DateTimeOffset.Now }
-                    });                    
+            {
+                searchServiceClient.Indexers.CreateOrUpdate(new Indexer
+                {
+                    Name = "fromsql",
+                    DataSourceName = "concertssql",
+                    TargetIndexName = "concerts",
+                    Schedule = new IndexingSchedule { Interval = TimeSpan.FromMinutes(5), StartTime = DateTimeOffset.Now }
+                });
             }
         }
     }

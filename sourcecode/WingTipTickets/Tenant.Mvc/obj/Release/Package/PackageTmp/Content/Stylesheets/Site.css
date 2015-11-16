@@ -1,0 +1,743 @@
+﻿/* ========================================================================================== */
+/* REGISTER FONTS */
+/* ========================================================================================== */
+
+@font-face {
+	font-family: 'Conv_segoeuil';
+	src: url('../fonts/segoeuil.eot');
+	src: local('☺'), url('../fonts/segoeuil.woff') format('woff'), url('../fonts/segoeuil.ttf') format('truetype'), url('../fonts/segoeuil.svg') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+/* ========================================================================================== */
+/* HTML ELEMENTS */
+/* ========================================================================================== */
+
+body 
+{
+    color: #000000;
+    background-color: #FFFFFF;
+    font-family: "Conv_segoeuil";
+    font-size: 12pt;
+    font-weight: normal;
+    line-height: 30px;
+}
+
+header 
+{
+    background-color: #FFFFFF;
+    padding-bottom: 10px;
+}
+
+header a 
+{
+    color: #000000;
+    font-size: 16pt;
+    padding-left: 20px;
+    padding-right: 20px; 
+}
+
+tr {
+    background-color: #FFFFFF;
+}
+
+th {
+    padding: 10px;
+    color: #000000;
+    font-size: 20px;
+    font-weight: Bold;
+}
+
+td {
+    padding: 10px;
+}
+
+td a {
+    color: #000000;
+}
+
+td a:visited {
+    color: #000000;
+}
+
+h1 {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+h2 {
+    font-weight: bold;
+}
+
+legend {
+    color: #000000;
+    font-size: 24pt;
+    padding-top: 15px;
+}
+
+
+/* ========================================================================================== */
+/* BOOTSTRAP ELEMENTS */
+/* ========================================================================================== */
+
+.control-label
+{
+    
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) {
+    
+}
+
+.ui-autocomplete {
+    color: #000000;
+    background-color: #FFFFFF;
+    list-style: none;
+    padding: 5px;
+    margin: 0px;
+}
+
+.ui-menu-item {
+    color: #000000;
+}
+
+.ui-state-focus {
+    color: #C33501;
+    background-color: #E6E6E6;
+}
+
+/* ========================================================================================== */
+/* HEADER */
+/* ========================================================================================== */
+
+.logo-image 
+{
+    height: 90px;    
+}
+
+.logo-heading {
+  height: 90px;   
+  margin: 0px;
+  padding: 25px 25px 25px 25px;
+  float: left;
+  color: #000000;
+  background-color: #FFFFFF;
+}
+
+.sub-heading {
+  margin: 0px;
+  padding: 25px 0px 25px 25px;
+  float: right;
+  color: #000000;
+  background-color: #FFFFFF;
+}
+
+/* ========================================================================================== */
+/* MENU */
+/* ========================================================================================== */
+
+.menu-bar-default {
+  background: transparent;
+  border: none;
+  margin-top: 20px;
+  margin-bottom: 0;
+  min-height: 30px;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+.menu-bar {
+  background: none;
+}
+
+.menu-border {
+    border-left-style: solid;
+    border-left-width: 2px;
+    border-left-color: #000000;
+    padding-right: 30px;
+}
+
+.nav-menu li {
+	float: left;
+	list-style: none;
+}
+
+.nav-menu li a {
+	float: left;
+	display: block;
+    padding-top: 5px !important;
+    padding-bottom: 5px !important;
+    padding-right: 38px;
+    padding-left:0px;
+	text-align: center;
+	color: #000000 !important;
+	font-size: 19px;
+    font-weight: bold;
+    max-height: 30px;
+}
+
+.nav-menu li a.active{
+	color: #000000 !important;
+}
+
+.nav-menu li a:hover {
+	text-decoration: none;
+	color: #000000 !important;
+}
+
+.dropdown-menu {
+    background-color: #FFFFFF;
+}
+
+.nav-menu-dropdown-item {
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 5px;
+	color: #000000;
+	font-size: 19px;
+}
+
+.nav-menu li a:hover, .nav-menu-dropdown-item:hover {
+	text-decoration: none;
+	color: #000000;
+}
+
+/* ========================================================================================== */
+/* PAGE */
+/* ========================================================================================== */
+
+.page-heading {
+	background-color: #FFFFFF;
+    color: #000000;
+    height: 97px;
+}
+
+.page-heading h1 {
+    margin-top: 25px;
+    font-weight: bold;
+}
+
+/* ========================================================================================== */
+/* FORM */
+/* ========================================================================================== */
+
+.content 
+{
+    background-color: #FFFFFF;
+}
+
+.form-heading {
+    font-size: 30px;
+	font-weight: normal;
+	margin: 0px 0px 25px 0px;	
+}
+
+.form-search 
+{
+    height: 50px;
+	border: none;
+	background-color: #EEEEEE;
+	float: left;
+	padding: 5px 0px 8px 15px;
+	font-size: 20px;
+	border-radius: 0;
+}
+
+.banner-home-left {
+	background: #FFFFFF;
+	position: absolute;
+	height: 91px;
+	width: 73%;
+	bottom: 0;
+	left: 0px;
+	opacity: 0.7;
+}
+
+.banner-home-right {
+	position: absolute;
+	height: 91px;
+	width: 24%;
+	bottom: 0;
+	right: 0px;
+	background-color: #FFFFFF;
+	font-size: 35px;
+	font-weight: bold;
+    padding: 20px;
+	line-height: 43px;
+    opacity: 0.7;
+}
+
+.banner-home-right a {
+	color: #000000;
+}
+
+.banner-findseats {
+	background-color: #FFFFFF;
+	position: absolute;
+	height: 91px;
+	width: 100%;
+	bottom: 0;
+	left: 0px;
+	opacity: 0.7;
+}
+
+.banner-caption {
+    position: absolute;
+    height: 91px;
+    width: 100%;
+    bottom: 0;
+    left: 0px;
+    color: #000000;
+    font-size: 40px;
+    padding: 20px;
+    line-height: 43px;
+}
+
+.banner-splitter {
+	border-right: 3px solid #000000;
+	padding-right: 15px;
+}
+
+/* ========================================================================================== */
+/* BUTTONS */
+/* ========================================================================================== */
+
+.btn-search {
+	background: url("../img/pop/search.png") no-repeat center center;
+	height: 50px;
+	width: 50px;
+	padding: 2px;
+	display: block;
+	float: left;
+	background-color: #EEEEEE;
+    border: none;
+}
+
+.btn-search:hover {
+	background-color: #EEEEEE;
+    border: none;
+}
+
+.btn-themed {
+    background-color: #EEEEEE;
+    color: #000000;
+    margin-bottom: 10px;
+}
+
+.btn-themed:hover {
+    background-color: #EEEEEE;
+    color: #000000;
+}
+
+.btn-themed-secondary {
+    background-color: #EEEEEE;
+    color: #000000;
+    margin-bottom: 10px;
+}
+
+.btn-themed-secondary:hover {
+    background-color: #FFFFFF;
+    color: #000000;
+}
+
+.btn-close {
+    font-size: 30px;
+    opacity: 0.5;
+    border: 0px none #000000;
+    background-color: #FFFFFF;
+    color: #000000;
+}
+
+/* ========================================================================================== */
+/* MODAL */
+/* ========================================================================================== */
+
+.modal-header {
+    color: #000000;
+    background-color: #FFFFFF;
+    font-size: 18pt;
+}
+
+/* ========================================================================================== */
+/* TOP FOOTER */
+/* ========================================================================================== */
+
+.top-footer {
+    background-color: #FFFFFF;
+    line-height: 20px;
+}
+
+.top-footer a {
+    
+    color: #000000;
+    font-weight: bolder;
+}
+
+.top-footer-h2 {
+    color: #000000;
+    font-size: 30px;
+    margin: 20px 0px 0px 0px;
+}
+
+.top-footer-h3 {
+    font-size: 20px;
+    margin: 0px 0px 20px 0px;
+}
+
+.top-footer-p {
+	color: #000000;
+    font-size: 18px;
+}
+
+/* ========================================================================================== */
+/* BOTTOM FOOTER */
+/* ========================================================================================== */
+
+.btm-footer {
+    color: #000000;
+    background-color: #FFFFFF;
+    font-size: 10pt;
+    line-height: 20px;
+    padding: 20px 0;
+}
+
+.btm-footer a 
+{
+    color: #000000;
+    font-size: 14pt;
+    padding-left: 20px;
+    padding-right: 20px; 
+}
+
+.btm-footer-menu {
+    padding-top: 40px;
+}
+
+.btm-footer-item-border {
+    border-right-style: solid;
+    border-right-width: 2px;
+    border-right-color: #000000;
+}
+
+/* ========================================================================================== */
+/* PURCHASE */
+/* ========================================================================================== */
+
+.ticket-info {
+}
+
+.ticket-info h3 {
+    font-size: 18pt;
+    font-weight: bold;
+    margin-top: 0px;
+    margin-bottom: 25px;
+}
+
+.ticket-info ul {
+    font-size: 14pt;
+    font-weight: bold;
+    list-style: none;
+    padding: 0px;
+}
+
+.subscript {
+    font-size: 8pt;
+}
+
+/* ========================================================================================== */
+/* EVENT PANELS */
+/* ========================================================================================== */
+
+.event-panel {
+	width: 96%;
+	height: 440px;
+	overflow: auto;
+}
+
+.event-block {
+	clear:both;
+	margin-bottom:30px;
+	overflow:hidden;
+	display:block;
+	font-family: 'Conv_segoeuil';
+}
+
+.event-date {
+	float: left;
+	background: #91BAEF;
+	width: 130px;
+	text-align: center;
+	padding: 5px 10px;
+	color: #fff;
+	font-size: 26px;
+	line-height: 26px;
+	font-weight: lighter;
+	margin-right: 10px;
+	font-family: 'Conv_segoeuil';
+}
+
+.event-date-shaded {
+    background-color: #FFFFFF;   
+}
+
+.event-date-top {
+	font-size: 20px;
+    line-height: normal;
+}
+
+.event-date-mid {
+	font-size: 55px;
+    line-height: 40px;
+}
+
+.event-date-btm {
+	font-size: 20px;
+    line-height: normal;
+}
+
+.event-info {
+    float: left;
+}
+
+.event-performer {
+    color: #000000;
+    font-size: 40px;
+    line-height: 44px;
+    margin: 0px 0px 10px 0px;
+    padding: 0px;
+}
+
+.event-venue {
+    color: #000000;
+    font-size: 25px;
+    font-weight: bold;
+    line-height: 35px;
+    margin: 0px 0px 10px 0px;
+    padding: 0px;
+}
+
+.event-button {
+    float: right;
+    margin-right: 10px;
+}
+
+.event-detail {
+    float: right;
+    font-size: 16px;
+}
+
+.event-detail-heading {
+	color: #000000;
+	font-weight: bold;
+}
+
+.event-detail ul {
+    float: left;
+    list-style: none;
+}
+
+/* ========================================================================================== */
+/* RECOMMENDATION PANELS */
+/* ========================================================================================== */
+
+.recommendation-panel {
+	width: 96%;
+	height: 440px;
+	overflow: auto;    
+    border: none;
+}
+
+/* ========================================================================================== */
+/* LIGHT BOX */
+/* ========================================================================================== */
+
+.box-light {
+	background-color: #FFFFFF;
+	padding: 15px;
+    overflow: auto;
+}
+
+.box-light h3 {
+	margin-top:0px;
+	margin-bottom: 15px;
+    font-size: 30px;
+	font-weight: bold;
+	color: #000000;
+}
+
+.box-light p {
+	margin: 10px 0px;
+	font-size: 18px;
+	font-weight: bold;
+	color: #000000;
+}
+
+.box-light ul {
+	margin:0;
+	padding: 0;
+}
+
+.box-light ul li {
+	list-style: none;
+    margin-bottom: 0px;
+	font-size: 15px;
+}
+
+.box-light ul li a {
+	color: #000000;
+	font-weight:bold;
+	font-size: 18px;
+}
+
+.box-light ul li a:hover {
+	text-decoration: underline;
+}
+
+.box-light-splitter {
+	border-right:2px solid #000000; 
+	padding-right:2px;
+	margin-right: 2px;
+}
+
+/* ========================================================================================== */
+/* DARK BOX */
+/* ========================================================================================== */
+
+.box-dark {
+	background-color: #FFFFFF;
+	padding: 10px 15px;
+	margin-top:30px;
+    overflow: auto;
+}
+
+.box-dark h3 {
+    margin-top: 0px;
+	margin-bottom: 15px;
+    font-size: 30px;
+	font-weight: bold;
+	color: #000000;
+}
+
+.box-dark ul {
+	margin:0;
+	padding: 0;
+}
+
+.box-dark ul li {
+	list-style: none;
+	margin-bottom: 0px;
+	font-size: 15px;
+}
+
+.box-dark ul li a {
+	color: #000000;
+	font-weight:bold;
+	font-size: 18px;
+}
+
+.box-dark ul li a:hover {
+	text-decoration: underline;
+}
+
+/* ========================================================================================== */
+/* HELPERS */
+/* ========================================================================================== */
+
+.highligted-text {
+	color: #000000;
+	font-weight: bold;
+}
+
+.row-underline-dark {
+    border-bottom-width: 6px;
+    border-bottom-style: solid;
+    border-bottom-color: #000000;
+
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.row-underline-light {
+    border-bottom-width: 6px;
+    border-bottom-style: solid;
+    border-bottom-color: #000000;
+
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.no-padding {
+    padding: 0px !important;
+}
+
+.no-padding-left {
+    padding-left: 0px !important;
+}
+
+.no-padding-right {
+    padding-right: 0px !important;
+}
+
+.no-margin {
+    margin: 0px !important;
+}
+
+.no-margin-left {
+    margin-left: 0px !important;
+}
+
+.no-margin-right {
+    margin-right: 0px !important;
+}
+
+.right-padding-20 {
+    padding-right: 20px;
+}
+
+.spacer-5 
+{
+    height: 5px;    
+}
+
+.spacer-10
+{
+    height: 10px;    
+}
+
+.spacer-15 
+{
+    height: 15px;    
+}
+
+.spacer-25 
+{
+    height: 25px;    
+}
+
+.spacer-50 
+{
+    height: 50px;    
+}
+
+.height-165 
+{
+    height: 165px;    
+}
+
+.height-220 {
+    height: 225px;   
+}
+
+.height-260 {
+    height: 220px;   
+}
+
+.height-660 {
+    height: 665px;
+}
+
+.margin-bottom-15 {
+    margin-bottom: 15px;    
+}
