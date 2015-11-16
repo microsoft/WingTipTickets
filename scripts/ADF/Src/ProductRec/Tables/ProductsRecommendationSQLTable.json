@@ -1,0 +1,26 @@
+{
+  "name": "ProductsRecommendationSQLTable",
+  "properties": {
+    "structure": [
+      {
+        "name": "CustomerId",
+        "position": 0,
+        "type": "Int"
+      },
+      {
+        "name": "RecommendedProductId",
+        "position": 1,
+        "type": "Int"
+      }
+    ],
+    "type": "AzureSqlTable",
+    "linkedServiceName": "AzureSqlLinkedService",
+    "typeProperties": {
+      "tableName": "PersonalizedRecommendations"
+    },
+    "availability": {
+      "frequency": "month",
+      "interval": 1
+    }
+  }
+}

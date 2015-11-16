@@ -41,6 +41,10 @@ function Get-WTTAzureSqlDatabaseServerRegionCapabilities
 
             # Get Service Admin Live Email Id since we don't have native access to the Azure Active Directory Tenant Name
             [string]$adTenantAdminEmailId = (Get-AzureSubscription -Current -ExtendedDetails).AccountAdminLiveEmailId
+			$AzureActiveDirectoryTenantName = ""
+            $userid = (Get-AzureSubscription -Current -ExtendedDetails).Accounts
+            $id = $userid.id
+            $user = $id.Split('@')[-1] 
 
             if ($AzureActiveDirectoryTenantName -eq "")
             {
@@ -62,7 +66,12 @@ function Get-WTTAzureSqlDatabaseServerRegionCapabilities
             {
                 $adTenantName = $AzureActiveDirectoryTenantName
                 $adTenant = $adTenantName
-            }            
+            } 
+			
+			if ($adTenant -ne $user)
+            {
+                    $adTenant = $user
+            }             
 
             # Set Azure AD Tenant name
             #$adTenant = "$adTenantName.onmicrosoft.com" 

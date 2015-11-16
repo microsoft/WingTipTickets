@@ -63,9 +63,10 @@ function Populate-DBSchema
             Write-Host "Finished cleaning Customers tables."
             $CustomersCommand.CommandText =
 @"
-                Set Identity_Insert [dbo].[Customers] On 
-                Insert [dbo].[Customers] ([CustomerId], [FirstName], [LastName], [Email], [Password]) Values (1, N'admin', N'admin', N'admin@admin.com', N'P@ssword1')
-                Set Identity_Insert [dbo].[Customers] Off
+				INSERT INTO [dbo].[Customers]([FirstName], [LastName], [Email], [Password]) VALUES 
+				(N'admin', N'admin', N'admin@admin.com', N'P@ssword1'),
+				(N'Mike', N'Flasko', N'mike.flasko@microsoft.com', N'P@ssword1'),
+				(N'Gaurav', N'Malhotra', N'gamal@microsoft.com', N'P@ssword1')
 "@
             $Result = $CustomersCommand.ExecuteNonQuery()
             Write-Host "Table 'Customers' populated with data successfully."
@@ -276,8 +277,6 @@ function Populate-DBSchema
             $ConcertTicketsCommand = $null
             $ConcertTicketsConnectionString = $null
             Write-Host "Closed connection and finished processing Concert tables." -ForegroundColor Yellow
-
-            Write-Host "Finished refreshing and populating all tables with data." -ForegroundColor Yellow
         }
         Catch { Write-Error "Error -- $Error " }
         Finally
@@ -286,6 +285,7 @@ function Populate-DBSchema
             if ($VenuesConnection -ne $null -and $VenuesConnection.State -eq "Open") { $VenuesConnection.close(); $VenuesConnection = $null; }
             if ($ConcertsConnection -ne $null -and $ConcertsConnection.State -eq "Open") { $ConcertsConnection.close(); $ConcertsConnection = $null; }
             if ($ConcertTicketsConnection -ne $null -and $ConcertTicketsConnection.State -eq "Open") { $ConcertTicketsConnection.close(); $ConcertTicketsConnection = $null; }
+			if ($ConcertUsersConnection -ne $null -and $ConcertUsersConnection.State -eq "Open") { $ConcertUsersConnection.close(); $ConcertUsersConnection = $null; }
         }
     }
 }

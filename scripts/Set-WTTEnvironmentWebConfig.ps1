@@ -11,49 +11,56 @@ function Set-WTTEnvironmentWebConfig
     [CmdletBinding()]
     Param
     (   
-        #WTT Environment Application Name
+        # WTT Environment Application Name
         [Parameter(Mandatory=$true)]
         [String]
         $WTTEnvironmentApplicationName,
 
-        #Primary Azure SQL Database Server Name
+        # Primary Azure SQL Database Server Name
         [Parameter(Mandatory=$false)]
         [String]
         $AzureSqlDatabaseServerPrimaryName,
 
-        #Secondary Azure SQL Database Server Name
+        # Secondary Azure SQL Database Server Name
         [Parameter(Mandatory=$false)]
         [String]
         $AzureSqlDatabaseServerSecondaryName,
 
-        #Azure SQL Database Server Administrator User Name
+        # Azure SQL Database Server Administrator User Name
         [Parameter(Mandatory=$false)]
         [String]
         $AzureSqlDatabaseServerAdministratorUserName,
 
-        #Azure SQL Database Server Adminstrator Password
+        # Azure SQL Database Server Adminstrator Password
         [Parameter(Mandatory=$false)]
         [String]
         $AzureSqlDatabaseServerAdministratorPassword,
         
-        #Azure SQL Database Name
+        # Azure SQL Database Name
         [Parameter(Mandatory=$false)]
         [String]
         $AzureSqlDatabaseName,
 
-         #Path to Azure Web Site WebDeploy Package
+        # Path to Azure Web Site WebDeploy Package
         [Parameter(Mandatory = $false)] 
         [String]$AzureWebSiteWebDeployPackagePath, 
                         
-        #Azure Search Service Primary Management Key
+        # Azure Search Service Primary Management Key
         [Parameter(Mandatory = $true)] 
-        [String]$SearchServicePrimaryManagementKey        
+        [String]$SearchServicePrimaryManagementKey,  
+
+		# Azure DocumentDb Name
+        [Parameter(Mandatory = $false)] 
+        [String]$azureDocumentDbName,   
+
+		# Azure DocumentDb Key
+        [Parameter(Mandatory = $false)] 
+        [String]$documentDbPrimaryKey  		
     )
     Process
     {   
         try
         {
-         
             if($AzureSqlDatabaseServerAdministratorUserName -eq "")
             {
                 $AzureSqlDatabaseServerAdministratorUserName = "developer"
@@ -87,7 +94,8 @@ function Set-WTTEnvironmentWebConfig
             {
                 $AzureSqlDatabaseServerSecondaryName = $WTTEnvironmentApplicationName + "secondary"                    
             }
-            
+
+                        
 
             # Open zip and find the particular file (assumes only one inside the Zip file)
             $fileToEdit = "web.config"
@@ -110,7 +118,7 @@ function Set-WTTEnvironmentWebConfig
             [xml]$webConfig = [xml]$webConfigFile.ReadToEnd()
             $webConfigFile.Close()
             
-            #Set the appSetttings values 
+            # Set the appSetttings values 
             $obj = $webConfig.configuration.appSettings.add | where {$_.Key -eq 'TenantName'}
             $obj.value = $WTTEnvironmentApplicationName
 
@@ -143,6 +151,14 @@ function Set-WTTEnvironmentWebConfig
 
             $obj = $webConfig.configuration.appSettings.add | where {$_.Key -eq 'SearchServiceName'}
             $obj.value = $wTTEnvironmentApplicationName
+			
+			# New DocumentDb Keys
+			$obj = $webConfig.configuration.appSettings.add | where {$_.Key -eq 'DocumentDbServiceEndpointUri'}
+            $azureDocDBObj = ("https://$azureDocumentDbName.documents.azure.com:443/")
+            $obj.value = $azureDocDBObj 
+			
+			$obj = $webConfig.configuration.appSettings.add | where {$_.Key -eq 'DocumentDbServiceAuthorizationKey'}
+            $obj.value = $documentDbPrimaryKey
                         
             $formattedXml = Format-XML -xml $webConfig.OuterXml
             
