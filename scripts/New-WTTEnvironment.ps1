@@ -58,7 +58,6 @@ function New-WTTEnvironment
         #Azure Active Directory Tenant Name
         [Parameter(Mandatory=$false)]
         [String]
-<<<<<<< HEAD
         $AzureActiveDirectoryTenantName,
 		
 		#Mode of deployment for ADF
@@ -92,9 +91,6 @@ function New-WTTEnvironment
         [Alias("ADFWebSiteDeployPackagePath")] 
         [String]$azureADFWebSiteWebDeployPackagePath
 		
-=======
-        $AzureActiveDirectoryTenantName         
->>>>>>> origin/master
     )
 
     Process
@@ -306,11 +302,7 @@ function New-WTTEnvironment
             
                     # Create Storage Account                    
                     New-WTTAzureStorageAccount -AzureStorageAccountResourceGroupName $azureResourceGroupName -AzureStorageAccountName $azureStorageAccountName -AzureStorageAccountType "Standard_GRS" -AzureStorageLocation $WTTEnvironmentPrimaryServerLocation
-<<<<<<< HEAD
                     Start-Sleep -Seconds 30
-=======
-                    
->>>>>>> origin/master
                     #Create DocumentDB location based off the closest available location.
 					switch-AzureMode AzureResourceManager -WarningVariable null -WarningAction SilentlyContinue
                     Start-Sleep -Seconds 30    
@@ -363,11 +355,7 @@ function New-WTTEnvironment
 
                           }
                        } 
-<<<<<<< HEAD
                     Start-sleep -Seconds 30 
-=======
-                     
->>>>>>> origin/master
                     # If a WTTEnvironmentPrimaryServerLocation value was specified, Get Secondary Server Datacenter Location
                     if ($wTTEnvironmentSecondaryServerLocation -eq "")
                     {                        
@@ -394,10 +382,7 @@ function New-WTTEnvironment
                         Switch-AzureMode AzureResourceManager -WarningVariable null -WarningAction SilentlyContinue
                         # Create Secondary Azure SQL Database Server if it doesn't already exist
                         New-WTTAzureSqlDatabaseServer -AzureSqlDatabaseServerName $azureSqlDatabaseServerSecondaryName -AzureSqlDatabaseServerLocation $wTTEnvironmentSecondaryServerLocation -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseServerVersion $AzureSqlDatabaseServerVersion -AzureSqlDatabaseServerResourceGroupName $azureResourceGroupName   
-<<<<<<< HEAD
                         Start-Sleep -s 30
-=======
->>>>>>> origin/master
                         # Added from Mark's email after working with Audit team to address the bug
                         $azureSqlDatabaseServerSecondaryNameExists = Get-AzureSqlServer -ServerName $azureSqlDatabaseServerSecondaryName -ResourceGroupName $azureResourceGroupName -ErrorVariable azureSqlDatabaseServerSecondaryNameExists -ErrorAction SilentlyContinue                                 
                     }
@@ -558,15 +543,9 @@ function New-WTTEnvironment
         {
 	        Write-Error "Error: $Error "
         }  	    
-<<<<<<< HEAD
 	 }
 }
 
-=======
-   }
- }
- 
->>>>>>> origin/master
 # Check Installed Azure PowerShell Version
 # Bitwise left shift
 function Lsh([UInt32] $n, [Byte] $bits) 
