@@ -327,8 +327,8 @@ function New-WTTEnvironment
                               'Australia Southeast' {'Southeast Asia'}
                               'Australia East' {'Southeast Asia'}
                               'East Asia' {'East Asia'}
-                              'East Asia' {'Japan East'}
-                              'East Asia' {'Japan West'}
+                              'Japan East' {'East Asia'}
+                              'Japan West' {'East Asia'}
                               default {'West US'}
                             }
                         
