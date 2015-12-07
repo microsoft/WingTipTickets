@@ -1,6 +1,0 @@
-﻿namespace WingTipTickets
-{
-    public partial class Startup
-    {
-    }
-}
