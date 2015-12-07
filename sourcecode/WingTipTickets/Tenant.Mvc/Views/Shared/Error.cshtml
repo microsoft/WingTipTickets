@@ -1,0 +1,46 @@
+﻿@using System.Configuration
+@model System.Web.Mvc.HandleErrorInfo
+
+@{
+    ViewBag.Title = "Error";
+}
+
+<div class="container">
+    <h1 class="text-danger">An Error Occurred:</h1>
+    <h3>@Model.Exception.Message</h3>
+
+    <br/>
+
+    @if (ConfigurationManager.AppSettings["ShowDetailedInformation"].ToLower() == "true")
+    {
+        <h2>Main Details</h2>
+        <p>
+            <b>Controller:</b> @Model.ControllerName<br />
+            <b>Action:</b> @Model.ActionName<br />
+        </p>
+        
+        <h2>Exception Details</h2>
+        <p>
+            <b>Message:</b> @Model.Exception.Message<br />
+        </p>
+        <div style="overflow: scroll">
+            <pre>
+                @Model.Exception.StackTrace
+            </pre>
+        </div>
+
+        if (@Model.Exception.InnerException != null)
+        {
+            <h2>InnerException Details</h2>
+            <p>
+                <b>Message:</b> @Model.Exception.InnerException.Message<br />
+            </p>
+             <div style="overflow: scroll">
+                 <pre>
+                @Model.Exception.InnerException.StackTrace
+            </pre>
+             </div>
+        }
+        
+    }
+</div>

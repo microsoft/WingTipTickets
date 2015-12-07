@@ -1,0 +1,75 @@
+﻿@model Tenant.Mvc.Models.VenuesDB.ArtistCollection
+
+<div class="col-xs-9">
+    @if (Model.Artists != null)
+    {
+        for (int i = 0; i < Model.Artists.Count; i++)
+        {
+            <div class="row margin-bottom-15">
+                <div class="col-xs-3">
+                    @Html.EditorFor(model => model.Artists[i].Name, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+                <div class="col-xs-1">
+                    (name)
+                </div>
+                <div class="col-xs-3">
+                    @Html.EditorFor(model => model.Artists[i].Genre, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+                <div class="col-xs-1">
+                    (genre)
+                </div>
+            </div>
+        }
+
+        <div class="row margin-bottom-15">
+            <div class="col-xs-3">
+                @Html.TextBox("ArtistsName", null, new { @class = "form-control", placeholder = "Enter Name" })
+            </div>
+            <div class="col-xs-1">
+                (name)
+            </div>
+            <div class="col-xs-3">
+                @Html.TextBox("ArtistsGenre", null, new { @class = "form-control", placeholder = "Enter Genre" })
+            </div>
+            <div class="col-xs-1">
+                (genre)
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xs-2">
+                <input id="btnSaveArtist" name="btnSaveArtist" type="button" class="btn btn-themed" value=" + Add More">
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts
+{
+    <script type="text/javascript">
+
+        $(document).ready(function()
+        {
+            $("#btnSaveArtist").click(function(event)
+            {
+                var name = $('#ArtistsName').val();
+                var genre = $('#ArtistsGenre').val();
+                var meta = @Html.Raw(Json.Encode(Model));
+
+                $.ajax({
+                    url: '@Url.Action("AddArtist", "VenueAdministration")',
+                    type: 'POST',
+                    data: { Name: name, Genre: genre, Meta: meta },
+                    success: function(response)
+                    {
+                        $("#divArtists").html(response);
+                    },
+                    error: function()
+                    {
+                    }
+                });
+            });
+        });
+
+    </script>
+}

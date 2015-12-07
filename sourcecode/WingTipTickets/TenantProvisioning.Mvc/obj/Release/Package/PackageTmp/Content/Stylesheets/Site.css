@@ -1,0 +1,295 @@
+﻿/* ========================================================================================== */
+/* REGISTER FONTS */
+/* ========================================================================================== */
+
+@font-face {
+	font-family: 'Conv_segoeuil';
+	src: url('../../content/fonts/segoeuil.eot');
+	src: local('☺'), url('../../content/fonts/segoeuil.woff') format('woff'), url('../../content/fonts/segoeuil.ttf') format('truetype'), url('../../content/fonts/segoeuil.svg') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+/* ========================================================================================== */
+/* HTML ELEMENTS */
+/* ========================================================================================== */
+
+body 
+{
+    color: #4D4D4D;
+    background-color: #1D1D1D;
+    font-family: "Conv_segoeuil";
+    font-size: 12pt;
+    font-weight: normal;
+    line-height: 39px;
+}
+
+header 
+{
+    background-color: #E6E6E6;
+    padding-bottom: 10px;
+}
+
+header a 
+{
+    color: #4D4D4D;
+    font-size: 16pt;
+    padding-left: 20px;
+    padding-right: 20px; 
+}
+
+th {
+    padding: 10px;
+}
+
+td {
+    padding: 10px;
+}
+
+/* ========================================================================================== */
+/* HEADER */
+/* ========================================================================================== */
+
+.logo-image 
+{
+    height: 90px;    
+}
+
+.logo-heading {
+  margin: 0px;
+  padding: 25px 25px 25.5px 25px;
+  float: left;
+  color: #fff;
+  background: rgb(77,77,77);
+}
+
+.header-item-border {
+    border-left-style: solid;
+    border-left-width: 2px;
+    border-left-color: #575757;
+    padding-right: 30px;
+}
+
+/* ========================================================================================== */
+/* MENU */
+/* ========================================================================================== */
+
+.menu 
+{
+    color: rgb(77,77,77);
+    font-weight: bold;
+    padding-top: 80px;
+}
+
+.menu-bar-default {
+  background: transparent;
+  border: none;
+  margin-top: 20px;
+  margin-bottom: 0;
+  min-height: 30px;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+.menu-bar {
+  background: none;
+}
+
+.nav-menu li {
+	float: left;
+	list-style: none;
+}
+
+.nav-menu li a {
+	float: left;
+	display: block;
+	padding: 5px 38px 5px 0 !important;
+	text-align: center;
+	color: #575757 !important;
+	font-size: 19px;
+    font-weight: bold;
+}
+
+.nav-menu li a.active{
+	color: #E77A39 !important;
+}
+
+.nav-menu li a:hover {
+	text-decoration: none;
+	color: #E77A39 !important;
+}
+
+/* ========================================================================================== */
+/* CONTENT */
+/* ========================================================================================== */
+
+.content {
+    background-color: #FFFFFF;
+}
+
+.description
+{
+    font-size: 24pt;
+    font-weight: normal;   
+}
+
+.subsription-plan-left-div {
+    color: #FFFFFF;
+    font-size: 20pt;
+    text-align: center;
+    padding-right: 60px;
+
+    border-right-width: 6px;
+    border-right-style: solid;
+    border-right-color: #F3F3F3;
+}
+
+.subsription-plan-right-div {
+    color: #FFFFFF;
+    font-size: 20pt;
+    text-align: center;
+}
+
+.subsription-detail-div {
+    color: #000000;
+    font-size: 20pt;
+    padding: 10pt;
+    text-align: center;
+}
+
+.tenant-table {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.service-table {
+    width: 100%;
+    background-color: #E6E6E6;
+}
+
+.standard-plan-header {
+    background-color: #2E4143;
+    font-weight: bold;
+    padding: 10pt;
+    margin-top: 15px;
+    margin-left: 15px;
+    margin-right: 20pt;
+    width: 100%;
+}
+
+.premium-plan-header {
+    background-color: #7D9CD0;
+    font-weight: bold;
+    padding: 10pt;
+    margin-top: 15px;
+    margin-left: 20pt;
+    margin-right: 15px;
+}
+
+.field-validation-error {
+    color: #FF0000;
+}
+
+/* ========================================================================================== */
+/* FOOTER */
+/* ========================================================================================== */
+
+.footer 
+{
+    color: #FFFFFF;
+    background-color: rgb(77,77,77);
+    font-size: 12px;
+    line-height: 20px;
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+.footer a 
+{
+    color: #FFFFFF;
+    font-size: 14pt;
+    padding-left: 20px;
+    padding-right: 20px; 
+}
+
+.footer-menu {
+    padding-top: 40px;
+}
+
+.footer-item-border {
+    border-right-style: solid;
+    border-right-width: 2px;
+    border-right-color: #FFFFFF;
+}
+
+/* ========================================================================================== */
+/* MODAL */
+/* ========================================================================================== */
+
+.modal-header {
+    color: #FFFFFF;
+    background-color: rgb(77,77,77);
+    font-size: 18pt;
+}
+
+/* ========================================================================================== */
+/* HELPERS */
+/* ========================================================================================== */
+
+.row-underline {
+    border-bottom-width: 6px;
+    border-bottom-style: solid;
+    border-bottom-color: #F3F3F3;
+}
+
+.no-padding {
+    padding: 0px;
+}
+
+.right-padding-20 {
+    padding-right: 20px;
+}
+
+.spacer-5 
+{
+    height: 5px;    
+}
+
+.spacer-10
+{
+    height: 10px;    
+}
+
+.spacer-15 
+{
+    height: 15px;    
+}
+
+.spacer-25 
+{
+    height: 25px;    
+}
+
+.spacer-50 
+{
+    height: 50px;    
+}
+
+/* ========================================================================================== */
+/* OVERIDDEN BOOTSTRAP */
+/* ========================================================================================== */
+
+.navbar-default .navbar-collapse, .navbar-default .navbar-form {
+    border-style: none;
+    border-width: 0px;
+    border-color: transparent;
+}
+
+.btn-default {
+    background-color: #E6E6E6;
+}
+
+.alert {
+    padding: 5px !important;
+    margin: 0px !important;
+}
