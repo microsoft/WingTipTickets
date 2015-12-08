@@ -1,0 +1,39 @@
+{
+  "name": "PrepareMahoutUsagePipeline",
+  "properties": {
+    "description": "This is a pipeline to prepare the data for feeding into the Mahout engine",
+    "start": "<pipeline start time>",
+    "end": "<pipeline end time>",
+    "activities": [
+      {
+        "name": "PrepareMahoutInputHiveActivity",
+        "inputs": [
+          {
+            "name": "PartitionedProductsUsageTable"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "MahoutInputProductsUsageTable"
+          }
+        ],
+        "linkedServiceName": "HDInsightLinkedService",
+        "type": "HDInsightHive",
+        "typeProperties": {
+          "scriptpath": "scripts\\preparemahoutinput.hql",
+          "scriptLinkedService": "StorageLinkedService",
+          "defines": {
+            "MAHOUTINPUT": "$$Text.Format('wasb://productrec@<account name>.blob.core.windows.net/mahoutinput/yearno={0:yyyy}/monthno={0:%M}/', SliceStart)",
+            "PARTITIONEDOUTPUT": "$$Text.Format('wasb://productrec@<account name>.blob.core.windows.net/partitionedusageevents/yearno={0:yyyy}/monthno={0:%M}/', SliceStart)"
+          }
+        },
+        "policy": {
+          "concurrency": 1,
+          "executionPriorityOrder": "NewestFirst",
+          "retry": 1,
+          "timeout": "01:00:00"
+        }
+      }
+    ]
+  }
+}
