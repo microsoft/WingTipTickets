@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Options>
+  <Option Name="Standard">
+    <Component Tag="CloudService" />
+    <Component Tag="Database" />
+    <Component Tag="DatabaseServer" />
+  </Option>
+  <Option Name="Premium">
+    <Component Tag="CloudService" />
+    <Component Tag="Database" />
+    <Component Tag="DatabaseServer" />
+    <Component Tag="ResourceGroup" />
+    <Component Tag="Storage" />
+    <Component Tag="TrafficManager" />
+  </Option>
+</Options>

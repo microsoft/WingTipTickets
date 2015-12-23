@@ -1,0 +1,351 @@
+﻿/* ========================================================================================== */
+/* HTML ELEMENTS */
+/* ========================================================================================== */
+
+body 
+{
+    color: #4D4D4D;
+}
+
+header 
+{
+    background-color: #E6E6E6;
+}
+
+tr {
+    background-color: #FFFFFF;
+}
+
+th {
+    color: #c33501;
+    background-color: #4D4D4D;
+}
+
+td {
+    color: #4D4D4D;
+}
+
+td a {
+    color: #4D4D4D;
+}
+
+td a:visited {
+    color: #4D4D4D;
+}
+
+h1 {
+    color: #FFFFFF;
+}
+
+h2 {
+    color: #4D4D4D;
+}
+
+/* ========================================================================================== */
+/* BOOTSTRAP ELEMENTS */
+/* ========================================================================================== */
+
+.control-label
+{
+    color: #4D4D4D;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: #AAAAAA;
+}
+
+.ui-autocomplete {
+    color: #4D4D4D;
+    background-color: #FFFFFF;
+}
+
+.ui-menu-item {
+    color: #4D4D4D;
+}
+
+.ui-state-focus {
+    color: #C33501;
+    background-color: #E6E6E6;
+}
+
+/* ========================================================================================== */
+/* HEADER */
+/* ========================================================================================== */
+
+.logo-heading {
+  color: #FFFFFF;
+  background-color: #626262;
+  font-weight: normal;
+}
+
+.sub-heading {
+  color: #FFFFFF;
+  background-color: #626262;
+}
+
+/* ========================================================================================== */
+/* MENU */
+/* ========================================================================================== */
+
+.menu-border {
+    border-left-color: #4D4D4D;
+}
+
+.nav-menu li a {
+	color: #575757 !important;
+}
+
+.nav-menu li a.active{
+	color: #c33501 !important;
+}
+
+.nav-menu li a:hover {
+	color: #c33501 !important;
+}
+
+.dropdown-menu {
+    background-color: #E6E6E6;
+}
+
+/* ========================================================================================== */
+/* PAGE */
+/* ========================================================================================== */
+
+.page-heading {
+	background:#4d4d4d;
+}
+
+/* ========================================================================================== */
+/* FORM */
+/* ========================================================================================== */
+
+.content 
+{
+    background-color: #FFFFFF;
+}
+
+.banner-home-left {
+    color: #FFFFFF;
+    background-color: #333333;
+}
+
+.banner-home-right {
+	background-color: #c33501;
+    opacity: 1;
+}
+
+.banner-home-right a {
+	color: #FFFFFF;
+}
+
+.banner-caption {
+    color: #FFFFFF;
+}
+
+.banner-splitter {
+	border-right-color: #FFFFFF;
+}
+
+/* ========================================================================================== */
+/* BUTTONS */
+/* ========================================================================================== */
+
+.btn-search {
+	background-color: #626262;
+}
+
+.btn-search:hover {
+	background-color: #696969;
+    border: none;
+}
+
+.btn-themed {
+    background-color: #c33501;
+    color: #FFFFFF;
+}
+
+.btn-themed:hover {
+    background-color: #c33531;
+    color: #ffffff;
+}
+
+.btn-themed-secondary {
+    background-color: #c33501;
+    color: #FFFFFF;
+}
+
+.btn-themed-secondary:hover {
+    background-color: #c33531;
+    color: #ffffff;
+}
+
+.btn-close {
+    background-color: #626262;
+    color: #FFFFFF;
+}
+
+/* ========================================================================================== */
+/* MODAL */
+/* ========================================================================================== */
+
+.modal-header {
+    color: #FFFFFF;
+    background-color: #626262;
+    font-size: 18pt;
+}
+
+/* ========================================================================================== */
+/* TOP FOOTER */
+/* ========================================================================================== */
+
+.top-footer {
+    background-color: #E6E6E6;
+}
+
+.top-footer a {
+    
+    color: #202020;
+}
+
+.top-footer-h2 {
+    color: #4D4D4D;
+}
+
+.top-footer-p {
+	color: #575757;
+}
+
+/* ========================================================================================== */
+/* BOTTOM FOOTER */
+/* ========================================================================================== */
+
+.btm-footer {
+    color: #FFFFFF;
+    background-color: #4D4D4D;
+}
+
+.btm-footer a 
+{
+    color: #FFFFFF;
+}
+
+.btm-footer-item-border {
+    border-right-color: #FFFFFF;
+}
+
+/* ========================================================================================== */
+/* PURCHASE */
+/* ========================================================================================== */
+
+.ticket-info h3 {
+    color: #4D4D4D;
+}
+
+.ticket-info ul {
+    color: #4D4D4D;
+}
+
+.subscript {
+    color: #4D4D4D;
+}
+
+/* ========================================================================================== */
+/* EVENT PANELS */
+/* ========================================================================================== */
+
+.event-date {
+	background-color: #c33501;
+}
+
+.event-date-shaded {
+    background-color:#666666;   
+}
+
+.event-performer {
+    color: #666666;
+}
+
+.event-venue {
+    color: #4D4D4D;
+}
+
+.event-detail-heading {
+	color: #4D4D4D;
+}
+
+/* ========================================================================================== */
+/* RATING PANELS */
+/* ========================================================================================== */
+
+.rating-block {
+    border-bottom-color: #4D4D4D;
+}
+
+.rating-heading {
+    color: #c33501;
+}
+
+.rating-info {
+    color: #4D4D4D;
+}
+
+/* ========================================================================================== */
+/* ACCOUNT BOX */
+/* ========================================================================================== */
+
+.box-light {
+	background: #E6E6E6;
+}
+
+.box-light h3 {
+	color: #c33501;
+}
+
+.box-light p {
+	margin: 10px 0px;
+	font-size: 18px;
+	font-weight: bold;
+	color: #4D4D4D;
+}
+
+.box-light ul li a {
+	color: #4D4D4D;
+}
+
+.box-light-splitter {
+	border-right-color: #c33501; 
+}
+
+/* ========================================================================================== */
+/* VENUE BOX */
+/* ========================================================================================== */
+
+.box-dark {
+	background: #4D4D4D;
+}
+
+.box-dark h3 {
+	color: #c33501;
+}
+
+.box-dark ul li a {
+	color: #FFFFFF;
+	font-weight:bold;
+	font-size: 18px;
+}
+
+/* ========================================================================================== */
+/* HELPERS */
+/* ========================================================================================== */
+
+.highligted-text {
+	color: #c33501;
+}
+
+.row-underline-dark {
+    border-bottom-color: #333333;
+}
+
+.row-underline-light {
+    border-bottom-color: #999999;
+}

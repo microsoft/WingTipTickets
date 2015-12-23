@@ -1,0 +1,130 @@
+﻿@model Tenant.Mvc.Models.EventListView
+@{
+    ViewBag.Title = "ViewVenue";
+    //Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="page-heading">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <h1> Venue Listing@(Model.SelectedVenue > 0 && Model.ConcertsList.Any(a => a.VenueId == Model.SelectedVenue) ? ": " + Model.ConcertsList.First(a => a.VenueId == Model.SelectedVenue).Venue.VenueName : "s")</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row spacer-25">
+    </div>
+
+    <div class="row">
+        <div class="col-xs-8 no-padding">
+            <div class="event-panel height-660">
+                @{
+                    if (Model != null && Model.ConcertsList != null)
+                    {
+                        var concerts = Model.SelectedVenue > 0 ? Model.ConcertsList.Where(a => a.VenueId == Model.SelectedVenue) : Model.ConcertsList;
+                        var concertIndex = 0;
+                        
+                        foreach(var concert in concerts)
+                        {
+                            <div class="event-block">
+                                <div class="@((concertIndex % 2) == 0 ? "event-date" : "event-date event-date-shaded")">
+                                    <span class="event-date-top">@concert.ConcertDate.ToString("MMM").ToUpper()</span><br />
+                                    <span class="event-date-mid">@concert.ConcertDate.Day</span><br />
+                                    <span class="event-date-btm">@concert.ConcertDate.DayOfWeek.ToString().ToUpper().Substring(0, 3)</span><br />
+                                </div>
+
+                                <div class="event-info">
+                                    <h3 class="event-performer">@(((concert.Performer != null) && (concert.Performer != null)) ? (concert.Performer.ShortName) : "???")</h3>
+                                    <p class="event-venue">@(((concert.Venue != null) && (concert.Venue.VenueName != null)) ? (concert.Venue.VenueName) : "???")</p>
+                                </div>
+
+                                <div class="event-button">
+                                    @Html.ActionLink("Find Seats", "Index", "FindSeats", new { concertId = concert.ConcertId }, new { @class = "btn btn-themed-secondary" })
+                                </div>
+                            </div>
+
+                            concertIndex++;
+                        }
+                    }
+                }
+            </div>
+        </div>
+        
+        <div class="col-xs-4">
+
+            <div class="row box-light height-260">
+                <h3>Nearby Cities</h3>
+
+                <ul>
+                    @foreach (var city in Model.VenuesList.OrderBy(a => a.VenueCity.CityName).GroupBy(a => a.VenueCity.CityId).Select(a => a.First()))
+                    {
+                        <li>
+                            <a href="@Url.Action("Index", "City", new { cityId = city.VenueCity.CityId })">@city.VenueCity.CityName, @city.VenueCity.State.StateName</a>
+                        </li>
+                    }
+
+                    <li>
+                        <a href="@Url.Action("Index", "City")">See All Cities ></a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="row box-dark height-160">
+                <h3>Local Venues</h3>
+
+                <ul>
+                    @{
+                        if (Model.SelectedCity > 0)
+                        {
+                            foreach (var venue in Model.VenuesList.Where(a => a.VenueCity.CityId == Model.SelectedCity).OrderBy(a => a.VenueName).GroupBy(a => a.VenueId).Select(a => a.First()).Take(2))
+                            {
+                                <li>
+                                    <a href="@Url.Action("Index", "Venue", new { venueId = venue.VenueId })">@venue.VenueName - @Model.ConcertsList.Count(a => a.VenueId == venue.VenueId) Event(s)</a>
+                                </li>
+                            }
+                        }
+                        else
+                        {
+                            foreach (var venue in Model.VenuesList.OrderBy(a => a.VenueName).GroupBy(a => a.VenueId).Select(a => a.First()).Take(2))
+                            {
+                                <li>
+                                    <a href="@Url.Action("Index", "Venue", new { venueId = venue.VenueId })">@venue.VenueName - @Model.ConcertsList.Count(a => a.VenueId == venue.VenueId) Event(s)</a>
+                                </li>
+                            }
+                        }
+                    }
+
+                    <li>
+                        <a href="@Url.Action("Index", "Venue")">See All Venues ></a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="row box-dark height-220">
+                <h3>Sort By Date</h3>
+
+                <ul>
+                    <li>
+                        <a href="#">November 2014</a>
+                    </li>
+                    <li>
+                        <a href="#">December 2014</a>
+                    </li>
+                    <li>
+                        <a href="#">January 2015</a>
+                    </li>
+                    <li>
+                        <a href="#">February 2015</a>
+                    </li>
+                    <li>
+                        <a href="#">See All Dates ></a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</div>

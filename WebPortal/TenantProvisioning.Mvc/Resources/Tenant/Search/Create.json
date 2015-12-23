@@ -1,0 +1,10 @@
+{ 
+	"location": "@Location", 
+	"properties": 
+	{ 
+		"sku": 
+		{ 
+			"name": "free" 
+		}
+	}
+}

@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<parameters>
+  <parameter name="localConnection-Web.config Connection String" description="localConnection Connection String used in web.config by the application to access the database." defaultValue="Data Source=.;Initial Catalog=WingTipTicketsTenant;Integrated Security=False;User=developer;Password=P@ssword1" tags="SqlConnectionString">
+    <parameterEntry kind="XmlFile" scope="C:\\Users\\meyer\\Source\\Workspaces\\WingTipTickets\\Source-Main\\WebPortal\\Tenant\.Mvc\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='localConnection']/@connectionString" />
+  </parameter>
+</parameters>
