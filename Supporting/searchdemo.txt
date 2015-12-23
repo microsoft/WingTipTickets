@@ -1,0 +1,179 @@
+        public static SearchIndexClient SearchIndexClient;
+
+        public static void Configure()
+        {
+            var searchServiceClient = new SearchServiceClient(WingtipTicketApp.Config.SearchServiceName,
+                                                              new SearchCredentials(WingtipTicketApp.Config.SearchServiceKey));
+
+            CreateIndex(searchServiceClient);
+            CreateIndexer(searchServiceClient);
+            searchServiceClient.Indexers.Run("fromsql");
+
+            WingtipTicketApp.SearchIndexClient = searchServiceClient.Indexes.GetClient("concerts");
+        }
+
+        private static void CreateIndex(SearchServiceClient searchServiceClient)
+        {
+            if (!searchServiceClient.Indexes.Exists("concerts"))
+            {
+                searchServiceClient.Indexes.Create(new Index
+                {
+                    Name = "concerts",
+                    Fields = new List<Field>
+                        {
+                            new Field { Name = "ConcertId", Type = DataType.String, IsKey = true, IsFilterable = true, IsRetrievable = true },
+                            new Field { Name = "ConcertName", Type = DataType.String, IsRetrievable = true },
+                            new Field { Name = "ConcertDate", Type = DataType.DateTimeOffset, IsFilterable = true, IsFacetable = true, IsSortable = true, IsRetrievable = true },
+                            new Field { Name = "VenueId", Type = DataType.Int32, IsFilterable = true, IsRetrievable = true },
+                            new Field { Name = "VenueName", Type = DataType.String, IsFilterable = true, IsFacetable = true },
+                            new Field { Name = "VenueCity", Type = DataType.String, IsFilterable = true, IsFacetable = true },
+                            new Field { Name = "VenueState", Type = DataType.String, IsFilterable = true, IsFacetable = true },
+                            new Field { Name = "VenueCountry", Type = DataType.String, IsFilterable = true, IsFacetable = true },
+                            new Field { Name = "PerformerId", Type = DataType.Int32, IsFilterable = true, IsRetrievable = true },
+                            new Field { Name = "PeformerName", Type = DataType.String, IsFilterable = true, IsFacetable = true },
+                            new Field { Name = "FullTitle", Type = DataType.String, IsRetrievable = true, IsSearchable = true },
+                            new Field { Name = "Popularity", Type = DataType.Int32, IsRetrievable = true, IsFilterable = true, IsSortable = true }
+                        },
+                    Suggesters = new List<Suggester>
+                        {
+                            new Suggester
+                            {
+                                Name = "sg",
+                                SearchMode = SuggesterSearchMode.AnalyzingInfixMatching,
+                                SourceFields = { "FullTitle" }
+                            }
+                        }
+                });
+            }
+        }
+
+        private static void CreateIndexer(SearchServiceClient searchServiceClient)
+        {
+            if (!searchServiceClient.DataSources.List().Any(d => d.Name == "concertssql"))
+            {
+                string connectionString = WingtipTicketApp.ConstructConnection(WingtipTicketApp.Config.PrimaryDatabaseServer,
+                                                                               WingtipTicketApp.Config.ConcertsDbName);
+
+                searchServiceClient.DataSources.Create(new DataSource
+                {
+                    Name = "concertssql",
+                    Type = "azuresql",
+                    Container = new DataContainer { Name = "ConcertSearch" },
+                    Credentials = new DataSourceCredentials { ConnectionString = connectionString },
+                    DataChangeDetectionPolicy = new HighWaterMarkChangeDetectionPolicy("RowVersion")
+                });
+            }
+
+            if (!searchServiceClient.Indexers.List().Any(i => i.Name == "fromsql"))
+            {
+                searchServiceClient.Indexers.Create(new Indexer
+                {
+                    Name = "fromsql",
+                    DataSourceName = "concertssql",
+                    TargetIndexName = "concerts",
+                    Schedule = new IndexingSchedule { Interval = TimeSpan.FromMinutes(5), StartTime = DateTimeOffset.Now }
+                });
+            }
+        }
+
+
+                        <div class="search-box">
+                            <form method="GET" action="/" autocomplete="off">
+                                <input name="search" type="search" class="search" placeholder="SEARCH" id="search" value="@Request["search"]">
+                                <button class="icon-maginfire" type="submit" />
+                            </form>
+                        </div>
+
+        public async Task<ActionResult> Index()
+        {
+            ActionResult result;
+            string search = Request["search"];
+            if (string.IsNullOrEmpty(search))
+            {
+                result = View(ticketsRepo.GenerateEventListView());
+            }
+            else
+            {
+                var searchResult = await WingtipTicketApp.SearchIndexClient.Documents.SearchAsync<ConcertSearchHit>(search, new SearchParameters(), CancellationToken.None);
+                result = View(EventListView.FromSearchHits(searchResult.Select(r => r.Document)));
+            }
+
+            return result;
+        }
+
+            $('#search').autocomplete({
+                source: "/home/AutoCompleteEvents"
+            });
+
+        public async Task<ActionResult> AutoCompleteEvents(string term)
+        {
+            var suggestions = await WingtipTicketApp.SearchIndexClient.Documents.SuggestAsync(term,
+                                                                                              "sg",
+                                                                                              new SuggestParameters { UseFuzzyMatching = true },
+                                                                                              CancellationToken.None);
+
+            return new JsonResult
+            {
+                JsonRequestBehavior = JsonRequestBehavior.AllowGet,
+                Data = suggestions.Select(s => s.Text)
+            };
+        }
+
+
+
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace WingTipTickets.Models
+{
+    public class ConcertSearchHit
+    {
+        public string ConcertId { get; set; }
+
+        public string ConcertName { get; set; }
+
+        public DateTimeOffset ConcertDate { get; set; }
+
+        public int VenueId { get; set; }
+
+        public string VenueName { get; set; }
+
+        public string VenueCity { get; set; }
+
+        public string VenueState { get; set; }
+
+        public string VenueCountry { get; set; }
+
+        public int PerformerId { get; set; }
+
+        public string PerformerName { get; set; }
+
+        public string FullTitle { get; set; }
+
+        public static EventListView ToEventListView(IEnumerable<ConcertSearchHit> hits)
+        {
+            EventListView view = new EventListView()
+            {
+                ConcertsList = hits.Select(h => new Concert
+                {
+                    ConcertId = int.Parse(h.ConcertId),
+                    ConcertName = h.ConcertName,
+                    ConcertDate = h.ConcertDate.LocalDateTime,
+                    Performer = new Performer { PerformerId = h.PerformerId, ShortName = h.PerformerName },
+                    PerformerId = h.PerformerId,
+                    Venue = new Venue { VenueId = h.VenueId, VenueName = h.VenueName },
+                    VenueId = h.VenueId
+                }).ToList(),
+                VenuesList = hits.Select(h => new { h.VenueId, h.VenueName })
+                                 .Distinct()
+                                 .Select(v => new Venue { VenueId = v.VenueId, VenueName = v.VenueName })
+                                 .ToList()
+            };
+
+            return view;
+        }
+    }
+}

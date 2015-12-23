@@ -1,0 +1,135 @@
+public class Rating
+{
+    public string id;
+    public int concertId;
+    public int venue;
+    public int performer;
+    public string section;
+    public string seat;
+    public int customerId;
+    public string comment;
+    public int score;
+    public string date;
+}
+
+---
+
+public ActionResult RateMySeats(PurchasedTicket ticket)
+{
+	return View(new MyEventRating { PurchasedTicket = ticket });
+}
+
+public async Task<ActionResult> SubmitReview(MyEventRating eventRating)
+{
+    Customer customer = Session["SessionUser"] as Customer;
+
+    Rating rating = new Rating
+    {
+        concertId = eventRating.PurchasedTicket.ConcertId,
+        customerId = customer.CustomerId,
+        performer = eventRating.PurchasedTicket.PerformerId,
+        section = eventRating.PurchasedTicket.SectionName,
+        seat = eventRating.PurchasedTicket.SeatName,
+        venue = eventRating.PurchasedTicket.VenueId,
+        comment = eventRating.Comments,
+        score = eventRating.Score,
+        date = DateTime.UtcNow.ToString(),
+    };
+
+    var created = await RatingsRepository.CreateAsync(rating);
+
+    return RedirectToAction("ViewMyEvents", "Home");
+}
+
+---
+
+public static async Task<Rating> CreateAsync(Rating entity)
+{
+    Document doc = await Client.CreateDocumentAsync(Collection.SelfLink, entity);
+
+    Rating ret = (Rating)(dynamic)doc;
+    return ret;
+}
+
+---
+
+Document doc = await Client.CreateDocumentAsync(Collection.SelfLink, entity,
+                    new RequestOptions { PostTriggerInclude = new List<string> { "aggregateRatings" } });
+
+---
+
+public class VenueRating
+{
+    public string id;
+    public int concertId;
+    public double avgScore;
+    public int totalReviews;
+    public SectionRating reviewsBySection;
+}
+
+public class SectionRating
+{
+    public string section;
+    public double avgScore;
+    public int totalReviews;
+    public List<Rating> recentReviews;
+}
+
+---
+
+<div class="col-xs-12 col-sm-12 col-md-12 col-g-12 PNONE1 img-div">
+    <div id="ratingsPane" class="pull-left">
+        <div id="ratings" style="text-align: left">
+            <ul id="ratingsList"></ul>
+        </div>
+    </div>
+    <img class="img-responsive" src="~/img/floor-plan.jpg" />
+</div>
+
+function loadRatings() {
+    var price =  $("#slctPriceSection").val().split("|")[0];
+
+    $.ajax({
+        url: "/home/GetRatings?concertId=" + getParameterByName('concertId') + "&priceId=" + price.substring(0, price.length - 3),
+        success: function (rating) {
+            drawRatings(rating);
+        },
+        error: function () {
+            $("#ratings").hide();
+        }
+    })
+}
+
+---
+
+public ActionResult GetRatings(int concertId, int priceId)
+{           
+    string sectionId = GetSectionFromPrice(priceId);
+
+    var rating = RatingsRepository.GetRatingsByVenue(concertId, sectionId);
+
+    return new JsonResult
+    {
+        JsonRequestBehavior = JsonRequestBehavior.AllowGet,
+        Data = rating
+    };
+}
+
+---
+
+public static VenueRating GetRatingsByVenue(int concertId, string section)
+{
+    var found = Client.CreateDocumentQuery<VenueRating>(Collection.DocumentsLink, new SqlQuerySpec
+    {
+        QueryText = "SELECT c.concertId, c.avgScore, c.totalReviews, s as reviewsBySection FROM c JOIN s IN c.reviewsBySection WHERE c.concertId = @concertId AND s.section = @section",
+        Parameters = new SqlParameterCollection{
+            new SqlParameter{Name = "@concertId", Value=concertId },
+            new SqlParameter{Name = "@section", Value = section }
+        }
+    }).AsEnumerable().ToList().FirstOrDefault();
+
+    return found;
+}
+
+---
+
