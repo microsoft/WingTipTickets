@@ -8,12 +8,13 @@
 #>
 function Set-WTTEnvironmentWebConfigDay2
 {
-    Switch-AzureMode AzureServiceManagement
+    #Switch-AzureMode AzureServiceManagement
 	#Get the ADF website
-	$ADFWebSite = Get-AzureWebSite | Where-Object {$_.Name -like "*product*"}
+	#$ADFWebSite = Get-AzureWebSite | Where-Object {$_.Name -like "*product*"}
+    $ADFWebSite = Get-AzureRMWebApp | Where-Object {$_.Name -like "*product*"}
 
 	#Get the WTT primary Website
-    $wttWebSite = Get-AzureWebSite | Where-Object {$_.Name -like "*primary"}
+    $wttWebSite = Get-AzureRMWebApp | Where-Object {$_.Name -like "*primary"}
     
 	$ADFWebSite = [string]$ADFWebSite.HostNames
     $wttWebSite = [string]$wttWebSite.Name
@@ -22,5 +23,6 @@ function Set-WTTEnvironmentWebConfigDay2
 	$settings = New-Object Hashtable
 	$settings[“RecommendationSiteUrl"] = $ADFWebSite
 	
-	Set-AzureWebsite -AppSettings $settings -Name $wttWebSite
+	#Set-AzureWebsite -AppSettings $settings -Name $wttWebSite
+    Set-AzureRMWebApp -AppSettings $settings -Name $wttWebSite
 }

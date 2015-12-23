@@ -12,11 +12,11 @@ Param(
 
    [Parameter()]
    [Alias("sqllogin")]
-   [string]$global:sqlServerLogin = 'mylogin',
+   [string]$global:sqlServerLogin = 'developer',
 
    [Parameter()]
    [Alias("sqlpassword")]
-   [string]$global:sqlServerPassword = 'pass@word1',
+   [string]$global:sqlServerPassword = 'P@ssword1',
            
    #WTT Environment Application Name
    [Parameter()]
@@ -275,7 +275,7 @@ function DeleteResourceGroup{
 }
 #>
 function CreateStorageAccount{
-    Param($affinityGroup)
+    #Param($affinityGroup)
     Process{
         #Switch-AzureMode AzureServiceManagement
         $storage = $null
@@ -331,7 +331,7 @@ function CreateStorageAccount{
 }
 #>
 
-function CreateSQLServerAndDB{
+<#function CreateSQLServerAndDB{
     process{
         Write-Host 'Creating SQL Server ...... ' -NoNewline
         #Switch-AzureMode AzureServiceManagement
@@ -383,10 +383,30 @@ function CreateSQLServerAndDB{
         }
         return $sqldb
     }
+}#>
+
+function CreateSQLServerAndDB{
+    process{
+            
+        #create sql server & DB
+        
+            try{
+                Write-Host 'Creating SQL DB [' $global:sqlDBName ']......' -NoNewline 
+                $servercredential = new-object System.Management.Automation.PSCredential("developer", ("P@ssword1"  | ConvertTo-SecureString -asPlainText -Force))
+                #create a connection context
+                $ctx = New-AzureSqlDatabaseServerContext -ServerName $sqlsvrname -Credential $serverCredential 
+                $sqldb = New-AzureSqlDatabase $ctx –DatabaseName $azureSqlDatabaseServerPrimaryName -Edition Basic   >> setup-log.txt
+                Write-Host 'created.'
+            } catch {
+                Write-Host 'error.'
+                throw
+            }
+        }
+    
 }
 
 
-function DeleteSQLServerAndDB{
+<#function DeleteSQLServerAndDB{
     Switch-AzureMode AzureServiceManagement
     $sqlsvrname = ""
 
@@ -412,16 +432,16 @@ function DeleteSQLServerAndDB{
         }
     }    
 }
-
+#>
 
 function CreateDataFactory{
     Process{
-        Switch-AzureMode AzureResourceManager
+        #Switch-AzureMode AzureResourceManager
         $adf = $null
         try{
             Write-Host 'Creating Data Factory [' $global:defaultResourceName ']......' -NoNewline
             #will force overwrite if already exists
-            $adf = New-AzureDataFactory -Name $global:defaultResourceName -location 'West US' -ResourceGroupName $resourceGroupName -Force  | out-null
+            $adf = New-AzureRMDataFactory -Name $global:defaultResourceName -location 'West US' -ResourceGroupName $WTTEnvironmentApplicationName -Force  | out-null
             Write-Host 'created.'    
         }catch {
             Write-Host 'error.'
@@ -431,7 +451,7 @@ function CreateDataFactory{
     }
 }
 
-function DeleteDataFactory{
+<#function DeleteDataFactory{
     Process{
         Switch-AzureMode AzureResourceManager
         $retryCount = 2;
@@ -461,25 +481,26 @@ function DeleteDataFactory{
         }
     }
 }
+#>
 
 function CreateAzureWebsite{  
     Process{
-        Switch-AzureMode AzureServiceManagement
+        #Switch-AzureMode AzureServiceManagement
         $azurewebsite = $null
 		$eventhub = $null
 		
         try{            
-			$azurewebsite = Get-AzureWebsite -Name $global:azureWebsiteName 
+			$azurewebsite = Get-AzureRMWebApp -ResourceGroupName $WTTEnvironmentApplicationName -Name $global:azureWebsiteName 
 			if($azurewebsite.name -ne $global:azureWebsiteName)
 			{
 			Write-Host 'Creating Azure Website ['$global:azureWebsiteName']......' -NoNewline
             #create a new Azure Website
-            $azurewebsite = New-AzureWebsite -Name $global:azureWebsiteName -Location $global:locationMultiWord -ErrorAction Stop | out-null
+            $azurewebsite = New-AzureRmWebApp -ResourceGroupName $WTTEnvironmentApplicationName -Name $global:azureWebsiteName -Location $global:locationMultiWord -ErrorAction Stop | out-null
 			Write-Host 'created.'
 			}
 			else {
 				Write-Host 'Creating Azure Website ['$global:azureWebsiteName']...... already exists.'
-				DeleteProductRecommendationResources
+				Remove-AzureRMWebApp -ResourceGroupName $WTTEnvironmentApplicationName -Name $global:azureWebsiteName
 				Write-Host 'An error occured during setup; it was repaired. :) Please, run script again.'
 				throw
 			}
@@ -489,7 +510,7 @@ function CreateAzureWebsite{
     }
 }
 
-function DeleteAzureWebsite{
+<#function DeleteAzureWebsite{
     Switch-AzureMode AzureServiceManagement
     try{
         Write-Host 'Deleting Azure Website [' $global:azureWebsiteName ']......' -NoNewline
@@ -502,13 +523,14 @@ function DeleteAzureWebsite{
     }
     Write-Host 'deleted'.
 }
+#>
 
 function CreateProductRecommendationResources{
     Write-Host 'Creating Azure services for product recommendation use case:'
 
-    CreateResourceGroup
-    $affinityGroup = CreateAffinityGroup 
-    $storageAccount = CreateStorageAccount $affinityGroup
+    #CreateResourceGroup
+    #$affinityGroup = CreateAffinityGroup 
+    $storageAccount = CreateStorageAccount
     CreateSQLServerAndDB 
 	CreateAzureWebsite
     $adf = CreateDataFactory
@@ -516,7 +538,7 @@ function CreateProductRecommendationResources{
     Write-Host 'Completed creating Azure services.'
 }
 
-function DeleteProductRecommendationResources{
+<#function DeleteProductRecommendationResources{
     Write-Host 'Deleting Azure services for product recommendation use case:'
 
     DeleteStorageAccount
@@ -528,6 +550,7 @@ function DeleteProductRecommendationResources{
 
     Write-Host 'Completed deleting Azure services.'
 }
+#>
 
 function PopulateProductRecommendation{
     Write-Host "Deploying use case content (scripts, sample data, etc) to the resources created..."
@@ -564,7 +587,7 @@ function PopulateProductRecommendation{
 	    
     #Upload the hive scripts to the container
     #$global:storageAccountName
-    switch-azureMode AzureServiceManagement
+    #switch-azureMode AzureServiceManagement
     #Write-Verbose   "Preparing the storage account - $global:storageAccountName "
     $destContext = New-AzureStorageContext  –StorageAccountName $global:dict["<account name>"] -StorageAccountKey $global:dict["<account key>"] -ea silentlycontinue
     If ($destContext -eq $Null) {
@@ -621,11 +644,11 @@ function PopulateProductRecommendation{
 	# Upload package zip to azure blob storage
 	Set-AzureStorageBlobContent -File ".\packages\ProductRecDataGenerator.zip" -Container $packagecontainerName -Context $destContext -Blob "ProductRecDataGenerator.zip" -Force >> setup-log.txt
 	
-    Switch-AzureMode AzureResourceManager
+    #Switch-AzureMode AzureResourceManager
     #Write-Host $global:progressMessages
 
     #Write-Host "Preparing the Azure SQL Database with output tables/stored procedures and types"
-    sqlcmd -S "$global:sqlserverName.database.windows.net" -U "$global:sqlServerLogin@$global:sqlserverName" -P $global:sqlServerPassword -i .\scripts\productrec\productrecommendationssqldb.sql -d $global:useCaseName 2>&1 3>&1 4>&1 1>>setup-log.txt
+    sqlcmd -S "$azureSqlDatabaseServerPrimaryName.database.windows.net" -U "$azureSqlDatabaseServerPrimaryName@developer" -P "P@ssword1" -i .\scripts\productrec\productrecommendationssqldb.sql -d $global:useCaseName 2>&1 3>&1 4>&1 1>>setup-log.txt
    
     
     #$scriptPath = (Join-Path -Path "." -ChildPath ".\src\deployFolder.ps1")
@@ -657,7 +680,7 @@ function ShowProductRecommendationsRemainingTODOs {
 
 }
 
-function Set-ADFWebsiteWebConfig
+<#function Set-ADFWebsiteWebConfig
 {
             $azureADFWebSiteWebDeployPackagePath = (Get-Item -Path ".\" -Verbose).FullName + "\Packages\productrecommendations.zip"
 			[string]$sqlsvrname = Get-Content -Path $global:configPath -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
@@ -707,6 +730,22 @@ function Set-ADFWebsiteWebConfig
             $webConfigFileFinal.Write($formattedXml)            
             $webConfigFileFinal.Close()
             $webDeployPackage.Dispose()
+}
+#>
+function Set-ADFWebsiteWebConfig
+{
+   
+	#Get the ADF website
+	$ADFWebSite = Get-AzureWebSite | Where-Object {$_.Name -like "*product*"}
+
+	$ADFWebSite = [string]$ADFWebSite.Name
+	
+	#Set the RecommendationSiteURL for the ADF website setting in the WTT website 
+	$settings = New-Object Hashtable
+	$settings = @{“SqlServer" = $ADFWebSite; "SqlDB" = $global:sqlDBName; "SqlUserID" = "Developer"; "SqlPassword" = "P@ssword1"}
+	
+	Set-AzureRMWebApp -AppSettings $settings -Name $ADFWebSite
+
 }
 
 function Format-XML ([xml]$xml, $indent=2) 
@@ -765,11 +804,11 @@ try {
             Set-ADFWebsiteWebConfig
             Start-Sleep -s 10
             Write-Host "### Deploying ADF Website $global:azureWebsiteName. ###" -foregroundcolor Yellow
-            Switch-AzureMode AzureServiceManagement -WarningVariable null -WarningAction SilentlyContinue
+            #Switch-AzureMode AzureServiceManagement -WarningVariable null -WarningAction SilentlyContinue
 			$azureADFWebSiteWebDeployPackagePath = (Get-Item -Path ".\" -Verbose).FullName + "\Packages\ProductRecommendations.zip"
             Publish-AzureWebsiteProject -Name $global:azureWebsiteName -Package $azureADFWebSiteWebDeployPackagePath                            
         }
-        'delete'{
+        <#'delete'{
 			$source = ".\temp\setup"
 			$filter = [regex] "productrec"
 			$bin = Get-ChildItem -Path $source | Where-Object {$_.Name -match $filter}
@@ -785,7 +824,7 @@ try {
 					Write-Host "The example was already deleted."
 				}
 			}               
-        }
+        }#>
     } 
 }
 catch {
