@@ -1,0 +1,391 @@
+14,Green Alarm,134,,,,5
+40,The Archie Boyle Band,45,,,,5
+74,The Running Ostrichs,764,,,,5
+78,The Prehistoric Eagles,564,,,,5
+99,Sweet Forgotten Rangers,57,,,,5
+221,Essential Killers,345,,,,5
+238,The Data Runners,46,,,,5
+251,Los Alpha,64,,,,5
+405,The Rare Pink Spiders,674,,,,5
+407,Julie And The Plantes,141,,,,5
+410,Crazy Alpha,224,,,,5
+465,Helpless Backpacks,345,,,,5
+597,Fierce Ogers,67,,,,5
+602,The Rotten Nephews,534,,,,5
+604,The Clubs,124,,,,5
+655,Fast Knights,23,,,,5
+658,Young Jupiter,134,,,,5
+668,Defiant Chiefs,23,,,,5
+722,The Digital Commanders,327,,,,5
+739,Forbidden Eagles,674,,,,5
+893,The Kid Wealthy Gamma,234,,,,5
+910,Dreaded Gamma,234,,,,5
+1087,Bad Pythons,234,,,,5
+1098,The Aggressive Lions,745,,,,5
+1195,The Minefield,423,,,,5
+1305,The Sienna Protons,234,,,,5
+1393,The Electrical Ducks,276,,,,5
+1404,Needless Haystack,563,,,,5
+1428,Smoke Scissors,531,,,,5
+1554,The Small Eager Giants,357,,,,5
+1681,Walla Walla Symphony,357,,,,5
+1779,Yellow Alarm,34,,,,5
+1845,The Bad Ninth Hounddogs,64,,,,5
+1870,Little Divisions,346,,,,6
+1968,The Mothers,645,,,,5
+2090,The Nocturnal Invaders,235,,,,5
+2138,Fox Stormy Sofas,345,,,,5
+2149,Cosmic Admirals,364,,,,5
+2167,Meaty Fish,645,,,,5
+2193,Ivory Warm Beta,156,,,,5
+2217,Tired Warehouse,745,,,,5
+2712,The Boys,534,,,,5
+2814,The Totally Windshields,634,,,,2
+2817,The Ogers,136,,,,8
+2860,Mysterious Gravel,75,,,,5
+2883,The Animals,745,,,,5
+2916,Purple Beauty Roosters,73,,,,5
+3007,Risky Mothers,365,,,,5
+3298,Los Poles,465,,,,5
+3324,The Gamma,63,,,,5
+3418,Moving Gargoyles,345,,,,5
+3437,The Maroon Erasers,531,,,,5
+3677,Elastic Gladiators,745,,,,5
+3792,Permanent Lanterns,34,,,,5
+3922,Sleepy Dusty Gangsters,764,,,,5
+4019,The Zeuses,456,,,,12
+4207,The Fast Leaders,634,,,,5
+4449,Sad Papas,234,,,,5
+4538,Crazy Tamborines,126,,,,5
+4605,The Totally Heavy Backpacks,75,,,,5
+4985,Dancing Red Milk,634,,,,5
+5116,The Kid Dancers,53,,,,5
+5187,The Reborn Microphones,256,,,,5
+5214,Flaming Poseidons,645,,,,5
+5496,Sweet Temples,357,,,,5
+5535,The Bad Rabbits,634,,,,5
+5640,Minimum Funerals,634,,,,5
+5659,The Bitter Sparrows,634,,,,5
+5687,Fake Sleepy Roadrunners,645,,,,5
+5703,The Torpedos,63,,,,5
+5792,Cool Admirals,43,,,,5
+5795,Colorful Vipers,544,,,,5
+1000138,The Bold Swans,234,,,,5
+1000193,Los Hammers,43,,,,5
+1000319,The Skunk,424,,,,5
+1000320,Old Aberrant Kittens,65,,,,5
+1000412,Thirsty Tungsten,34,,,,5
+1000424,Gutsy Tainted Torpedos,673,,,,6
+1000428,Tables Of Strength,346,,,,5
+1000584,Steamy Showers,745,,,,3
+1000620,The Purple Locomotives,234,,,,5
+1000646,The Winter,76,,,,5
+1000658,The Intense Crayons,247,,,,5
+1000669,The Rocking Mountains,264,,,,5
+1000681,Beta Itchy Crossbows,45,,,,5
+1000689,The Cute Barbarians,734,,,,5
+1000796,Epsilon Bees,234,,,,5
+1000820,Rocky Mustard,123,,,,5
+1000824,The Worthy Icy Coffins,73,,,,7
+1000848,The Wild Epsilon,345,,,,5
+1000854,The Boiling Pilatus Leather,345,,,,5
+1000889,Solid Scoreboards,745,,,,5
+1000914,The Grim Anacondas,645,,,,5
+1001025,Dodgy Dragons,344,,,,5
+1001082,The Micro Gargoyles,73,,,,5
+1001101,Shining Propellors,62,,,,5
+1001136,Meaty Jupiter Children,345,,,,5
+1001265,The Mars Craws,234,,,,5
+1001286,The Strange Steel,345,,,,5
+1001307,The Grenades,563,,,,5
+1001332,Speedy Kids,745,,,,12
+1001339,The Crazy Agents,343,,,,5
+1001395,Dodgy Dragons,523,,,,5
+1001402,Hot Chairs,356,,,,5
+1001424,Thirsty Vegetables,745,,,,5
+1001452,The Dancing Beta,73,,,,5
+1001463,Cute Rodents,73,,,,5
+1001473,The Forsaken Riders,245,,,,5
+1001495,The Small Sapphires,64,,,,5
+1001525,Skilled Roadrunners,23,,,,5
+1001567,Mars Lonesome Doors,74,,,,5
+1001572,The Lucky Eardrums,675,,,,5
+1001577,The Disco Devils,745,,,,5
+1001584,The Old Accident-Prone Lamas,645,,,,5
+1001631,Strong Tables,423,,,,5
+1001701,Angry Pythons,413,,,,5
+1001780,The Dozers,345,,,,5
+1001805,Hungry Lieutenants,534,,,,5
+1001833,Freaky Shelter,234,,,,5
+1001876,The Sarcastic Parachutes,234,,,,5
+1001884,The Small Scarecrows,764,,,,5
+1001886,Digital Commanders,455,,,,5
+1001891,Alpha Mars,735,,,,5
+1001941,The Tiny Waffles,147,,,,5
+1002044,The Mysterious Wolfram Dragonflies,645,,,,5
+1002122,Gamma Wolfram,652,,,,5
+1002208,Hidden Beammers,341,,,,5
+1002308,Furious Soldiers,34,,,,5
+1002309,Tired Waffles,67,,,,5
+1002316,The Fox Sergeant,23,,,,5
+1002385,The Hydrogen Dogs,45,,,,5
+1002398,The Plastic Erasers,733,,,,5
+1002496,The Homeless Bulldozers,73,,,,5
+1002499,Hot Beards,64,,,,5
+1002584,Itchy Crystals,300,,,,5
+1002611,Teal Trombones,164,,,,5
+1002621,The Rainbow Love,153,,,,5
+1002642,The Tough Gutsy Autopsy,764,,,,5
+1002748,Indigo Comics,345,,,,5
+1002890,The Speedy Honeys,234,,,,5
+1002896,Young Moon,354,,,,5
+1002978,The But-Heads,234,,,,5
+1003069,The Ivory Daggers,745,,,,5
+1003079,The Frozen Wave,352,,,,5
+1003168,The Pluto Craws,63,,,,5
+1003258,Ninth Invaders,634,,,,5
+1003263,Bitter Sparrows,766,,,,5
+1003281,Lively Hawks,343,,,,5
+1003313,The Soldiers,198,,,,2
+1003326,Silly Railroads,474,,,,5
+1003346,The Sweet Testdummies,745,,,,5
+1003388,The Boiling Stallions,343,,,,5
+1003430,Omega Pluto,76,,,,5
+1003443,The Fried Massive Fathers,764,,,,5
+1003472,The Risky Mothers,575,,,,5
+1003572,Pure Locomotives,64,,,,7
+1003645,Fatty Major,645,,,,5
+1003648,Los Arrows,63,,,,5
+1003773,Dusty Generals,432,,,,5
+1003775,The Deserted Colonels,153,,,,5
+1003776,Raw Metaphors,745,,,,5
+1003789,The Golden Zeuses,264,,,,5
+1003805,The Itchy Crystals,345,,,,5
+1003811,The Nocturnal Iron,24,,,,5
+1003846,The Angry Panthers,387,,,,11
+1003847,Empty Guardians,213,,,,5
+1003853,The Lone Donuts,735,,,,5
+1003858,The Screaming Plastic,53,,,,5
+1003912,The Tombstones,634,,,,5
+1003950,The Mysterious Gravel,356,,,,5
+1003961,Third Tunas,343,,,,5
+1003965,The Navy Hammers,452,,,,5
+1003970,Rare Messengers,136,,,,5
+1004028,Forsaken Rockstars,645,,,,5
+1004064,Massive Epsilon Bees,136,,,,5
+1004127,Flower Princes,425,,,,5
+1004152,Lone Dogs,54,,,,5
+1004162,The Rebel Blue Spiders,745,,,,5
+1004179,Chicken Tigers,64,,,,5
+1004241,Hungry Coffin,854,,,,5
+1004253,The Microphones,145,,,,5
+1004346,The Funerals,536,,,,5
+1004401,The Prehistoric Meaningful Firecrackers,35,,,,5
+1004407,Rusty Papas,23,,,,5
+1004449,Grim Atoms,453,,,,5
+1004461,The Dinosaurs,346,,,,5
+1004467,Tainted Torpedos,453,,,,5
+1004513,The Junkyards,234,,,,5
+1004552,Tidy Vultures,674,,,,5
+1004713,The Fried Eagles,325,,,,5
+1004723,The Alpha Pluto,653,,,,5
+1004828,The Trombones,73,,,,5
+1004902,Magenta Electrons,34,,,,5
+1004947,Heavy Summer,735,,,,5
+1005059,The Crying Angels,634,,,,5
+1005093,The Only Dictators,63,,,,5
+1005143,Los Pineapples,645,,,,5
+1005227,The Hydrogen Dragons,156,,,,5
+1005234,Gutsy Atoms,73,,,,5
+1005268,Beauty Snakes,645,,,,5
+1005321,The Mercury Cats,72,,,,5
+1005340,The Toupees,634,,,,5
+1005472,Liquid Dinosaurs,645,,,,5
+1005492,The Week,63,,,,5
+1005550,The Micro Hydrogen Dogs,234,,,,5
+1005553,Sunny Flower Queens,23,,,,5
+1005590,The Streaming Summer,467,,,,5
+1005613,Nervous Hazard,24,,,,5
+1005683,Heavy Autumn,342,,,,5
+1005720,Probiotic Robots,143,,,,5
+1005733,Empty Guards,634,,,,5
+1005832,Eternal Silver Rhinestones,643,,,,5
+1005835,The Blue Spiders,54,,,,5
+1005874,Essential Sienna Puppets,564,,,,5
+1005877,Cute Arrows,314,,,,5
+1005896,The Rainbow Love,45,,,,5
+1005897,Sweety Tires,534,,,,5
+1005901,The Jupiter Cobras,234,,,,5
+1005990,Loud Motorcyclists,64,,,,5
+1006002,Heavy Tasty Toupees,745,,,,5
+1006026,Hot Tiny Vultures,645,,,,3
+1006542,The Smoke Electric Guardians,287,,,,5
+1006549,Meaningful Firecrackers,245,,,,5
+1006555,Treacherous Winter,345,,,,5
+1006696,Sweet Testdummies,63,,,,5
+1006740,Maximum Poseidon Butterflies,324,,,,5
+1006846,The Itchy Vital Beta,246,,,,5
+1006955,Next Hooks,634,,,,5
+1006963,Brave Pink Limousines,534,,,,5
+1007023,The Hydrogen,745,,,,5
+1007445,The Brave Swallows,64,,,,5
+1007712,The Empty Guards,563,,,,5
+1008419,The New Hearts,674,,,,5
+1008527,The Swift Tombstones,745,,,,5
+1008542,The Worthy Mercury,454,,,,5
+1008644,Serious Poles,234,,,,2
+1008764,Flying Queens,634,,,,5
+1008836,Vital Alpha,734,,,,5
+1009243,Helpless Temporary Tubas,345,,,,5
+1009256,The Hidden Boomerangs,643,,,,5
+1009879,Young Intense Crayons,64,,,,5
+1010350,The Purple Baron Roosters,373,,,,5
+1010658,The Disappointed Demons,241,,,,5
+1011017,The Eagles,64,,,,5
+1011179,The Rusty Oysters,753,,,,5
+1012167,Bold Prince Lobsters,325,,,,5
+1012306,Icy Comics,745,,,,5
+1013389,The Rubber Hares,734,,,,5
+1014214,Acoustic Lions,54,,,,5
+1014826,The All Men,745,,,,5
+1015134,The Magenta Emeralds,634,,,,9
+1015849,Brave Swallows,256,,,,5
+1016065,The Global Warriors,745,,,,5
+1016079,The Bold Pointless Lipsticks,74,,,,5
+1016548,Los Boys,76,,,,5
+1017262,Ironic Creeks,784,,,,5
+1017311,The Thirsty Uncles,234,,,,5
+1017312,The Princes,454,,,,5
+1017624,The Bulldozers,635,,,,5
+1017676,Rough Neutrons,63,,,,5
+1018635,The Skilled Rhinestones,215,,,,5
+1022200,Skeletons on Diet,346,,,,5
+1022510,Bold Tigers,534,,,,5
+1023923,Honey But-Heads,345,,,,5
+1024629,Pilatus Leather,73,,,,5
+1024725,Blue Pilatus Lasers,236,,,,5
+1025220,Full Smugglers,23,,,,5
+1026124,Los Hazard,653,,,,5
+1027719,Drunken Gamma,423,,,,5
+1029443,Chicken Tigers,745,,,,5
+1029629,The Pointless Lipsticks,126,,,,5
+1030636,Fox Sergeant,164,,,,5
+1031182,The Scarlet Defiant Chiefs,642,,,,5
+1032976,Orange Knifes,234,,,,5
+1035423,Hungry Clubs,234,,,,5
+1036173,Freaky Stormy Spades,221,,,,7
+1040343,Hilarious Brothers,534,,,,5
+1042418,Full on Californians,563,,,,5
+1045900,The Disco Doctors,343,,,,5
+1046839,Stony Sisters,254,,,,5
+1050528,Maximum Fathers,313,,,,5
+1057426,Magenta Omega Animals,653,,,,5
+1058612,Dirty Rocky Mustard,234,,,,5
+1063841,Kid Daggers,124,,,,5
+1069200,The Rapid Big Snakes,252,,,,5
+1075482,Robot Scorpions,234,,,,5
+1087680,Frozen Stray Steel,356,,,,5
+1087753,The Dancers,764,,,,5
+1088841,Scarlet Peasants,236,,,,5
+1098856,Old Kangaroos,435,,,,5
+1101324,Rapid Lust,234,,,,5
+1112229,Prince Barely Ravens,234,,,,5
+1112637,Baron Ravens,234,,,,5
+1141000,The Locking Mechanism,524,,,,5
+1143313,The Smoke Scissors,436,,,,5
+1145685,Sparkly Electrons,753,,,,5
+1149604,Kid White Omega,135,,,,5
+1152838,Totally Windshields,312,,,,5
+1184515,The Clouds,654,,,,5
+1201759,The Alien Lizards,214,,,,5
+1233212,The Mellow Frostbites,643,,,,5
+1233389,The Kneecaps,456,,,,5
+1234027,Small Eager Giants,75,,,,5
+1234850,Remote Monkeys,645,,,,5
+1236708,The Official Iron,345,,,,5
+1240220,The Silly Railroads,127,,,,5
+1240240,Forgotten Riders,134,,,,5
+1240452,The Tidy Vegetables,168,,,,5
+1240973,Official Iron,674,,,,5
+1241016,The Chicken Tigers,134,,,,5
+1245185,The Lieutenants,123,,,,5
+1246211,Zeus Boys,165,,,,5
+1247869,The Boomerangs,353,,,,5
+1248399,The Frostbites,246,,,,5
+1249089,Forsaken Stony Skunk,513,,,,5
+1250243,The Magenta Electrons,156,,,,5
+1251278,The Official Aberrant Kittens,643,,,,5
+1252130,The Giant Gems,256,,,,5
+1252141,Frozen Skeletons,213,,,,5
+1252214,Total Week,166,,,,5
+1252420,Prehistoric Eagles,124,,,,5
+1252428,Bitter Permanent Lanterns,675,,,,5
+1252764,Empty Shining Propellors,624,,,,5
+1253284,Hilarious Third Tungsten,266,,,,5
+1254886,The Minimum Pluto Cobras,267,,,,5
+1255063,The Next Hounddogs,653,,,,5
+1255659,Clever Knights,454,,,,5
+1262123,Solid Scorpions,162,,,,5
+1264463,The Ninth Speedy Honeys,283,,,,5
+1264703,Dancing Beta,287,,,,5
+1266739,Screaming Plastic,164,,,,5
+1268270,The Coffins,137,,,,5
+1268522,The Scarlet Peasants,7534,,,,5
+1268554,The Yellow Spiders,247,,,,5
+1268623,Sienna Puppets,34,,,,5
+1268720,The Endless Emperors,377,,,,5
+1270226,Aggitated Rats,365,,,,5
+1272256,The Olive Acoustic Lions,135,,,,5
+1274328,The Omega,73,,,,5
+1274600,Forgotten Rangers,134,,,,5
+1275131,Homeless Thirsty Vegetables,354,,,,5
+1275226,The Ironic Crossbows,453,,,,5
+1277211,Fake Leaders,351,,,,5
+1277408,Humid Clowns,325,,,,5
+1280371,The Strong Sunshine,243,,,,5
+1280758,The Yellow Jupiter,154,,,,5
+1280943,Meaty Fleas,452,,,,5
+1281772,Rebel Metaphors,234,,,,5
+1284044,The Official Abandoned Kids,542,,,,5
+1284215,The Pure Lock,234,,,,5
+1284219,Deadly Captains,343,,,,5
+1284266,The Sleepy Rockers,343,,,,5
+1284278,The Tough Weather,874,,,,5
+1284694,King Diamonds,452,,,,5
+1289443,Running Oysters,653,,,,5
+1290310,The Godfathers,432,,,,5
+1290837,The Mornings,534,,,,5
+1291259,Liquid Wooden Zeus,345,,,,5
+1291608,The Aggressive Lizards,534,,,,5
+1291617,Rare Mammas,345,,,,5
+1292375,The Dirty Corporals,534,,,,5
+1292435,The Wizards,534,,,,5
+1292438,Unique Wrenches,343,,,,5
+1292474,The Donuts,534,,,,5
+1293312,Dancing Barbarians,123,,,,5
+1295497,The Needless Haystack,645,,,,5
+1298111,Deserted Colonels,634,,,,5
+1298659,Persistent Lasers,345,,,,11
+1300189,Swinging Toothbrushes,234,,,,5
+1302903,The Sunny Temples,345,,,,5
+1305342,Dangerous Brigadiers,345,,,,7
+1310234,Electrical Ducks,53,,,,5
+1310601,Wolfram Dragons,543,,,,5
+1310624,Vicious Xylophones,45,,,,5
+1313829,The Streaming Street,367,,,,5
+1313953,The Wooden Poseidon,75,,,,5
+1314035,The Alien Men,75,,,,7
+1314086,Raw Messengers,74,,,,2
+1314100,Solid Showers,56,,,,5
+1314107,Thirsty Gold Wolfram,756,,,,5
+1314951,The Olive Kangaroos,63,,,,5
+1316789,The Remote Minefield,24,,,,5
+1317025,The Spades,64,,,,5
+1318111,The Girls,73,,,,5
+1318606,The Parachutes,63,,,,5
+1318961,Joking Clowns,45,,,,4
+6901218,The Eternal Kings,245,,,,5
+9918732,The Doors,189,,,,5
+9980437,Mercury Cats,236,,,,5
+10591801,The Gloomy Wolfram,154,,,,5
+10596860,The Cool Vipers,135,,,,5
