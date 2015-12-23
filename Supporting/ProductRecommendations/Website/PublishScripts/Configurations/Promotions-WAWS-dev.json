@@ -1,0 +1,21 @@
+{
+    "environmentSettings": {
+        "webSite": {
+            "name": "zivproductrecommendations2",
+            "location": "Central US"
+        },
+        "databases": [
+            {
+                "connectionStringName": "DefaultConnection",
+                "databaseName": "zivproductrecommendations2_db",
+                "serverName": "ouomqbqnxx",
+                "user": "Ziv",
+                "password": "",
+                "edition": "",
+                "size": "",
+                "collation": "",
+                "location": "Central US"
+            }
+        ]
+    }
+}
