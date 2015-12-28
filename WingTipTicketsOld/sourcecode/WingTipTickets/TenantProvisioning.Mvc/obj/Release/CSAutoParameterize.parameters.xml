@@ -1,6 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<parameters>
-  <parameter name="ProvisionSiteDb-Web.config Connection String" description="ProvisionSiteDb Connection String used in web.config by the application to access the database." defaultValue="Data Source=wingtipticketsprovisioning.database.windows.net;Initial Catalog=WingTipTicketsProvisioning;Integrated Security=False;User=developer;Password=P@ssword" tags="SqlConnectionString">
-    <parameterEntry kind="XmlFile" scope="C:\\Users\\meyer\\Source\\Workspaces\\WingTipTickets\\Source-Main\\WebPortal\\TenantProvisioning\.Mvc\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='ProvisionSiteDb']/@connectionString" />
-  </parameter>
-</parameters>
