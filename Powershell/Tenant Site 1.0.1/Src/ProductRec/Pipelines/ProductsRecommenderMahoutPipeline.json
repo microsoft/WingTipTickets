@@ -1,0 +1,47 @@
+{
+  "name": "ProductsRecommenderMahoutPipeline",
+  "properties": {
+    "description": "Pipeline to Run a Mahout Custom Map Reduce Jar to generate Recommendations.",
+    "start": "<pipeline start time>",
+    "end": "<pipeline end time>",
+    "activities": [
+      {
+        "name": "MahoutActivity",
+        "description": "Custom Map Reduce to generate Mahout result",
+        "inputs": [
+          {
+            "Name": "MahoutInputProductsUsageTable"
+          }
+        ],
+        "outputs": [
+          {
+            "Name": "ProductsRecommendationTable"
+          }
+        ],
+        "linkedServiceName": "HDInsightLinkedService",
+        "type": "HDInsightMapReduce",
+        "typeProperties": {
+          "className": "org.apache.mahout.cf.taste.hadoop.item.RecommenderJob",
+          "jarFilePath": "jars/mahout/mahout-core-0.9.0.2.1.12.0-2329-job.jar",
+          "jarLinkedService": "StorageLinkedService",
+          "arguments": [
+            "-s",
+            "SIMILARITY_COOCCURRENCE",
+            "--input",
+            "$$Text.Format('wasb://productrec@<account name>.blob.core.windows.net/mahoutinput/yearno={0:yyyy}/monthno={0:%M}/', SliceStart)",
+            "--output",
+            "$$Text.Format('wasb://productrec@<account name>.blob.core.windows.net/recommendations/yearno={0:yyyy}/monthno={0:%M}/', SliceStart)",
+            "--tempDir",
+            "$$Text.Format('wasb://productrec@<account name>.blob.core.windows.net/temprecommendationsdir/yearno={0:yyyy}/monthno={0:%M}/', SliceStart)"
+          ]
+        },
+        "policy": {
+          "concurrency": 1,
+          "executionPriorityOrder": "NewestFirst",
+          "retry": 1,
+          "timeout": "01:00:00"
+        }
+      }
+    ]
+  }
+}
