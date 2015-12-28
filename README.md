@@ -4,6 +4,4 @@ These files comprise a hands-on-lab that demostrates an Azure SQL Database and A
 There are two Word documents, one that describes that HOL setup, and another that describes all of the scenarios that can be used
 Source-code for the application is also available in the sourcecode sub-directory
 
-WingTipTicketsOLD contains everything up to 12/22/2015.
-
 This fork is for continuing development efforts for the Wingtip Tickets project.
