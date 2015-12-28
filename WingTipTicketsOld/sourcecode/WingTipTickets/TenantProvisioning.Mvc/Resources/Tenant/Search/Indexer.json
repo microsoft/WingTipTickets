@@ -1,6 +1,0 @@
-{ 
-	"name": "fromsql",
-	"dataSourceName": "concertssql",
-	"targetIndexName": "concerts",
-	"schedule": { "interval": "PT5M", "startTime" : "2015-01-01T00:00:00Z" }
-}
