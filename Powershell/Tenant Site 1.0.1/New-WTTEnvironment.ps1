@@ -117,6 +117,11 @@ function New-WTTEnvironment
             $AzureSqlDatabaseName = "Customer1"
         }
 
+        if($AzureSqlDWDatabaseName -eq "")
+        {
+            $AzureSqlDWDatabaseName = "CustomerDW"
+        }
+
         if($AzureWebSiteWebDeployPackagePath -eq "")
         {
             $azureWebSiteWebDeployPackagePath = (Get-Item -Path ".\" -Verbose).FullName + "\Packages"
