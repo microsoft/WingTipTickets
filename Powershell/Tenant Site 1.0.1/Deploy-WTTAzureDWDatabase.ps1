@@ -129,7 +129,7 @@ function Deploy-WTTAzureDWDatabase
                     $dbExists=$false
                     Write-Host " "
                     Write-Host "### Creating database ' " $DWDatabaseName " ' ###"
-                    New-AzureRMSqlDatabase -RequestedServiceObjectiveName "DW1000" -ServerName $ServerName -DatabaseName "$DWDatabaseName" -Edition "$DatabaseEdition" -ResourceGroupName $WTTEnvironmentApplicationName
+                    New-AzureRMSqlDatabase -RequestedServiceObjectiveName "DW2000" -ServerName $ServerName -DatabaseName "$DWDatabaseName" -Edition "$DatabaseEdition" -ResourceGroupName $WTTEnvironmentApplicationName
                     Write-Host "Success: New database $DWDatabaseName created" -foregroundcolor "green"
 
                     $DWServer = "$ServerName.database.windows.net"
@@ -163,6 +163,8 @@ function Deploy-WTTAzureDWDatabase
 
 	        $Connection.Close()
 	        $Connection=$null
+            
+            Set-AzureRmSqlDatabase -RequestedServiceObjectiveName "DW100" -ServerName $ServerName -DatabaseName "$DWDatabaseName" -ResourceGroupName $WTTEnvironmentApplicationName
         }
         Write-Host " "
         Write-Host "SUCCESS:Warehouse Database tables created and database connection closed. " -foregroundcolor "yellow"

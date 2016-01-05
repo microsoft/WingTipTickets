@@ -35,15 +35,16 @@ $oldErrors = $Error.Count
 [System.Reflection.Assembly]::LoadWithPartialName("System.Web.Extensions")
 $ser = New-Object System.Web.Script.Serialization.JavaScriptSerializer -ErrorAction Stop
 
-if($SubscriptionName.CompareTo("Current"))
+<#if($SubscriptionName.CompareTo("Current"))
 {
     Select-AzureSubscription $SubscriptionName -ErrorAction Stop
 } else {
     Get-AzureSubscription -Current
-}
+}#>
 
 # Get the Azure Data Factory
-$df = Get-AzureDataFactory -ResourceGroupName $ResourceGroupName -Name $DataFactoryName
+#$df = Get-AzureDataFactory -ResourceGroupName $ResourceGroupName -Name $DataFactoryName
+$df =  Get-AzureRmDataFactory -ResourceGroupName $ResourceGroupName -Name $DataFactoryName
 $df 
 
 $JsonFilesFolder = ".\temp\json"
@@ -87,7 +88,8 @@ foreach($file in $files)
         #continue;
     #}
     #-ErrorAction Stop
-    New-AzureDataFactoryLinkedService -DataFactory $df -File $file.FullName  -Force 2>&1 3>&1 4>&1 1>>adfdeploy-log.txt
+    #New-AzureDataFactoryLinkedService -DataFactory $df -File $file.FullName  -Force 2>&1 3>&1 4>&1 1>>adfdeploy-log.txt
+    New-AzureRmDataFactoryLinkedService -DataFactory $df -File $file.FullName  -Force 2>&1 3>&1 4>&1 1>>adfdeploy-log.txt
     
     Start-Sleep -Seconds 60
 }
@@ -124,7 +126,8 @@ foreach($file in $files)
     }
     #>
     #-ErrorAction Stop
-     New-AzureDataFactoryDataset -DataFactory $df -File $file.FullName  -Force 2>&1 3>&1 4>&1 1>>adfdeploy-log.txt
+     #New-AzureDataFactoryDataset -DataFactory $df -File $file.FullName  -Force 2>&1 3>&1 4>&1 1>>adfdeploy-log.txt
+     New-AzureRmDataFactoryDataset -DataFactory $df -File $file.FullName  -Force 2>&1 3>&1 4>&1 1>>adfdeploy-log.txt
 
      Start-Sleep -Seconds 60
 }
@@ -152,13 +155,15 @@ foreach($file in $files)
         continue;
     }
     #>
-    New-AzureDataFactoryPipeline -DataFactory $df -File $file.FullName -Force 2>&1 3>&1 4>&1 1>>adfdeploy-log.txt
+    #New-AzureDataFactoryPipeline -DataFactory $df -File $file.FullName -Force 2>&1 3>&1 4>&1 1>>adfdeploy-log.txt
+    New-AzureRmDataFactoryPipeline -DataFactory $df -File $file.FullName -Force 2>&1 3>&1 4>&1 1>>adfdeploy-log.txt
 
     if($StartTime -and $EndTime)
     {
         $name = Extract-Name -FileContent $json -Target $obj.name
         Write-Host "Setting Pipeline Active Period from [$StartTime] to [$EndTime]..."  -ForegroundColor Green
-        Set-AzureDataFactoryPipelineActivePeriod -DataFactory $df -Name $name -StartDateTime $StartTime -EndDateTime $EndTime -Force 
+        #Set-AzureDataFactoryPipelineActivePeriod -DataFactory $df -Name $name -StartDateTime $StartTime -EndDateTime $EndTime -Force 
+        Set-AzureRmDataFactoryPipelineActivePeriod -DataFactory $df -Name $name -StartDateTime $StartTime -EndDateTime $EndTime -Force 
     }
     Start-Sleep -Seconds 60
 }

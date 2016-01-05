@@ -39,25 +39,20 @@ function Remove-WTTEnvironment
             $global:VerbosePreference = "SilentlyContinue"
 
             ### Check installed PowerShell Version ###
-            Write-Host "### Checking whether installed Azure PowerShell Version is at least 0.9.7. ###" -foregroundcolor "yellow"
+            Write-Host "### Checking whether installed Azure PowerShell Version is at least 1.0.. ###" -foregroundcolor "yellow"
                         
             $installedAzurePowerShellVersion = CheckInstalledPowerShellVersion
             if ($installedAzurePowerShellVersion -ge 0)
             {
-                Write-Host "### Installed Azure PowerShell Version is at least 0.9.7. ###" -foregroundcolor "yellow"
+                Write-Host "### Installed Azure PowerShell Version is at least 1.0.2. ###" -foregroundcolor "yellow"
 
                 ### Check if both ASM and ARM are provisioned ###
                 Write-Host "### Checking whether Azure Service Model (ASM) and Azure Resource Model (ARM) are provisioned. ###" -foregroundcolor "yellow"
-                $supportedModes = (Get-AzureSubscription -Current).SupportedModes.Split(",")
-                if ($supportedModes.Count -eq 2)
-                {
-                    Write-Host "### Both Azure Service Model (ASM) and Azure Resource Model (ARM) are provisioned. ###" -foregroundcolor "yellow"                    
-                    
-                    Switch-AzureMode AzureResourceManager -WarningVariable null -WarningAction SilentlyContinue
-                                                                        
+                if ($installedAzurePowerShellVersion -lt "1.0.2")
+                {                                                                               
                     #Remove Azure Resource Group
                     Write-Host "### Removing Azure Resource Group '$wTTEnvironmentApplicationName'. ###" -foregroundcolor "yellow"
-                    $azureResourceGroupRemoved = (Remove-AzureResourceGroup -Name $azureResourceGroupName -Force -PassThru -ErrorAction SilentlyContinue -ErrorVariable azureResourceGroupRemovedErrors)
+                    $azureResourceGroupRemoved = (Remove-AzureRMResourceGroup -Name $azureResourceGroupName -Force -PassThru -ErrorAction SilentlyContinue -ErrorVariable azureResourceGroupRemovedErrors)
                     
                     if ($azureResourceGroupRemoved)
                     {
@@ -78,49 +73,18 @@ function Remove-WTTEnvironment
                             }
                         }
                     }
-                                
-                    Switch-AzureMode AzureServiceManagement -WarningVariable null -WarningAction SilentlyContinue
                     
-                    #Remove Traffic Manager Profile
-                    Write-Host "### Removing Azure Traffic Manager Profile '$wTTEnvironmentApplicationName'. ###" -foregroundcolor "yellow"
-                    $azureTrafficManagerProfileRemoved = (Remove-AzureTrafficManagerProfile -Name $wTTEnvironmentApplicationName -Force -PassThru -ErrorAction SilentlyContinue -ErrorVariable azureTrafficManagerProfileRemovedErrors)
-                                        
-                    if ($azureTrafficManagerProfileRemoved)
-                    {
-                        Write-Host "### Success: Azure Traffic Manager Profile '$wTTEnvironmentApplicationName' removed. ###" -foregroundcolor "green"
-                    }
-                    else
-                    {
-                        foreach ($error in $azureTrafficManagerProfileRemovedErrors)
-                        {
-                            [string]$exception = $error.Exception
-                            if($exception.Contains("does not exist"))
-                            {
-                                Write-Host "### Azure Traffic Manager Profile '$wTTEnvironmentApplicationName' doesn't exist. ###" -foregroundcolor "yellow"
-                            }                    
-                                else
-                            {
-                                Write-Host "### Error: Azure Cloud Service '$azureCloudServiceSecondaryName' was not removed because: '$error'. ###" -foregroundcolor "red"
-                            }
-                        }                      
-                    }                                          
-                }
-				#Load ADF script to remove ADF items
-				. .\New-WTTADFEnvironment.ps1
-                    New-WTTADFEnvironment -mode delete -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName
-
                 else
                 {
                     ### Error if both ASM and ARM aren't provisioned ###
-                    Write-Host "### Error: Both Azure Service Model (ASM) and Azure Resource Model (ARM) need to be provisioned. ###" -foregroundcolor "red"
-                    Write-Host "### You can run: (Get-AzureSubscription -Default).SupportedModes to verify which is/isn't provisioned. ###" -foregroundcolor "red"
+                    Write-Host "### Error: Azure Resource Model (ARM) needs to be provisioned. ###" -foregroundcolor "red"
                     Write-Host "### Please contact Microsoft Support to have them troubleshoot further. ###" -foregroundcolor "red"
                 }
             }
             else
             {
                 ### Error if installed Azure PowerShell Version is older than minimum required version ###
-                Write-Host "### Error: Installed Azure PowerShell Version is older than 0.9.7.  Please install the latest version from: ###" -foregroundcolor "red"
+                Write-Host "### Error: Installed Azure PowerShell Version is older than 1.0.2.  Please install the latest version from: ###" -foregroundcolor "red"
                 Write-Host "### http://azure.microsoft.com/en-us/downloads/, under Command-line tools, under Windows PowerShell, click Install ###" -foregroundcolor "red"
             }
             
@@ -161,10 +125,8 @@ function GetVersionStringAsArray([String] $version)
 # $version1 > $version2, returns 1.
 function CheckInstalledPowerShellVersion() 
     {
-        Switch-AzureMode AzureServiceManagement -WarningVariable null -WarningAction SilentlyContinue
-
         $installedVersion = ((Get-Module Azure).Version.Major -as [string]) +'.'+ ((Get-Module Azure).Version.Minor -as [string]) +'.'+ ((Get-Module Azure).Version.Build -as [string])        
-        $minimumRequiredVersion = '0.9.7'        
+        $minimumRequiredVersion = '1.0.2'        
         $ver1 = GetVersionStringAsArray $installedVersion
         $ver2 = GetVersionStringAsArray $minimumRequiredVersion
         if ($ver1[0] -lt $ver2[0]) 
