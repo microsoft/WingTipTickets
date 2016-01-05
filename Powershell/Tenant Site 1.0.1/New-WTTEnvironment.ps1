@@ -117,6 +117,11 @@ function New-WTTEnvironment
             $AzureSqlDatabaseName = "Customer1"
         }
 
+        if($AzureSqlDWDatabaseName -eq "")
+        {
+            $AzureSqlDWDatabaseName = "CustomerDW"
+        }
+
         if($AzureWebSiteWebDeployPackagePath -eq "")
         {
             $azureWebSiteWebDeployPackagePath = (Get-Item -Path ".\" -Verbose).FullName + "\Packages"
@@ -419,23 +424,14 @@ function New-WTTEnvironment
 
 
 
-						# Set the Application Settings
-                        if($azureSearchService.Count -eq 1)
-                        {
-                            $searchServicePrimaryManagementKey = $azureSearchService
-                            $documentDbPrimaryKey = Import-Clixml .\docdbkey.xml
-                            
-                            Write-Host "### Setting the appSettings Values in the web.config for the '$azureWebSitePrimaryWebDeployPackageName' Azure WebSites WebDeploy Package. ###" -foregroundcolor "yellow"
-                            Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -AzureWebSiteWebDeployPackagePath $azureWebSitePrimaryWebDeployPackagePath -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey  $documentDbPrimaryKey
-                            Write-Host "### Setting the appSettings Values in the web.config for the '$azureWebSiteSecondaryWebDeployPackageName' Azure WebSites WebDeploy Package. ###" -foregroundcolor "yellow"
-                            Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -AzureWebSiteWebDeployPackagePath $azureWebSiteSecondaryWebDeployPackagePath -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerSecondaryName -AzureSqlDatabaseServerSecondaryName $azureSqlDatabaseServerPrimaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey  $documentDbPrimaryKey
-                        }
+
 						
 						# Create Service Plans
                         Write-Host "### Creating Primary App Service Plan '$azureSqlDatabaseServerPrimaryName' if it doesn't already exist. ###" -foregroundcolor "yellow"
-                        $null = New-AzureAppServicePlan -Name $azureSqlDatabaseServerPrimaryName -Location $WTTEnvironmentPrimaryServerLocation -Sku Standard -ResourceGroupName $azureResourceGroupName
+                        #$null = New-AzureAppServicePlan -Name $azureSqlDatabaseServerPrimaryName -Location $WTTEnvironmentPrimaryServerLocation -Sku Standard -ResourceGroupName $azureResourceGroupName
+                        $null = New-AzureRMAppServicePlan -Name $azureSqlDatabaseServerPrimaryName -Location $WTTEnvironmentPrimaryServerLocation -Sku Standard -ResourceGroupName $azureResourceGroupName
                         Write-Host "### Creating Secondary App Service Plan '$azureSqlDatabaseServerSecondaryName' if it doesn't already exist. ###" -foregroundcolor "yellow"
-                        $null = New-AzureAppServicePlan -Name $azureSqlDatabaseServerSecondaryName -Location $wTTEnvironmentSecondaryServerLocation -Sku Standard -ResourceGroupName $azureResourceGroupName
+                        $null = New-AzureRMAppServicePlan -Name $azureSqlDatabaseServerSecondaryName -Location $wTTEnvironmentSecondaryServerLocation -Sku Standard -ResourceGroupName $azureResourceGroupName
 
 						# Create Web Applications
                         Write-Host "### Creating a Primary Web App '$azureSqlDatabaseServerPrimaryName' in Primary App Service Plan '$azureSqlDatabaseServerPrimaryName' if it doesn't already exist. ###" -foregroundcolor "yellow"
@@ -458,7 +454,19 @@ function New-WTTEnvironment
 
                         Write-Host "### Deploying Secondary WebDeploy Package '$azureWebSiteSecondaryWebDeployPackageName' to Secondary Web App '$azureSqlDatabaseServerSecondaryName'. ###" -foregroundcolor "yellow"
                         Publish-AzureWebsiteProject -Name $azureSqlDatabaseServerSecondaryName -Package $azureWebSiteSecondaryWebDeployPackagePath
-                    
+                        
+                        # Set the Application Settings
+                        if($azureSearchService.Count -eq 1)
+                        {
+                            $searchServicePrimaryManagementKey = $azureSearchService
+                            $documentDbPrimaryKey = Import-Clixml .\docdbkey.xml
+                            
+                            Write-Host "### Setting the appSettings Values in the web.config for the '$azureWebSitePrimaryWebDeployPackageName' Azure WebSites WebDeploy Package. ###" -foregroundcolor "yellow"
+                            Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -AzureWebSiteWebDeployPackagePath $azureWebSitePrimaryWebDeployPackagePath -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey  $documentDbPrimaryKey
+                            Write-Host "### Setting the appSettings Values in the web.config for the '$azureWebSiteSecondaryWebDeployPackageName' Azure WebSites WebDeploy Package. ###" -foregroundcolor "yellow"
+                            Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -AzureWebSiteWebDeployPackagePath $azureWebSiteSecondaryWebDeployPackagePath -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerSecondaryName -AzureSqlDatabaseServerSecondaryName $azureSqlDatabaseServerPrimaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey  $documentDbPrimaryKey
+                        }
+
                         # Create Traffic Manager Profile
                         # ARM - currently having an issue with the ARM preview cmdlets.  Working ps1s are in the 2.2 folder
                         # New-WTTAzureTrafficManagerProfile -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -AzureTrafficManagerResourceGroupName $azureResourceGroupName

@@ -1,4 +1,4 @@
-<#
+﻿<#
 .Synopsis
     WingtipTickets (WTT) Demo Environment.
  .DESCRIPTION
@@ -95,79 +95,27 @@ function Set-WTTEnvironmentWebConfig
                 $AzureSqlDatabaseServerSecondaryName = $WTTEnvironmentApplicationName + "secondary"                    
             }
 
-                        
-
-            # Open zip and find the particular file (assumes only one inside the Zip file)
-            $fileToEdit = "web.config"
-            Add-Type -assembly  System.IO.Compression.FileSystem            
-            $webDeployPackage = [System.IO.Compression.ZipFile]::Open($AzureWebSiteWebDeployPackagePath,"Update")
-            $desiredWebConfigFile = $webDeployPackage.Entries | Where({$_.name -eq $fileToEdit})   
-            if($desiredWebConfigFile.Count -gt 1)
-            {
-                foreach($webConfigFile in $desiredWebConfigFile)                
-                {
-                    if ($webConfigFile.FullName -notcontains "Views")
-                    {
-                        $desiredWebConfigFile = $webConfigFile
-                    }
-                }
-            }
-            
-            # Read the contents of the web.config file
-            $webConfigFile = [System.IO.StreamReader]($desiredWebConfigFile).Open()            
-            [xml]$webConfig = [xml]$webConfigFile.ReadToEnd()
-            $webConfigFile.Close()
-            
-            # Set the appSetttings values 
-            $obj = $webConfig.configuration.appSettings.add | where {$_.Key -eq 'TenantName'}
-            $obj.value = $WTTEnvironmentApplicationName
-
-            $obj = $webConfig.configuration.appSettings.add | where {$_.Key -eq 'DatabaseUserName'}
-            $obj.value = $AzureSqlDatabaseServerAdministratorUserName
-
-            $obj = $webConfig.configuration.appSettings.add | where {$_.Key -eq 'DatabaseUserPassword'}
-            $obj.value = $AzureSqlDatabaseServerAdministratorPassword        
-        
-            $obj = $webConfig.configuration.appSettings.add | where {$_.Key -eq 'PrimaryDatabaseServer'}
-            $obj.value = $AzureSqlDatabaseServerPrimaryName
-
-            $obj = $webConfig.configuration.appSettings.add | where {$_.Key -eq 'SecondaryDatabaseServer'}
-            $obj.value = $AzureSqlDatabaseServerSecondaryName
-
-            $obj = $webConfig.configuration.appSettings.add | where {$_.Key -eq 'TenantDbName'}
-            $obj.value = $AzureSqlDatabaseName
-
-            $obj = $webConfig.configuration.appSettings.add | where {$_.Key -eq 'SearchServiceKey'}
-            $obj.value = $SearchServicePrimaryManagementKey
-
-            if ($WTTEnvironmentApplicationName.Length -gt 15)
-            {
-                $wTTEnvironmentApplicationName = $WTTEnvironmentApplicationName.Substring(0,15)
-            }
-            else
-            {
-                $wTTEnvironmentApplicationName = $WTTEnvironmentApplicationName
-            }                        
-
-            $obj = $webConfig.configuration.appSettings.add | where {$_.Key -eq 'SearchServiceName'}
-            $obj.value = $wTTEnvironmentApplicationName
 			
-			# New DocumentDb Keys
-			$obj = $webConfig.configuration.appSettings.add | where {$_.Key -eq 'DocumentDbServiceEndpointUri'}
-            $azureDocDBObj = ("https://$azureDocumentDbName.documents.azure.com:443/")
-            $obj.value = $azureDocDBObj 
-			
-			$obj = $webConfig.configuration.appSettings.add | where {$_.Key -eq 'DocumentDbServiceAuthorizationKey'}
-            $obj.value = $documentDbPrimaryKey
-                        
-            $formattedXml = Format-XML -xml $webConfig.OuterXml
-            
-            # Write the changes and close the zip file
-            $webConfigFileFinal = [System.IO.StreamWriter]($desiredWebConfigFile).Open()            
-            $webConfigFileFinal.BaseStream.SetLength(0)
-            $webConfigFileFinal.Write($formattedXml)            
-            $webConfigFileFinal.Close()
-            $webDeployPackage.Dispose()
+			# Build web application settings
+			$appSettings = @{ `
+				"TenantName" = $WTTEnvironmentApplicationName; 
+				"DatabaseUserName" = $AzureSqlDatabaseServerAdministratorUserName; 
+				"DatabaseUserPassword" = $AzureSqlDatabaseServerAdministratorPassword; 
+				"PrimaryDatabaseServer" = $AzureSqlDatabaseServerPrimaryName; 
+				"SecondaryDatabaseServer" = $AzureSqlDatabaseServerSecondaryName; 
+				"TenantDbName" = $AzureSqlDatabaseName; 
+				"SearchServiceKey" = $SearchServicePrimaryManagementKey; 
+				"SearchServiceName" = $wTTEnvironmentApplicationName; 
+				"DocumentDbServiceEndpointUri" = ("https://$DocumentDbName.documents.azure.com:443/"); 
+				"DocumentDbServiceAuthorizationKey" = $DocumentDbKey; 
+			}
+
+			# Add the settings to the website
+			# WebSiteName needs to be passed
+			Set-AzureWebsite -Name $websiteName -AppSettings $appSettings
+
+			# Restart the website - (Not sure that this is needed, try without first)
+			Restart-AzureWebsite -Name $websiteName
         }
         catch
         {            
@@ -176,21 +124,3 @@ function Set-WTTEnvironmentWebConfig
     }
 }
 
-function Format-XML ([xml]$xml, $indent=2) 
-{ 
-    try
-    {
-        $StringWriter = New-Object System.IO.StringWriter 
-        $XmlWriter = New-Object System.XMl.XmlTextWriter $StringWriter 
-        $xmlWriter.Formatting = "indented" 
-        $xmlWriter.Indentation = $Indent 
-        $xml.WriteContentTo($XmlWriter) 
-        $XmlWriter.Flush() 
-        $StringWriter.Flush() 
-        Write-Output $StringWriter.ToString() 
-    }
-    catch
-    {            
-        Write-Host $Error
-    }
-}

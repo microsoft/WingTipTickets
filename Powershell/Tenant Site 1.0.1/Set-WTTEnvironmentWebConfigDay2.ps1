@@ -14,7 +14,8 @@ function Set-WTTEnvironmentWebConfigDay2
     $ADFWebSite = Get-AzureRMWebApp | Where-Object {$_.Name -like "*product*"}
 
 	#Get the WTT primary Website
-    $wttWebSite = Get-AzureRMWebApp | Where-Object {$_.Name -like "*primary"}
+    $wttWebSitePrimary = Get-AzureRMWebApp | Where-Object {$_.Name -like "*primary"}
+    $wttWebSiteSecondary = Get-AzureRMWebApp | Where-Object {$_.Name -like "*secondary"}
     
 	$ADFWebSite = [string]$ADFWebSite.HostNames
     $wttWebSite = [string]$wttWebSite.Name
@@ -24,5 +25,6 @@ function Set-WTTEnvironmentWebConfigDay2
 	$settings[“RecommendationSiteUrl"] = $ADFWebSite
 	
 	#Set-AzureWebsite -AppSettings $settings -Name $wttWebSite
-    Set-AzureRMWebApp -AppSettings $settings -Name $wttWebSite
+    Set-AzureRMWebApp -AppSettings $settings -Name $wttWebSitePrimary
+    Set-AzureRMWebApp -AppSettings $settings -Name $wttWebSiteSecondary
 }
