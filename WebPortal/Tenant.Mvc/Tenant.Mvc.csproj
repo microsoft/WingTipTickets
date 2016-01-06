@@ -455,6 +455,7 @@
     <Content Include="Content\Img\WingTipTickets\up.png" />
     <Content Include="Content\Stylesheets\bootstrap-theme.css.map" />
     <Content Include="Content\Stylesheets\bootstrap.css.map" />
+    <None Include="Properties\PublishProfiles\AutoProvisioner.pubxml" />
     <None Include="Properties\PublishProfiles\Deployment-Primary.pubxml" />
     <None Include="Properties\PublishProfiles\Deployment-Secondary.pubxml" />
     <Content Include="SqlScripts\TrimConcerts.sql">
