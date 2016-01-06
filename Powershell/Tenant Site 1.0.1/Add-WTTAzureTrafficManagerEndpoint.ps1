@@ -10,7 +10,12 @@ function Add-WTTAzureTrafficManagerEndpoint
 {
     [CmdletBinding()]
     Param
-    (    
+    (   
+        #WTT Environment Application Name
+        [Parameter(Mandatory=$true)]
+        [String]
+        $WTTEnvironmentApplicationName,
+ 
         #Azure Traffic Manager Profile Name
         [Parameter(Mandatory=$true)]
         [String]
@@ -78,14 +83,14 @@ function Add-WTTAzureTrafficManagerEndpoint
             {
                 Write-Host "### Azure Traffic Manager Domain Name '$azureTrafficManagerDomainName' exists. ###" -foregroundcolor "yellow"
                 Write-Host "### Retrieving Traffic Manager Profile. ###" -foregroundcolor "yellow"
-                $azureTrafficManagerProfile = Get-AzureTrafficManagerProfile -Name $azureTrafficManagerProfileName
+                $azureTrafficManagerProfile = Get-AzureRmTrafficManagerProfile -ResourceGroupName $WTTEnvironmentApplicationName -Name $azureTrafficManagerProfileName
 
                 if($azureWebSiteExists)
                 {
                     Write-Host "### Azure WebSite '$azureWebSiteDomainName' exists. ###" -foregroundcolor "yellow"
                     Write-Host "### Checking if Azure WebSite $azureWebSiteDomainName' is already an endpoint in the Traffic Manager Profile '$azureTrafficManagerDomainName'. ###" -foregroundcolor "yellow"
 
-                    $azureTrafficManagerProfileEndpoints = (Get-AzureTrafficManagerProfile -Name $azureTrafficManagerProfileName).Endpoints
+                    $azureTrafficManagerProfileEndpoints = (Get-AzureRmTrafficManagerProfile -ResourceGroupName $WTTEnvironmentApplicationName -Name $azureTrafficManagerProfileName).Endpoints
                     #if($azureTrafficManagerProfileEndpoints.DomainName -notcontains $azureWebSiteDomainName -and $azureTrafficManagerProfileEndpoints.DomainName)
                     if($azureTrafficManagerProfileEndpoints.DomainName -notcontains $azureWebSiteDomainName)
                     {

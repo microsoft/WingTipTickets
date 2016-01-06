@@ -95,6 +95,8 @@ function Set-WTTEnvironmentWebConfig
                 $AzureSqlDatabaseServerSecondaryName = $WTTEnvironmentApplicationName + "secondary"                    
             }
 
+             $ADFWebSite = Get-AzureRMWebApp | Where-Object {$_.Name -like "*product*"}
+             $ADFWebSite = [string]$ADFWebSite.HostNames
 			
 			# Build web application settings
 			$appSettings = @{ `
@@ -107,7 +109,8 @@ function Set-WTTEnvironmentWebConfig
 				"SearchServiceKey" = $SearchServicePrimaryManagementKey; 
 				"SearchServiceName" = $wTTEnvironmentApplicationName; 
 				"DocumentDbServiceEndpointUri" = ("https://$DocumentDbName.documents.azure.com:443/"); 
-				"DocumentDbServiceAuthorizationKey" = $DocumentDbKey; 
+				"DocumentDbServiceAuthorizationKey" = $DocumentDbKey;
+                “RecommendationSiteUrl" = $ADFWebSite ;
 			}
 
 			# Add the settings to the website
