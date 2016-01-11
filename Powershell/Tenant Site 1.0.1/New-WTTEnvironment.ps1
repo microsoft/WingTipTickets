@@ -186,12 +186,12 @@ function New-WTTEnvironment
             $global:VerbosePreference = "SilentlyContinue"
 
             ### Check installed PowerShell Version ###
-            Write-Host "### Checking whether installed Azure PowerShell Version is at least 1.0.2. ###" -foregroundcolor "yellow"
+            Write-Host "### Checking whether installed Azure PowerShell Version is at least 1.0.1. ###" -foregroundcolor "yellow"
 
             $installedAzurePowerShellVersion = CheckInstalledPowerShellVersion
-            if ($installedAzurePowerShellVersion -ge 0)
+            if ($installedAzurePowerShellVersion -gt 0)
             {
-                Write-Host "### Installed Azure PowerShell Version is at least 1.0.. ###" -foregroundcolor "yellow"
+                Write-Host "### Installed Azure PowerShell Version is at least 1.0.1. ###" -foregroundcolor "yellow"
                  
                     Write-Host "### Unblocking all PowerShell Scripts in the '$localPath' folder. ###" -foregroundcolor "yellow"
                     # Unblock Files
@@ -491,15 +491,9 @@ function New-WTTEnvironment
                         }
                     
                 
-
-                else
-                {
-                    ### Error if both ASM and ARM aren't provisioned ###
-                    Write-Host "### Error: Both Azure Service Model (ASM) and Azure Resource Model (ARM) need to be provisioned. ###" -foregroundcolor "red"
-                    Write-Host "### You can run: (Get-AzureSubscription -Default).SupportedModes to verify which is/isn't provisioned. ###" -foregroundcolor "red"
-                    Write-Host "### Please contact Microsoft Support to have them troubleshoot further. ###" -foregroundcolor "red"
                 }
-            }
+
+            
             else
             {
                 ### Error if installed Azure PowerShell Version is older than minimum required version ###
@@ -547,8 +541,8 @@ function GetVersionStringAsArray([String] $version)
 function CheckInstalledPowerShellVersion() 
     {
 
-        $installedVersion = ((Get-Module Azure).Version.Major -as [string]) +'.'+ ((Get-Module Azure).Version.Minor -as [string]) +'.'+ ((Get-Module Azure).Version.Build -as [string])        
-        $minimumRequiredVersion = '1.0.2'        
+        $installedVersion = ((Get-Module Azure*).Version.Major -as [string]) +'.'+ ((Get-Module Azure*).Version.Minor -as [string]) +'.'+ ((Get-Module Azure*).Version.Build -as [string])    
+        $minimumRequiredVersion = '1.0.1'        
         $ver1 = GetVersionStringAsArray $installedVersion
         $ver2 = GetVersionStringAsArray $minimumRequiredVersion
         if ($ver1[0] -lt $ver2[0]) 
