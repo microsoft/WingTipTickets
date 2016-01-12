@@ -296,10 +296,6 @@ function New-WTTEnvironment
 					#switch-AzureMode AzureResourceManager -WarningVariable null -WarningAction SilentlyContinue
 					#Remove Switch-AzureMode
                     Start-Sleep -Seconds 30    
-                    #$resourcegroup = (get-azureresourcegroup -name $WTTResourceGroupName).Location
-                    #$resourcegrouplocation = $resourcegroup.location
-                    #$resourcelocation = $resourcegrouplocation
-                    #$resourcelocation = $resourcegroup
 
                     $WTTDocumentDbLocation = Switch ($WTTEnvironmentPrimaryServerLocation)
                            {
@@ -362,7 +358,7 @@ function New-WTTEnvironment
 
                     if ($azureSqlDatabaseServerPrimaryNameExists.Count -gt 0)
                     {   
-                        Deploy-DBSchema -ServerName $azureSqlDatabaseServerPrimaryName -DatabaseEdition "Basic" -UserName $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -ServerLocation $WTTEnvironmentPrimaryServerLocation -DatabaseName $AzureSqlDatabaseName            
+                        Deploy-DBSchema -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName -DatabaseEdition "Basic" -UserName $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -ServerLocation $WTTEnvironmentPrimaryServerLocation -DatabaseName $AzureSqlDatabaseName            
                         Populate-DBSchema -ServerName $azureSqlDatabaseServerPrimaryName -Username $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -DatabaseName $AzureSqlDatabaseName                    
                     }
                                                             
@@ -417,9 +413,9 @@ function New-WTTEnvironment
 						# Create Service Plans
                         Write-Host "### Creating Primary App Service Plan '$azureSqlDatabaseServerPrimaryName' if it doesn't already exist. ###" -foregroundcolor "yellow"
                         #$null = New-AzureAppServicePlan -Name $azureSqlDatabaseServerPrimaryName -Location $WTTEnvironmentPrimaryServerLocation -Sku Standard -ResourceGroupName $azureResourceGroupName
-                        $null = New-AzureRMAppServicePlan -Name $azureSqlDatabaseServerPrimaryName -Location $WTTEnvironmentPrimaryServerLocation -Sku Standard -ResourceGroupName $azureResourceGroupName
+                        $null = New-AzureRMAppServicePlan -Name $azureSqlDatabaseServerPrimaryName -Location $WTTEnvironmentPrimaryServerLocation -Tier Standard -ResourceGroupName $azureResourceGroupName
                         Write-Host "### Creating Secondary App Service Plan '$azureSqlDatabaseServerSecondaryName' if it doesn't already exist. ###" -foregroundcolor "yellow"
-                        $null = New-AzureRMAppServicePlan -Name $azureSqlDatabaseServerSecondaryName -Location $wTTEnvironmentSecondaryServerLocation -Sku Standard -ResourceGroupName $azureResourceGroupName
+                        $null = New-AzureRMAppServicePlan -Name $azureSqlDatabaseServerSecondaryName -Location $wTTEnvironmentSecondaryServerLocation -Tier Standard -ResourceGroupName $azureResourceGroupName
 
 						# Create Web Applications
                         Write-Host "### Creating a Primary Web App '$azureSqlDatabaseServerPrimaryName' in Primary App Service Plan '$azureSqlDatabaseServerPrimaryName' if it doesn't already exist. ###" -foregroundcolor "yellow"
