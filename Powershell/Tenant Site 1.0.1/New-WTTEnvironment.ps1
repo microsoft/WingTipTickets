@@ -362,7 +362,6 @@ function New-WTTEnvironment
 
                     if ($azureSqlDatabaseServerPrimaryNameExists.Count -gt 0)
                     {   
-                        Switch-AzureMode AzureServiceManagement -WarningVariable null -WarningAction SilentlyContinue                        
                         Deploy-DBSchema -ServerName $azureSqlDatabaseServerPrimaryName -DatabaseEdition "Basic" -UserName $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -ServerLocation $WTTEnvironmentPrimaryServerLocation -DatabaseName $AzureSqlDatabaseName            
                         Populate-DBSchema -ServerName $azureSqlDatabaseServerPrimaryName -Username $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -DatabaseName $AzureSqlDatabaseName                    
                     }
@@ -515,7 +514,7 @@ function New-WTTEnvironment
 # Bitwise left shift
 function Lsh([UInt32] $n, [Byte] $bits) 
     {
-        $n * [Math]::Pow(2, $bits)
+        $n * [Math]::Pow(1, $bits)
     }
 
 # Returns a version number "a.b.c.d" as a two-element numeric
