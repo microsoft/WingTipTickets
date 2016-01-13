@@ -180,10 +180,12 @@ namespace DataCleaner
                 values.Add(_salesKey.ToString());
 
                 // Sales Date
-                values.Add(_dateKeys.GetRandomElement());
+                var salesDate = _dateKeys.GetRandomElement();
+                values.Add(salesDate);
 
                 // Venue
-                values.Add(_venueKeys.GetRandomElement());
+                var venue = _venueKeys.GetRandomElement();
+                values.Add(venue);
 
                 // Concert
                 var concert = Convert.ToInt32(_concertKeys.GetRandomElement());
@@ -206,13 +208,15 @@ namespace DataCleaner
                 }
 
                 // Promotion
-                values.Add(_promotionKeys.GetRandomElement());
+                var promotionKey = _promotionKeys.GetRandomElement();
+                values.Add(promotionKey);
 
                 // Currency - US Dollar
                 values.Add("1");
 
                 // Customer
-                values.Add(_customerKeys.GetRandomElement());
+                var customerKey = _customerKeys.GetRandomElement();
+                values.Add(customerKey);
 
                 // Sales Order Number
                 values.Add(_salesKey.PadWithZeros(18));

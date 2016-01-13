@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CryptoRandom.cs" />
     <Compile Include="Data Generators\StringHelpers.cs" />
     <Compile Include="File Generators\FileGenerator.cs" />
     <Compile Include="File Generators\GenerateCurrencyFile.cs" />
