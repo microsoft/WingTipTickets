@@ -19,7 +19,7 @@ function New-WTTEnvironment
 
         #Primary Server Location
         [Parameter(Mandatory=$false, HelpMessage="Please specify the primary location for your WTT Environment ('East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast')?")]
-        [ValidateSet('East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast')]
+        [ValidateSet('East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast', 'EastUS', 'WestUS', 'SouthCentralUS', 'NorthCentralUS', 'CentralUS', 'EastAsia', 'WestEurope', 'EastUS2', 'JapanEast', 'JapanWest', 'BrazilSouth', 'NorthEurope', 'SoutheastAsia', 'AustraliaEast', 'AustraliaSoutheast')]
         [String]
         $WTTEnvironmentPrimaryServerLocation,
 
@@ -419,10 +419,10 @@ function New-WTTEnvironment
 
 						# Create Web Applications
                         Write-Host "### Creating a Primary Web App '$azureSqlDatabaseServerPrimaryName' in Primary App Service Plan '$azureSqlDatabaseServerPrimaryName' if it doesn't already exist. ###" -foregroundcolor "yellow"
-                        $null = New-AzureWebApp -Location $WTTEnvironmentPrimaryServerLocation -AppServicePlan $azureSqlDatabaseServerPrimaryName -ResourceGroupName $azureResourceGroupName -Name $azureSqlDatabaseServerPrimaryName
+                        $null = New-AzureRMWebApp -Location $WTTEnvironmentPrimaryServerLocation -AppServicePlan $azureSqlDatabaseServerPrimaryName -ResourceGroupName $azureResourceGroupName -Name $azureSqlDatabaseServerPrimaryName
                         Start-Sleep -Seconds 10
                         Write-Host "### Creating a Secondary Web App '$azureSqlDatabaseServerSecondaryName' in Secondary App Service Plan '$azureSqlDatabaseServerSecondaryName' if it doesn't already exist. ###" -foregroundcolor "yellow"
-                        $null = New-AzureWebApp -Location $wTTEnvironmentSecondaryServerLocation -AppServicePlan $azureSqlDatabaseServerSecondaryName -ResourceGroupName $azureResourceGroupName -Name $azureSqlDatabaseServerSecondaryName
+                        $null = New-AzureRMWebApp -Location $wTTEnvironmentSecondaryServerLocation -AppServicePlan $azureSqlDatabaseServerSecondaryName -ResourceGroupName $azureResourceGroupName -Name $azureSqlDatabaseServerSecondaryName
                         Start-Sleep -Seconds 10
 
 						# Deploy Web Applications
@@ -446,8 +446,8 @@ function New-WTTEnvironment
                         New-WTTAzureTrafficManagerProfile -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName
 
                         # Add Azure WebSite Endpoints to Traffic Manager Profile 
-                        Add-WTTAzureTrafficManagerEndpoint -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -AzureWebSiteName $azureSqlDatabaseServerPrimaryName -AzureTrafficManagerEndpointStatus "Enabled"
-                        Add-WTTAzureTrafficManagerEndpoint -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -AzureWebSiteName $azureSqlDatabaseServerSecondaryName -AzureTrafficManagerEndpointStatus "Disabled"
+                        Add-WTTAzureTrafficManagerEndpoint -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -AzureWebSiteName $azureSqlDatabaseServerPrimaryName -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -AzureTrafficManagerEndpointStatus "Enabled"
+                        Add-WTTAzureTrafficManagerEndpoint -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -AzureWebSiteName $azureSqlDatabaseServerSecondaryName -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -AzureTrafficManagerEndpointStatus "Disabled"
 
                         #Switch-AzureMode AzureResourceManager -WarningVariable null -WarningAction SilentlyContinue
 						#Remove Switch-AzureMode
@@ -463,10 +463,17 @@ function New-WTTEnvironment
                             #$setSecondaryAzureSqlDatabaseServerAuditingPolicy = Set-AzureSqlDatabaseServerAuditingPolicy -ResourceGroupName $azureResourceGroupName -ServerName $azureSqlDatabaseServerSecondaryName -StorageAccountName $azureStorageAccountName -TableIdentifier "wtt" -EventType PlainSQL_Success, PlainSQL_Failure, ParameterizedSQL_Success, ParameterizedSQL_Failure, StoredProcedure_Success, StoredProcedure_Success -WarningVariable null -WarningAction SilentlyContinue
                             $setSecondaryAzureSqlDatabaseServerAuditingPolicy = Set-AzureRmSqlDatabaseServerAuditingPolicy -ResourceGroupName $azureResourceGroupName -ServerName $azureSqlDatabaseServerSecondaryName -StorageAccountName $azureStorageAccountName -TableIdentifier "wtt" -EventType PlainSQL_Success, PlainSQL_Failure, ParameterizedSQL_Success, ParameterizedSQL_Failure, StoredProcedure_Success, StoredProcedure_Success -WarningVariable null -WarningAction SilentlyContinue
                         }
-                    }   
+                    } 
+                    
+                    #Deploy Azure Data Warehouse on the primary database server. This may run between 2-3 hours.
+                    <#if ($azureSqlDatabaseServerPrimaryNameExists.Count -gt 0)
+                    {   
+                        Deploy-WTTAzureDWDatabase -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName -ServerLocation $WTTEnvironmentPrimaryServerLocation -DatabaseEdition "DataWarehouse" -UserName $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -DWDatabaseName $AzureSqlDWDatabaseName
+                    }#>  
+
                         #Deploy ADF environment
 						Write-Host "###Deploying Azure Data Factory demo. There will be several prompts during the script.###" -ForegroundColor Yellow
-		                New-WTTADFEnvironment -Mode deploy -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName                  
+		                New-WTTADFEnvironment -Mode deploy -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -azureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerPrimaryName
 						
                         Start-Sleep -Seconds 30
 						  
@@ -505,7 +512,7 @@ function New-WTTEnvironment
         }  	    
 	 }
 }
-
+<#
 # Check Installed Azure PowerShell Version
 # Bitwise left shift
 function Lsh([UInt32] $n, [Byte] $bits) 
@@ -558,6 +565,24 @@ function CheckInstalledPowerShellVersion()
             {
                 $out = 1
             }
+        }
+        else 
+            {
+                $out = 1
+            }
+        return $out
+}#>
+
+function CheckInstalledPowerShellVersion() 
+    {
+
+        $installedVersion = (Get-Module AzureRM.Profile).Version
+        $minimumRequiredVersion = '1.0.1'        
+        $ver1 = ($installedVersion)
+        $ver2 = ($minimumRequiredVersion)
+        if ($ver1 -lt $ver2) 
+        {
+            $out = -1
         }
         else 
             {
