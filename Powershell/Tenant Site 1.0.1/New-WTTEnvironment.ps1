@@ -186,12 +186,12 @@ function New-WTTEnvironment
             $global:VerbosePreference = "SilentlyContinue"
 
             ### Check installed PowerShell Version ###
-            Write-Host "### Checking whether installed Azure PowerShell Version is at least 1.0.2. ###" -foregroundcolor "yellow"
+            Write-Host "### Checking whether installed Azure PowerShell Version is at least 1.0.1. ###" -foregroundcolor "yellow"
 
             $installedAzurePowerShellVersion = CheckInstalledPowerShellVersion
-            if ($installedAzurePowerShellVersion -ge 0)
+            if ($installedAzurePowerShellVersion -gt 0)
             {
-                Write-Host "### Installed Azure PowerShell Version is at least 1.0.. ###" -foregroundcolor "yellow"
+                Write-Host "### Installed Azure PowerShell Version is at least 1.0.1. ###" -foregroundcolor "yellow"
                  
                     Write-Host "### Unblocking all PowerShell Scripts in the '$localPath' folder. ###" -foregroundcolor "yellow"
                     # Unblock Files
@@ -296,10 +296,6 @@ function New-WTTEnvironment
 					#switch-AzureMode AzureResourceManager -WarningVariable null -WarningAction SilentlyContinue
 					#Remove Switch-AzureMode
                     Start-Sleep -Seconds 30    
-                    #$resourcegroup = (get-azureresourcegroup -name $WTTResourceGroupName).Location
-                    #$resourcegrouplocation = $resourcegroup.location
-                    #$resourcelocation = $resourcegrouplocation
-                    #$resourcelocation = $resourcegroup
 
                     $WTTDocumentDbLocation = Switch ($WTTEnvironmentPrimaryServerLocation)
                            {
@@ -362,8 +358,7 @@ function New-WTTEnvironment
 
                     if ($azureSqlDatabaseServerPrimaryNameExists.Count -gt 0)
                     {   
-                        Switch-AzureMode AzureServiceManagement -WarningVariable null -WarningAction SilentlyContinue                        
-                        Deploy-DBSchema -ServerName $azureSqlDatabaseServerPrimaryName -DatabaseEdition "Basic" -UserName $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -ServerLocation $WTTEnvironmentPrimaryServerLocation -DatabaseName $AzureSqlDatabaseName            
+                        Deploy-DBSchema -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName -DatabaseEdition "Basic" -UserName $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -ServerLocation $WTTEnvironmentPrimaryServerLocation -DatabaseName $AzureSqlDatabaseName            
                         Populate-DBSchema -ServerName $azureSqlDatabaseServerPrimaryName -Username $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -DatabaseName $AzureSqlDatabaseName                    
                     }
                                                             
@@ -418,9 +413,9 @@ function New-WTTEnvironment
 						# Create Service Plans
                         Write-Host "### Creating Primary App Service Plan '$azureSqlDatabaseServerPrimaryName' if it doesn't already exist. ###" -foregroundcolor "yellow"
                         #$null = New-AzureAppServicePlan -Name $azureSqlDatabaseServerPrimaryName -Location $WTTEnvironmentPrimaryServerLocation -Sku Standard -ResourceGroupName $azureResourceGroupName
-                        $null = New-AzureRMAppServicePlan -Name $azureSqlDatabaseServerPrimaryName -Location $WTTEnvironmentPrimaryServerLocation -Sku Standard -ResourceGroupName $azureResourceGroupName
+                        $null = New-AzureRMAppServicePlan -Name $azureSqlDatabaseServerPrimaryName -Location $WTTEnvironmentPrimaryServerLocation -Tier Standard -ResourceGroupName $azureResourceGroupName
                         Write-Host "### Creating Secondary App Service Plan '$azureSqlDatabaseServerSecondaryName' if it doesn't already exist. ###" -foregroundcolor "yellow"
-                        $null = New-AzureRMAppServicePlan -Name $azureSqlDatabaseServerSecondaryName -Location $wTTEnvironmentSecondaryServerLocation -Sku Standard -ResourceGroupName $azureResourceGroupName
+                        $null = New-AzureRMAppServicePlan -Name $azureSqlDatabaseServerSecondaryName -Location $wTTEnvironmentSecondaryServerLocation -Tier Standard -ResourceGroupName $azureResourceGroupName
 
 						# Create Web Applications
                         Write-Host "### Creating a Primary Web App '$azureSqlDatabaseServerPrimaryName' in Primary App Service Plan '$azureSqlDatabaseServerPrimaryName' if it doesn't already exist. ###" -foregroundcolor "yellow"
@@ -491,15 +486,9 @@ function New-WTTEnvironment
                         }
                     
                 
-
-                else
-                {
-                    ### Error if both ASM and ARM aren't provisioned ###
-                    Write-Host "### Error: Both Azure Service Model (ASM) and Azure Resource Model (ARM) need to be provisioned. ###" -foregroundcolor "red"
-                    Write-Host "### You can run: (Get-AzureSubscription -Default).SupportedModes to verify which is/isn't provisioned. ###" -foregroundcolor "red"
-                    Write-Host "### Please contact Microsoft Support to have them troubleshoot further. ###" -foregroundcolor "red"
                 }
-            }
+
+            
             else
             {
                 ### Error if installed Azure PowerShell Version is older than minimum required version ###
@@ -521,7 +510,7 @@ function New-WTTEnvironment
 # Bitwise left shift
 function Lsh([UInt32] $n, [Byte] $bits) 
     {
-        $n * [Math]::Pow(2, $bits)
+        $n * [Math]::Pow(1, $bits)
     }
 
 # Returns a version number "a.b.c.d" as a two-element numeric
@@ -547,8 +536,8 @@ function GetVersionStringAsArray([String] $version)
 function CheckInstalledPowerShellVersion() 
     {
 
-        $installedVersion = ((Get-Module Azure).Version.Major -as [string]) +'.'+ ((Get-Module Azure).Version.Minor -as [string]) +'.'+ ((Get-Module Azure).Version.Build -as [string])        
-        $minimumRequiredVersion = '1.0.2'        
+        $installedVersion = ((Get-Module Azure*).Version.Major -as [string]) +'.'+ ((Get-Module Azure*).Version.Minor -as [string]) +'.'+ ((Get-Module Azure*).Version.Build -as [string])    
+        $minimumRequiredVersion = '1.0.1'        
         $ver1 = GetVersionStringAsArray $installedVersion
         $ver2 = GetVersionStringAsArray $minimumRequiredVersion
         if ($ver1[0] -lt $ver2[0]) 

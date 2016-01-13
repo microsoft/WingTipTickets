@@ -42,13 +42,13 @@ function Remove-WTTEnvironment
             Write-Host "### Checking whether installed Azure PowerShell Version is at least 1.0.. ###" -foregroundcolor "yellow"
                         
             $installedAzurePowerShellVersion = CheckInstalledPowerShellVersion
-            if ($installedAzurePowerShellVersion -ge 0)
+            if ($installedAzurePowerShellVersion -ge 1)
             {
                 Write-Host "### Installed Azure PowerShell Version is at least 1.0.2. ###" -foregroundcolor "yellow"
 
                 ### Check if both ASM and ARM are provisioned ###
                 Write-Host "### Checking whether Azure Service Model (ASM) and Azure Resource Model (ARM) are provisioned. ###" -foregroundcolor "yellow"
-                if ($installedAzurePowerShellVersion -lt "1.0.2")
+                if ($installedAzurePowerShellVersion -lt "1")
                 {                                                                               
                     #Remove Azure Resource Group
                     Write-Host "### Removing Azure Resource Group '$wTTEnvironmentApplicationName'. ###" -foregroundcolor "yellow"
@@ -89,10 +89,11 @@ function Remove-WTTEnvironment
             }
             
         }
+        }
         Catch
         {
 	        Write-Error "Error: $Error "
-        }  	    
+        } 	    
    }
  }
 
@@ -125,10 +126,10 @@ function GetVersionStringAsArray([String] $version)
 # $version1 > $version2, returns 1.
 function CheckInstalledPowerShellVersion() 
     {
-        $installedVersion = ((Get-Module Azure).Version.Major -as [string]) +'.'+ ((Get-Module Azure).Version.Minor -as [string]) +'.'+ ((Get-Module Azure).Version.Build -as [string])        
-        $minimumRequiredVersion = '1.0.2'        
-        $ver1 = GetVersionStringAsArray $installedVersion
-        $ver2 = GetVersionStringAsArray $minimumRequiredVersion
+        $installedVersion = ((Get-Module Azure*).Version.Major -as [string]) +'.'+ ((Get-Module Azure*).Version.Minor -as [string]) +'.'+ ((Get-Module Azure*).Version.Build -as [string])        
+        $minimumRequiredVersion = '1.0.1'        
+        $ver1 =  $installedVersion
+        $ver2 =  $minimumRequiredVersion
         if ($ver1[0] -lt $ver2[0]) 
         {
             $out = -1
