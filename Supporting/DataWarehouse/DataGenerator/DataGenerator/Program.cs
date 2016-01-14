@@ -30,7 +30,7 @@ namespace DataCleaner
         private static void Main(string[] args)
         {
             GenerateSupportFiles();
-            GenerateSalesFile();
+            //GenerateSalesFile();
 
             Console.WriteLine();
             Console.WriteLine("Done, hit any key to Exit");
@@ -62,7 +62,7 @@ namespace DataCleaner
                 OnGeneratingLine = PrintLineNumber
             };
 
-            //salesGenerator.Run(8, 1000000000);
+            salesGenerator.Run(1, 1000000000);
             salesGenerator.GzipFile();
         }
 
