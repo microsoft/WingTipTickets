@@ -443,7 +443,7 @@ function New-WTTEnvironment
                         # ARM - currently having an issue with the ARM preview cmdlets.  Working ps1s are in the 2.2 folder
                         # New-WTTAzureTrafficManagerProfile -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -AzureTrafficManagerResourceGroupName $azureResourceGroupName
                         # ASM
-                        New-WTTAzureTrafficManagerProfile -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName
+                        New-WTTAzureTrafficManagerProfile -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName
 
                         # Add Azure WebSite Endpoints to Traffic Manager Profile 
                         Add-WTTAzureTrafficManagerEndpoint -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -AzureWebSiteName $azureSqlDatabaseServerPrimaryName -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -AzureTrafficManagerEndpointStatus "Enabled"
