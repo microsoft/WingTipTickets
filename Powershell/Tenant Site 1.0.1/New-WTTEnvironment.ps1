@@ -446,8 +446,8 @@ function New-WTTEnvironment
                         New-WTTAzureTrafficManagerProfile -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName
 
                         # Add Azure WebSite Endpoints to Traffic Manager Profile 
-                        Add-WTTAzureTrafficManagerEndpoint -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -AzureWebSiteName $azureSqlDatabaseServerPrimaryName -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -AzureTrafficManagerEndpointStatus "Enabled"
-                        Add-WTTAzureTrafficManagerEndpoint -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -AzureWebSiteName $azureSqlDatabaseServerSecondaryName -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -AzureTrafficManagerEndpointStatus "Disabled"
+                        Add-WTTAzureTrafficManagerEndpoint -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -AzureWebSiteName $azureSqlDatabaseServerPrimaryName -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -AzureTrafficManagerEndpointStatus "Enabled" -priority 1
+                        Add-WTTAzureTrafficManagerEndpoint -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -AzureWebSiteName $azureSqlDatabaseServerSecondaryName -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -AzureTrafficManagerEndpointStatus "Disabled" -priority 2
 
                         #Switch-AzureMode AzureResourceManager -WarningVariable null -WarningAction SilentlyContinue
 						#Remove Switch-AzureMode

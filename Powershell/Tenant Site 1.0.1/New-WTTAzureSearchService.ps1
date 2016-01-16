@@ -239,7 +239,7 @@ function New-WTTAzureSearchService
                 #Write-Host "create service"                    
                 $createSearchServiceURL = "https://management.azure.com/subscriptions/$azureSubscriptionID/resourceGroups/$WTTEnvironmentResourceGroupName/providers/Microsoft.Search/searchServices/$wTTEnvironmentApplicationName" + "?api-version=2015-02-28"
                 $createSearchService = Invoke-RestMethod -Uri $createSearchServiceURL -Method "PUT" -Body $newSearchServiceJsonBody -Headers $headers -ContentType "application/json"
-
+                Start-Sleep -Seconds 30
                 #Write-Host "get management keys"
                 # once created, retrieve the Primary Key via the REST API    
                 $searchServiceManagementKeyURL = "https://management.azure.com/subscriptions/$azureSubscriptionID/resourceGroups/$WTTEnvironmentResourceGroupName/providers/Microsoft.Search/searchServices/$wTTEnvironmentApplicationName/listAdminKeys?api-version=2015-02-28"

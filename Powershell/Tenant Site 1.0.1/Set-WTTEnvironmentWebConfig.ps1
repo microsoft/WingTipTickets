@@ -96,7 +96,15 @@ function Set-WTTEnvironmentWebConfig
             }
 
              $ADFWebSite = Get-AzureRMWebApp | Where-Object {$_.Name -like "*product*"}
-             $ADFWebSite = [string]$ADFWebSite.HostNames
+             if ($ADFWebSite.SiteName -like "*product*")
+             {
+                $ADFWebSite = [string]$ADFWebsite.HostNames
+             }
+             else
+             {
+                $adfwebsite ="ProductRecWebAppMissing"
+                Write-Host $ADFWebSite
+             }
 			
 			# Build web application settings
 			$appSettings = @{ `

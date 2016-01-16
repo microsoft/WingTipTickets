@@ -29,7 +29,11 @@ function Add-WTTAzureTrafficManagerEndpoint
         #Azure Traffic Manager Endpoint Status
         [Parameter(Mandatory=$false)]
         [String]
-        $AzureTrafficManagerEndpointStatus
+        $AzureTrafficManagerEndpointStatus,
+        
+        [Parameter(Mandatory=$false)]
+        [String]
+        $Priority
 
     )
     Process
@@ -97,7 +101,7 @@ function Add-WTTAzureTrafficManagerEndpoint
 						$targetResourceID = (Get-AzureRMWebApp -Name $AzureWebSiteName).id
                         Write-Host "### Adding $azureWebSiteDomainName' to Traffic Manager Profile '$azureTrafficManagerDomainName'. ###" -foregroundcolor "yellow"                    
                         #$newAzureTrafficManagerEndpoint = Add-AzureTrafficManagerEndpoint -TrafficManagerProfile $azureTrafficManagerProfile -DomainName $azureWebSiteDomainName -Status $azureTrafficManagerEndpointStatus -Type AzureWebsite | Set-AzureTrafficManagerProfile
-                        $newAzureTrafficManagerEndpoint = Add-AzureRmTrafficManagerEndpointConfig -TrafficManagerProfile $azureTrafficManagerProfile -TargetResourceID $targetResourceID -EndpointName $AzureWebSiteName -EndpointStatus $azureTrafficManagerEndpointStatus -Type AzureEndpoints 
+                        $newAzureTrafficManagerEndpoint = Add-AzureRmTrafficManagerEndpointConfig -TrafficManagerProfile $azureTrafficManagerProfile -TargetResourceID $targetResourceID -EndpointName $AzureWebSiteName -EndpointStatus $azureTrafficManagerEndpointStatus -Type AzureEndpoints -priority $Priority
                         Set-AzureRMTrafficManagerProfile -TrafficManagerProfile $azureTrafficManagerProfile
                         Write-Host "### Success: $azureWebSiteDomainName' added to Azure Traffic Manager Profile '$azureTrafficManagerDomainName'. ###" -foregroundcolor "green"
                     }

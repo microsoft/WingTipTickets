@@ -184,11 +184,11 @@ function CreateSQLServerAndDB{
         #create sql server & DB
         
             try{
-                #Write-Host 'Creating SQL DB [' $global:sqlDBName ']......' -NoNewline 
+                Write-Host 'Creating SQL DB [' $global:sqlDBName ']......' -NoNewline 
                 #$servercredential = new-object System.Management.Automation.PSCredential("developer", ("P@ssword1"  | ConvertTo-SecureString -asPlainText -Force))
                 #create a connection context
                 #$ctx = New-AzureSqlDatabaseServerContext -ServerName $sqlsvrname -Credential $serverCredential 
-                $sqldb = New-AzureRMSqlDatabase -ResourceGroupName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName –DatabaseName $azureSqlDatabaseServerPrimaryName -Edition Basic   >> setup-log.txt
+                $sqldb = New-AzureRMSqlDatabase -ResourceGroupName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName –DatabaseName $sqlDBName  -Edition Basic   >> setup-log.txt
                 Write-Host 'created.'
             } catch {
                 Write-Host 'error.'
