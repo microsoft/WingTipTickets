@@ -89,9 +89,18 @@ function SetGlobalParams {
     [string]$global:location = 'CentralUS'
     [string]$global:locationMultiWord = 'Central US'
 
-
+    $global:useCaseName = "productrec"
+ 
+    if($WTTEnvironmentApplicationName -like 'data*')
+    {
+        $WTTEnvironmentApplicationName = $WTTEnvironmentApplicationName.Substring(4)
+        $output = ($global:useCaseName + $WTTEnvironmentApplicationName).ToLower()
+    }
+    else
+    {
     $output = ($global:useCaseName + $WTTEnvironmentApplicationName).ToLower()
     if($output.Length -gt 14) { $output = $output.Remove(15) }
+    }
 
 	if ($global:mode -eq 'deploy')
 	{
@@ -103,7 +112,7 @@ function SetGlobalParams {
     $global:useCaseName = $global:useCaseName
 
     $global:defaultResourceName = $output 
-    $global:storageAccountName = $output
+    $global:storageAccountName = $WTTEnvironmentApplicationName
     $global:storageAccountKey = ""
     $global:blobContainerName = $output
 	$global:azureWebsiteName = $output
@@ -164,7 +173,7 @@ function registerDataFactoryProvider
 #function CreateStorageAccount
 function GetStorageAccount{
             # Get Storage Key information
-            $blobAccountkey = (Get-AzureRMStorageAccountKey -ResourceGroupName $WTTEnvironmentApplicationName -storageAccountName $azureStorageAccountName).Key1
+            $blobAccountkey = (Get-AzureRMStorageAccountKey -ResourceGroupName $WTTEnvironmentApplicationName -storageAccountName $global:storageAccountName).Key1
             # Get Context
                     
 }
@@ -175,11 +184,11 @@ function CreateSQLServerAndDB{
         #create sql server & DB
         
             try{
-                #Write-Host 'Creating SQL DB [' $global:sqlDBName ']......' -NoNewline 
+                Write-Host 'Creating SQL DB [' $global:sqlDBName ']......' -NoNewline 
                 #$servercredential = new-object System.Management.Automation.PSCredential("developer", ("P@ssword1"  | ConvertTo-SecureString -asPlainText -Force))
                 #create a connection context
                 #$ctx = New-AzureSqlDatabaseServerContext -ServerName $sqlsvrname -Credential $serverCredential 
-                $sqldb = New-AzureRMSqlDatabase -ResourceGroupName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName –DatabaseName $azureSqlDatabaseServerPrimaryName -Edition Basic   >> setup-log.txt
+                $sqldb = New-AzureRMSqlDatabase -ResourceGroupName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName –DatabaseName $sqlDBName  -Edition Basic   >> setup-log.txt
                 Write-Host 'created.'
             } catch {
                 Write-Host 'error.'
@@ -215,6 +224,7 @@ function CreateAzureWebsite{
 			if($azurewebsite.name -ne $global:azureWebsiteName)
 			{
 			Write-Host 'Creating Azure Website ['$global:azureWebsiteName']......' -NoNewline
+            $null = New-AzureRMAppServicePlan -Name $global:azureWebsiteName -Location $global:locationMultiWord -Tier Free -ResourceGroupName $WTTEnvironmentApplicationName
             #create a new Azure Website
             $azurewebsite = New-AzureRmWebApp -ResourceGroupName $WTTEnvironmentApplicationName -Name $global:azureWebsiteName -Location $global:locationMultiWord -ErrorAction Stop | out-null
 			Write-Host 'created.'
@@ -261,7 +271,7 @@ function PopulateProductRecommendation{
     {
         Update-JSONFile  $file.FullName
     }
-    $destContext = New-AzureStorageContext –StorageAccountName $azureStorageAccountName -StorageAccountKey $blobAccountkey -ea silentlycontinue
+    $destContext = New-AzureStorageContext –StorageAccountName $global:storageAccountName -StorageAccountKey $blobAccountkey -ea silentlycontinue
 
     If ($destContext -eq $Null) {
 	    Write-Verbose "Invalid storage account name and/or storage key provided"
@@ -384,12 +394,6 @@ function writeAccountInformation {
 }
 
 #start of main script
-$uniqueSuffix = $WTTEnvironmentApplicationName
-$global:useCaseName = 'productrec' + $uniqueSuffix
-$output = ($global:useCaseName).ToLower()
-if($output.Length -gt 14) { $output = $output.Remove(15) }
-$global:useCaseName = $output
-$storePreference = $Global:VerbosePreference
 ValidateParameters
 SetGlobalParams
 registerDataFactoryProvider   
@@ -420,6 +424,4 @@ catch {
         Write-Host 'Setup error.'
         throw  
 }
-
-$Global:VerbosePreference = $storePreference
 }

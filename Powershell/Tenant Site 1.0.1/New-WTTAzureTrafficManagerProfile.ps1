@@ -14,7 +14,12 @@ function New-WTTAzureTrafficManagerProfile
         #Azure Traffic Manager Profile Name
         [Parameter(Mandatory=$true)]
         [String]
-        $AzureTrafficManagerProfileName
+        $AzureTrafficManagerProfileName,
+
+        #Azure Resource Group Name
+                [Parameter(Mandatory=$true)]
+        [String]
+        $WTTEnvironmentApplicationName
 		
     )
     Process
