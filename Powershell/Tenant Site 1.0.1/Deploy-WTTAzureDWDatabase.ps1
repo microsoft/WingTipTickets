@@ -164,7 +164,8 @@ function Deploy-WTTAzureDWDatabase
 	        $Connection.Close()
 	        $Connection=$null
             
-            Set-AzureRmSqlDatabase -RequestedServiceObjectiveName "DW100" -ServerName $ServerName -DatabaseName "$DWDatabaseName" -ResourceGroupName $WTTEnvironmentApplicationName
+            Set-AzureRmSqlDatabase -RequestedServiceObjectiveName "DW400" -ServerName $ServerName -DatabaseName "$DWDatabaseName" -ResourceGroupName $WTTEnvironmentApplicationName
+            Suspend-AzureSqlDatabase –ResourceGroupName $WTTEnvironmentApplicationName –ServerName $ServerName –DatabaseName "$DWDatabaseName"
         }
         Write-Host " "
         Write-Host "SUCCESS:Warehouse Database tables created and database connection closed. " -foregroundcolor "yellow"
