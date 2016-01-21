@@ -35,6 +35,7 @@ function New-WTTAzureDocumentDb
 
           try
           {
+			write-Host "### Creating DocumentDB if it doesn't already exist. ###" -foregroundcolor "yellow"
 			#Switch Azure Powershell Mode
 			#Switch-AzureMode AzureResourceManager
             

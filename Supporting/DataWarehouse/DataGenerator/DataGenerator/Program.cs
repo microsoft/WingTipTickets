@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace DataCleaner
 {
@@ -29,8 +30,32 @@ namespace DataCleaner
 
         private static void Main(string[] args)
         {
-            GenerateSupportFiles();
+            //GenerateSupportFiles();
             //GenerateSalesFile();
+
+            int count = 0;
+            using (var reader = new StreamReader(@"D:\FactSales.txt"))
+            {
+                using (var writer = new StreamWriter(@"D:\FactSalesNew.txt"))
+                {
+                    var line = string.Empty;
+
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        count++;
+
+                        if (!line.Trim().Equals(""))
+                        {
+                            writer.WriteLine(line);
+                        }
+
+                        if (count % 100 == 0)
+                        {
+                            Console.WriteLine("Cleaning Line No: {0}", count);
+                        }
+                    }
+                }
+            }
 
             Console.WriteLine();
             Console.WriteLine("Done, hit any key to Exit");

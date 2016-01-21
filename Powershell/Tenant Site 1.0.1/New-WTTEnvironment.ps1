@@ -95,7 +95,9 @@ function New-WTTEnvironment
     )
 
     Process
-    { 
+    {
+		$Error.Clear()
+	
 		#Add-AzureAccount
         if($AzureSqlDatabaseServerAdministratorUserName -eq "")
         {
@@ -193,56 +195,56 @@ function New-WTTEnvironment
             {
                 Write-Host "### Installed Azure PowerShell Version is at least 1.0.1. ###" -foregroundcolor "yellow"
                  
-                    Write-Host "### Unblocking all PowerShell Scripts in the '$localPath' folder. ###" -foregroundcolor "yellow"
+                    Write-Host "### Unblocking all Scripts in '$localPath'. ###" -foregroundcolor "yellow"
                     # Unblock Files
                     Get-ChildItem -Path $localPath -Filter *.ps1 | Unblock-File                               
 
-                    Write-Host "### Loading all PowerShell Scripts in the '$localPath' folder. ###" -foregroundcolor "yellow"
+                    Write-Host "### Loading all Scripts in '$localPath'. ###" -foregroundcolor "yellow"
                     # Load (DotSource) Scripts
                     Get-ChildItem -Path $localPath -Filter *.ps1 | ForEach { . $_.FullName }
                     
                     #Switch-AzureMode AzureResourceManager -WarningVariable null -WarningAction SilentlyContinue
                     Write-Host "### Checking whether Azure Resource Group '$azureResourceGroupName' already exists. ###" -foregroundcolor "yellow"
-                    $azureResourceGroupNameExists = Get-AzureRMResourceGroup -Name $azureResourceGroupName -ErrorVariable azureResourceGroupNameExistsErrors -ErrorAction SilentlyContinue
-                    If($azureResourceGroupNameExists.Count -gt 0) 
+                    $azureResourceGroupNameExists = (Find-AzureRMResourceGroup).Name -contains $azureResourceGroupName
+                    If($azureResourceGroupNameExists -eq $true)
                     {
                         Write-Host "### Azure Resource Group '$azureResourceGroupName' exists. ###" -foregroundcolor "yellow"
 
                         ### Check if Primary Azure SQL Database Server Exists ###
                         Write-Host "### Checking whether Primary Azure SQL Database Server '$azureSqlDatabaseServerPrimaryName' already exists. ###" -foregroundcolor "yellow"
-                        $azureSqlDatabaseServerPrimaryNameExists = Get-AzureRMSqlServer -ServerName $azureSqlDatabaseServerPrimaryName -ResourceGroupName $azureResourceGroupName -ErrorVariable azureSqlDatabaseServerPrimaryNameExistsErrors -ErrorAction SilentlyContinue
-                        
+                        $azurePrimarySqlDatabaseServer = Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains $azureSqlDatabaseServerPrimaryName -ResourceGroupNameContains $azureResourceGroupName
+                        						
                         ### Check if Secondary Azure SQL Database Server Exists ###
                         Write-Host "### Checking whether Secondary Azure SQL Database Server '$azureSqlDatabaseServerSecondaryName' already exists. ###" -foregroundcolor "yellow"
-                        $azureSqlDatabaseServerSecondaryNameExists = Get-AzureRMSqlServer -ServerName $azureSqlDatabaseServerSecondaryName -ResourceGroupName $azureResourceGroupName -ErrorVariable azureSqlDatabaseServerSecondaryNameExistsErrors -ErrorAction SilentlyContinue
+                        $azureSecondarySqlDatabaseServer = Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains $azureSqlDatabaseServerSecondaryName -ResourceGroupNameContains $azureResourceGroupName
                         
-                        If($azureSqlDatabaseServerPrimaryNameExists.Count -gt 0 -and $azureSqlDatabaseServerSecondaryNameExists.Count -gt 0) 
+                        If($azurePrimarySqlDatabaseServer -ne $null -and $azureSecondarySqlDatabaseServer -ne $null) 
                         {
-                            Write-Host "### Primary Azure SQL Database Server '$azureSqlDatabaseServerPrimaryName' already exists. ###" -foregroundcolor "yellow"
-                            Write-Host "### Secondary Azure SQL Database Server '$azureSqlDatabaseServerSecondaryName' already exists. ###" -foregroundcolor "yellow"
-                            $WTTEnvironmentPrimaryServerLocation = $azureSqlDatabaseServerPrimaryNameExists.Location
-                            $wTTEnvironmentSecondaryServerLocation = $azureSqlDatabaseServerSecondaryNameExists.Location
+							write-host "### primary azure sql database server '$azuresqldatabaseserverprimaryname' already exists. ###" -foregroundcolor "yellow"
+							write-host "### secondary azure sql database server '$azuresqldatabaseserversecondaryname' already exists. ###" -foregroundcolor "yellow"
+							$wttenvironmentprimaryserverlocation = $azurePrimarySqlDatabaseServer.location
+							$wttenvironmentsecondaryserverlocation = $azureSecondarySqlDatabaseServer.location
                         }
                         
-                        elseif($azureSqlDatabaseServerPrimaryNameExists.Count -gt 0 -and $azureSqlDatabaseServerSecondaryNameExists.Count -eq 0) 
+                        elseif($azurePrimarySqlDatabaseServer -ne $null -and $azureSecondarySqlDatabaseServer -eq $null) 
                         {
-                            Write-Host "### Primary Azure SQL Database Server '$azureSqlDatabaseServerPrimaryName' already exists. ###" -foregroundcolor "yellow"
-                            Write-Host "### Secondary Azure SQL Database Server '$azureSqlDatabaseServerSecondaryName' doesn't exist. ###" -foregroundcolor "yellow"
-                            Write-Host "### Removing '$azureResourceGroupName' Resource Group and all related resources. ###" -foregroundcolor "yellow"    
-                            $null = Remove-AzureRMResourceGroup -Name $azureResourceGroupName -Force -PassThru
-                            $azureResourceGroupNameExists = $null
-                            $azureSqlDatabaseServerPrimaryNameExists = $null
-                            $azureSqlDatabaseServerSecondaryNameExists = $null
+                          Write-Host "### Primary Azure SQL Database Server '$azureSqlDatabaseServerPrimaryName' already exists. ###" -foregroundcolor "yellow"
+                          Write-Host "### Secondary Azure SQL Database Server '$azureSqlDatabaseServerSecondaryName' doesn't exist. ###" -foregroundcolor "yellow"
+                          Write-Host "### Removing '$azureResourceGroupName' Resource Group and all related resources. ###" -foregroundcolor "yellow"    
+                          $null = Remove-AzureRMResourceGroup -Name $azureResourceGroupName -Force -PassThru
+                          $azureResourceGroupNameExists = $null
+                          $azurePrimarySqlDatabaseServer = $null
+                          $azureSecondarySqlDatabaseServer = $null
                         }
-                        elseif($azureSqlDatabaseServerPrimaryNameExists.Count -eq 0 -and $azureSqlDatabaseServerSecondaryNameExists.Count -gt 0) 
+                        elseif($azurePrimarySqlDatabaseServer -eq $null -and $azureSecondarySqlDatabaseServer -ne $null) 
                         {
-                            Write-Host "### Primary Azure SQL Database Server '$azureSqlDatabaseServerPrimaryName' doesn't exists. ###" -foregroundcolor "yellow"
-                            Write-Host "### Secondary Azure SQL Database Server '$azureSqlDatabaseServerSecondaryName' already exists ###" -foregroundcolor "yellow"
-                            Write-Host "### Removing '$azureResourceGroupName' Resource Group and all related resources. ###" -foregroundcolor "yellow"    
-                            $null = Remove-AzureRMResourceGroup -Name $azureResourceGroupName -Force -PassThru
-                            $azureResourceGroupNameExists = $null
-                            $azureSqlDatabaseServerPrimaryNameExists = $null
-                            $azureSqlDatabaseServerSecondaryNameExists = $null
+                          Write-Host "### Primary Azure SQL Database Server '$azureSqlDatabaseServerPrimaryName' doesn't exists. ###" -foregroundcolor "yellow"
+                          Write-Host "### Secondary Azure SQL Database Server '$azureSqlDatabaseServerSecondaryName' already exists ###" -foregroundcolor "yellow"
+                          Write-Host "### Removing '$azureResourceGroupName' Resource Group and all related resources. ###" -foregroundcolor "yellow"    
+                          $null = Remove-AzureRMResourceGroup -Name $azureResourceGroupName -Force -PassThru
+                          $azureResourceGroupNameExists = $null
+                          $azurePrimarySqlDatabaseServer = $null
+                          $azureSecondarySqlDatabaseServer = $null
                         }                        
                     }
 
@@ -283,7 +285,7 @@ function New-WTTEnvironment
 					#Remove Switch-AzureMode
                                 
                     # Create Azure Resource Group
-                    if ($azureResourceGroupNameExists.Count -eq 0)
+                    if ($azureResourceGroupNameExists -eq $false)
                     {
                         New-WTTAzureResourceGroup -AzureResourceGroupName $azureResourceGroupName -AzureResourceGroupLocation $WTTEnvironmentPrimaryServerLocation
                         Start-Sleep -Seconds 10
@@ -292,11 +294,11 @@ function New-WTTEnvironment
                     # Create Storage Account                    
                     New-WTTAzureStorageAccount -AzureStorageAccountResourceGroupName $azureResourceGroupName -AzureStorageAccountName $azureStorageAccountName -AzureStorageAccountType "Standard_GRS" -AzureStorageLocation $WTTEnvironmentPrimaryServerLocation
                     Start-Sleep -Seconds 30
+					
                     #Create DocumentDB location based off the closest available location.
 					#switch-AzureMode AzureResourceManager -WarningVariable null -WarningAction SilentlyContinue
 					#Remove Switch-AzureMode
                     Start-Sleep -Seconds 30    
-
                     $WTTDocumentDbLocation = Switch ($WTTEnvironmentPrimaryServerLocation)
                            {
                               'West US' {'West US'}
@@ -493,9 +495,8 @@ function New-WTTEnvironment
                         }
                     
                 
-                }
-
             
+            }
             else
             {
                 ### Error if installed Azure PowerShell Version is older than minimum required version ###
@@ -508,7 +509,7 @@ function New-WTTEnvironment
     	}			
         Catch
         {
-	        Write-Error "Error: $Error "
+	        Write-Error "Error: $Error"
         }  	    
 	 }
 }

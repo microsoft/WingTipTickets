@@ -37,8 +37,9 @@ function New-WTTAzureStorageAccount
             ### Check if Azure Storage Account Exists ###
             Write-Host "### Checking whether Azure Storage Account '$AzureStorageAccountName' already exists. ###" -foregroundcolor "yellow"
             #$azureStorageAccountExists = Get-AzureStorageAccount -Name $AzureStorageAccountName -ResourceGroupName $AzureStorageAccountResourceGroupName -ErrorVariable azureStorageAccountExistsErrors -ErrorAction SilentlyContinue
-			$azureStorageAccountExists = Get-AzureRMStorageAccount -Name $AzureStorageAccountName -ResourceGroupName $AzureStorageAccountResourceGroupName -ErrorVariable azureStorageAccountExistsErrors -ErrorAction SilentlyContinue
-            if($azureStorageAccountExists.Count -eq 0)
+			$azureStorageAccount = Find-AzureRmResource -ResourceType "Microsoft.Storage/storageaccounts" -ResourceNameContains $AzureStorageAccountName -ResourceGroupNameContains $AzureStorageAccountResourceGroupName
+
+            if($azureStorageAccount -eq $null)
             {                
                 Write-Host "### Azure Storage Account '$AzureStorageAccountName' does not exist. ###" -foregroundcolor "yellow"
                 Write-Host "### Creating new Azure Storage Account '$AzureStorageAccountName' ###" -foregroundcolor "yellow"
@@ -53,7 +54,7 @@ function New-WTTAzureStorageAccount
                     Write-Host "### Failure: New Azure Storage Account '$AzureStorageAccountName' not created. ###" -foregroundcolor "red"
                 }
             }
-            elseif($azureStorageAccountExists)
+            elseif($azureStorageAccount)
             {
                 Write-Host "### Azure Storage Account '$AzureStorageAccountName' already exists. ###" -foregroundcolor "yellow"
             }            
