@@ -30,8 +30,8 @@ namespace DataCleaner
 
         private static void Main(string[] args)
         {
-            //GenerateSupportFiles();
-            //GenerateSalesFile();
+            GenerateSupportFiles();
+            GenerateSalesFile();
 
             int count = 0;
             using (var reader = new StreamReader(@"D:\FactSales.txt"))
@@ -43,11 +43,19 @@ namespace DataCleaner
                     while ((line = reader.ReadLine()) != null)
                     {
                         count++;
+                        try
+                        { 
+                        var values = line.Split('\t');
+                        var date1 = Convert.ToDateTime(values[1]);
+                        var date2 = Convert.ToDateTime(values[19]);
+                        var date3 = Convert.ToDateTime(values[20]);
 
-                        if (!line.Trim().Equals(""))
+                        if (!line.Trim().Equals("") && !values[0].Trim().Equals(""))
                         {
                             writer.WriteLine(line);
                         }
+                        }
+                        catch{}
 
                         if (count % 100 == 0)
                         {
@@ -87,7 +95,7 @@ namespace DataCleaner
                 OnGeneratingLine = PrintLineNumber
             };
 
-            salesGenerator.Run(1, 1000000000);
+            salesGenerator.Run(1, 10000000);
             salesGenerator.GzipFile();
         }
 

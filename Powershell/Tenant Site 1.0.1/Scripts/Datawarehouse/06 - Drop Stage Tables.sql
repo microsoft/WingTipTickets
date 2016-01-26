@@ -3,25 +3,23 @@
 -- ================================================================
 
 IF OBJECT_ID('stage.DimCurrency') IS NOT NULL
-    DROP TABLE stage.DimCurrency;
+	DROP TABLE stage.DimCurrency;
 GO
-
 
 -- ================================================================
 -- Dropping Dim Stage Table
 -- ================================================================
 
 IF OBJECT_ID('stage.DimCustomer') IS NOT NULL
-    DROP TABLE stage.DimCustomer;
+	DROP TABLE stage.DimCustomer;
 GO
-
 
 -- ================================================================
 -- Dropping Dim Stage Table
 -- ================================================================
 
 IF OBJECT_ID('stage.DimDate') IS NOT NULL
-    DROP TABLE stage.DimDate;
+	DROP TABLE stage.DimDate;
 GO
 
 -- ================================================================
@@ -29,16 +27,15 @@ GO
 -- ================================================================
 
 IF OBJECT_ID('stage.DimGeography') IS NOT NULL
-    DROP TABLE stage.DimGeography;
+	DROP TABLE stage.DimGeography;
 GO
-
 
 -- ================================================================
 -- Dropping Dim Stage Table
 -- ================================================================
 
 IF OBJECT_ID('stage.DimPerformer') IS NOT NULL
-    DROP TABLE stage.DimPerformer;
+	DROP TABLE stage.DimPerformer;
 GO
 
 -- ================================================================
@@ -46,7 +43,7 @@ GO
 -- ================================================================
 
 IF OBJECT_ID('stage.DimConcert') IS NOT NULL
-    DROP TABLE stage.DimConcert;
+	DROP TABLE stage.DimConcert;
 GO
 
 -- ================================================================
@@ -54,7 +51,7 @@ GO
 -- ================================================================
 
 IF OBJECT_ID('stage.DimPromotion') IS NOT NULL
-    DROP TABLE stage.DimPromotion;
+	DROP TABLE stage.DimPromotion;
 GO
 
 -- ================================================================
@@ -62,7 +59,7 @@ GO
 -- ================================================================
 
 IF OBJECT_ID('stage.DimSalesTerritory') IS NOT NULL
-    DROP TABLE stage.DimSalesTerritory;
+	DROP TABLE stage.DimSalesTerritory;
 GO
 
 -- ================================================================
@@ -70,7 +67,7 @@ GO
 -- ================================================================
 
 IF OBJECT_ID('stage.DimVenue') IS NOT NULL
-    DROP TABLE stage.DimVenue;
+	DROP TABLE stage.DimVenue;
 GO
 
 -- ================================================================
@@ -78,5 +75,5 @@ GO
 -- ================================================================
 
 IF OBJECT_ID('stage.FactSales') IS NOT NULL
-    DROP TABLE stage.FactSales;
+	DROP TABLE stage.FactSales;
 GO

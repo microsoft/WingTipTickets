@@ -1,181 +1,153 @@
 ﻿<#
 .Synopsis
-    Azure SQL database operation.
- .DESCRIPTION
-    This script is used to create object in azure sql database.
- .EXAMPLE
-    Deploy-DBSchema 'ServerName', 'UserName', 'Password', 'Location', 'DatabaseEdition', 'DatabaseName'
- .INPUTS    
-    1. ServerName
-        Azure sql database server name for connection.
-    2. UserName
-        Username for sql database connection.
-    3. Password
-        Password for sql database connection.
-    4. Location
-        Location ('East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast') for object creation
-    5. DatabaseEdition
-        DatabaseEdition ('Basic','Standard', 'Premium') for object creation    
-    6. DatabaseName
-        Azure sql database name.    
+	Azure SQL database operation.
+.DESCRIPTION
+	This script is used to create object in azure sql database.
+.EXAMPLE
+	Deploy-DBSchema 'ServerName', 'UserName', 'Password', 'Location', 'DatabaseEdition', 'DatabaseName'
 
- .OUTPUTS
-    Message creation of DB schema.
- .NOTES
-    All parameters are mandatory.
- .COMPONENT
-    The component this cmdlet belongs to Azure Sql.
- .ROLE
-    The role this cmdlet belongs to the person having azure sql access.
- .FUNCTIONALITY
-    The functionality that best describes this cmdlet.
+.INPUTS    
+	1. ServerName
+		Azure sql database server name for connection.
+	2. UserName
+		Username for sql database connection.
+	3. Password
+		Password for sql database connection.
+	4. Location
+		Location ('East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast') for object creation
+	5. DatabaseEdition
+		DatabaseEdition ('Basic','Standard', 'Premium') for object creation    
+	6. DatabaseName
+		Azure sql database name.
+
+.OUTPUTS
+	Message creation of DB schema.
+.NOTES
+	All parameters are mandatory.
+.COMPONENT
+	The component this cmdlet belongs to Azure Sql.
+.ROLE
+	The role this cmdlet belongs to the person having azure sql access.
+.FUNCTIONALITY
+	The functionality that best describes this cmdlet.
 #>
 function Deploy-WTTAzureDWDatabase
 {
-    [CmdletBinding()]
-    Param
-    (        
-        #WTT Environment Application Name
-        [Parameter(Mandatory=$true)]
-        [String]
-        $WTTEnvironmentApplicationName,
+	[CmdletBinding()]
+	Param
+	(
+		# WTT Environment Application Name
+		[Parameter(Mandatory=$true)]
+		[String]
+		$WTTEnvironmentApplicationName,
 
-        #Azure SQL server name for connection.
-        [Parameter(Mandatory=$true)]
-        [String]
-        $ServerName,
+		# Azure SQL server name for connection.
+		[Parameter(Mandatory=$true)]
+		[String]
+		$ServerName,
 
-        #Azure SQL database server location
-        [Parameter(Mandatory=$true, HelpMessage="Please specify location for AzureSQL server ('East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast')?")]
-        [ValidateSet('East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast')]
-        [String]
-        $ServerLocation,
+		# Azure SQL database server location
+		[Parameter(Mandatory=$true, HelpMessage="Please specify location for AzureSQL server ('East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast')?")]
+		[ValidateSet('East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast')]
+		[String]
+		$ServerLocation,
 
-        #Azure SQL database server location
-        [Parameter(Mandatory=$true, HelpMessage="Please specify edition for AzureSQL database ('DataWarehouse')?")]
-        [ValidateSet('DataWarehouse')]
-        [String]
-        $DatabaseEdition,
-	
-        #Azure SQL db user name for connection.
-        [Parameter(Mandatory=$true)]
-        [String]
-        $UserName,
+		# Azure SQL database server location
+		[Parameter(Mandatory=$true, HelpMessage="Please specify edition for AzureSQL database ('DataWarehouse')?")]
+		[ValidateSet('DataWarehouse')]
+		[String]
+		$DatabaseEdition,
 
-        #Azure SQL db password for connection.
-        [Parameter(Mandatory=$true)]
-        [String]
-        $Password,
-                
-		#Azure SQL Database name.
-        [Parameter(Mandatory=$true)]
-        [String]        
-        $DWDatabaseName
-    )
-        Process
-    {
-        
-    	#Add-AzureAccount
+		# Azure SQL db user name for connection.
+		[Parameter(Mandatory=$true)]
+		[String]
+		$UserName,
 
-        #
-        # ****** Check Server exists ******
-        #
-        
-        $dbServerExists=$true
-        Try 
-        {
-            Write-Host "### Checking whether Azure SQL Database Server $ServerName already exists. ###" -foregroundcolor "yellow"
-            $existingDbServer=Get-AzureSqlDatabaseServer -ServerName $ServerName -ErrorVariable existingDbServerErrors -ErrorAction SilentlyContinue
-            If($existingDbServer.ServerName -eq $ServerName) 
-            {
-                Write-Host "### Azure SQL Database Server: $ServerName exists. ###" -foregroundcolor "yellow"
-                $dbServerExists=$true
-            }
-            else
-            {
-                Write-Host "### Existing Azure SQL Database Server: $ServerName does not exist. ###" -foregroundcolor "red"
-                $dbServerExists=$false
-	        }
-        }
-        Catch
-        {
-	            Write-Host "Get-AzureSqlDatabaseServer failed.."
-                $dbServerExists=$false
-        }
-    
-        #
-        # ****** Check Database exists ******
-        #
+		# Azure SQL db password for connection.
+		[Parameter(Mandatory=$true)]
+		[String]
+		$Password,
 
-        $dbExists=$true
-        if(!$dbServerExists) 
-        {
-            $dbExists=$false
-        }
-        else
-        {
-	        Try
-        {
-                #$azureSqlDatabaseExists = Get-AzureSqlDatabase -ServerName $ServerName -DatabaseName $DatabaseName  -ErrorVariable azureSqlDatabaseExistsErrors -ErrorAction SilentlyContinue
-                $azureSqlDatabaseExists = Get-AzureRMSqlDatabase -ServerName $ServerName -DatabaseName $DWDatabaseName -ResourceGroupName $WTTEnvironmentApplicationName -ErrorVariable azureSqlDatabaseExistsErrors -ErrorAction SilentlyContinue
+		# Azure SQL Database name.
+		[Parameter(Mandatory=$true)]
+		[String]        
+		$DWDatabaseName
+	)
 
-                if($azureSqlDatabaseExists.Count -gt 0)
-                {
-                    Write-Host $DWDatabaseName " Database already exists on the server '" $ServerName "'"  -foregroundcolor "red"
-                }
+	Process
+	{
+		# Set Defaults
+		$dbServerExists=$true
+		$dbExists=$true
 
-                elseif($azureSqlDatabaseExists.Count -eq 0)
-                {
-                    $dbExists=$false
-                    Write-Host " "
-                    Write-Host "### Creating database ' " $DWDatabaseName " ' ###"
-                    New-AzureRMSqlDatabase -RequestedServiceObjectiveName "DW2000" -ServerName $ServerName -DatabaseName "$DWDatabaseName" -Edition "$DatabaseEdition" -ResourceGroupName $WTTEnvironmentApplicationName
-                    Write-Host "Success: New database $DWDatabaseName created" -foregroundcolor "green"
+		Try 
+		{
+			# Check if Server Exists
+			$existingDbServer = Get-AzureRmSqlServer -resourcegroupname $WTTEnvironmentApplicationName -ServerName $ServerName -ErrorVariable existingDbServerErrors -ErrorAction SilentlyContinue
 
-                    $DWServer = "$ServerName.database.windows.net"
-                    $ConnectionString = "Server=tcp:$ServerName.database.windows.net;
-					Database=$DWDatabaseName;
-					User ID=$UserName;
-					Password=$Password;
-					Trusted_Connection=False;
-					Encrypt=True;"
-                    
-                    $Connection = New-object system.data.SqlClient.SqlConnection($ConnectionString)
-                    $Command = New-Object System.Data.SqlClient.SqlCommand('',$Connection)
-                    #Open the connection with db server.
-                    $Connection.Open()
-                    If(!$Connection)
-                    {
-                        throw "Failed to open connection $ConnectionString"
-                    }
-                    Write-Host "Success: Connection opened to database.. '" $DatabaseName "'"
+			if ($existingDbServer -ne $null)
+			{
+				$dbServerExists = $true
+			}
+			else
+			{
+				$dbServerExists = $false
+				$dbExists = $false
+			}
+		}
+		Catch
+		{
+			WriteError("Azure SQL Server could not be found")
+			$dbServerExists = $false
+			$dbExists = $false
+		}
 
-           
-                    If ($DWDatabaseName -eq $DWDatabaseName)
-                    {
-                        Write-Host "Creating Customer Data Warehouse database..."
-                        Get-ChildItem ".\Scripts\Datawarehouse" -Filter *.sql | `
-                        Foreach-Object{
-                        Write-Host 'Executing' $_.FullName
-                        sqlcmd -U $UserName@$ServerName -P $Password -S $DWDatabaseName -d $DWDatabaseName -i $_.FullName -I
-                        }
-                    }
+		# Check if Database Exists
+		if($dbServerExists) 
+		{
+			Try
+			{
+				LineBreak
+				WriteLabel("Checking for DataWarehouse Database")
+				$azureSqlDatabase = Find-AzureRmResource -ResourceType "Microsoft.Sql/servers/databases" -ResourceNameContains $DWDatabaseName -ResourceGroupNameContains $WTTEnvironmentApplicationName
 
-	        $Connection.Close()
-	        $Connection=$null
-            
-            Set-AzureRmSqlDatabase -RequestedServiceObjectiveName "DW100" -ServerName $ServerName -DatabaseName "$DWDatabaseName" -ResourceGroupName $WTTEnvironmentApplicationName
-        }
-        Write-Host " "
-        Write-Host "SUCCESS:Warehouse Database tables created and database connection closed. " -foregroundcolor "yellow"
-        Write-Host " "    
-    }
-                   
-        Catch
-        {
-            Write-Error "Error -- $Error "
-            $dbExists=$false
-        }
-    }
-    }
-   }
+				if ($azureSqlDatabase -ne $null)
+				{
+					$dbExists = $true
+					WriteValue("Found")
+				}
+				else
+				{
+					WriteValue("Not Found")
+
+					$dbExists = $false
+
+					# Create database using 2000 units
+					WriteLabel("Creating database '$DWDatabaseName'")
+					New-AzureRMSqlDatabase -RequestedServiceObjectiveName "DW2000" -ServerName $ServerName -DatabaseName $DWDatabaseName -Edition $DatabaseEdition -ResourceGroupName $WTTEnvironmentApplicationName -Verbose:$false
+					WriteValue("Successful")
+
+					$DWServer = "tcp:$ServerName.database.windows.net"
+
+					# Create Database tables
+					ForEach($file in Get-ChildItem ".\Scripts\Datawarehouse" -Filter *.sql)
+					{
+						WriteLabel("Executing Script '$file'")
+						$result = sqlcmd -U $UserName@$ServerName -P $Password -S $DWServer -d $DWDatabaseName -i ".\Scripts\Datawarehouse\$file" -I
+						WriteValue("Successful")
+					}
+
+					# Downgrade to 100 units
+					WriteLabel("Downgrading DataWarehouse database to 100 Units")
+					Set-AzureRmSqlDatabase -RequestedServiceObjectiveName "DW100" -ServerName $ServerName -DatabaseName $DWDatabaseName -ResourceGroupName $WTTEnvironmentApplicationName
+					WriteValue("Successful")
+				}
+			}
+			Catch
+			{
+				WriteError($Error)
+				$dbExists = $false
+			}
+		}
+	}
+}

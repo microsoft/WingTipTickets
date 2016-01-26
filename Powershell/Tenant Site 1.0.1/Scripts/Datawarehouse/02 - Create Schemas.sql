@@ -1,9 +1,9 @@
--- ================================================================
--- Creating external and staging schemas
--- ================================================================
+IF (SCHEMA_ID('asb') IS NULL) 
+BEGIN
+	EXEC ('CREATE SCHEMA [asb]')
+END;
 
-CREATE SCHEMA asb
-GO
-
-CREATE SCHEMA stage
-GO
+IF (SCHEMA_ID('stage') IS NULL) 
+BEGIN
+	EXEC ('CREATE SCHEMA [stage]')
+END;

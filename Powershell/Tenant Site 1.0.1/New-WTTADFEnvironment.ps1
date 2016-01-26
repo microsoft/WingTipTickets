@@ -1,138 +1,112 @@
-﻿Function New-WTTADFEnvironment
+﻿<#
+.Synopsis
+	Azure DataFactory operation.
+.DESCRIPTION
+	This script is used to create an Azure Data Factory.
+.EXAMPLE
+	Test
+#>
+function New-WTTADFEnvironment
 {
-[CmdletBinding()]
-Param(
-   [Parameter()]
-   [Alias("subscriptionID")]
-   [string]$global:subscriptionID,
+	[CmdletBinding()]
+	Param
+	(
+		[Parameter()]
+		[string]
+		$SubscriptionId,
 
-   [Parameter()]
-   [Alias("mode")]
-   [string]$global:mode,
+		[Parameter(Mandatory=$true)]
+		[ValidateSet('deploy', 'delete')]
+		[string]
+		$Mode,
 
-   [Parameter()]
-   [Alias("sqllogin")]
-   [string]$global:sqlServerLogin = 'developer',
+		[Parameter()]
+		[string]
+		$SqlServerLogin = 'developer',
 
-   [Parameter()]
-   [Alias("sqlpassword")]
-   [string]$global:sqlServerPassword = 'P@ssword1',
-           
-   #WTT Environment Application Name
-   [Parameter()]
-   [String]$WTTEnvironmentApplicationName,
-           
-   #Azure Active Directory Tenant Name
-   [Parameter(Mandatory=$false)]
-   [String]
-   $AzureActiveDirectoryTenantName,
+		[Parameter()]
+		[string]
+		$SqlServerPassword = 'P@ssword1',
 
-   #Azure Storage Account Name
-   [Parameter(Mandatory=$false)]
-   [String]
-   $azureStorageAccountName,
+		#WTT Environment Application Name
+		[Parameter()]
+		[String]
+		$WTTEnvironmentApplicationName,
 
-   #Azure Storage Account Name
-   [Parameter(Mandatory=$false)]
-   [String]
-   $azureSqlDatabaseServerPrimaryName
-)
+		#Azure Active Directory Tenant Name
+		[Parameter(Mandatory=$false)]
+		[String]
+		$AzureActiveDirectoryTenantName,
 
+		#Azure Storage Account Name
+		[Parameter(Mandatory=$false)]
+		[String]
+		$azureStorageAccountName,
 
+		#Azure Storage Account Name
+		[Parameter(Mandatory=$false)]
+		[String]
+		$azureSqlDatabaseServerPrimaryName
+	)
 
-function Update-JSONFile( $file ){
-	
-
-	(Get-Content $file ) | Foreach-Object {
-		$_ -replace '<account name>', $global:dict["<account name>"] `
- 		    -replace '<account key>', $global:dict["<account key>"] `
- 		    -replace '<ML BES Endpoint>', $global:dict["<ML BES Endpoint>"] `
- 		    -replace '<API Key>', $global:dict["<API Key>"] `
- 		    -replace '<azuredbname>', $global:dict["<azuredbname>"] `
- 		    -replace '<dbname>', $global:dict["<dbname>"] `
- 		    -replace '<userid>', $global:dict["<userid>"] `
- 		    -replace '<password>', $global:dict["<password>"] `
-			-replace '<usecase>', $global:dict["<usecase>"] `
-            -replace '<pipeline start time>', $global:dict["<pipeline start time>"] `
-            -replace '<pipeline end time>', $global:dict["<pipeline end time>"] `
-            -replace '<subId>', $global:dict["<subId>"] `
-            -replace '<subName>', $global:dict["<subName>"] ` 
-	} | Set-Content  $file
-
-}
-
-function ValidateParameters{
-    $modeList = 'deploy', 'delete'
-    if($modeList -notcontains $global:mode){
-        Write-Host ''
-        Write-Host 'MISSING REQUIRED PARAMETER: -mode parameter must be set to one of: ' $modeList
-        $global:mode = Read-Host 'Enter mode'
-        while($modeList -notcontains $global:mode){
-            Write-Host 'Invalid mode. Please enter a mode from the list above.'
-            $global:mode = Read-Host 'Enter mode'                     
-        }
-    }
-}
-
-function DisplayMode {
-    Write-Host
-    Write-Host '------------------------------------------'
-    Write-Host 'Mode: ' $global:mode
-    Write-Host 'Use Case: ' $global:useCaseName   
-    Write-Host '------------------------------------------'
-}
-
-function SetGlobalParams {
-    #this function must be called after ValidateParams
-    
-
-    [string]$global:location = 'CentralUS'
-    [string]$global:locationMultiWord = 'Central US'
-
-    $global:useCaseName = "productrec"
- 
-    if($WTTEnvironmentApplicationName -like 'data*')
-    {
-        $WTTEnvironmentApplicationName = $WTTEnvironmentApplicationName.Substring(4)
-        $output = ($global:useCaseName + $WTTEnvironmentApplicationName).ToLower()
-    }
-    else
-    {
-    $output = ($global:useCaseName + $WTTEnvironmentApplicationName).ToLower()
-    if($output.Length -gt 14) { $output = $output.Remove(15) }
-    }
-
-	if ($global:mode -eq 'deploy')
+	Process
 	{
-		$global:ServiceBusNamespace = $output
-		$global:ServiceBusNamespace | out-file -filepath "temp\sbnamespace.txt"
+		# Check if DataFactory exists
+		$azureDataFactory = Find-AzureRmResource -ResourceType "Microsoft.DataFactory/dataFactories" -ResourceNameContains $WTTEnvironmentApplicationName -ResourceGroupNameContains $WTTEnvironmentApplicationName
+
+		If($azureDataFactory -ne $null)
+		{
+			WriteValue("Found")
+		}
+		else
+		{
+			#SetGlobalParams()
+			RegisterProvider
+
+			try {
+				switch($Mode)
+				{
+					'deploy'
+					{
+						WriteLabel("Creating DataFactory")
+						# CreateProductRecommendationResources
+						# SetMappingDictionary
+						# writeAccountInformation
+						# PopulateProductRecommendation
+						
+						# Write-Host "### Deploying ADF Website $global:azureWebsiteName. ###" -foregroundcolor Yellow
+						#$azureADFWebSiteWebDeployPackagePath = (Get-Item -Path ".\" -Verbose).FullName + "\Packages\ProductRecommendations.zip"
+						#Publish-AzureWebsiteProject -Name $global:azureWebsiteName -Package $azureADFWebSiteWebDeployPackagePath 
+						#Set-ADFWebsiteWebConfig            
+					}
+				} 
+			}
+			Catch
+			{
+				WriteError($Error)
+			}
+		}
 	}
+}
+
+function RegisterProvider()
+{
+	$status = Get-AzureRmResourceProvider -ProviderNamespace Microsoft.DataFactory
 	
-    $global:useCaseName = $output.ToLower()
-    $global:useCaseName = $global:useCaseName
+	if ($status -ne "Registered")
+	{
+		Register-AzureRmResourceProvider -ProviderNamespace Microsoft.DataFactory -Force
+	}
+}
 
-    $global:defaultResourceName = $output 
-    $global:storageAccountName = $WTTEnvironmentApplicationName
-    $global:storageAccountKey = ""
-    $global:blobContainerName = $output
-	$global:azureWebsiteName = $output
-	$global:EventHubName = $output
+function CreateProductRecommendationResources{
+    Write-Host 'Creating Azure services for product recommendation use case:'
+    $storageAccount = GetStorageAccount
+    CreateSQLServerAndDB 
+	CreateAzureWebsite
+    $adf = CreateDataFactory
 
-    $global:resourceGroupName = $output
-    $global:affinityGroupName = $output
-
-    $global:sqlserverName = ""
-    $global:sqlDBName = $output
-    
-
-    $global:configPath = ('.\temp\setup\' + $global:useCaseName + '.txt')
-
-    $global:dict = @{}    
-    $global:progressMessages = New-Object System.Collections.ArrayList($null)
-
-    $global:pipelineDuration = -365
-
-
+    Write-Host 'Completed creating Azure services.'
 }
 
 function SetMappingDictionary {
@@ -155,100 +129,12 @@ function SetMappingDictionary {
     
     $global:dict.Add('<pipeline end time>',$pipelineEndTime.ToString("yyyy-MM-01T00:00:00Z"))
     $global:dict.Add('<pipeline start time>',$pipelineStartTime.ToString("yyyy-MM-01T00:00:00Z"))
-
 }
 
-
-
-function registerDataFactoryProvider
-{
-	$status = Get-AzureRmResourceProvider -ProviderNamespace Microsoft.DataFactory
-	if ($status -ne "Registered")
-	{
-		Register-AzureRmResourceProvider -ProviderNamespace Microsoft.DataFactory -Force
-	}
-}
-
-
-#function CreateStorageAccount
-function GetStorageAccount{
-            # Get Storage Key information
-            $blobAccountkey = (Get-AzureRMStorageAccountKey -ResourceGroupName $WTTEnvironmentApplicationName -storageAccountName $global:storageAccountName).Key1
-            # Get Context
-                    
-}
-
-function CreateSQLServerAndDB{
-    process{
-            
-        #create sql server & DB
-        
-            try{
-                Write-Host 'Creating SQL DB [' $global:sqlDBName ']......' -NoNewline 
-                #$servercredential = new-object System.Management.Automation.PSCredential("developer", ("P@ssword1"  | ConvertTo-SecureString -asPlainText -Force))
-                #create a connection context
-                #$ctx = New-AzureSqlDatabaseServerContext -ServerName $sqlsvrname -Credential $serverCredential 
-                $sqldb = New-AzureRMSqlDatabase -ResourceGroupName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName –DatabaseName $sqlDBName  -Edition Basic   >> setup-log.txt
-                Write-Host 'created.'
-            } catch {
-                Write-Host 'error.'
-                throw
-            }
-        }
-    
-}
-
-function CreateDataFactory{
-    Process{
-        $adf = $null
-        try{
-            Write-Host 'Creating Data Factory [' $global:defaultResourceName ']......' -NoNewline
-            #will force overwrite if already exists
-            $adf = New-AzureRMDataFactory -Name $global:defaultResourceName -location 'West US' -ResourceGroupName $WTTEnvironmentApplicationName -Force  | out-null
-            Write-Host 'created.'    
-        }catch {
-            Write-Host 'error.'
-            throw
-        }
-        return $adf
-    }
-}
-
-function CreateAzureWebsite{  
-    Process{
-        $azurewebsite = $null
-		$eventhub = $null
-		
-        try{            
-			$azurewebsite = Get-AzureRMWebApp -ResourceGroupName $WTTEnvironmentApplicationName -Name $global:azureWebsiteName 
-			if($azurewebsite.name -ne $global:azureWebsiteName)
-			{
-			Write-Host 'Creating Azure Website ['$global:azureWebsiteName']......' -NoNewline
-            $null = New-AzureRMAppServicePlan -Name $global:azureWebsiteName -Location $global:locationMultiWord -Tier Free -ResourceGroupName $WTTEnvironmentApplicationName
-            #create a new Azure Website
-            $azurewebsite = New-AzureRmWebApp -ResourceGroupName $WTTEnvironmentApplicationName -Name $global:azureWebsiteName -Location $global:locationMultiWord -ErrorAction Stop | out-null
-			Write-Host 'created.'
-			}
-			else {
-				Write-Host 'Creating Azure Website ['$global:azureWebsiteName']...... already exists.'
-				Remove-AzureRMWebApp -ResourceGroupName $WTTEnvironmentApplicationName -Name $global:azureWebsiteName
-				Write-Host 'An error occured during setup; it was repaired. :) Please, run script again.'
-				throw
-			}
-		 }catch{
-                Write-Host 'created.'
-		}          
-    }
-}
-
-function CreateProductRecommendationResources{
-    Write-Host 'Creating Azure services for product recommendation use case:'
-    $storageAccount = GetStorageAccount
-    CreateSQLServerAndDB 
-	CreateAzureWebsite
-    $adf = CreateDataFactory
-
-    Write-Host 'Completed creating Azure services.'
+function writeAccountInformation {
+   $accountFile = "$global:useCaseName-accounts.txt"
+   copy -Path "src\\account-template.txt" -Destination ".\\$accountFile" -Force
+   Update-JSONFile ".\\$accountFile"
 }
 
 function PopulateProductRecommendation{
@@ -350,6 +236,160 @@ function PopulateProductRecommendation{
 
 }
 
+function Update-JSONFile( $file ){
+
+	(Get-Content $file ) | Foreach-Object {
+		$_ -replace '<account name>', $global:dict["<account name>"] `
+ 		   -replace '<account key>', $global:dict["<account key>"] `
+ 		   -replace '<ML BES Endpoint>', $global:dict["<ML BES Endpoint>"] `
+ 		   -replace '<API Key>', $global:dict["<API Key>"] `
+ 		   -replace '<azuredbname>', $global:dict["<azuredbname>"] `
+ 		   -replace '<dbname>', $global:dict["<dbname>"] `
+ 		   -replace '<userid>', $global:dict["<userid>"] `
+ 		   -replace '<password>', $global:dict["<password>"] `
+		   -replace '<usecase>', $global:dict["<usecase>"] `
+           -replace '<pipeline start time>', $global:dict["<pipeline start time>"] `
+           -replace '<pipeline end time>', $global:dict["<pipeline end time>"] `
+           -replace '<subId>', $global:dict["<subId>"] `
+           -replace '<subName>', $global:dict["<subName>"] `
+	} | Set-Content  $file
+
+}
+
+function SetGlobalParams($parent) {
+    #this function must be called after ValidateParams
+    
+	$parent.$SubscriptionId = 'TEST'
+
+    [string]$global:location = 'CentralUS'
+    [string]$global:locationMultiWord = 'Central US'
+
+    $global:useCaseName = "productrec"
+ 
+    if($WTTEnvironmentApplicationName -like 'data*')
+    {
+        $WTTEnvironmentApplicationName = $WTTEnvironmentApplicationName.Substring(4)
+        $output = ($global:useCaseName + $WTTEnvironmentApplicationName).ToLower()
+    }
+    else
+    {
+    $output = ($global:useCaseName + $WTTEnvironmentApplicationName).ToLower()
+    if($output.Length -gt 14) { $output = $output.Remove(15) }
+    }
+
+	if ($global:mode -eq 'deploy')
+	{
+		$global:ServiceBusNamespace = $output
+		$global:ServiceBusNamespace | out-file -filepath "temp\sbnamespace.txt"
+	}
+	
+    $global:useCaseName = $output.ToLower()
+    $global:useCaseName = $global:useCaseName
+
+    $global:defaultResourceName = $output 
+    $global:storageAccountName = $WTTEnvironmentApplicationName
+    $global:storageAccountKey = ""
+    $global:blobContainerName = $output
+	$global:azureWebsiteName = $output
+	$global:EventHubName = $output
+
+    $global:resourceGroupName = $output
+    $global:affinityGroupName = $output
+
+    $global:sqlserverName = ""
+    $global:sqlDBName = $output
+    
+
+    $global:configPath = ('.\temp\setup\' + $global:useCaseName + '.txt')
+
+    $global:dict = @{}    
+    $global:progressMessages = New-Object System.Collections.ArrayList($null)
+
+    $global:pipelineDuration = -365
+
+
+}
+
+
+
+
+
+
+
+
+#function CreateStorageAccount
+function GetStorageAccount{
+            # Get Storage Key information
+            $blobAccountkey = (Get-AzureRMStorageAccountKey -ResourceGroupName $WTTEnvironmentApplicationName -storageAccountName $global:storageAccountName).Key1
+            # Get Context
+                    
+}
+
+function CreateSQLServerAndDB{
+    process{
+            
+        #create sql server & DB
+        
+            try{
+                Write-Host 'Creating SQL DB [' $global:sqlDBName ']......' -NoNewline 
+                #$servercredential = new-object System.Management.Automation.PSCredential("developer", ("P@ssword1"  | ConvertTo-SecureString -asPlainText -Force))
+                #create a connection context
+                #$ctx = New-AzureSqlDatabaseServerContext -ServerName $sqlsvrname -Credential $serverCredential 
+                $sqldb = New-AzureRMSqlDatabase -ResourceGroupName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName –DatabaseName $sqlDBName  -Edition Basic   >> setup-log.txt
+                Write-Host 'created.'
+            } catch {
+                Write-Host 'error.'
+                throw
+            }
+        }
+    
+}
+
+function CreateDataFactory{
+    Process{
+        $adf = $null
+        try{
+            Write-Host 'Creating Data Factory [' $global:defaultResourceName ']......' -NoNewline
+            #will force overwrite if already exists
+            $adf = New-AzureRMDataFactory -Name $global:defaultResourceName -location 'West US' -ResourceGroupName $WTTEnvironmentApplicationName -Force  | out-null
+            Write-Host 'created.'    
+        }catch {
+            Write-Host 'error.'
+            throw
+        }
+        return $adf
+    }
+}
+
+function CreateAzureWebsite{  
+    Process{
+        $azurewebsite = $null
+		$eventhub = $null
+		
+        try{            
+			$azurewebsite = Get-AzureRMWebApp -ResourceGroupName $WTTEnvironmentApplicationName -Name $global:azureWebsiteName 
+			if($azurewebsite.name -ne $global:azureWebsiteName)
+			{
+			Write-Host 'Creating Azure Website ['$global:azureWebsiteName']......' -NoNewline
+            $null = New-AzureRMAppServicePlan -Name $global:azureWebsiteName -Location $global:locationMultiWord -Tier Free -ResourceGroupName $WTTEnvironmentApplicationName
+            #create a new Azure Website
+            $azurewebsite = New-AzureRmWebApp -ResourceGroupName $WTTEnvironmentApplicationName -Name $global:azureWebsiteName -Location $global:locationMultiWord -ErrorAction Stop | out-null
+			Write-Host 'created.'
+			}
+			else {
+				Write-Host 'Creating Azure Website ['$global:azureWebsiteName']...... already exists.'
+				Remove-AzureRMWebApp -ResourceGroupName $WTTEnvironmentApplicationName -Name $global:azureWebsiteName
+				Write-Host 'An error occured during setup; it was repaired. :) Please, run script again.'
+				throw
+			}
+		 }catch{
+                Write-Host 'created.'
+		}          
+    }
+}
+
+
+
 function Set-ADFWebsiteWebConfig
 {
    
@@ -360,7 +400,7 @@ function Set-ADFWebsiteWebConfig
 	
 	#Set the RecommendationSiteURL for the ADF website setting in the WTT website 
 	$settings = New-Object Hashtable
-	$settings = @{“SqlServer" = $ADFWebSite; "SqlDB" = $global:sqlDBName; "SqlUserID" = "Developer"; "SqlPassword" = "P@ssword1"}
+	$settings = @{"SqlServer" = $ADFWebSite; "SqlDB" = $global:sqlDBName; "SqlUserID" = "Developer"; "SqlPassword" = "P@ssword1"}
 	
 	Set-AzureRMWebApp -AppSettings $settings -Name $ADFWebSite
 
@@ -382,46 +422,6 @@ function Format-XML ([xml]$xml, $indent=2)
     catch
     {            
         Write-Host $Error
-    }#>
+    }
 }
 
-
-
-function writeAccountInformation {
-   $accountFile = "$global:useCaseName-accounts.txt"
-   copy -Path "src\\account-template.txt" -Destination ".\\$accountFile" -Force
-   Update-JSONFile ".\\$accountFile"
-}
-
-#start of main script
-ValidateParameters
-SetGlobalParams
-registerDataFactoryProvider   
-
-$Global:VerbosePreference = "SilentlyContinue"
-$setupDate = [DateTimeoffset]::Now
-echo "Setup Logs" > setup-log.txt
-echo $setupDate.ToString()  >> setup-log.txt
-echo "-------------------------------------------------------" >> setup-log.txt
-
-try {
-    switch($global:mode){
-        'deploy'{
-			DisplayMode
-            CreateProductRecommendationResources
-		    SetMappingDictionary
-            writeAccountInformation
-            PopulateProductRecommendation
-            Start-Sleep -s 10
-            Write-Host "### Deploying ADF Website $global:azureWebsiteName. ###" -foregroundcolor Yellow
-            $azureADFWebSiteWebDeployPackagePath = (Get-Item -Path ".\" -Verbose).FullName + "\Packages\ProductRecommendations.zip"
-            Publish-AzureWebsiteProject -Name $global:azureWebsiteName -Package $azureADFWebSiteWebDeployPackagePath 
-            Set-ADFWebsiteWebConfig            
-        }
-    } 
-}
-catch {
-        Write-Host 'Setup error.'
-        throw  
-}
-}
