@@ -102,8 +102,8 @@ foreach($file in $files)
     New-AzureDataFactoryLinkedService -DataFactory $df -File $file.FullName -Force 2>&1 3>&1 4>&1 1>>adfdeploy-log.txt
 }
 #>
-#Write-Host "Creating ADF Tables..."  -ForegroundColor Green
-$files = Get-ChildItem "$JsonFilesFolder\Tables\*" -Include *.json -Recurse -ErrorAction Stop
+#Write-Host "Creating ADF DataSets..."  -ForegroundColor Green
+$files = Get-ChildItem "$JsonFilesFolder\DataSets\*" -Include *.json -Recurse -ErrorAction Stop
 
 if($files.Count -eq 0)
 {

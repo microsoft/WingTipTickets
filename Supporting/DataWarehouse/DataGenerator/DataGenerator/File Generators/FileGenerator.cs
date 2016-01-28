@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using Microsoft.SqlServer.Server;
 
 namespace DataCleaner
 {
@@ -88,6 +89,21 @@ namespace DataCleaner
         {
             var keys = new List<string>(Lines.Select(t => t.First()));
             keys.RemoveAll(string.IsNullOrEmpty);
+
+            return keys;
+        }
+
+        public Dictionary<string, int> GetWeightedKeys()
+        {
+            var weight = 0;
+            var keys = new Dictionary<string, int>();
+
+            foreach (var line in Lines)
+            {
+                keys.Add(line.First(), line[1].Length);
+            }
+
+            var distinctRanges = keys.Select(k => k.Value).Distinct();
 
             return keys;
         }

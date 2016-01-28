@@ -123,7 +123,7 @@ namespace DataCleaner
         
         private readonly List<string> _dateKeys;
         private readonly List<string> _venueKeys;
-        private readonly List<string> _concertKeys;
+        private readonly Dictionary<string, int> _concertKeys;
         private readonly List<string> _customerKeys;
         private readonly List<string> _promotionKeys;
 
@@ -146,7 +146,7 @@ namespace DataCleaner
             _salesKey = salesKeySeed;
 
             _dateKeys = (new GenerateDateFile()).GetKeys();
-            _concertKeys = (new GenerateConcertFile()).GetKeys();
+            _concertKeys = (new GenerateConcertFile()).GetWeightedKeys();
             _venueKeys = (new GenerateVenueFile()).GetKeys();
             _promotionKeys = (new GeneratePromotionFile()).GetKeys();
             _customerKeys = (new GenerateCustomerFile()).GetKeys();
@@ -188,7 +188,7 @@ namespace DataCleaner
                 values.Add(venue);
 
                 // Concert
-                var concert = Convert.ToInt32(_concertKeys.GetRandomElement());
+                var concert = Convert.ToInt32(_concertKeys.GetRandomElement().Key);
                 values.Add(concert.ToString());
 
                 // Unit Cost

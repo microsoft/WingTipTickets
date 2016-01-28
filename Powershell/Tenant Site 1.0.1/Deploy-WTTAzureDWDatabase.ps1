@@ -124,7 +124,7 @@ function Deploy-WTTAzureDWDatabase
 
 					# Create database using 2000 units
 					WriteLabel("Creating database '$DWDatabaseName'")
-					New-AzureRMSqlDatabase -RequestedServiceObjectiveName "DW2000" -ServerName $ServerName -DatabaseName $DWDatabaseName -Edition $DatabaseEdition -ResourceGroupName $WTTEnvironmentApplicationName -Verbose:$false
+					$null = New-AzureRMSqlDatabase -RequestedServiceObjectiveName "DW2000" -ServerName $ServerName -DatabaseName $DWDatabaseName -Edition $DatabaseEdition -ResourceGroupName $WTTEnvironmentApplicationName -Verbose:$false
 					WriteValue("Successful")
 
 					$DWServer = "tcp:$ServerName.database.windows.net"
@@ -139,7 +139,7 @@ function Deploy-WTTAzureDWDatabase
 
 					# Downgrade to 100 units
 					WriteLabel("Downgrading DataWarehouse database to 100 Units")
-					Set-AzureRmSqlDatabase -RequestedServiceObjectiveName "DW100" -ServerName $ServerName -DatabaseName $DWDatabaseName -ResourceGroupName $WTTEnvironmentApplicationName
+					$null = Set-AzureRmSqlDatabase -RequestedServiceObjectiveName "DW100" -ServerName $ServerName -DatabaseName $DWDatabaseName -ResourceGroupName $WTTEnvironmentApplicationName
 					WriteValue("Successful")
 				}
 			}
