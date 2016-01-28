@@ -290,53 +290,53 @@ function New-WTTEnvironment
 				New-WTTAzureResourceGroup -AzureResourceGroupName $azureResourceGroupName -AzureResourceGroupLocation $WTTEnvironmentPrimaryServerLocation
 			}
 
-			# If($azureResourceGroupNameExists -eq $true)
-			# {
-				# # Check for Primary SQL Server
-				# WriteLabel("Checking for Primary SQL Server '$azureSqlDatabaseServerPrimaryName'")
-				# $azurePrimarySqlDatabaseServer = Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains $azureSqlDatabaseServerPrimaryName -ResourceGroupNameContains $azureResourceGroupName
-				# WriteValue((IIf ($azurePrimarySqlDatabaseServer -ne $null) "Found" "Not Found"))
+			If($azureResourceGroupNameExists -eq $true)
+			{
+				# Check for Primary SQL Server
+				WriteLabel("Checking for Primary SQL Server '$azureSqlDatabaseServerPrimaryName'")
+				$azurePrimarySqlDatabaseServer = Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains $azureSqlDatabaseServerPrimaryName -ResourceGroupNameContains $azureResourceGroupName
+				WriteValue((IIf ($azurePrimarySqlDatabaseServer -ne $null) "Found" "Not Found"))
 
-				# # Check for Secondary SQL Server
-				# WriteLabel("Checking for Secondary SQL Server '$azureSqlDatabaseServerSecondaryName'")
-				# $azureSecondarySqlDatabaseServer = Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains $azureSqlDatabaseServerSecondaryName -ResourceGroupNameContains $azureResourceGroupName
-				# WriteValue((IIf ($azureSecondarySqlDatabaseServer -ne $null) "Found" "Not Found"))
+				# Check for Secondary SQL Server
+				WriteLabel("Checking for Secondary SQL Server '$azureSqlDatabaseServerSecondaryName'")
+				$azureSecondarySqlDatabaseServer = Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains $azureSqlDatabaseServerSecondaryName -ResourceGroupNameContains $azureResourceGroupName
+				WriteValue((IIf ($azureSecondarySqlDatabaseServer -ne $null) "Found" "Not Found"))
 
-				# # Get location if both exist
-				# If($azurePrimarySqlDatabaseServer -ne $null -and $azureSecondarySqlDatabaseServer -ne $null) 
-				# {
-					# $azurePrimarySqlDatabaseServer
-					# $azureSecondarySqlDatabaseServer
+				# Get location if both exist
+				If($azurePrimarySqlDatabaseServer -ne $null -and $azureSecondarySqlDatabaseServer -ne $null) 
+				{
+					$azurePrimarySqlDatabaseServer
+					$azureSecondarySqlDatabaseServer
 
-					# # TODO: Returning the Location incorrectly. Single value with no spaces
-					# #$wttenvironmentprimaryserverlocation = $azurePrimarySqlDatabaseServer.location
-					# #$wttenvironmentsecondaryserverlocation = $azureSecondarySqlDatabaseServer.location
-				# }
+					# TODO: Returning the Location incorrectly. Single value with no spaces
+					#$wttenvironmentprimaryserverlocation = $azurePrimarySqlDatabaseServer.location
+					#$wttenvironmentsecondaryserverlocation = $azureSecondarySqlDatabaseServer.location
+				}
 
-				# # Restart if Secondary SQL Server missing
-				# elseif($azurePrimarySqlDatabaseServer -ne $null -and $azureSecondarySqlDatabaseServer -eq $null) 
-				# {
-					# LineBreak
-					# WriteError("Removing '$azureResourceGroupName' Resource Group and all related resources.")
+				# Restart if Secondary SQL Server missing
+				elseif($azurePrimarySqlDatabaseServer -ne $null -and $azureSecondarySqlDatabaseServer -eq $null) 
+				{
+					LineBreak
+					WriteError("Removing '$azureResourceGroupName' Resource Group and all related resources.")
 
-					# $null = Remove-AzureRMResourceGroup -Name $azureResourceGroupName -Force -PassThru
-					# $azureResourceGroupNameExists = $null
-					# $azurePrimarySqlDatabaseServer = $null
-					# $azureSecondarySqlDatabaseServer = $null
-				# }
+					$null = Remove-AzureRMResourceGroup -Name $azureResourceGroupName -Force -PassThru
+					$azureResourceGroupNameExists = $null
+					$azurePrimarySqlDatabaseServer = $null
+					$azureSecondarySqlDatabaseServer = $null
+				}
 
-				# # Restart if Primary SQL Server missing
-				# elseif($azurePrimarySqlDatabaseServer -eq $null -and $azureSecondarySqlDatabaseServer -ne $null) 
-				# {
-					# LineBreak
-					# WriteError("Removing '$azureResourceGroupName' Resource Group and all related resources.")
+				# Restart if Primary SQL Server missing
+				elseif($azurePrimarySqlDatabaseServer -eq $null -and $azureSecondarySqlDatabaseServer -ne $null) 
+				{
+					LineBreak
+					WriteError("Removing '$azureResourceGroupName' Resource Group and all related resources.")
 
-					# $null = Remove-AzureRMResourceGroup -Name $azureResourceGroupName -Force -PassThru
-					# $azureResourceGroupNameExists = $null
-					# $azurePrimarySqlDatabaseServer = $null
-					# $azureSecondarySqlDatabaseServer = $null
-				# }
-			# }
+					$null = Remove-AzureRMResourceGroup -Name $azureResourceGroupName -Force -PassThru
+					$azureResourceGroupNameExists = $null
+					$azurePrimarySqlDatabaseServer = $null
+					$azureSecondarySqlDatabaseServer = $null
+				}
+			}
 
 			# Create Storage Account                    
 			New-WTTAzureStorageAccount -AzureStorageAccountResourceGroupName $azureResourceGroupName -AzureStorageAccountName $azureStorageAccountName -AzureStorageAccountType "Standard_GRS" -AzureStorageLocation $WTTEnvironmentPrimaryServerLocation
@@ -349,185 +349,185 @@ function New-WTTEnvironment
 				WriteValue("Successful")
 			}
 
-			# # Create DocumentDB location based off the closest available location
-			# LineBreak
-			# WriteLabel("Checking for DocumentDb Location")
-			# $WTTDocumentDbLocation = 
-				# Switch ($WTTEnvironmentPrimaryServerLocation)
-				# {
-					# 'West US' {'West US'}
-					# 'North Europe' {'North Europe'}
-					# 'West Europe' {'West Europe'}
-					# 'East US' {'East US'}
-					# 'North Central US' {'East US'}
-					# 'EastUS2' {'East US'}
-					# 'South Central US' {'East US'}
-					# 'Central US' {'East US'}
-					# 'North Central US' {'East US'}
-					# 'Brazil South' {'East US'}
-					# 'Southeast Asia' {'Southeast Asia'}
-					# 'Australia Southeast' {'Southeast Asia'}
-					# 'Australia East' {'Southeast Asia'}
-					# 'East Asia' {'East Asia'}
-					# 'Japan East' {'East Asia'}
-					# 'Japan West' {'East Asia'}
-					# default {'West US'}
-				# }
-			# WriteValue("Successful")
+			# Create DocumentDB location based off the closest available location
+			LineBreak
+			WriteLabel("Checking for DocumentDb Location")
+			$WTTDocumentDbLocation = 
+				Switch ($WTTEnvironmentPrimaryServerLocation)
+				{
+					'West US' {'West US'}
+					'North Europe' {'North Europe'}
+					'West Europe' {'West Europe'}
+					'East US' {'East US'}
+					'North Central US' {'East US'}
+					'EastUS2' {'East US'}
+					'South Central US' {'East US'}
+					'Central US' {'East US'}
+					'North Central US' {'East US'}
+					'Brazil South' {'East US'}
+					'Southeast Asia' {'Southeast Asia'}
+					'Australia Southeast' {'Southeast Asia'}
+					'Australia East' {'Southeast Asia'}
+					'East Asia' {'East Asia'}
+					'Japan East' {'East Asia'}
+					'Japan West' {'East Asia'}
+					default {'West US'}
+				}
+			WriteValue("Successful")
 
-			# # Create DocumentDB
-			# if($AzureActiveDirectoryTenantName -eq "")
-			# {
-				# $azureDocumentDBService = New-WTTAzureDocumentDb -WTTResourceGroupName $azureResourceGroupName -WTTDocumentDbName $azureDocumentDbName -WTTDocumentDbLocation $WTTDocumentDbLocation
+			# Create DocumentDB
+			if($AzureActiveDirectoryTenantName -eq "")
+			{
+				$azureDocumentDBService = New-WTTAzureDocumentDb -WTTResourceGroupName $azureResourceGroupName -WTTDocumentDbName $azureDocumentDbName -WTTDocumentDbLocation $WTTDocumentDbLocation
 
-				# if($azureDocumentDBService.Count -eq 0)
-				# {
-					# Start-Sleep -s 30
-					# $azureDocuemtnDBService = New-WTTAzureDocumentDb -WTTResourceGroupName $azureResourceGroupName -WTTDocumentDbName $azureDocumentDbName -WTTDocumentDbLocation $WTTDocumentDbLocation
-					# $azureDocumentDBService
-				# }
-			# }
-			# else
-			# {
-				# $azureDocumentDBService = New-WTTAzureDocumentDb -WTTResourceGroupName $azureResourceGroupName -WTTDocumentDbName $azureDocumentDbName -WTTDocumentDbLocation $WTTDocumentDbLocation -AzureActiveDirectoryTenantName $AzureActiveDirectoryTenantName
+				if($azureDocumentDBService.Count -eq 0)
+				{
+					Start-Sleep -s 30
+					$azureDocuemtnDBService = New-WTTAzureDocumentDb -WTTResourceGroupName $azureResourceGroupName -WTTDocumentDbName $azureDocumentDbName -WTTDocumentDbLocation $WTTDocumentDbLocation
+					$azureDocumentDBService
+				}
+			}
+			else
+			{
+				$azureDocumentDBService = New-WTTAzureDocumentDb -WTTResourceGroupName $azureResourceGroupName -WTTDocumentDbName $azureDocumentDbName -WTTDocumentDbLocation $WTTDocumentDbLocation -AzureActiveDirectoryTenantName $AzureActiveDirectoryTenantName
 
-				# if($azureSearchService.Count -eq 0)
-				# {
-					# Start-Sleep -s 30
-					# $azureDocumentDBService = New-WTTAzureDocumentDb -WTTResourceGroupName $azureResourceGroupName -WTTDocumentDbName $azureDocumentDbName -WTTDocumentDbLocation $WTTDocumentDbLocation -AzureActiveDirectoryTenantName $AzureActiveDirectoryTenantName
-					# $azureDocumentDBService
-				# }
-			# }
+				if($azureSearchService.Count -eq 0)
+				{
+					Start-Sleep -s 30
+					$azureDocumentDBService = New-WTTAzureDocumentDb -WTTResourceGroupName $azureResourceGroupName -WTTDocumentDbName $azureDocumentDbName -WTTDocumentDbLocation $WTTDocumentDbLocation -AzureActiveDirectoryTenantName $AzureActiveDirectoryTenantName
+					$azureDocumentDBService
+				}
+			}
 
-			# # Create Primary SQL Server
-			# if ($azurePrimarySqlDatabaseServer -eq $null)
-			# {
-				# New-WTTAzureSqlDatabaseServer -AzureSqlDatabaseServerName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerLocation $WTTEnvironmentPrimaryServerLocation -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseServerVersion $AzureSqlDatabaseServerVersion -AzureSqlDatabaseServerResourceGroupName $azureResourceGroupName                        
-				# $azurePrimarySqlDatabaseServer = Get-AzureRMSqlServer -ServerName $azureSqlDatabaseServerPrimaryName -ResourceGroupName $azureResourceGroupName -ErrorVariable azureSqlDatabaseServerPrimaryNameExistsErrors -ErrorAction SilentlyContinue                                                
-			# }
+			# Create Primary SQL Server
+			if ($azurePrimarySqlDatabaseServer -eq $null)
+			{
+				New-WTTAzureSqlDatabaseServer -AzureSqlDatabaseServerName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerLocation $WTTEnvironmentPrimaryServerLocation -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseServerVersion $AzureSqlDatabaseServerVersion -AzureSqlDatabaseServerResourceGroupName $azureResourceGroupName                        
+				$azurePrimarySqlDatabaseServer = Get-AzureRMSqlServer -ServerName $azureSqlDatabaseServerPrimaryName -ResourceGroupName $azureResourceGroupName -ErrorVariable azureSqlDatabaseServerPrimaryNameExistsErrors -ErrorAction SilentlyContinue                                                
+			}
 
-			# # Deploy database
-			# if ($azurePrimarySqlDatabaseServer -ne $null)
-			# {   
-				# Deploy-DBSchema -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName -DatabaseEdition "Basic" -UserName $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -ServerLocation $WTTEnvironmentPrimaryServerLocation -DatabaseName $AzureSqlDatabaseName            
-				# Populate-DBSchema -ServerName $azureSqlDatabaseServerPrimaryName -Username $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -DatabaseName $AzureSqlDatabaseName                    
-			# }
+			# Deploy database
+			if ($azurePrimarySqlDatabaseServer -ne $null)
+			{   
+				Deploy-DBSchema -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName -DatabaseEdition "Basic" -UserName $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -ServerLocation $WTTEnvironmentPrimaryServerLocation -DatabaseName $AzureSqlDatabaseName            
+				Populate-DBSchema -ServerName $azureSqlDatabaseServerPrimaryName -Username $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -DatabaseName $AzureSqlDatabaseName                    
+			}
 
-			# # Create Secondary SQL Server
-			# if ($azureSecondarySqlDatabaseServer -eq $null)
-			# {
-				# New-WTTAzureSqlDatabaseServer -AzureSqlDatabaseServerName $azureSqlDatabaseServerSecondaryName -AzureSqlDatabaseServerLocation $wTTEnvironmentSecondaryServerLocation -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseServerVersion $AzureSqlDatabaseServerVersion -AzureSqlDatabaseServerResourceGroupName $azureResourceGroupName   
-				
-				# # Added from Mark's email after working with Audit team to address the bug
-				# $azureSecondarySqlDatabaseServer = Get-AzureRMSqlServer -ServerName $azureSqlDatabaseServerSecondaryName -ResourceGroupName $azureResourceGroupName -ErrorVariable azureSqlDatabaseServerSecondaryNameExists -ErrorAction SilentlyContinue                                 
-			# }
+			# Create Secondary SQL Server
+			if ($azureSecondarySqlDatabaseServer -eq $null)
+			{
+				New-WTTAzureSqlDatabaseServer -AzureSqlDatabaseServerName $azureSqlDatabaseServerSecondaryName -AzureSqlDatabaseServerLocation $wTTEnvironmentSecondaryServerLocation -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseServerVersion $AzureSqlDatabaseServerVersion -AzureSqlDatabaseServerResourceGroupName $azureResourceGroupName   
 
-			# if ($WTTEnvironmentPrimaryServerLocation -notcontains "" -and $wTTEnvironmentSecondaryServerLocation -notcontains "")                 
-			# {
-				# if ($wTTEnvironmentApplicationName.Length -gt 15)
-				# {
-					# $azureSearchServiceName = $wTTEnvironmentApplicationName.Substring(0,15)
-				# }
-				# else
-				# {
-					# $azureSearchServiceName = $wTTEnvironmentApplicationName
-				# }
+				# Added from Mark's email after working with Audit team to address the bug
+				$azureSecondarySqlDatabaseServer = Get-AzureRMSqlServer -ServerName $azureSqlDatabaseServerSecondaryName -ResourceGroupName $azureResourceGroupName -ErrorVariable azureSqlDatabaseServerSecondaryNameExists -ErrorAction SilentlyContinue                                 
+			}
 
-				# if($AzureActiveDirectoryTenantName -eq "")
-				# {
-					# $azureSearchService = New-WTTAzureSearchService -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -WTTEnvironmentResourceGroupName $azureResourceGroupName -AzureSearchServiceLocation $WTTEnvironmentPrimaryServerLocation -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseName $AzureSqlDatabaseName
+			if ($WTTEnvironmentPrimaryServerLocation -notcontains "" -and $wTTEnvironmentSecondaryServerLocation -notcontains "")                 
+			{
+				if ($wTTEnvironmentApplicationName.Length -gt 15)
+				{
+					$azureSearchServiceName = $wTTEnvironmentApplicationName.Substring(0,15)
+				}
+				else
+				{
+					$azureSearchServiceName = $wTTEnvironmentApplicationName
+				}
 
-					# if($azureSearchService.Count -eq 0)
-					# {
-						# $azureSearchService = New-WTTAzureSearchService -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -WTTEnvironmentResourceGroupName $azureResourceGroupName -AzureSearchServiceLocation $WTTEnvironmentPrimaryServerLocation -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseName $AzureSqlDatabaseName
-						# Start-Sleep -s 30
-					# }
-				# }
-				# else
-				# {
-					# $azureSearchService = New-WTTAzureSearchService -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -WTTEnvironmentResourceGroupName $azureResourceGroupName -AzureSearchServiceLocation $WTTEnvironmentPrimaryServerLocation -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseName $AzureSqlDatabaseName -AzureActiveDirectoryTenantName $AzureActiveDirectoryTenantName
+				if($AzureActiveDirectoryTenantName -eq "")
+				{
+					$azureSearchService = New-WTTAzureSearchService -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -WTTEnvironmentResourceGroupName $azureResourceGroupName -AzureSearchServiceLocation $WTTEnvironmentPrimaryServerLocation -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseName $AzureSqlDatabaseName
 
-					# if($azureSearchService.Count -eq 0)
-					# {
-						# $azureSearchService = New-WTTAzureSearchService -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -WTTEnvironmentResourceGroupName $azureResourceGroupName -AzureSearchServiceLocation $WTTEnvironmentPrimaryServerLocation -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseName $AzureSqlDatabaseName -AzureActiveDirectoryTenantName $AzureActiveDirectoryTenantName
-						# Start-Sleep -s 30
-					# }
-				# }
+					if($azureSearchService.Count -eq 0)
+					{
+						$azureSearchService = New-WTTAzureSearchService -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -WTTEnvironmentResourceGroupName $azureResourceGroupName -AzureSearchServiceLocation $WTTEnvironmentPrimaryServerLocation -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseName $AzureSqlDatabaseName
+						Start-Sleep -s 30
+					}
+				}
+				else
+				{
+					$azureSearchService = New-WTTAzureSearchService -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -WTTEnvironmentResourceGroupName $azureResourceGroupName -AzureSearchServiceLocation $WTTEnvironmentPrimaryServerLocation -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseName $AzureSqlDatabaseName -AzureActiveDirectoryTenantName $AzureActiveDirectoryTenantName
 
-				# # Create service plans
-				# LineBreak
-				# WriteLabel("Creating Primary application service plan '$azureSqlDatabaseServerPrimaryName'")
-				# $null = New-AzureRmAppServicePlan -name $azureSqlDatabaseServerPrimaryName -location $WTTEnvironmentPrimaryServerLocation -tier standard -resourcegroupname $azureresourcegroupname
-				# WriteValue("Successful")
+					if($azureSearchService.Count -eq 0)
+					{
+						$azureSearchService = New-WTTAzureSearchService -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -WTTEnvironmentResourceGroupName $azureResourceGroupName -AzureSearchServiceLocation $WTTEnvironmentPrimaryServerLocation -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseName $AzureSqlDatabaseName -AzureActiveDirectoryTenantName $AzureActiveDirectoryTenantName
+						Start-Sleep -s 30
+					}
+				}
 
-				# WriteLabel("Creating Secondary application service plan '$azureSqlDatabaseServerSecondaryName'")
-				# $null = New-AzureRmAppServicePlan -name $azureSqlDatabaseServerSecondaryName -location $wTTEnvironmentSecondaryServerLocation -tier standard -resourcegroupname $azureresourcegroupname
-				# WriteValue("Successful")
+				# Create service plans
+				LineBreak
+				WriteLabel("Creating Primary application service plan '$azureSqlDatabaseServerPrimaryName'")
+				$null = New-AzureRmAppServicePlan -name $azureSqlDatabaseServerPrimaryName -location $WTTEnvironmentPrimaryServerLocation -tier standard -resourcegroupname $azureresourcegroupname
+				WriteValue("Successful")
 
-				# # Create Web Applications
-				# LineBreak
-				# WriteLabel("Creating Primary application '$azureSqlDatabaseServerPrimaryName'")
-				# $null = New-AzureRMWebApp -Location $WTTEnvironmentPrimaryServerLocation -AppServicePlan $azureSqlDatabaseServerPrimaryName -ResourceGroupName $azureResourceGroupName -Name $azureSqlDatabaseServerPrimaryName
-				# WriteValue("Successful")
+				WriteLabel("Creating Secondary application service plan '$azureSqlDatabaseServerSecondaryName'")
+				$null = New-AzureRmAppServicePlan -name $azureSqlDatabaseServerSecondaryName -location $wTTEnvironmentSecondaryServerLocation -tier standard -resourcegroupname $azureresourcegroupname
+				WriteValue("Successful")
 
-				# WriteLabel("Creating Secondary application '$azureSqlDatabaseServerSecondaryName'")
-				# $null = New-AzureRMWebApp -Location $wTTEnvironmentSecondaryServerLocation -AppServicePlan $azureSqlDatabaseServerSecondaryName -ResourceGroupName $azureResourceGroupName -Name $azureSqlDatabaseServerSecondaryName
-				# WriteValue("Successful")
+				# Create Web Applications
+				LineBreak
+				WriteLabel("Creating Primary application '$azureSqlDatabaseServerPrimaryName'")
+				$null = New-AzureRMWebApp -Location $WTTEnvironmentPrimaryServerLocation -AppServicePlan $azureSqlDatabaseServerPrimaryName -ResourceGroupName $azureResourceGroupName -Name $azureSqlDatabaseServerPrimaryName
+				WriteValue("Successful")
 
-				# # Deploy Web Applications
-				# WriteLabel("Deploying Primary application '$azureWebSitePrimaryWebDeployPackageName'")
-				# Publish-AzureWebsiteProject -Name $azureSqlDatabaseServerPrimaryName -Package $azureWebSitePrimaryWebDeployPackagePath
-				# WriteValue("Successful")
+				WriteLabel("Creating Secondary application '$azureSqlDatabaseServerSecondaryName'")
+				$null = New-AzureRMWebApp -Location $wTTEnvironmentSecondaryServerLocation -AppServicePlan $azureSqlDatabaseServerSecondaryName -ResourceGroupName $azureResourceGroupName -Name $azureSqlDatabaseServerSecondaryName
+				WriteValue("Successful")
 
-				# WriteLabel("Deploying Secondary application '$azureWebSiteSecondaryWebDeployPackageName'")
-				# Publish-AzureWebsiteProject -Name $azureSqlDatabaseServerSecondaryName -Package $azureWebSiteSecondaryWebDeployPackagePath
-				# WriteValue("Successful")
+				# Deploy Web Applications
+				WriteLabel("Deploying Primary application '$azureWebSitePrimaryWebDeployPackageName'")
+				Publish-AzureWebsiteProject -Name $azureSqlDatabaseServerPrimaryName -Package $azureWebSitePrimaryWebDeployPackagePath
+				WriteValue("Successful")
 
-				# # Create Traffic Manager Profile
-				# LineBreak
-				# New-WTTAzureTrafficManagerProfile -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -AzureTrafficManagerResourceGroupName $azureResourceGroupName
+				WriteLabel("Deploying Secondary application '$azureWebSiteSecondaryWebDeployPackageName'")
+				Publish-AzureWebsiteProject -Name $azureSqlDatabaseServerSecondaryName -Package $azureWebSiteSecondaryWebDeployPackagePath
+				WriteValue("Successful")
 
-				# # Add Azure WebSite Endpoints to Traffic Manager Profile
-				# Add-WTTAzureTrafficManagerEndpoint -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -AzurePrimaryWebSiteName $azureSqlDatabaseServerPrimaryName -AzureSecondaryWebSiteName $azureSqlDatabaseServerSecondaryName -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -AzureTrafficManagerEndpointStatus "Enabled" -AzureTrafficManagerResourceGroupName $azureResourceGroupName
+				# Create Traffic Manager Profile
+				LineBreak
+				New-WTTAzureTrafficManagerProfile -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -AzureTrafficManagerResourceGroupName $azureResourceGroupName
 
-				# # Enable Auditing on Azure SQL Database Server
-				# # Appears to be a name resolution issue if Auditing is enabled, as Azure Search will not redirect to the database server
-				# if ($azurePrimarySqlDatabaseServer -ne $null)
-				# {
-					# LineBreak
-					# WriteLabel("Setting Primary SQL Server Auditing Policy")
-					# $setPrimaryAzureSqlDatabaseServerAuditingPolicy = Set-AzureRmSqlDatabaseServerAuditingPolicy -ResourceGroupName $azureResourceGroupName -ServerName $azureSqlDatabaseServerPrimaryName -StorageAccountName $azureStorageAccountName -TableIdentifier "wtt" -EventType PlainSQL_Success, PlainSQL_Failure, ParameterizedSQL_Success, ParameterizedSQL_Failure, StoredProcedure_Success, StoredProcedure_Success -WarningVariable null -WarningAction SilentlyContinue                                                 
-					# WriteValue("Successful")
-				# }
+				# Add Azure WebSite Endpoints to Traffic Manager Profile
+				Add-WTTAzureTrafficManagerEndpoint -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -AzurePrimaryWebSiteName $azureSqlDatabaseServerPrimaryName -AzureSecondaryWebSiteName $azureSqlDatabaseServerSecondaryName -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -AzureTrafficManagerEndpointStatus "Enabled" -AzureTrafficManagerResourceGroupName $azureResourceGroupName
 
-				# if ($azureSecondarySqlDatabaseServer -ne $null)
-				# {
-					# WriteLabel("Setting Secondary SQL Server Auditing Policy")
-					# $setSecondaryAzureSqlDatabaseServerAuditingPolicy = Set-AzureRmSqlDatabaseServerAuditingPolicy -ResourceGroupName $azureResourceGroupName -ServerName $azureSqlDatabaseServerSecondaryName -StorageAccountName $azureStorageAccountName -TableIdentifier "wtt" -EventType PlainSQL_Success, PlainSQL_Failure, ParameterizedSQL_Success, ParameterizedSQL_Failure, StoredProcedure_Success, StoredProcedure_Success -WarningVariable null -WarningAction SilentlyContinue
-					# WriteValue("Successful")
-				# }
-			# }
+				# Enable Auditing on Azure SQL Database Server
+				# Appears to be a name resolution issue if Auditing is enabled, as Azure Search will not redirect to the database server
+				if ($azurePrimarySqlDatabaseServer -ne $null)
+				{
+					LineBreak
+					WriteLabel("Setting Primary SQL Server Auditing Policy")
+					$setPrimaryAzureSqlDatabaseServerAuditingPolicy = Set-AzureRmSqlDatabaseServerAuditingPolicy -ResourceGroupName $azureResourceGroupName -ServerName $azureSqlDatabaseServerPrimaryName -StorageAccountName $azureStorageAccountName -TableIdentifier "wtt" -EventType PlainSQL_Success, PlainSQL_Failure, ParameterizedSQL_Success, ParameterizedSQL_Failure, StoredProcedure_Success, StoredProcedure_Success -WarningVariable null -WarningAction SilentlyContinue                                                 
+					WriteValue("Successful")
+				}
 
-			# # Deploy Azure Data Warehouse on the primary database server. This may run for about 15 minutes.
-			# if ($azurePrimarySqlDatabaseServer -ne $null)
-			# {
-				# Deploy-WTTAzureDWDatabase -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName -ServerLocation $WTTEnvironmentPrimaryServerLocation -DatabaseEdition "DataWarehouse" -UserName $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -DWDatabaseName $AzureSqlDWDatabaseName
-			# }
+				if ($azureSecondarySqlDatabaseServer -ne $null)
+				{
+					WriteLabel("Setting Secondary SQL Server Auditing Policy")
+					$setSecondaryAzureSqlDatabaseServerAuditingPolicy = Set-AzureRmSqlDatabaseServerAuditingPolicy -ResourceGroupName $azureResourceGroupName -ServerName $azureSqlDatabaseServerSecondaryName -StorageAccountName $azureStorageAccountName -TableIdentifier "wtt" -EventType PlainSQL_Success, PlainSQL_Failure, ParameterizedSQL_Success, ParameterizedSQL_Failure, StoredProcedure_Success, StoredProcedure_Success -WarningVariable null -WarningAction SilentlyContinue
+					WriteValue("Successful")
+				}
+			}
+
+			# Deploy Azure Data Warehouse on the primary database server. This may run for about 15 minutes.
+			if ($azurePrimarySqlDatabaseServer -ne $null)
+			{
+				Deploy-WTTAzureDWDatabase -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName -ServerLocation $WTTEnvironmentPrimaryServerLocation -DatabaseEdition "DataWarehouse" -UserName $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -DWDatabaseName $AzureSqlDWDatabaseName
+			}
 
 			# Deploy ADF environment
-			#New-WTTADFEnvironment -ApplicationName $WTTEnvironmentApplicationName -ResourceGroupName $azureResourceGroupName -Location $WTTEnvironmentPrimaryServerLocation -WebsiteHostingPlanName $azureSqlDatabaseServerPrimaryName -DatabaseServerName $azureSqlDatabaseServerPrimaryName -DatabaseName "Recommendations" -DatabaseEdition "Basic" -DatabaseUserName $AzureSqlDatabaseServerAdministratorUserName -DatabasePassword $AzureSqlDatabaseServerAdministratorPassword
+			New-WTTADFEnvironment -ApplicationName $WTTEnvironmentApplicationName -ResourceGroupName $azureResourceGroupName -Location $WTTEnvironmentPrimaryServerLocation -WebsiteHostingPlanName $azureSqlDatabaseServerPrimaryName -DatabaseServerName $azureSqlDatabaseServerPrimaryName -DatabaseName "Recommendations" -DatabaseEdition "Basic" -DatabaseUserName $AzureSqlDatabaseServerAdministratorUserName -DatabasePassword $AzureSqlDatabaseServerAdministratorPassword
 
-			#Start-Sleep -Seconds 30
+			Start-Sleep -Seconds 30
 
 			# Set the Application Settings
-			#if($azureSearchService.Count -eq 1)
-			#{
+			if($azureSearchService.Count -eq 1)
+			{
 				$searchServicePrimaryManagementKey = $azureSearchService
 				$documentDbPrimaryKey = Import-Clixml .\docdbkey.xml
 
 				Set-WTTEnvironmentWebConfigDay1 -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -AzureWebSiteWebDeployPackagePath $azureWebSitePrimaryWebDeployPackagePath -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey  $documentDbPrimaryKey
 				Set-WTTEnvironmentWebConfigDay1 -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -AzureWebSiteWebDeployPackagePath $azureWebSiteSecondaryWebDeployPackagePath -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerSecondaryName -AzureSqlDatabaseServerSecondaryName $azureSqlDatabaseServerPrimaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey  $documentDbPrimaryKey
-			#}
+			}
 
 			LineBreak
 		}
