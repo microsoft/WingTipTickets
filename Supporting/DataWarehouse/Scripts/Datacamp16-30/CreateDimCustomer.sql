@@ -1,4 +1,47 @@
 -- ================================================================
+-- Drop West US credentials
+-- ================================================================
+DROP EXTERNAL DATA SOURCE wttdatacampdwwestus
+DROP DATABASE SCOPED CREDENTIAL ASB_WTTCredential
+
+-- ================================================================
+-- Create East US credentials
+-- ================================================================
+-- ================================================================
+-- Creating master key
+-- ================================================================
+
+IF (NOT EXISTS(SELECT * FROM sys.symmetric_keys WHERE name LIKE '%MS_DatabaseMasterKey%'))
+BEGIN
+	CREATE MASTER KEY;
+END
+
+-- ================================================================
+-- Create a database scoped credential
+-- ================================================================
+
+IF (NOT EXISTS(SELECT * FROM sys.database_credentials WHERE Name = 'ASB_WTTCredential'))
+BEGIN
+	CREATE DATABASE SCOPED CREDENTIAL ASB_WTTCredential 
+	WITH IDENTITY = 'wttdatacampdweastus', SECRET = 's6bvZXAJ8nT7wLXh88CVDGKKRVyt05ksyC9dz20QGcMxbsjMx9F07KLfVRU1xVXFpkR2cEV0svkrWt2sALxuvw=='
+END;
+
+-- ================================================================
+-- Creating external data source (Azure Blob Storage)
+-- ================================================================
+
+IF (NOT EXISTS(SELECT * FROM sys.external_data_sources WHERE Name = 'wttdatacampdweastus'))
+BEGIN
+	CREATE EXTERNAL DATA SOURCE wttdatacampdweastus
+	WITH (
+		TYPE = HADOOP,
+		LOCATION ='wasbs://wttdatacampdw@wttdatacampdweastus.blob.core.windows.net',
+		CREDENTIAL = ASB_WTTCredential
+	)
+END;
+
+
+-- ================================================================
 -- Creating DimCustomer External Table
 -- ================================================================
 
@@ -40,14 +83,14 @@ CREATE EXTERNAL TABLE asb.DimCustomer
 )
 WITH (
     LOCATION='DimCustomer.txt.gz'
-  , DATA_SOURCE = wttdatacampdwwestus
+  , DATA_SOURCE = wttdatacampdweastus
   , FILE_FORMAT = gzip_tab_delimited_text_file
 );
 -- ================================================================
 -- Creating DimCustomer External Table Completed
 -- ================================================================
 -- ================================================================
--- Creating Dim External Customer Table
+-- Creating Dim Stage Customer Table
 -- ================================================================
 
 IF OBJECT_ID('stage.DimCustomer') IS NOT NULL
@@ -89,7 +132,7 @@ SELECT
   , UpdateDate
 FROM asb.DimCustomer;
 -- ================================================================
--- Creating Dim External Customer Table Completed
+-- Creating Dim Stage Customer Table Completed
 -- ================================================================
 -- ================================================================
 -- Creating Dim Customer Table
@@ -162,5 +205,5 @@ GO
 -- ================================================================
 
 IF OBJECT_ID('asb.DimCustomer') IS NOT NULL
-    DROP TABLE asb.DimCustomer;
+    DROP EXTERNAL TABLE asb.DimCustomer;
 GO
