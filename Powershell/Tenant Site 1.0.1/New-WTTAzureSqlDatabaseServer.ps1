@@ -48,7 +48,7 @@ function New-WTTAzureSqlDatabaseServer
 	{ 
 		Try 
 		{
-			$azureSqlDatabaseServerResourceGroup = (Find-AzureRMResourceGroup).Name -contains $azureResourceGroupName
+			$azureSqlDatabaseServerResourceGroup = (Find-AzureRMResourceGroup).Name -contains $AzureSqlDatabaseServerResourceGroupName
 
 			If($azureSqlDatabaseServerResourceGroup -eq $true)
 			{
