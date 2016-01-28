@@ -33,7 +33,7 @@ function New-WTTAzureDocumentDb
 
 	try
 	{
-		write-Host "### Creating DocumentDB if it doesn't already exist. ###" -foregroundcolor "yellow"
+		WriteLabel("Creating DocumentDB")
 
 		# Load ADAL Assemblies
 		$adal = "${env:ProgramFiles(x86)}\Microsoft SDKs\Azure\PowerShell\ServiceManagement\Azure\Services\Microsoft.IdentityModel.Clients.ActiveDirectory.dll"
@@ -115,7 +115,6 @@ function New-WTTAzureDocumentDb
 			$statusResponse = Invoke-RestMethod -Method GET -ContentType "application/json" -Uri $statusUrl -Headers $headers
 
 			$createStatus = $statusResponse.properties.provisioningState
-			write-host "Create status: " $createStatus 
 			Start-Sleep -s 30
 		}
 		Until ($createStatus -eq "succeeded")
@@ -128,9 +127,11 @@ function New-WTTAzureDocumentDb
 
 		$documentDbPrimaryKey = $keys.primaryMasterKey
 		$documentDbPrimaryKey | Export-Clixml .\docdbkey.xml -Force
+		WriteValue("Successful")
 	}
 	Catch
 	{
+		WriteValue("Failed")
 		WriteError($Error)
 	}
 } 

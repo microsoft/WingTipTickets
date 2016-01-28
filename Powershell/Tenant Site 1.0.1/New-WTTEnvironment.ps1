@@ -195,10 +195,10 @@ function New-WTTEnvironment
 			# Print Script Path
 			WriteLine("Script Path: '$localPath'")
 			LineBreak
-			
+
 			# Set Defaults
-			$azurePrimarySqlDatabaseServer = $false
-			$azureSecondarySqlDatabaseServer = $false
+			$azurePrimarySqlDatabaseServer = $null
+			$azureSecondarySqlDatabaseServer = $null
 
 			# Check installed PowerShell Version
 			WriteLabel("Checking for Azure PowerShell Version 1.0.1 or later")
@@ -400,10 +400,18 @@ function New-WTTEnvironment
 			}
 
 			# Create Primary SQL Server
+			$azurePrimarySqlDatabaseServer
 			if ($azurePrimarySqlDatabaseServer -eq $null)
 			{
 				New-WTTAzureSqlDatabaseServer -AzureSqlDatabaseServerName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerLocation $WTTEnvironmentPrimaryServerLocation -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseServerVersion $AzureSqlDatabaseServerVersion -AzureSqlDatabaseServerResourceGroupName $azureResourceGroupName                        
 				$azurePrimarySqlDatabaseServer = Get-AzureRMSqlServer -ServerName $azureSqlDatabaseServerPrimaryName -ResourceGroupName $azureResourceGroupName -ErrorVariable azureSqlDatabaseServerPrimaryNameExistsErrors -ErrorAction SilentlyContinue                                                
+			}
+
+			# Create Secondary SQL Server
+			if ($azureSecondarySqlDatabaseServer -eq $null)
+			{
+				New-WTTAzureSqlDatabaseServer -AzureSqlDatabaseServerName $azureSqlDatabaseServerSecondaryName -AzureSqlDatabaseServerLocation $wTTEnvironmentSecondaryServerLocation -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseServerVersion $AzureSqlDatabaseServerVersion -AzureSqlDatabaseServerResourceGroupName $azureResourceGroupName   
+				$azureSecondarySqlDatabaseServer = Get-AzureRMSqlServer -ServerName $azureSqlDatabaseServerSecondaryName -ResourceGroupName $azureResourceGroupName -ErrorVariable azureSqlDatabaseServerSecondaryNameExists -ErrorAction SilentlyContinue                                 
 			}
 
 			# Deploy database
@@ -411,15 +419,6 @@ function New-WTTEnvironment
 			{   
 				Deploy-DBSchema -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName -DatabaseEdition "Basic" -UserName $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -ServerLocation $WTTEnvironmentPrimaryServerLocation -DatabaseName $AzureSqlDatabaseName            
 				Populate-DBSchema -ServerName $azureSqlDatabaseServerPrimaryName -Username $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -DatabaseName $AzureSqlDatabaseName                    
-			}
-
-			# Create Secondary SQL Server
-			if ($azureSecondarySqlDatabaseServer -eq $null)
-			{
-				New-WTTAzureSqlDatabaseServer -AzureSqlDatabaseServerName $azureSqlDatabaseServerSecondaryName -AzureSqlDatabaseServerLocation $wTTEnvironmentSecondaryServerLocation -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseServerVersion $AzureSqlDatabaseServerVersion -AzureSqlDatabaseServerResourceGroupName $azureResourceGroupName   
-
-				# Added from Mark's email after working with Audit team to address the bug
-				$azureSecondarySqlDatabaseServer = Get-AzureRMSqlServer -ServerName $azureSqlDatabaseServerSecondaryName -ResourceGroupName $azureResourceGroupName -ErrorVariable azureSqlDatabaseServerSecondaryNameExists -ErrorAction SilentlyContinue                                 
 			}
 
 			if ($WTTEnvironmentPrimaryServerLocation -notcontains "" -and $wTTEnvironmentSecondaryServerLocation -notcontains "")                 
@@ -475,6 +474,7 @@ function New-WTTEnvironment
 				WriteValue("Successful")
 
 				# Deploy Web Applications
+				LineBreak
 				WriteLabel("Deploying Primary application '$azureWebSitePrimaryWebDeployPackageName'")
 				Publish-AzureWebsiteProject -Name $azureSqlDatabaseServerPrimaryName -Package $azureWebSitePrimaryWebDeployPackagePath
 				WriteValue("Successful")
@@ -525,8 +525,8 @@ function New-WTTEnvironment
 				$searchServicePrimaryManagementKey = $azureSearchService
 				$documentDbPrimaryKey = Import-Clixml .\docdbkey.xml
 
-				Set-WTTEnvironmentWebConfigDay1 -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -AzureWebSiteWebDeployPackagePath $azureWebSitePrimaryWebDeployPackagePath -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey  $documentDbPrimaryKey
-				Set-WTTEnvironmentWebConfigDay1 -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -AzureWebSiteWebDeployPackagePath $azureWebSiteSecondaryWebDeployPackagePath -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerSecondaryName -AzureSqlDatabaseServerSecondaryName $azureSqlDatabaseServerPrimaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey  $documentDbPrimaryKey
+				Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -AzureWebSiteWebDeployPackagePath $azureWebSitePrimaryWebDeployPackagePath -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey  $documentDbPrimaryKey
+				Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -AzureWebSiteWebDeployPackagePath $azureWebSiteSecondaryWebDeployPackagePath -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerSecondaryName -AzureSqlDatabaseServerSecondaryName $azureSqlDatabaseServerPrimaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey  $documentDbPrimaryKey
 			}
 
 			LineBreak
