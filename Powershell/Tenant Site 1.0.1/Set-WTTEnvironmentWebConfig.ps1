@@ -16,6 +16,11 @@ function Set-WTTEnvironmentWebConfig
 		[String]
 		$WTTEnvironmentApplicationName,
 
+		# WTT Environment Application Name
+		[Parameter(Mandatory=$true)]
+		[String]
+		$Websitename,
+
 		# Primary Azure SQL Database Server Name
 		[Parameter(Mandatory=$false)]
 		[String]
@@ -85,11 +90,6 @@ function Set-WTTEnvironmentWebConfig
 				$AzureSqlDatabaseName = "Customer1"
 			}
 
-			if($AzureWebSiteWebDeployPackagePath -eq "")
-			{
-				$AzureWebSiteWebDeployPackagePath = (Get-Item -Path ".\" -Verbose).FullName + "\Packages"
-			}
-
 			if($AzureSqlDatabaseServerPrimaryName -eq "")
 			{
 				$AzureSqlDatabaseServerPrimaryName = $WTTEnvironmentApplicationName + "primary"
@@ -128,7 +128,7 @@ function Set-WTTEnvironmentWebConfig
 			}
 
 			# Add the settings to the website
-			$null = Set-AzureRMWebApp -AppSettings $settings -Name $ApplicationName$DatabaseName -ResourceGroupName $ResourceGroupName
+			$null = Set-AzureRMWebApp -AppSettings $settings -Name $websiteName -ResourceGroupName $ResourceGroupName
 
 			# Restart the website - (Not sure that this is needed, try without first)
 			Restart-AzureWebsite -Name $websiteName

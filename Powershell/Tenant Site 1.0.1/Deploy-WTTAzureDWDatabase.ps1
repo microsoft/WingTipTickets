@@ -133,11 +133,11 @@ function Deploy-WTTAzureDWDatabase
 					ForEach($file in Get-ChildItem ".\Scripts\Datawarehouse" -Filter *.sql)
 					{
 						WriteLabel("Executing Script '$file'")
-						$result = sqlcmd -U "$UserName@$ServerName" -P $Password -S $DWServer -d $DWDatabaseName -i ".\Scripts\Datawarehouse\$file" -I
+                        $result = Invoke-Sqlcmd -Username "$UserName@$ServerName" -Password $Password -ServerInstance $DWServer -Database $DWDatabaseName -InputFile ".\Scripts\Datawarehouse\$file" -QueryTimeout 0
 						WriteValue("Successful")
 					}
 
-					# Downgrade to 100 units
+					# Downgrade to 400 units
 					WriteLabel("Downgrading DataWarehouse database to 400 Units")
 					$null = Set-AzureRmSqlDatabase -RequestedServiceObjectiveName "DW400" -ServerName $ServerName -DatabaseName $DWDatabaseName -ResourceGroupName $WTTEnvironmentApplicationName
 					WriteValue("Successful")

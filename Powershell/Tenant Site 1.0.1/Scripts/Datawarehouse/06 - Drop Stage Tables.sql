@@ -10,14 +10,6 @@ GO
 -- Dropping Dim Stage Table
 -- ================================================================
 
-IF OBJECT_ID('stage.DimCustomer') IS NOT NULL
-	DROP TABLE stage.DimCustomer;
-GO
-
--- ================================================================
--- Dropping Dim Stage Table
--- ================================================================
-
 IF OBJECT_ID('stage.DimDate') IS NOT NULL
 	DROP TABLE stage.DimDate;
 GO
@@ -76,4 +68,76 @@ GO
 
 IF OBJECT_ID('stage.FactSales') IS NOT NULL
 	DROP TABLE stage.FactSales;
+GO
+-- ================================================================
+-- Creating Dim External Table
+-- ================================================================
+
+IF OBJECT_ID('asb.DimCurrency') IS NOT NULL
+    DROP EXTERNAL TABLE asb.DimCurrency;
+GO
+
+-- ================================================================
+-- Creating Dim External Table
+-- ================================================================
+
+IF OBJECT_ID('asb.DimDate') IS NOT NULL
+    DROP EXTERNAL TABLE asb.DimDate;
+GO
+
+-- ================================================================
+-- Creating Dim External Table
+-- ================================================================
+
+IF OBJECT_ID('asb.DimGeography') IS NOT NULL
+    DROP EXTERNAL TABLE asb.DimGeography;
+GO
+
+
+-- ================================================================
+-- Creating Dim External Table
+-- ================================================================
+
+IF OBJECT_ID('asb.DimPerformer') IS NOT NULL
+    DROP EXTERNAL TABLE asb.DimPerformer;
+GO
+
+-- ================================================================
+-- Creating Dim External Table
+-- ================================================================
+
+IF OBJECT_ID('asb.DimConcert') IS NOT NULL
+    DROP EXTERNAL TABLE asb.DimConcert;
+GO
+
+-- ================================================================
+-- Creating Dim External Table
+-- ================================================================
+
+IF OBJECT_ID('asb.DimPromotion') IS NOT NULL
+    DROP EXTERNAL TABLE asb.DimPromotion;
+GO
+
+-- ================================================================
+-- Creating Dim External Table
+-- ================================================================
+
+IF OBJECT_ID('asb.DimSalesTerritory') IS NOT NULL
+    DROP EXTERNAL TABLE asb.DimSalesTerritory;
+GO
+
+-- ================================================================
+-- Creating Dim External Table
+-- ================================================================
+
+IF OBJECT_ID('asb.DimVenue') IS NOT NULL
+    DROP EXTERNAL TABLE asb.DimVenue;
+GO
+
+-- ================================================================
+-- Creating Dim External Table
+-- ================================================================
+
+IF OBJECT_ID('asb.FactSales') IS NOT NULL
+    DROP EXTERNAL TABLE asb.FactSales;
 GO
