@@ -127,20 +127,25 @@ function Deploy-WTTAzureDWDatabase
 					$null = New-AzureRMSqlDatabase -RequestedServiceObjectiveName "DW2000" -ServerName $ServerName -DatabaseName $DWDatabaseName -Edition $DatabaseEdition -ResourceGroupName $WTTEnvironmentApplicationName -Verbose:$false
 					WriteValue("Successful")
 
-					$DWServer = "tcp:$ServerName.database.windows.net"
+					$DWServer = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains "primary" -ExpandProperties).properties.FullyQualifiedDomainName
 
 					# Create Database tables
 					ForEach($file in Get-ChildItem ".\Scripts\Datawarehouse" -Filter *.sql)
 					{
 						WriteLabel("Executing Script '$file'")
-						$result = sqlcmd -U $UserName@$ServerName -P $Password -S $DWServer -d $DWDatabaseName -i ".\Scripts\Datawarehouse\$file" -I
+						$result = sqlcmd -U "$UserName@$ServerName" -P $Password -S $DWServer -d $DWDatabaseName -i ".\Scripts\Datawarehouse\$file" -I
 						WriteValue("Successful")
 					}
 
 					# Downgrade to 100 units
-					WriteLabel("Downgrading DataWarehouse database to 100 Units")
-					$null = Set-AzureRmSqlDatabase -RequestedServiceObjectiveName "DW100" -ServerName $ServerName -DatabaseName $DWDatabaseName -ResourceGroupName $WTTEnvironmentApplicationName
+					WriteLabel("Downgrading DataWarehouse database to 400 Units")
+					$null = Set-AzureRmSqlDatabase -RequestedServiceObjectiveName "DW400" -ServerName $ServerName -DatabaseName $DWDatabaseName -ResourceGroupName $WTTEnvironmentApplicationName
 					WriteValue("Successful")
+
+                    WriteLabel("Pausing DataWarehouse database")
+                    $null = Suspend-AzureRMSqlDatabase –ResourceGroupName $WTTEnvironmentApplicationName –ServerName $ServerName –DatabaseName $DWDatabaseName
+                    WriteValue("Successful")
+                    Start-Sleep -s 180
 				}
 			}
 			Catch
