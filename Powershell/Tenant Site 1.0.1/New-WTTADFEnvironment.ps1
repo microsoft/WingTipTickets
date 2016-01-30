@@ -75,6 +75,7 @@ function New-WTTADFEnvironment
 
 			try 
 			{
+                $path = (Get-Item -Path ".\" -Verbose).FullName
 				# Register DataFactory Provider
 				RegisterProvider
 
@@ -189,9 +190,11 @@ function CreateSchema()
 	{
 		# Create Database Schema
 		WriteLabel("Creating Database Schema")
+        
+        $DatabaseServer = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains "primary" -ExpandProperties).properties.FullyQualifiedDomainName
+        $result = Invoke-Sqlcmd -Username "$DatabaseUserName@$DatabaseServerName" -Password $DatabasePassword -ServerInstance $DatabaseServer -Database $DatabaseName -InputFile ".\Resources\DataFactory\Database\Schema.sql" -QueryTimeout 0
 
-		$DWServer = "tcp:$DatabaseServerName.database.windows.net"
-		$result = sqlcmd -U $DatabaseUserName@$DatabaseServerName -P $DatabasePassword -S $DWServer -d $DatabaseName -i ".\Resources\DataFactory\Database\Schema.sql" -I
+        Set-Location $path
 
 		WriteValue("Successful")
 	}
@@ -209,8 +212,10 @@ function PopulateDatabase()
 		# Populate Database
 		WriteLabel("Populating Database")
 
-		$DWServer = "tcp:$DatabaseServerName.database.windows.net"
-		$result = sqlcmd -U $DatabaseUserName@$DatabaseServerName -P $DatabasePassword -S $DWServer -d $DatabaseName -i ".\Resources\DataFactory\Database\Populate.sql" -I
+        $DatabaseServer = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains "primary" -ExpandProperties).properties.FullyQualifiedDomainName
+        $result = Invoke-Sqlcmd -Username "$DatabaseUserName@$DatabaseServerName" -Password $DatabasePassword -ServerInstance $DatabaseServer -Database $DatabaseName -InputFile ".\Resources\DataFactory\Database\Populate.sql" -QueryTimeout 0
+        
+        Set-Location $path
 
 		WriteValue("Successful")
 	}
