@@ -80,30 +80,17 @@ function Set-WTTEnvironmentWebConfig
 				$AzureSqlDatabaseServerAdministratorPassword = "P@ssword1"
 			}
 
-			if($AzureSqlDatabaseServerVersion -eq "")
-			{
-				$AzureSqlDatabaseServerVersion = "12.0"
-			}
-
 			if($AzureSqlDatabaseName -eq "")
 			{
 				$AzureSqlDatabaseName = "Customer1"
 			}
 
-			if($AzureSqlDatabaseServerPrimaryName -eq "")
-			{
-				$AzureSqlDatabaseServerPrimaryName = $WTTEnvironmentApplicationName + "primary"
-			}
 
-			if($AzureSqlDatabaseServerSecondaryName -eq "")
-			{
-				$AzureSqlDatabaseServerSecondaryName = $WTTEnvironmentApplicationName + "secondary"                    
-			}
+			$ADFWebSite = (Find-AzureRmResource -ResourceType Microsoft.Web/sites -ResourceNameContains "recommendations" -ExpandProperties).Name
 
-			$ADFWebSite = Get-AzureRMWebApp | Where-Object {$_.Name -like "*product*"}
-			if ($ADFWebSite.SiteName -like "*product*")
+			if ($ADFWebSite -like "*recommendations*")
 			{
-				$ADFWebSite = [string]$ADFWebsite.HostNames
+				$ADFWebSite = [string](get-azurermwebapp -name $ADFWebsite).HostNames
 			}
 			else
 			{
@@ -114,24 +101,24 @@ function Set-WTTEnvironmentWebConfig
 			$settings = New-Object Hashtable
 			$settings = 
 			@{
-				"TenantName" = $WTTEnvironmentApplicationName; 
-					"DatabaseUserName" = $AzureSqlDatabaseServerAdministratorUserName; 
-					"DatabaseUserPassword" = $AzureSqlDatabaseServerAdministratorPassword; 
-					"PrimaryDatabaseServer" = $AzureSqlDatabaseServerPrimaryName; 
-					"SecondaryDatabaseServer" = $AzureSqlDatabaseServerSecondaryName; 
-					"TenantDbName" = $AzureSqlDatabaseName; 
-					"SearchServiceKey" = $SearchServicePrimaryManagementKey; 
-					"SearchServiceName" = $wTTEnvironmentApplicationName; 
+				    "TenantName" = "$WTTEnvironmentApplicationName"; 
+					"DatabaseUserName" = "$AzureSqlDatabaseServerAdministratorUserName"; 
+					"DatabaseUserPassword" = "$AzureSqlDatabaseServerAdministratorPassword"; 
+					"PrimaryDatabaseServer" = "$AzureSqlDatabaseServerPrimaryName"; 
+					"SecondaryDatabaseServer" = "$AzureSqlDatabaseServerSecondaryName"; 
+					"TenantDbName" = "$AzureSqlDatabaseName"; 
+					"SearchServiceKey" = "$SearchServicePrimaryManagementKey"; 
+					"SearchServiceName" = "$wTTEnvironmentApplicationName"; 
 					"DocumentDbServiceEndpointUri" = ("https://$DocumentDbName.documents.azure.com:443/"); 
-					"DocumentDbServiceAuthorizationKey" = $DocumentDbKey;
-					"RecommendationSiteUrl" = $ADFWebSite;
+					"DocumentDbServiceAuthorizationKey" = "$DocumentDbKey";
+					"RecommendationSiteUrl" = "$ADFWebSite";
 			}
 
 			# Add the settings to the website
-			$null = Set-AzureRMWebApp -AppSettings $settings -Name $websiteName -ResourceGroupName $ResourceGroupName
+			$null = Set-AzureRMWebApp -AppSettings $settings -Name $websiteName -ResourceGroupName $WTTEnvironmentApplicationName
 
 			# Restart the website - (Not sure that this is needed, try without first)
-			Restart-AzureWebsite -Name $websiteName
+			Restart-AzureRMWebApp -Name $websiteName -ResourceGroupName $WTTEnvironmentApplicationName
 			
 			WriteValue("Successful")
 		}

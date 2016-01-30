@@ -14,7 +14,7 @@ Select-AzureSubscription -SubscriptionId $_.SubscriptionID
 
 $StorageAccountName = $_.UserName+'vhd'
 $Location = 'Central US'
-$ContainerName = $_.StorageContainer
+$ContainerName = "demovhd"
 New-AzureStorageAccount –StorageAccountName $StorageAccountName -Location $Location
 Set-AzureSubscription -CurrentStorageAccountName $StorageAccountName -SubscriptionID $_.SubscriptionID
 New-AzureStorageContainer -Name $ContainerName -Permission Off
