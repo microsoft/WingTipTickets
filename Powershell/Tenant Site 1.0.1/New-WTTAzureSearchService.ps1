@@ -269,7 +269,7 @@ function New-WTTAzureSearchService
 				$createSearchServiceIndexer = Invoke-RestMethod -Uri $azureSearchServiceIndexerURL -Method "POST" -Body $newSearchServiceIndexerJsonBody -Headers $headers -ContentType "application/json"
 			}
 
-			$searchServiceManagementKey.PrimaryKey            
+			$searchServiceManagementKey.PrimaryKey | Export-Clixml .\searchkey.xml -force        
 
 		}
 		Catch

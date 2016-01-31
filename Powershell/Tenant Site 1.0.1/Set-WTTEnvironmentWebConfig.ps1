@@ -49,6 +49,10 @@ function Set-WTTEnvironmentWebConfig
 		# Path to Azure Web Site WebDeploy Package
 		[Parameter(Mandatory = $false)] 
 		[String]$AzureWebSiteWebDeployPackagePath, 
+		
+		# Azure Search Service Name
+		[Parameter(Mandatory = $true)] 
+		[String]$SearchName,
 
 		# Azure Search Service Primary Management Key
 		[Parameter(Mandatory = $true)] 
@@ -95,7 +99,8 @@ function Set-WTTEnvironmentWebConfig
 			else
 			{
 				$adfwebsite ="ProductRecWebAppMissing"
-			}
+			}		
+			$docDBName = "https://$DocumentDbName.documents.azure.com:443/"
 
 			# Build web application settings
 			$settings = New-Object Hashtable
@@ -108,9 +113,9 @@ function Set-WTTEnvironmentWebConfig
 					"SecondaryDatabaseServer" = "$AzureSqlDatabaseServerSecondaryName"; 
 					"TenantDbName" = "$AzureSqlDatabaseName"; 
 					"SearchServiceKey" = "$SearchServicePrimaryManagementKey"; 
-					"SearchServiceName" = "$wTTEnvironmentApplicationName"; 
-					"DocumentDbServiceEndpointUri" = ("https://$DocumentDbName.documents.azure.com:443/"); 
-					"DocumentDbServiceAuthorizationKey" = "$DocumentDbKey";
+					"SearchServiceName" = "$SearchName"; 
+					"DocumentDbServiceEndpointUri" = "$docDBName"; 
+					"DocumentDbServiceAuthorizationKey" = "$documentDbPrimaryKey";
 					"RecommendationSiteUrl" = "$ADFWebSite";
 			}
 
