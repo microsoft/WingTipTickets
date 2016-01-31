@@ -53,10 +53,10 @@ $nic = New-AzureRmNetworkInterface -Name $nicname -ResourceGroupName $rgName -Lo
 
 $vm = New-AzureRmVMConfig -VMName $vmName -VMSize $vmSize
 
-$vm = Add-AzureRmVMNetworkInterface -VM $vm -Id $nic.Id
+$vm | Add-AzureRmVMNetworkInterface -VM $vm -Id $nic.Id
 
 $osDiskUri = $vhd
-$vm = Set-AzureRmVMOSDisk -VM $vm -Name $osDiskName -VhdUri $osDiskUri -CreateOption attach -Windows
+$vm | Set-AzureRmVMOSDisk -VM $vm -Name $osDiskName -VhdUri $osDiskUri -CreateOption attach -Windows
 
 ## Create the VM in Azure
 New-AzureRmVM -ResourceGroupName $rgName -Location $location -VM $vm -DisableBginfoExtension -Verbose -Debug
