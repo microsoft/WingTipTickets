@@ -116,7 +116,7 @@ function Add-WTTAzureTrafficManagerEndpoint
 
 						# Add Endpoint
 						WriteLabel("Adding '$AzureSecondaryWebSiteDomainName' to Traffic Manager Profile")
-						$newAzureTrafficManagerEndpoint = Add-AzureRmTrafficManagerEndpointConfig -TrafficManagerProfile $AzureTrafficManagerProfile -TargetResourceID $TargetResourceID -EndpointName $AzureSecondaryWebSiteName -EndpointStatus $azureTrafficManagerEndpointStatus -Type AzureEndpoints -priority 2
+						$newAzureTrafficManagerEndpoint = Add-AzureRmTrafficManagerEndpointConfig -TrafficManagerProfile $AzureTrafficManagerProfile -TargetResourceID $TargetResourceID -EndpointName $AzureSecondaryWebSiteName -EndpointStatus "Disabled" -Type AzureEndpoints -priority 2
 						WriteValue("Successful")
 					}
 					else
