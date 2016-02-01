@@ -191,10 +191,12 @@ function CreateSchema()
 		# Create Database Schema
 		WriteLabel("Creating Database Schema")
         
+        Push-Location
+
         $DatabaseServer = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains "primary" -ExpandProperties).properties.FullyQualifiedDomainName
         $result = Invoke-Sqlcmd -Username "$DatabaseUserName@$DatabaseServerName" -Password $DatabasePassword -ServerInstance $DatabaseServer -Database $DatabaseName -InputFile ".\Resources\DataFactory\Database\Schema.sql" -QueryTimeout 0
 
-        Set-Location $path
+        Pop-Location
 
 		WriteValue("Successful")
 	}
@@ -212,10 +214,12 @@ function PopulateDatabase()
 		# Populate Database
 		WriteLabel("Populating Database")
 
+        Push-Location
+
         $DatabaseServer = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains "primary" -ExpandProperties).properties.FullyQualifiedDomainName
         $result = Invoke-Sqlcmd -Username "$DatabaseUserName@$DatabaseServerName" -Password $DatabasePassword -ServerInstance $DatabaseServer -Database $DatabaseName -InputFile ".\Resources\DataFactory\Database\Populate.sql" -QueryTimeout 0
         
-        Set-Location $path
+        Pop-Location
 
 		WriteValue("Successful")
 	}
