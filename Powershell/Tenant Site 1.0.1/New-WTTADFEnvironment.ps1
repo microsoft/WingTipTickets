@@ -75,7 +75,7 @@ function New-WTTADFEnvironment
 
 			try 
 			{
-                $path = (Get-Item -Path ".\" -Verbose).FullName
+                $global:path = (Get-Item -Path ".\" -Verbose).FullName
 				# Register DataFactory Provider
 				RegisterProvider
 
@@ -196,7 +196,9 @@ function CreateSchema()
         $DatabaseServer = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains "primary" -ExpandProperties).properties.FullyQualifiedDomainName
         $result = Invoke-Sqlcmd -Username "$DatabaseUserName@$DatabaseServerName" -Password $DatabasePassword -ServerInstance $DatabaseServer -Database $DatabaseName -InputFile ".\Resources\DataFactory\Database\Schema.sql" -QueryTimeout 0
 
+        Set-Location -Path $global:path
         Pop-Location
+        
 
 		WriteValue("Successful")
 	}
@@ -219,6 +221,7 @@ function PopulateDatabase()
         $DatabaseServer = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains "primary" -ExpandProperties).properties.FullyQualifiedDomainName
         $result = Invoke-Sqlcmd -Username "$DatabaseUserName@$DatabaseServerName" -Password $DatabasePassword -ServerInstance $DatabaseServer -Database $DatabaseName -InputFile ".\Resources\DataFactory\Database\Populate.sql" -QueryTimeout 0
         
+        Set-Location -Path $global:path
         Pop-Location
 
 		WriteValue("Successful")

@@ -515,7 +515,8 @@ function New-WTTEnvironment
 
             # Enable Auditing on Azure SQL Database Server
 			# Appears to be a name resolution issue if Auditing is enabled, as Azure Search will not redirect to the database server
-			if ($azurePrimarySqlDatabaseServer -ne $null)
+
+            if ($azurePrimarySqlDatabaseServer -ne $null)
 			{
 				LineBreak
 				WriteLabel("Setting Primary SQL Server Auditing Policy")

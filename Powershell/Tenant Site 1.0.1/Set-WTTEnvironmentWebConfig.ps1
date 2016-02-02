@@ -100,7 +100,7 @@ function Set-WTTEnvironmentWebConfig
 			{
 				$adfwebsite ="ProductRecWebAppMissing"
 			}		
-			$docDBName = "https://$DocumentDbName.documents.azure.com:443/"
+			$docDBName = "https://$azureDocumentDbName.documents.azure.com:443/"
 
 			# Build web application settings
 			$settings = New-Object Hashtable
