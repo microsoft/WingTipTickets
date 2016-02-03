@@ -75,7 +75,6 @@ function New-WTTADFEnvironment
 
 			try 
 			{
-                $global:path = (Get-Item -Path ".\" -Verbose).FullName
 				# Register DataFactory Provider
 				RegisterProvider
 
@@ -147,7 +146,7 @@ function SetupMappingDictionary($StorageAccountKey)
 
 	$pipelineEndTime = [DateTimeoffset]::UtcNow
 	$pipelineStartTime = $pipelineEndTime.AddDays(-365)
-
+    
 	$global:dict.Add('<pipeline end time>',$pipelineEndTime.ToString("yyyy-MM-01T00:00:00Z"))##
 	$global:dict.Add('<pipeline start time>',$pipelineStartTime.ToString("yyyy-MM-01T00:00:00Z"))##
 }
@@ -191,14 +190,13 @@ function CreateSchema()
 		# Create Database Schema
 		WriteLabel("Creating Database Schema")
         
-        Push-Location
+        $RestoreValue = [Environment]::CurrentDirectory
+        [Environment]::CurrentDirectory = Get-Location
 
         $DatabaseServer = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains "primary" -ExpandProperties).properties.FullyQualifiedDomainName
         $result = Invoke-Sqlcmd -Username "$DatabaseUserName@$DatabaseServerName" -Password $DatabasePassword -ServerInstance $DatabaseServer -Database $DatabaseName -InputFile ".\Resources\DataFactory\Database\Schema.sql" -QueryTimeout 0
 
-        Set-Location -Path $global:path
-        Pop-Location
-        
+        [Environment]::CurrentDirectory = $RestoreValue
 
 		WriteValue("Successful")
 	}
@@ -215,14 +213,13 @@ function PopulateDatabase()
 	{
 		# Populate Database
 		WriteLabel("Populating Database")
-
-        Push-Location
+        $RestoreValue = [Environment]::CurrentDirectory
+        [Environment]::CurrentDirectory = Get-Location
 
         $DatabaseServer = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains "primary" -ExpandProperties).properties.FullyQualifiedDomainName
         $result = Invoke-Sqlcmd -Username "$DatabaseUserName@$DatabaseServerName" -Password $DatabasePassword -ServerInstance $DatabaseServer -Database $DatabaseName -InputFile ".\Resources\DataFactory\Database\Populate.sql" -QueryTimeout 0
         
-        Set-Location -Path $global:path
-        Pop-Location
+        [Environment]::CurrentDirectory = $RestoreValue
 
 		WriteValue("Successful")
 	}
