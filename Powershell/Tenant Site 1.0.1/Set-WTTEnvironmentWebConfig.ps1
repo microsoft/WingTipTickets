@@ -117,6 +117,7 @@ function Set-WTTEnvironmentWebConfig
 					"DocumentDbServiceEndpointUri" = "$docDBName"; 
 					"DocumentDbServiceAuthorizationKey" = "$documentDbPrimaryKey";
 					"RecommendationSiteUrl" = "$ADFWebSite";
+                    "RunningInDev" = "false";
 			}
 
 			# Add the settings to the website
