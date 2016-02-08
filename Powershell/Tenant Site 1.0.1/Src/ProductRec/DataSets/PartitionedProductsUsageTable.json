@@ -1,0 +1,46 @@
+{
+  "name": "PartitionedProductsUsageTable",
+  "properties": {
+    "structure": [
+      {
+        "name": "UserId",
+        "type": "String"
+      },
+      {
+        "name": "ProductId",
+        "type": "String"
+      },
+      {
+        "name": "TimeStamp",
+        "type": "String"
+      }
+    ],
+    "type": "AzureBlob",
+    "linkedServiceName": "StorageLinkedService",
+    "typeProperties": {
+      "folderPath": "productrec/partitionedusageevents/yearno={Year}/monthno={Month}/",
+      "partitionedBy": [
+        {
+          "name": "Year",
+          "value": {
+            "type": "DateTime",
+            "date": "SliceStart",
+            "format": "yyyy"
+          }
+        },
+        {
+          "name": "Month",
+          "value": {
+            "type": "DateTime",
+            "date": "SliceStart",
+            "format": "%M"
+          }
+        }
+      ]
+    },
+    "availability": {
+      "frequency": "month",
+      "interval": 1
+    }
+  }
+}

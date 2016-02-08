@@ -1,0 +1,46 @@
+{
+  "name": "ProductsSimilarityOutputTable",
+  "properties": {
+    "structure": [
+      {
+        "name": "ProductId",
+        "type": "Int"
+      },
+      {
+        "name": "SimilarProductId",
+        "type": "Int"
+      }
+    ],
+    "type": "AzureBlob",
+    "linkedServiceName": "StorageLinkedService",
+    "typeProperties": {
+      "folderPath": "productrec/itemsimilarityoutput/yearno={Year}/monthno={Month}/",
+      "partitionedBy": [
+        {
+          "name": "Year",
+          "value": {
+            "type": "DateTime",
+            "date": "SliceStart",
+            "format": "yyyy"
+          }
+        },
+        {
+          "name": "Month",
+          "value": {
+            "type": "DateTime",
+            "date": "SliceStart",
+            "format": "%M"
+          }
+        }
+      ],
+      "format": {
+        "type": "TextFormat",
+        "columnDelimiter": "\t"
+      }
+    },
+    "availability": {
+      "frequency": "month",
+      "interval": 1
+    }
+  }
+}
