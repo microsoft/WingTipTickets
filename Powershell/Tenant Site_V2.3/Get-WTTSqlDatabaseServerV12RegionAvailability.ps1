@@ -53,23 +53,20 @@ function Get-WTTSqlDatabaseServerV12RegionAvailability()
         # ******  Create Azure Storage Account ******
         else
         {
-            #Switch-AzureMode AzureResourceManager -WarningVariable null -WarningAction SilentlyContinue
+            Switch-AzureMode AzureResourceManager -WarningVariable null -WarningAction SilentlyContinue
 
             Write-Host "### Creating Test Azure Resource Group '$wTTEnvironmentApplicationNameWithIndex' in Primary region '$wTTEnvironmentPrimaryServerLocation'. ###" -foregroundcolor "yellow"
-            #$newAzureResourceGroup = New-AzureResourceGroup -Name $azureStorageAccountResourceGroupName -Location $wTTEnvironmentPrimaryServerLocation
-			$newAzureResourceGroup = New-AzureRMResourceGroup -Name $azureStorageAccountResourceGroupName -Location $wTTEnvironmentPrimaryServerLocation
-            
-			Write-Host "### Creating Test Azure Storage Account '$wTTEnvironmentApplicationNameWithIndex' in Primary region '$wTTEnvironmentPrimaryServerLocation' to obtain Matching Geo Secondary region. ###" -foregroundcolor "yellow"
-            #$newAzureStorageAccount = New-AzureStorageAccount -ResourceGroupName $azureStorageAccountResourceGroupName -Name $wTTEnvironmentApplicationNameWithIndex -Location $wTTEnvironmentPrimaryServerLocation -Type "Standard_GRS"
-			$newAzureStorageAccount = New-AzureRMStorageAccount -ResourceGroupName $azureStorageAccountResourceGroupName -Name $wTTEnvironmentApplicationNameWithIndex -Location $wTTEnvironmentPrimaryServerLocation -Type "Standard_GRS"
+            $newAzureResourceGroup = New-AzureResourceGroup -Name $azureStorageAccountResourceGroupName -Location $wTTEnvironmentPrimaryServerLocation
+
+            Write-Host "### Creating Test Azure Storage Account '$wTTEnvironmentApplicationNameWithIndex' in Primary region '$wTTEnvironmentPrimaryServerLocation' to obtain Matching Geo Secondary region. ###" -foregroundcolor "yellow"
+            $newAzureStorageAccount = New-AzureStorageAccount -ResourceGroupName $azureStorageAccountResourceGroupName -Name $wTTEnvironmentApplicationNameWithIndex -Location $wTTEnvironmentPrimaryServerLocation -Type "Standard_GRS"
             If($newAzureStorageAccount.Count -gt 0) 
             {
                 Write-Host "### Success: New Test Azure Storage Account '$wTTEnvironmentApplicationNameWithIndex' created. ###" -foregroundcolor "yellow"
 
                 Write-Host "### Retrieving Matching Geo Secondary region from Test Azure Storage Account '$wTTEnvironmentApplicationNameWithIndex'. ###" -foregroundcolor "yellow"
-                #$wTTEnvironmentSecondaryServerLocation = (Get-AzureStorageAccount -ResourceGroupName $wTTEnvironmentApplicationNameWithIndex -StorageAccountName $wTTEnvironmentApplicationNameWithIndex).SecondaryLocation                    
-                $wTTEnvironmentSecondaryServerLocation = (Get-AzureRMStorageAccount -ResourceGroupName $wTTEnvironmentApplicationNameWithIndex -StorageAccountName $wTTEnvironmentApplicationNameWithIndex).SecondaryLocation                    
-				                
+                $wTTEnvironmentSecondaryServerLocation = (Get-AzureStorageAccount -ResourceGroupName $wTTEnvironmentApplicationNameWithIndex -StorageAccountName $wTTEnvironmentApplicationNameWithIndex).SecondaryLocation                    
+                                
                 Write-Host "### Verifying Matching Geo Secondary region '$wTTEnvironmentSecondaryServerLocation' has Azure SQL Database Server version 12.0 Capacity for your subscription. ###" -foregroundcolor "yellow"                
                                 
                 If($azureSqlDatabaseServerV12RegionAvailabilityArray.Contains($wTTEnvironmentSecondaryServerLocation)) 
@@ -77,22 +74,18 @@ function Get-WTTSqlDatabaseServerV12RegionAvailability()
                     Write-Host "### Success: Matching Geo Secondary Region '$wTTEnvironmentSecondaryServerLocation' has Azure SQL Database Server version 12.0 Capacity for your subscription. ###" -foregroundcolor "yellow"                                        
                     
                     Write-Host "### Removing '$azureStorageAccountResourceGroupName' Test Resource Group and all related resources. ###" -foregroundcolor "yellow"    
-                    #$null = Remove-AzureResourceGroup -Name $azureStorageAccountResourceGroupName -Force -PassThru                             
-					#$null = Remove-AzureResourceGroup -Name $azureStorageAccountResourceGroupName -Force -PassThru                             
-					$null = Remove-AzureRMResourceGroup -Name $azureStorageAccountResourceGroupName -Force                         
+                    $null = Remove-AzureResourceGroup -Name $azureStorageAccountResourceGroupName -Force -PassThru                             
                     
                     return $wTTEnvironmentPrimaryServerLocation, $wTTEnvironmentSecondaryServerLocation
                     break
                 }                
                 Write-Host "### Removing '$azureStorageAccountResourceGroupName' Test Resource Group and all related resources. ###" -foregroundcolor "yellow"    
-                #$null = Remove-AzureResourceGroup -Name $azureStorageAccountResourceGroupName -Force -PassThru                             
-				$null = Remove-AzureRMResourceGroup -Name $azureStorageAccountResourceGroupName -Force                            
+                $null = Remove-AzureResourceGroup -Name $azureStorageAccountResourceGroupName -Force -PassThru                             
 	        }
             else
             {
                 Write-Host "### Removing '$azureStorageAccountResourceGroupName' Test Resource Group and all related resources. ###" -foregroundcolor "yellow"    
-                #$null = Remove-AzureResourceGroup -Name $azureStorageAccountResourceGroupName -Force -PassThru
-				$null = Remove-AzureRMResourceGroup -Name $azureStorageAccountResourceGroupName -Force
+                $null = Remove-AzureResourceGroup -Name $azureStorageAccountResourceGroupName -Force -PassThru
             }
             
         }        
@@ -110,13 +103,12 @@ function AzureStorageAccountExists()
         [String]$AzureStorageAccountResourceGroupName
         
     )
-    #Switch-AzureMode AzureResourceManager -WarningVariable null -WarningAction SilentlyContinue
+    Switch-AzureMode AzureResourceManager -WarningVariable null -WarningAction SilentlyContinue
 
     $azureStorageAccountName = $AzureStorageAccountName    
     ### Check if Azure Storage Account Exists ###
     Write-Host "### Checking whether Test Azure Storage Account '$azureStorageAccountName' already exists. ###" -foregroundcolor "yellow"
-    #$azureStorageAccountExists = Get-AzureStorageAccount -Name $AzureStorageAccountName -ResourceGroupName $AzureStorageAccountResourceGroupName -ErrorVariable azureStorageAccountExistsErrors -ErrorAction SilentlyContinue
-	$azureStorageAccountExists = Get-AzureRMStorageAccount -Name $AzureStorageAccountName -ResourceGroupName $AzureStorageAccountResourceGroupName -ErrorVariable azureStorageAccountExistsErrors -ErrorAction SilentlyContinue
+    $azureStorageAccountExists = Get-AzureStorageAccount -Name $AzureStorageAccountName -ResourceGroupName $AzureStorageAccountResourceGroupName -ErrorVariable azureStorageAccountExistsErrors -ErrorAction SilentlyContinue
                     
     If($azureStorageAccountExists.Count -gt 0) 
     {
