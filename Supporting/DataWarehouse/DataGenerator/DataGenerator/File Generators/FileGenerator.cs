@@ -96,12 +96,10 @@ namespace DataCleaner
         public Dictionary<string, int> GetWeightedKeys()
         {
             var weight = 0;
-            var keys = new Dictionary<string, int>();
+            var random = new Random((int)DateTime.Now.Ticks);
+            var weights = new List<int>() { 5, 30, 20, 2, 30, 15, 18, 30, 24, 30, 10, 18, 15, 10, 30, 2, 30, 20, 10, 13, 17, 25 };
 
-            foreach (var line in Lines)
-            {
-                keys.Add(line.First(), line[1].Length);
-            }
+            var keys = Lines.ToDictionary(line => line.First(), line => weights[random.Next(0, weights.Count)]);
 
             var distinctRanges = keys.Select(k => k.Value).Distinct();
 

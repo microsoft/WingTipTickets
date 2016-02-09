@@ -72,7 +72,7 @@
                 <div class="pull-right">
                     @if ((Session["SessionUser"] as Customer) != null)
                     {
-                        <button id="puchaseTicket" type="button" class="btn btn-themed-secondary pull-right" data-toggle="modal" data-target=".modal-tickets" data-backdrop="static" data-keyboard="false">
+                        <button id="puchaseTicket" type="button" class="btn btn-themed-secondary pull-right">
                             Purchase tickets &#62;
                         </button>
                     }
@@ -149,8 +149,8 @@
 </div>
 
 <!-- Ticket purchase dialog -->
-<div class="modal fade modal-tickets" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" data-ticketcount="0">
+<div id="purchaseTicketModel" class="modal fade modal-tickets" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
 
             <div class="modal-header">
@@ -183,19 +183,19 @@
                             <li>Date:  @String.Format("{0:D}", Model.ConcertDate)</li>
                         </ul>
                         <ul>
-                            <li id="liTicketQuantity">Tickets: 1 General Admission</li>
-                            <li id="liPrice">Total Cost: $@Model.Venue.VenueSeatSections[0].TicketPrice</li>
+                            <li id="liTicketQuantity">Tickets: <span id="spanTicketQty"></span> General Admission</li>
+                            <li id="liPrice">Total Cost: $<span id="spanTotal"></span></li>
                         </ul>
                     </div>
 
                     <div class="col-sm-12 col-md-6 ticket-info">
                         @using (Html.BeginForm("PurchaseTicketsWithCreditCard", "FindSeats", FormMethod.Post, new { @class = "form-horizontal" }))
                         {
-                            <input type="hidden" name="concertId" value="@Model.ConcertId" />
-                            <input type="hidden" name="customerId" value="@((Session["SessionUser"] is Customer) ? (Session["SessionUser"] as Customer).CustomerId : 1)" />
-                            <input type="hidden" name="ticketPrice" value="@(Convert.ToInt32(Model.Venue.VenueSeatSections[0].TicketPrice))" />
-                            <input type="hidden" name="ticketCount" value="1" />
-                            <input type="hidden" name="seatMapId" value="@(Convert.ToInt32(Model.Venue.VenueSeatSections[0].TicketLevelId))" />
+                            <input type="hidden" id="concertId" name="concertId" value="@Model.ConcertId" />
+                            <input type="hidden" id="customerId" name="customerId" value="@((Session["SessionUser"] is Customer) ? (Session["SessionUser"] as Customer).CustomerId : 1)" />
+                            <input type="hidden" id="ticketPrice" name="ticketPrice" value="1" />
+                            <input type="hidden" id="ticketCount" name="ticketCount" value="1" />
+                            <input type="hidden" id="seatMapId" name="seatMapId" value="1" />
 
                             <h3>Payment Information</h3>
 
@@ -219,10 +219,10 @@
                                     <select class="form-control">
                                         <option>Month</option>
                                         @{
-                                            for (var i = 1; i < 13; i++)
-                                            {
-                                                <option>@i</option>
-                                            }
+                            for (var i = 1; i < 13; i++)
+                                        {
+                                        <option>@i</option>
+                                        }
                                         }
                                     </select>
 
@@ -231,10 +231,10 @@
                                     <select class="form-control">
                                         <option>Year</option>
                                         @{
-                                            for (var i = 2015; i < 2021; i++)
-                                            {
-                                                <option>@i</option>
-                                            }
+                                        for (var i = 2015; i < 2021; i++)
+                                        {
+                                        <option>@i</option>
+                                        }
                                         }
                                     </select>
                                 </div>
@@ -250,7 +250,7 @@
                                     </button>
                                 </div>
                             </div>
-                                            }
+                        }
                     </div>
                 </div>
             </div>
@@ -258,13 +258,46 @@
     </div>
 </div>
 
+
+
+<script src="~/Content/Scripts/jquery-1.9.1.min.js"></script>
+<script>
+    $( document ).ready(function() {
+        $("#puchaseTicket").click(function()
+        {
+            // Get Values
+            var priceOption = $("#slctPriceSection").val();
+            var seatLevelId = priceOption.split("|")[1];
+
+            var ticketQty = $("#slctQuantity").val();
+            var ticketPrice = parseFloat(priceOption.split("|")[0]);
+            var ticketTotal = (ticketPrice * ticketQty).toFixed(2);
+
+            // Set Dialog Pricing
+            $("#spanTicketQty").html(ticketQty);
+            $("#spanTotal").html(ticketTotal);
+
+            // Set Purchase Values
+            $("#ticketCount").val(ticketQty);
+            $("#ticketPrice").val(ticketPrice);
+            $("#seatMapId").val(seatLevelId);
+
+            // Show the Model
+            $('#purchaseTicketModel').modal({
+                keyboard: false,
+                backdrop: 'static',
+            });
+        });
+    });
+</script>
+
 @if (ViewBag.VenueMetaData != null)
 {
-    <script src="~/Content/Scripts/jquery-1.9.1.min.js"></script>
     <script>
         (function () {
             var meta = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.VenueMetaData));
             meta = meta.Data;
+
             var template = $("#documentdb-meta-template");
             var parent = $("#documentdb-meta-parent");
 
@@ -298,7 +331,7 @@
             $.each(meta, function(key, value){
                 AddItem(key, value);
             });
-
         })();
+    
     </script>
 }
