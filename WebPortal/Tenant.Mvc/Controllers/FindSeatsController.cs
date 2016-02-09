@@ -106,7 +106,7 @@ namespace Tenant.Mvc.Controllers
                 }
             }
 
-            ViewBag.VenueMetaData = await _venueMetaData.GetVenueMetaData(selectedConcert.VenueId);
+            //ViewBag.VenueMetaData = await _venueMetaData.GetVenueMetaData(selectedConcert.VenueId);
 
             return View(selectedConcert);
         }

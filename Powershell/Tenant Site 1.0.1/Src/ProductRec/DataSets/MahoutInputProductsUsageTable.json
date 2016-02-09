@@ -1,0 +1,42 @@
+{
+  "name": "MahoutInputProductsUsageTable",
+  "properties": {
+    "structure": [
+      {
+        "name": "UserId",
+        "type": "String"
+      },
+      {
+        "name": "ProductId",
+        "type": "String"
+      }
+    ],
+    "type": "AzureBlob",
+    "linkedServiceName": "StorageLinkedService",
+    "typeProperties": {
+      "folderPath": "productrec/mahoutinput/yearno={Year}/monthno={Month}/",
+      "partitionedBy": [
+        {
+          "name": "Year",
+          "value": {
+            "type": "DateTime",
+            "date": "SliceStart",
+            "format": "yyyy"
+          }
+        },
+        {
+          "name": "Month",
+          "value": {
+            "type": "DateTime",
+            "date": "SliceStart",
+            "format": "%M"
+          }
+        }
+      ]
+    },
+    "availability": {
+      "frequency": "month",
+      "interval": 1
+    }
+  }
+}

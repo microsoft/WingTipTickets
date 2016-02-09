@@ -1,0 +1,42 @@
+{
+  "name": "PartitionProductsUsagePipeline",
+  "properties": {
+    "description": "This is a pipeline to prepare the raw Products Usage data for further processing (v1.0)",
+    "start": "<pipeline start time>",
+    "end": "<pipeline end time>",
+    "activities": [
+      {
+        "name": "BlobPartitionHiveActivity",
+        "inputs": [
+          {
+            "name": "RawProductsUsageTable"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "PartitionedProductsUsageTable"
+          }
+        ],
+        "linkedServiceName": "HDInsightLinkedService",
+        "type": "HDInsightHive",
+        "typeProperties": {
+          "scriptpath": "scripts\\partitionproductusage.hql",
+          "scriptLinkedService": "StorageLinkedService",
+          "defines": {
+            "RAWINPUT": "wasb://productrec@<account name>.blob.core.windows.net/rawusageevents/",
+            "PARTITIONEDOUTPUT": "wasb://productrec@<account name>.blob.core.windows.net/partitionedusageevents/",
+            "Year": "$$Text.Format('{0:yyyy}',SliceStart)",
+            "Month": "$$Text.Format('{0:%M}',SliceStart)",
+            "Day": "$$Text.Format('{0:%d}',SliceStart)"
+          }
+        },
+        "policy": {
+          "concurrency": 1,
+          "executionPriorityOrder": "NewestFirst",
+          "retry": 2,
+          "timeout": "01:00:00"
+        }
+      }
+    ]
+  }
+}
