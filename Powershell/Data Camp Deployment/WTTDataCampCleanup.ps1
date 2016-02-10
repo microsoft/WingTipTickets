@@ -4,12 +4,10 @@ $csv
 Import-Csv $csv | ForEach-Object `
 {
 $global:VerbosePreference = "SilentlyContinue"
-Select-AzureSubscription -SubscriptionId $_.SubscriptionID
-Switch-AzureMode AzureServiceManagement
-Get-AzureVM | Stop-AzureVM -Force
-Remove-AzureTrafficManagerProfile -Name $_.UserName -Force
+Select-AzureRMSubscription -SubscriptionId $_.SubscriptionID
 
-Switch-AzureMode AzureResourceManager
-Get-AzureResourcegroup | Remove-AzureResourceGroup -force
+Get-AzureRMVM | Stop-AzureRMVM -Force
+
+Get-AzureRMResourcegroup | Remove-AzureRMResourceGroup -force
 
 }
