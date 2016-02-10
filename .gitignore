@@ -197,5 +197,5 @@ FakesAssemblies/
 WebPortal/TenantProvisioning.Mvc/Resources/Tenant/Website/Package.zip
 
 #Allow Tenant Web Application Files
-!/Packages/PrimaryPackage.zip
-!/Packages/SecondaryPackage.zip
+!*/Packages/PrimaryPackage.zip
+!*/Packages/SecondaryPackage.zip
