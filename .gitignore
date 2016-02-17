@@ -195,3 +195,9 @@ FakesAssemblies/
 # Visual Studio 6 workspace options file
 *.opt
 WebPortal/TenantProvisioning.Mvc/Resources/Tenant/Website/Package.zip
+
+# Do not ignore zip files
+!PrimaryPackage.zip
+!ProductRecDataGenerator.zip
+!ProductRecommendations.zip
+!SecondaryPackage.zip
