@@ -1,0 +1,674 @@
+1	Continent	Asia				1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+2	Continent	Europe				1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+3	Continent	North America				1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+269	Country/Region	Asia			Armenia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+270	Country/Region	Asia			Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+271	Country/Region	Asia			Bhutan	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+272	Country/Region	Asia			China	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+273	Country/Region	Asia			India	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+274	Country/Region	Asia			Iran	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+275	Country/Region	Asia			Japan	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+276	Country/Region	Asia			Kyrgyzstan	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+277	Country/Region	Asia			Pakistan	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+278	Country/Region	Asia			Singapore	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+279	Country/Region	Asia			South Korea	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+280	Country/Region	Asia			Syria	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+281	Country/Region	Asia			Taiwan	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+282	Country/Region	Asia			Thailand	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+283	Country/Region	Asia			Turkmenistan	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+284	Country/Region	Europe			Denmark       	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+285	Country/Region	Europe			France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+286	Country/Region	Europe			Germany 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+287	Country/Region	Europe			Greece 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+288	Country/Region	Europe			the Netherlands	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+289	Country/Region	Europe			Ireland 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+290	Country/Region	Europe			Italy    	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+291	Country/Region	Europe			Malta	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+292	Country/Region	Europe			Poland 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+293	Country/Region	Europe			Portugal	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+294	Country/Region	Europe			Romania 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+295	Country/Region	Europe			Russia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+296	Country/Region	Europe			Slovenia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+297	Country/Region	Europe			Spain	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+298	Country/Region	Europe			Sweden 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+299	Country/Region	Europe			Switzerland 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+300	Country/Region	Europe			United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+301	Country/Region	North America			Canada	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+302	Country/Region	North America			United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+303	State/Province	Asia		Ahal Province	Turkmenistan	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+304	State/Province	Asia		Armenia	Armenia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+305	State/Province	Asia		Beijing	China	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+306	State/Province	Asia		Chubu	Japan	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+307	State/Province	Asia		Chuy Province	Kyrgyzstan	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+308	State/Province	Asia		Damascus	Syria	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+309	State/Province	Asia		GuangDong	China	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+310	State/Province	Asia		Hokkaido	Japan	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+311	State/Province	Asia		Hong Kong	China	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+312	State/Province	Asia		Islamabad Capital Territory	Pakistan	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+313	State/Province	Asia		Kansai	Japan	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+314	State/Province	Asia		Kanto	Japan	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+315	State/Province	Asia		Krung Thep	Thailand	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+316	State/Province	Asia		Maharashtra	India	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+317	State/Province	Asia		Molonglo	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+318	State/Province	Asia		National Capital Territory of Delhi	India	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+319	State/Province	Asia		New South Wales	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+320	State/Province	Asia		Seoul-jikhalsi	South Korea	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+321	State/Province	Asia		Shanghai	China	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+322	State/Province	Asia		Singapore	Singapore	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+323	State/Province	Asia		Taiwan	Taiwan	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+324	State/Province	Asia		Tehran	Iran	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+325	State/Province	Asia		Thimphu District	Bhutan	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+326	State/Province	Asia		Tohoku	Japan	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+327	State/Province	Asia		West Bengal	India	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+328	State/Province	Asia		Xinjiang	China	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+329	State/Province	Asia		Yeongnam	South Korea	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+330	State/Province	Europe		Alpes-Maritimes	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+331	State/Province	Europe		Bas-Rhin	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+332	State/Province	Europe		Bavaria	Germany 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+333	State/Province	Europe		Bayern	Germany 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+334	State/Province	Europe		Berlin	Germany 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+335	State/Province	Europe		Bern	Switzerland 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+336	State/Province	Europe		Bucuresti	Romania 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+337	State/Province	Europe		Central Greece and Evvoia	Greece 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+338	State/Province	Europe		England 	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+339	State/Province	Europe		Hesse	Germany 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+340	State/Province	Europe		Ile-del-France	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+341	State/Province	Europe		Leinster	Ireland 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+342	State/Province	Europe		Lisboa Region	Portugal	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+343	State/Province	Europe		Ljubljana	Slovenia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+344	State/Province	Europe		Lombardia	Italy    	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+345	State/Province	Europe		Madrid	Spain	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+346	State/Province	Europe		Midi-Pyrenees	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+347	State/Province	Europe		Moskovskaya oblast	Russia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+348	State/Province	Europe		Nizhny Novgorod Oblast	Russia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+349	State/Province	Europe		Noord-Holland	the Netherlands	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+350	State/Province	Europe		Nordrhein-Westfalen	Germany 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+351	State/Province	Europe		North Rhine-Westphalia	Germany 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+352	State/Province	Europe		Northwestern	Russia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+353	State/Province	Europe		Pays de la Loire	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+354	State/Province	Europe		Provence-Alpes-Cote d'Azur	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+355	State/Province	Europe		Province of Florence	Italy    	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+356	State/Province	Europe		Province of Turin	Italy    	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+357	State/Province	Europe		Rhineland-Palatinate	Germany 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+358	State/Province	Europe		Rhone-Alpes 	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+359	State/Province	Europe		Roma	Italy    	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+360	State/Province	Europe		Scotland	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+361	State/Province	Europe		Staden Kobenhavn	Denmark       	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+362	State/Province	Europe		Stockholms	Sweden 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+363	State/Province	Europe		Valletta	Malta	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+364	State/Province	Europe		Venice	Italy    	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+365	State/Province	Europe		Warszawa	Poland 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+366	State/Province	North America		Alaska	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+367	State/Province	North America		Alberta	Canada	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+368	State/Province	North America		British Columbia	Canada	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+369	State/Province	North America		Colorado	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+370	State/Province	North America		Connecticut	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+371	State/Province	North America		Florida	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+372	State/Province	North America		Maine	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+373	State/Province	North America		Maryland	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+374	State/Province	North America		Massachusetts	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+375	State/Province	North America		New Jersey	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+376	State/Province	North America		New York	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+377	State/Province	North America		Ontario	Canada	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+378	State/Province	North America		Quebec	Canada	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+379	State/Province	North America		South Carolina	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+380	State/Province	North America		Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+381	State/Province	North America		Virginia	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+382	State/Province	North America		Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+383	State/Province	North America		Wisconsin	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+384	State/Province	Asia		Tasmania	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+385	State/Province	Europe		Hessen	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+386	State/Province	North America		Mississippi	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+387	State/Province	Europe		Essonne	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+388	State/Province	Europe		Hamburg	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+389	State/Province	Europe		Hauts de Seine	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+390	State/Province	North America		Ohio	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+391	State/Province	Europe		Seine Saint Denis	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+392	State/Province	North America		Alabama	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+393	State/Province	Europe		Garonne (Haute)	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+394	State/Province	North America		Arizona	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+395	State/Province	Europe		Pas de Calais	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+396	State/Province	North America		North Carolina	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+397	State/Province	North America		Minnesota	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+398	State/Province	Europe		Yveline	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+399	State/Province	Europe		Loiret	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+400	State/Province	Europe		Nord	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+401	State/Province	North America		Wyoming	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+402	State/Province	Europe		Seine (Paris)	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+403	State/Province	Europe		Val de Marne	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+404	State/Province	Europe		Brandenburg	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+405	State/Province	Europe		Val d'Oise	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+406	State/Province	North America		Kentucky	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+407	State/Province	Asia		Queensland	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+408	State/Province	North America		Illinois	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+409	State/Province	North America		Utah	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+410	State/Province	Europe		Seine et Marne	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+411	State/Province	North America		Oregon	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+412	State/Province	Asia		South Australia	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+413	State/Province	Europe		Somme	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+414	State/Province	Europe		Loir et Cher	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+415	State/Province	North America		Montana	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+416	State/Province	Europe		Charente-Maritime	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+417	State/Province	North America		California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+418	State/Province	Europe		Moselle	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+419	State/Province	Europe		Saarland	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+420	State/Province	Asia		Victoria	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+421	State/Province	North America		Missouri	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+422	State/Province	North America		Georgia	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+423	City	Europe	Basingstoke Hants	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+424	City	North America	Bellevue	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+425	City	Asia	Bendigo	Victoria	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+426	City	Europe	Berks	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+430	City	North America	Beverly Hills	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+431	City	North America	Billings	Montana	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+432	City	North America	Biloxi	Mississippi	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+433	City	North America	Birmingham	Alabama	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+434	City	North America	Bluffton	South Carolina	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+435	City	Europe	Bobigny	Seine Saint Denis	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+436	City	North America	Bothell	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+437	City	Europe	Bottrop	North Rhine-Westphalia	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+438	City	North America	Bountiful	Utah	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+439	City	Europe	Bracknell	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+440	City	North America	Braintree	Massachusetts	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+441	City	North America	Branson	Missouri	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+442	City	North America	Bremerton	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+443	City	North America	Burbank	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+444	City	North America	Burbank	Ohio	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+445	City	North America	Burlingame	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+446	City	North America	Burnaby	British Columbia	Canada	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+447	City	Europe	Bury	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+448	City	North America	Byron	Georgia	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+449	City	Europe	Cambridge	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+450	City	North America	Campbellsville	Kentucky	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+451	City	North America	Carol Stream	Illinois	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+452	City	North America	Carrollton	Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+453	City	North America	Cedar Park	Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+454	City	Europe	Cergy	Val d'Oise	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+455	City	North America	Cerritos	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+456	City	North America	Chalk River	Ontario	Canada	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+457	City	North America	Chantilly	Virginia	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+458	City	North America	Charlotte	North Carolina	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+459	City	Europe	Chatou	Yveline	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+460	City	North America	Chehalis	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+461	City	North America	Cheyenne	Wyoming	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+462	City	North America	Cincinnati	Ohio	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+463	City	North America	City Of Commerce	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+464	City	North America	Clarkston	Georgia	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+465	City	North America	Clay	New York	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+466	City	North America	Clearwater	Florida	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+467	City	North America	Cliffside	British Columbia	Canada	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+468	City	Asia	Coffs Harbour	New South Wales	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+469	City	North America	Colma	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+470	City	North America	Concord	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+471	City	Asia	Cranbourne	Victoria	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+472	City	North America	Daly City	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+473	City	Asia	Darlinghurst	New South Wales	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+474	City	Europe	Darmstadt	Hesse	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+475	City	North America	Downey	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+476	City	Europe	Drancy	Seine Saint Denis	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+478	City	Asia	East Brisbane	Queensland	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+479	City	North America	Edmonds	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+480	City	Europe	Eilenburg	Saxony	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+481	City	Europe	Esher-Molesey	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+482	City	Europe	Essen	North Rhine-Westphalia	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+483	City	Europe	Frankfurt	Hesse	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+485	City	Europe	Gateshead	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+486	City	Europe	Gloucestershire	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+487	City	Asia	Gold Coast	Queensland	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+488	City	North America	Grossmont	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+490	City	North America	Haney	British Columbia	Canada	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+491	City	Europe	Hanover	Lower Saxony	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+492	City	Asia	Hervey Bay	Queensland	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+493	City	Asia	Hobart	Tasmania	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+494	City	North America	Imperial Beach	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+495	City	North America	Issaquah	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+496	City	Europe	Kiel	Schleswig-Holstein	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+497	City	Europe	Kirkby	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+498	City	Europe	Lancaster	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+499	City	North America	Langley	British Columbia	Canada	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+500	City	North America	Lebanon	Oregon	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+501	City	Europe	Leeds	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+502	City	North America	Lemon Grove	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+503	City	Europe	Les Ulis	Essonne	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+504	City	Europe	Lieusaint	Seine et Marne	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+505	City	North America	Lincoln Acres	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+506	City	Europe	London	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+507	City	North America	Lynnwood	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+508	City	North America	Marysville	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+509	City	Asia	Matraville	New South Wales	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+510	City	Asia	Melton	Victoria	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+511	City	North America	Metchosin	British Columbia	Canada	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+512	City	Asia	Milsons Point	New South Wales	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+513	City	Europe	M?hlheim am Main	Hesse	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+515	City	Europe	Munster	North Rhine-Westphalia	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+516	City	North America	National City	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+517	City	Europe	Neunkirchen	North Rhine-Westphalia	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+518	City	Asia	Newcastle	New South Wales	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+519	City	Asia	North Ryde	New South Wales	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+520	City	North America	Oakland	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+521	City	Europe	Offenbach am Main	Hesse	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+522	City	North America	Olympia	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+523	City	North America	Oregon City	Oregon	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+524	City	Europe	Orly	Val de Marne	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+525	City	Europe	Oxford	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+527	City	North America	Palo Alto	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+528	City	Europe	Pantin	Seine Saint Denis	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+529	City	Europe	Paris	Seine (Paris)	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+530	City	Europe	Paris La Defense	Hauts de Seine	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+531	City	Asia	Perth	South Australia	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+532	City	Europe	Peterborough	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+533	City	Europe	Poing	Bavaria	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+534	City	Asia	Port Macquarie	New South Wales	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+535	City	North America	Port Orchard	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+536	City	North America	Portland	Oregon	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+537	City	North America	Puyallup	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+538	City	North America	Redwood City	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+539	City	Europe	Roncq	Nord	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+540	City	Europe	Roubaix	Nord	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+541	City	Europe	Runcorn	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+542	City	Europe	Saarlouis	Saar	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+543	City	Europe	Saint Germain en Laye	Yveline	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+544	City	Europe	Saint Ouen	Somme	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+545	City	Europe	Saint-Denis	Seine Saint Denis	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+546	City	North America	San Carlos	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+547	City	North America	Santa Monica	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+548	City	Europe	S?vres	Hauts de Seine	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+549	City	Asia	Silverwater	New South Wales	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+550	City	North America	Sooke	British Columbia	Canada	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+551	City	North America	Spokane	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+552	City	North America	Spring Valley	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+553	City	Asia	Springwood	New South Wales	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+554	City	Asia	St. Leonards	New South Wales	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+555	City	Europe	Stuttgart	Baden-Wuerttemberg	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+556	City	Europe	Sulzbach Taunus	Saar	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+557	City	Europe	Suresnes	Hauts de Seine	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+558	City	Asia	Sydney	New South Wales	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+559	City	North America	Tacoma	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+560	City	North America	Torrance	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+561	City	Asia	Townsville	Queensland	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+562	City	North America	Vancouver	British Columbia	Canada	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+563	City	Europe	Verrieres Le Buisson	Essonne	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+564	City	Europe	Versailles	Yveline	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+565	City	Europe	W. York	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+566	City	North America	Walla Walla	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+567	City	Europe	Warrington	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+568	City	Asia	Warrnambool	Victoria	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+569	City	Europe	Werne	North Rhine-Westphalia	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+570	City	North America	West Covina	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+571	City	North America	Westminster	British Columbia	Canada	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+572	City	Europe	Wokingham	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+573	City	North America	Woodburn	Oregon	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+574	City	Europe	Woolston	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+575	City	North America	Yakima	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+576	City	Europe	York	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+577	City	North America	Ballard	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+578	City	North America	Barstow	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+579	City	North America	Baytown	Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+580	City	North America	Beaverton	Oregon	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+581	City	North America	Bell Gardens	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+582	City	North America	Bellflower	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+583	City	North America	Bellingham	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+584	City	North America	Berkeley	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+585	City	Europe	Berkshire	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+586	City	Europe	Berlin	Berlin	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+587	City	Europe	Billericay	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+588	City	Europe	Birmingham	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+590	City	Europe	Bonn	North Rhine-Westphalia	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+591	City	Europe	Boulogne-Billancourt	Hauts de Seine	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+592	City	Europe	Boulogne-sur-Mer	Pas de Calais	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+593	City	North America	Bradenton	Florida	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+594	City	North America	Branch	Minnesota	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+595	City	Europe	Brunswick	Lower Saxony	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+596	City	Asia	Brisbane	Queensland	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+597	City	North America	Burien	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+598	City	North America	Calgary	Alberta	Canada	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+599	City	Asia	Caloundra	Queensland	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+600	City	North America	Camarillo	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+601	City	North America	Canoga Park	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+602	City	North America	Carson	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+603	City	North America	Casper	Wyoming	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+604	City	North America	Cedar City	Utah	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+605	City	North America	Central Valley	New York	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+606	City	North America	Chandler	Arizona	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+607	City	North America	Cheektowaga	New York	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+608	City	Europe	Cheltenham	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+609	City	North America	Chicago	Illinois	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+610	City	North America	Chula Vista	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+611	City	North America	Citrus Heights	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+612	City	North America	Clackamas	Oregon	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+613	City	Asia	Cloverdale	South Australia	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+614	City	North America	College Station	Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+615	City	Europe	Colombes	Hauts de Seine	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+616	City	Europe	Colomiers	Garonne (Haute)	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+617	City	North America	Columbus	Georgia	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+618	City	North America	Columbus	Ohio	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+619	City	North America	Coronado	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+620	City	North America	Corvallis	Oregon	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+621	City	Europe	Courbevoie	Hauts de Seine	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+622	City	Europe	Croix	Nord	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+623	City	Europe	Dresden	Saxony	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+624	City	Europe	Dunkerque	Nord	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+625	City	North America	El Cajon	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+626	City	Europe	Erlangen	Bavaria	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+627	City	North America	Everett	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+628	City	Asia	Findon	South Australia	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+629	City	Europe	Frankfurt	Bavaria	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+631	City	North America	Fremont	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+632	City	Asia	Geelong	Victoria	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+633	City	North America	Glendale	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+634	City	Asia	Goulburn	New South Wales	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+635	City	Europe	Grevenbroich	North Rhine-Westphalia	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+637	City	Asia	Hawthorne	Queensland	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+638	City	Europe	High Wycombe	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+639	City	Europe	Hof	Bavaria	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+640	City	Europe	Ingolstadt	Bavaria	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+641	City	Europe	Kassel	Hesse	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+642	City	North America	Kirkland	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+643	City	North America	La Jolla	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+644	City	North America	Lake Oswego	Oregon	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+645	City	North America	Lakewood	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+646	City	Asia	Lane Cove	New South Wales	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+647	City	North America	Langford	British Columbia	Canada	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+648	City	Asia	Lavender Bay	New South Wales	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+649	City	Europe	Leipzig	Saxony	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+650	City	Europe	Lille	Nord	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+651	City	Europe	Liverpool	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+652	City	North America	Long Beach	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+653	City	North America	Los Angeles	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+654	City	Europe	Maidenhead	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+655	City	Asia	Malabar	New South Wales	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+656	City	Asia	Melbourne	Victoria	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+657	City	Europe	Metz	Moselle	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+658	City	North America	Mill Valley	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+659	City	Europe	Milton Keynes	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+660	City	North America	Milwaukie	Oregon	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+661	City	Europe	Morangis	Essonne	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+662	City	Europe	Hamburg 	Hamburg	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+664	City	Europe	M?nchengladbach	North Rhine-Westphalia	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+665	City	North America	N. Vancouver	British Columbia	Canada	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+666	City	Europe	Newcastle upon Tyne	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+667	City	North America	Newport Beach	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+668	City	North America	Newton	British Columbia	Canada	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+669	City	Asia	North Sydney	New South Wales	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+670	City	North America	Novato	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+671	City	North America	Oak Bay	British Columbia	Canada	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+672	City	Europe	Orleans	Loiret	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+673	City	Europe	Oxon	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+674	City	Europe	Paderborn	North Rhine-Westphalia	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+675	City	North America	Port Hammond	British Columbia	Canada	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+676	City	Europe	Reading	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+677	City	North America	Redmond	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+678	City	North America	Renton	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+679	City	Asia	Rhodes	New South Wales	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+680	City	Asia	Rockhampton	Queensland	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+681	City	Europe	Roissy en Brie	Seine et Marne	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+682	City	North America	Royal Oak	British Columbia	Canada	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+683	City	Europe	Saarbr?cken	Saar	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+684	City	Europe	Saint Ouen	Charente-Maritime	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+685	City	Europe	Saint Ouen	Loir et Cher	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+686	City	North America	Salem	Oregon	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+687	City	Europe	Salzgitter	Lower Saxony	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+688	City	North America	San Diego	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+689	City	North America	San Francisco	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+690	City	North America	San Gabriel	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+691	City	North America	Santa Cruz	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+692	City	Asia	Seaford	Victoria	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+693	City	North America	Seattle	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+694	City	North America	Sedro Woolley	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+695	City	North America	Shawnee	British Columbia	Canada	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+696	City	Europe	Solingen	North Rhine-Westphalia	Germany	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+697	City	Asia	South Melbourne	Victoria	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+698	City	Europe	Stoke-on-Trent	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+699	City	Asia	Sunbury	Victoria	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+700	City	Europe	Tremblay-en-France	Seine Saint Denis	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+701	City	North America	Victoria	British Columbia	Canada	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+702	City	Europe	Villeneuve-d'Ascq	Nord	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+703	City	North America	W. Linn	Oregon	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+704	City	Europe	Watford	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+705	City	Europe	West Sussex	England	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+706	City	Asia	Wollongong	New South Wales	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+707	City	North America	Woodland Hills	California	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+708	City	Asia	Ashgabat	Ahal Province	Turkmenistan	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+709	City	Asia	Bangkok	Krung Thep	Thailand	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+710	City	Asia	Beijing	Beijing	China	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+711	City	Asia	Bishkek	Chuy Province	Kyrgyzstan	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+712	City	Asia	Busan 	Yeongnam	South Korea	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+713	City	Asia	Canberra	Molonglo	Australia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+714	City	Asia	Damascus	Damascus	Syria	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+715	City	Asia	Guangzhou	GuangDong	China	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+716	City	Asia	Hong Kong	Hong Kong	China	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+717	City	Asia	Islamabad	Islamabad Capital Territory	Pakistan	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+718	City	Asia	Kolkata 	West Bengal	India	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+719	City	Asia	Kyoto 	Kansai	Japan	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+720	City	Asia	Miyagi	Tohoku	Japan	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+721	City	Asia	Mumbai 	Maharashtra	India	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+722	City	Asia	Nagoya 	Chubu	Japan	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+723	City	Asia	New Delhi	National Capital Territory of Delhi	India	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+724	City	Asia	Osaka 	Kansai	Japan	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+725	City	Asia	Sapporo 	Hokkaido	Japan	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+726	City	Asia	Seoul	Seoul-jikhalsi	South Korea	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+727	City	Asia	Shanghai	Shanghai	China	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+728	City	Asia	Singapore	Singapore	Singapore	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+729	City	Asia	Taipei	Taiwan	Taiwan	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+730	City	Asia	Tehran	Tehran	Iran	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+731	City	Asia	Thimphu	Thimphu District	Bhutan	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+732	City	Asia	Tokyo	Kanto	Japan	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+733	City	Asia	Urumqi	Xinjiang	China	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+734	City	Asia	Yerevan	Armenia	Armenia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+735	City	Asia	Yokohama 	Kanto	Japan	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+736	City	Europe	Amsterdam	Noord-Holland	the Netherlands	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+737	City	Europe	Athens	Central Greece and Evvoia	Greece 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+738	City	Europe	Baildon	England 	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+739	City	Europe	Baumholder	Rhineland-Palatinate	Germany 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+740	City	Europe	Berne	Bern	Switzerland 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+741	City	Europe	Bucharest	Bucuresti	Romania 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+742	City	Europe	Carlisle	England 	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+743	City	Europe	Cheshire	England 	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+745	City	Europe	Copenhagen	Staden Kobenhavn	Denmark       	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+746	City	Europe	Dublin	Leinster	Ireland 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+747	City	Europe	Dusseldorf	North Rhine-Westphalia	Germany 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+748	City	Europe	Edinburgh	Scotland	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+749	City	Europe	Firenze	Province of Florence	Italy    	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+750	City	Europe	Giebelstadt	Bavaria	Germany 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+751	City	Europe	Glasgow	Scotland	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+752	City	Europe	Hofheim am Taunus	Hesse	Germany 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+753	City	Europe	Knotty Ash	England 	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+754	City	Europe	Koln	North Rhine-Westphalia	Germany 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+755	City	Europe	Lancashire	England 	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+756	City	Europe	Landstuhl	Rhineland-Palatinate	Germany 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+757	City	Europe	Lisbon	Lisboa Region	Portugal	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+758	City	Europe	Ljubljana	Ljubljana	Slovenia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+759	City	Europe	Lyon	Rhone-Alpes 	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+760	City	Europe	Madrid	Madrid	Spain	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+761	City	Europe	Manchester	England 	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+762	City	Europe	Marseille	Provence-Alpes-Cote d'Azur	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+763	City	Europe	Milan	Lombardia	Italy    	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+764	City	Europe	Moscow	Moskovskaya oblast	Russia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+765	City	Europe	Munich	Bavaria	Germany 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+766	City	Europe	Nantes	Pays de la Loire	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+767	City	Europe	Nice	Alpes-Maritimes	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+768	City	Europe	Nizhny Novgorod 	Nizhny Novgorod Oblast	Russia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+769	City	Europe	Bamberg	Bavaria	Germany 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+770	City	Europe	Ramstein	Rhineland-Palatinate	Germany 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+771	City	Europe	Roma	Roma	Italy    	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+772	City	Europe	Saint Petersburg	Northwestern	Russia	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+773	City	Europe	Stockholm	Stockholms	Sweden 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+774	City	Europe	Stockport	England 	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+775	City	Europe	Strasbourg	Bas-Rhin	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+776	City	Europe	Torino	Province of Turin	Italy    	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+777	City	Europe	Toulouse	Midi-Pyrenees	France	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+778	City	Europe	Valletta	Valletta	Malta	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+779	City	Europe	Venezia	Venice	Italy    	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+780	City	Europe	Warsaw	Warszawa	Poland 	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+781	City	Europe	West Yorkshire	England 	United Kingdom	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+782	City	North America	Albany	New York	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+783	City	North America	Alexandria	Virginia	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+784	City	North America	Anchorage	Alaska	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+785	City	North America	Annapolis	Maryland	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+786	City	North America	Appleton	Wisconsin	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+787	City	North America	Arlington	Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+788	City	North America	Atlantic City 	New Jersey	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+789	City	North America	Attleboro	Massachusetts	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+790	City	North America	Aurora	Colorado	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+791	City	North America	Austin	Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+792	City	North America	Back River	Maryland	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+793	City	North America	Bacliff	Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+794	City	North America	Baltimore	Maryland	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+795	City	North America	Bangor	Maine	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+796	City	North America	Bar Harbor	Maine	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+797	City	North America	Bayonne 	New Jersey	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+798	City	North America	Beaumont	Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+799	City	North America	Berthoud	Colorado	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+800	City	North America	Bethesda	Maryland	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+801	City	North America	Bridgeport	Connecticut	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+802	City	North America	Boston	Massachusetts	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+803	City	North America	Boulder	Colorado	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+804	City	North America	Brooklyn	New York	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+805	City	North America	Buffalo	New York	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+806	City	North America	Burlington	Wisconsin	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+807	City	North America	Cape Canaveral	Florida	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+808	City	North America	Cape May	New Jersey	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+809	City	North America	Castle Rock	Colorado	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+810	City	North America	Charleston 	South Carolina	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+811	City	North America	Charlottesville 	Virginia	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+812	City	North America	Cheney	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+813	City	North America	Cle Elum	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+814	City	North America	Clifton	New Jersey	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+815	City	North America	Dallas	Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+816	City	North America	Darien	Connecticut	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+817	City	North America	Denton	Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+818	City	North America	Denver	Colorado	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+819	City	North America	Desoto	Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+820	City	North America	East Orange 	New Jersey	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+821	City	North America	East Troy	Wisconsin	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+822	City	North America	Edgerton	Wisconsin	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+823	City	North America	Elmira	New York	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+824	City	North America	Englewood	Colorado	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+825	City	North America	Fall City	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+826	City	North America	Falmouth	Massachusetts	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+827	City	North America	Fond du Lac	Wisconsin	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+828	City	North America	Fort Atkinson	Wisconsin	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+829	City	North America	Fort Collins	Colorado	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+830	City	North America	Fort Lauderdale	Florida	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+831	City	North America	Fort Worth	Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+832	City	North America	Framingham	Massachusetts	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+833	City	North America	Fredericksburg	Virginia	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+834	City	North America	Georgetown	Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+835	City	North America	Germantown	Maryland	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+836	City	North America	Grand Junction	Colorado	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+837	City	North America	Grand Prairie	Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+838	City	North America	Granger	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+839	City	North America	Greeley	Colorado	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+840	City	North America	Green Bay	Wisconsin	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+841	City	North America	Greenville	South Carolina	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+842	City	North America	Hackensack 	New Jersey	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+843	City	North America	Hartford	Connecticut	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+844	City	North America	Haverhill	Massachusetts	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+845	City	North America	Hillsboro	Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+846	City	North America	Hingham	Massachusetts	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+847	City	North America	Hoboken 	New Jersey	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+848	City	North America	Holyoke	Massachusetts	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+849	City	North America	Houston	Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+850	City	North America	Howard	Maryland	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+851	City	North America	Humble	Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+852	City	North America	Ithaca	New York	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+853	City	North America	Jacksonville	Florida	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+854	City	North America	Jersey City	New Jersey	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+855	City	North America	Kennebunkport	Maine	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+856	City	North America	Kennewick	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+857	City	North America	Key West	Florida	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+858	City	North America	La Porte	Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+859	City	North America	Lafayette	Colorado	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+860	City	North America	Lakeland	Florida	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+861	City	North America	Leominster	Massachusetts	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+862	City	North America	Lewiston	Maine	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+863	City	North America	Lewisville	Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+864	City	North America	Litchfield County	Connecticut	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+865	City	North America	Littleton	Colorado	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+866	City	North America	Longview	Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+867	City	North America	Loveland	Colorado	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+868	City	North America	Lowell	Massachusetts	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+869	City	North America	Lynn	Massachusetts	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+870	City	North America	Madison	Wisconsin	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+871	City	North America	Manitowoc	Wisconsin	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+872	City	North America	Marshall	Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+873	City	North America	Martinsville 	Virginia	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+874	City	North America	Menasha	Wisconsin	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+875	City	North America	Miami	Florida	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+876	City	North America	Midland	Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+877	City	North America	Milliken	Colorado	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+878	City	North America	Milwaukee	Wisconsin	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+879	City	North America	Minden	Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+880	City	North America	Montclair 	New Jersey	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+881	City	North America	Montreal	Quebec	Canada	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+882	City	North America	Morristown 	New Jersey	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+883	City	North America	Nantucket	Massachusetts	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+884	City	North America	Naples	Florida	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+885	City	North America	New Bedford	Massachusetts	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+886	City	North America	New Brunswick 	New Jersey	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+887	City	North America	New Castle	Colorado	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+888	City	North America	New Haven 	Connecticut	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+889	City	North America	New London	Connecticut	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+890	City	North America	New York	New York	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+891	City	North America	Newark	New Jersey	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+892	City	North America	Norfolk	Virginia	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+893	City	North America	North Bend	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+894	City	North America	North Harford	Maryland	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+895	City	North America	Northampton	Massachusetts	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+896	City	North America	Old Saybrook	Connecticut	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+897	City	North America	Orange	Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+898	City	North America	Oregon	Wisconsin	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+899	City	North America	Orlando	Florida	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+900	City	North America	Orono	Maine	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+901	City	North America	Oshkosh	Wisconsin	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+902	City	North America	Oswego	New York	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+903	City	North America	Ottawa	Ontario	Canada	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+904	City	North America	Parker	Colorado	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+905	City	North America	Parkville	Maryland	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+906	City	North America	Pasadena	Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+907	City	North America	Passaic 	New Jersey	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+908	City	North America	Paterson	New Jersey	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+909	City	North America	Pittsfield	Massachusetts	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+910	City	North America	Plano	Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+911	City	North America	Plattsburgh	New York	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+912	City	North America	Poestenkill	New York	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+913	City	North America	Port Washington	Wisconsin	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+914	City	North America	Provincetown	Massachusetts	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+915	City	North America	Queen Anne's County	Maryland	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+916	City	North America	Queens	New York	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+917	City	North America	Quincy	Massachusetts	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+918	City	North America	Racine	Wisconsin	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+919	City	North America	Richardson	Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+920	City	North America	Ridgely	Maryland	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+921	City	North America	Roanoke	Virginia	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+922	City	North America	Rochester	New York	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+923	City	North America	Round Rock	Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+924	City	North America	Russellville	Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+925	City	North America	San Antonio	Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+926	City	North America	Sebring	Florida	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+927	City	North America	Sedalia	Colorado	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+928	City	North America	Sheboygan	Wisconsin	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+929	City	North America	Shreveport	Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+930	City	North America	Snoqualmie	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+931	City	North America	Somerville	Massachusetts	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+932	City	North America	South Portland	Maine	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+933	City	North America	Spring	Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+934	City	North America	Stoughton	Wisconsin	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+935	City	North America	Sunnyside	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+936	City	North America	Syracuse	New York	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+937	City	North America	Tallahassee	Florida	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+938	City	North America	Tampa	Florida	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+939	City	North America	Texas City	Texas	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+940	City	North America	Thornton	Colorado	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+941	City	North America	Toppenish	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+942	City	North America	Toronto	Ontario	Canada	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+943	City	North America	Trenton	New Jersey	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+944	City	North America	Veradale	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+945	City	North America	Vineland	New Jersey	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+946	City	North America	Virginia Beach	Virginia	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+947	City	North America	Wapato	Washington	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+948	City	North America	Waterbury	Connecticut	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+949	City	North America	Waukesha	Wisconsin	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+950	City	North America	Wheat Ridge	Colorado	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+951	City	North America	Winchester	Virginia	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000
+952	City	North America	Worcester	Massachusetts	United States	1	2012-08-01 00:00:00.000	2012-08-01 00:00:00.000

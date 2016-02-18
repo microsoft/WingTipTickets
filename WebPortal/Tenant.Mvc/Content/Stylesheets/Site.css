@@ -22,6 +22,7 @@ body
     font-size: 12pt;
     font-weight: normal;
     line-height: 30px;
+    overflow-x: hidden;
 }
 
 header 
