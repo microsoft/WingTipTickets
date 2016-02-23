@@ -33,10 +33,10 @@
 	{
 		$containerName = "deployment-files"
         
-        $storageAccountKey = (Get-AzureRmStorageAccountKey -StorageAccountName $resourceGroupName -ResourceGroupName $resourceGroupName).Key1
+        $storageAccountKey = (Get-AzureRmStorageAccountKey -StorageAccountName $WTTEnvironmentApplicationName -ResourceGroupName $resourceGroupName).Key1
 
 		# Get the storage account context
-		$context = New-AzureStorageContext –StorageAccountName $ApplicationName -StorageAccountKey $storageAccountKey -ea silentlycontinue
+		$context = New-AzureStorageContext –StorageAccountName $WTTEnvironmentApplicationName -StorageAccountKey $storageAccountKey -ea silentlycontinue
 		If ($context -eq $null) { throw "Invalid storage account name and/or storage key provided" }
 
 		# Find the Container
@@ -50,20 +50,28 @@
 
 		# Upload Deployment Package
 		WriteLabel("Uploading Deployment Package")
-		Set-AzureStorageBlobContent -File $AzureWebSiteWebDeployPackagePath -Container $containerName -Context $context -Blob $AzureWebSiteWebDeployPackageName -Force
+		Set-AzureStorageBlobContent -File "$AzureWebSiteWebDeployPackagePath\$AzureWebSiteWebDeployPackageName" -Container $containerName -Context $context -Blob $AzureWebSiteWebDeployPackageName -Force
 		WriteValue("Successful")
 
 		# Build Paths
 		$templateFilePath = (Get-Item -Path ".\" -Verbose).FullName + "\Resources\DataFactory\Website\Deployment.json"
-		$packageUri = "https://$ApplicationName.blob.core.windows.net/deployment-files/$AzureWebSiteWebDeployPackageName"
+		$packageUri = "https://$WTTEnvironmentApplicationName.blob.core.windows.net/deployment-files/$AzureWebSiteWebDeployPackageName"
         
         WriteLabel("Deploying Web Application '$DatabaseName'")
-        $webSiteExist = Get-AzureRmWebApp -ResourceGroupName $ResourceGroupName -Name $Websitename
-        if($webSiteExist -eq $true)
+        #$webSiteExist = Get-AzureRmWebApp -ResourceGroupName $ResourceGroupName -Name $Websitename
+        $webSiteExist = Get-AzureRmResource -ResourceName $Websitename -ResourceType Microsoft.Web/sites -ExpandProperties -ResourceGroupName $ResourceGroupName
+        if($webSiteExist -ne $null)
             {
 		        # Deploy application
-		        $null = New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -Name $DatabaseName -Mode "Incremental" -TemplateFile $templateFilePath -siteName $Websitename -hostingPlanName $WebsiteHostingPlanName -siteLocation $Location -packageUri $packageUri
-		        WriteValue("Successful")
+                $webDeployment = New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -Name $Websitename -TemplateFile $templateFilePath -siteName $Websitename -Mode Incremental -hostingPlanName $Websitename -packageUri $packageUri -sitelocation $webSiteExist.Location -sku $webSiteExist.Properties.sku
+		        if($webDeployment.ProvisioningState -eq "Failed")
+                {
+                WriteValue("Unsuccessful")
+                }
+                Else
+                {
+                WriteValue("Successful")
+                }
             }
         else
             {

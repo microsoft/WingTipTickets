@@ -83,12 +83,12 @@ function New-WTTADFEnvironment
 
 				# Set up Mapping Dictionary
 				SetupMappingDictionary($storageAccountKey)
-
-				# Create and Deploy Database
+                
+                # Create and Deploy Database
 				CreateDatabase
 				CreateSchema
 				PopulateDatabase
-
+                
 				# Create and Deploy Website
 				CreateWebsite
 				DeployWebsite($storageAccountKey)
@@ -190,10 +190,10 @@ function CreateSchema
 	{
 		# Create Database Schema
 		WriteLabel("Creating Database Schema")
-       
+        Push-Location -StackName wtt
         $DatabaseServer = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains "primary" -ExpandProperties).properties.FullyQualifiedDomainName
         $result = Invoke-Sqlcmd -Username "$DatabaseUserName@$DatabaseServerName" -Password $DatabasePassword -ServerInstance $DatabaseServer -Database $DatabaseName -InputFile ".\Resources\DataFactory\Database\Schema.sql" -QueryTimeout 0
-       
+        Pop-Location -StackName wtt
 		WriteValue("Successful")
 	}
 	Catch
@@ -211,10 +211,10 @@ function PopulateDatabase
 	{
 		# Populate Database
 		WriteLabel("Populating Database")
-        
+        Push-Location -StackName wtt
         $DatabaseServer = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains "primary" -ExpandProperties).properties.FullyQualifiedDomainName
         $result = Invoke-Sqlcmd -Username "$DatabaseUserName@$DatabaseServerName" -Password $DatabasePassword -ServerInstance $DatabaseServer -Database $DatabaseName -InputFile ".\Resources\DataFactory\Database\Populate.sql" -QueryTimeout 0
-        
+        Pop-Location -StackName wtt
 		WriteValue("Successful")
 	}
 	Catch
@@ -427,4 +427,3 @@ function Update-JSONFile( $file )
 		-replace '<subName>', $global:dict["<subName>"] ` 
 	} | Set-Content  $file
 }
-
