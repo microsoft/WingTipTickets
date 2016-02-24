@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using Tenant.Mvc.Core.Enums;
+using Tenant.Mvc.Core.Interfaces.Tenant;
+using Tenant.Mvc.Core.Models;
 using Tenant.Mvc.Models;
-using Tenant.Mvc.Models.ConcertsDB;
-using Tenant.Mvc.Models.VenuesDB;
-using Tenant.Mvc.Repositories;
+using Tenant.Mvc.Models.DomainModels;
 
 namespace Tenant.Mvc.Controllers
 {
@@ -13,15 +14,28 @@ namespace Tenant.Mvc.Controllers
     {
         #region - Fields -
 
-        private readonly TicketsRepository _ticketsRepository;
+        private readonly IConcertRepository _concertRepository;
+        private readonly IArtistRepository _artistRepository;
+        private readonly IVenueRepository _venueRepository;
+        private readonly ICityRepository _cityRepository;
 
         #endregion
 
         #region - Constructors -
 
-        public EventAdministrationController()
+        public EventAdministrationController(IConcertRepository concertRepository, IArtistRepository artistRepository, IVenueRepository venueRepository, ICityRepository cityRepository)
         {
-            _ticketsRepository = new TicketsRepository(DisplayMessage);
+            // Setup Fields
+            _concertRepository = concertRepository;
+            _artistRepository = artistRepository;
+            _venueRepository = venueRepository;
+            _cityRepository = cityRepository;
+
+            // Setup Callbacks
+            _concertRepository.StatusCallback = DisplayMessage;
+            _artistRepository.StatusCallback = DisplayMessage;
+            _venueRepository.StatusCallback = DisplayMessage;
+            _cityRepository.StatusCallback = DisplayMessage;
         }
 
         #endregion
@@ -67,7 +81,7 @@ namespace Tenant.Mvc.Controllers
                     return new RedirectResult(ControllerContext.HttpContext.Request.UrlReferrer.AbsoluteUri);
                 }
 
-                _ticketsRepository.DeleteConcert(concertId);
+                _concertRepository.DeleteConcert(concertId);
 
                 return RedirectToAction("Index", "Home");
             }
@@ -90,12 +104,12 @@ namespace Tenant.Mvc.Controllers
             #region - Find/Add Artists -
 
             // First add artist if it doesn't exist
-            Performer artistFromDb;
+            PerformerModel artistFromDb;
 
             if (!String.IsNullOrWhiteSpace(eventArtist))
             {
                 eventArtist = eventArtist.Trim();
-                artistFromDb = _ticketsRepository.ConcertDbContext.GetArtistByName(eventArtist);
+                artistFromDb = _artistRepository.GetArtistByName(eventArtist);
 
                 if (artistFromDb == null)
                 {
@@ -106,7 +120,7 @@ namespace Tenant.Mvc.Controllers
                         return new RedirectResult(ControllerContext.HttpContext.Request.UrlReferrer.AbsoluteUri);
                     }
 
-                    artistFromDb = _ticketsRepository.ConcertDbContext.AddNewArtist(eventArtist);
+                    artistFromDb = _artistRepository.AddNewArtist(eventArtist);
 
                     if (artistFromDb == null)
                     {
@@ -117,7 +131,7 @@ namespace Tenant.Mvc.Controllers
             }
             else
             {
-                artistFromDb = _ticketsRepository.ConcertDbContext.GetArtistById(Int32.Parse(selectedArtistId));
+                artistFromDb = _artistRepository.GetArtistById(Int32.Parse(selectedArtistId));
             }
 
             #endregion
@@ -139,18 +153,18 @@ namespace Tenant.Mvc.Controllers
             #region - Find/Add City -
 
             // Then add city if it doesn't exist
-            City cityFromDb;
+            CityModel cityModelFromDb;
 
             if (!String.IsNullOrWhiteSpace(eventCity))
             {
                 eventCity = eventCity.Trim();
-                cityFromDb = _ticketsRepository.VenuesDbContext.GetCityByName(eventCity);
+                cityModelFromDb = _cityRepository.GetCityByName(eventCity);
 
-                if (cityFromDb == null)
+                if (cityModelFromDb == null)
                 {
-                    cityFromDb = _ticketsRepository.VenuesDbContext.AddNewCity(eventCity);
+                    cityModelFromDb = _cityRepository.AddNewCity(eventCity);
 
-                    if (cityFromDb == null)
+                    if (cityModelFromDb == null)
                     {
                         DisplayMessage(String.Format(" Failed to add new City '{0}'. Cannot Continue.", eventCity));
 
@@ -160,7 +174,7 @@ namespace Tenant.Mvc.Controllers
             }
             else
             {
-                cityFromDb = _ticketsRepository.VenuesDbContext.GetCityById(Int32.Parse(selectedCityId));
+                cityModelFromDb = _cityRepository.GetCityById(Int32.Parse(selectedCityId));
             }
 
             #endregion
@@ -181,21 +195,21 @@ namespace Tenant.Mvc.Controllers
             #region - Find/Add Venue -
 
             // Try to get the venue
-            Venue venueForConcert;
+            VenueModel venueModelForConcert;
             if (!String.IsNullOrWhiteSpace(eventVenueName))
             {
                 eventVenueName = eventVenueName.Trim();
-                venueForConcert = _ticketsRepository.VenuesDbContext.GetVenues().SingleOrDefault(ven => String.CompareOrdinal(ven.VenueName, eventVenueName) == 0);
+                venueModelForConcert = _venueRepository.GetVenues().SingleOrDefault(ven => String.CompareOrdinal(ven.VenueName, eventVenueName) == 0);
             }
             else
             {
-                venueForConcert = _ticketsRepository.VenuesDbContext.GetVenues().SingleOrDefault(ven => ven.VenueId == Int32.Parse(selectedVenueId));
+                venueModelForConcert = _venueRepository.GetVenues().SingleOrDefault(ven => ven.VenueId == Int32.Parse(selectedVenueId));
             }
 
             // Next, add venue if it doesn't exist
-            if (venueForConcert == null)
+            if (venueModelForConcert == null)
             {
-                venueForConcert = _ticketsRepository.VenuesDbContext.AddNewVenue(eventVenueName, cityFromDb.CityId);
+                venueModelForConcert = _venueRepository.AddNewVenue(eventVenueName, cityModelFromDb.CityId);
             }
 
             #endregion
@@ -217,10 +231,10 @@ namespace Tenant.Mvc.Controllers
             // Last, add concert/event
             eventName = eventName.Trim();
 
-            var saveToShardDb = saveToDatabase == "secondary" ? ShardDbServerTargetEnum.Shard : ShardDbServerTargetEnum.Primary;
+            var saveToShardDb = saveToDatabase == "secondary" ? ServerTargetEnum.Shard : ServerTargetEnum.Primary;
             var eventDateTime = new DateTime(Int32.Parse(eventYear), (int)Enum.Parse(typeof (MonthsEnum), eventMonth), Int32.Parse(eventDay), 20, 0, 0);
 
-            if (_ticketsRepository.ConcertDbContext.SaveNewConcert(eventName, eventDescription, eventDateTime, saveToShardDb, venueForConcert.VenueId, artistFromDb.PerformerId) == null)
+            if (_concertRepository.SaveNewConcert(eventName, eventDescription, eventDateTime, saveToShardDb, venueModelForConcert.VenueId, artistFromDb.PerformerId) == null)
             {
                 DisplayMessage(String.Format(" Failed to add new concert event. \'{0}\'", eventName));
                 return new RedirectResult(ControllerContext.HttpContext.Request.UrlReferrer.AbsoluteUri);
@@ -237,11 +251,11 @@ namespace Tenant.Mvc.Controllers
 
         #region - Private Methods -
 
-        private List<Concert> PopulateEvents(int venueId)
+        private List<ConcertModel> PopulateEvents(int venueId)
         {
-            var eventList = new List<Concert>
+            var eventList = new List<ConcertModel>
             {
-                new Concert
+                new ConcertModel
                 {
                     ConcertName = "<New Event>", ConcertId = -1
                 }
@@ -249,47 +263,47 @@ namespace Tenant.Mvc.Controllers
 
             if (venueId > 0)
             {
-                eventList.AddRange(_ticketsRepository.ConcertDbContext.GetConcerts(venueId, true));
+                eventList.AddRange(_concertRepository.GetConcerts(venueId, true));
             }
 
             return eventList;
         }
 
-        private List<City> PopulateCities()
+        private List<CityModel> PopulateCities()
         {
-            var cityList = new List<City>
+            var cityList = new List<CityModel>
             {
-                new City
+                new CityModel
                 {
                     CityName = "<New City>", CityId = -1
                 }
             };
 
-            cityList.AddRange(_ticketsRepository.VenuesDbContext.GetCities());
+            cityList.AddRange(_cityRepository.GetCities());
 
             return cityList;
         }
 
-        private List<Performer> PopulateArtists()
+        private List<PerformerModel> PopulateArtists()
         {
-            var artistList = new List<Performer>
+            var artistList = new List<PerformerModel>
             {
-                new Performer
+                new PerformerModel
                 {
                     ShortName = "<New Artist>", PerformerId = -1
                 }
             };
 
-            artistList.AddRange(_ticketsRepository.ConcertDbContext.GetArtists());
+            artistList.AddRange(_artistRepository.GetArtists());
 
             return artistList;
         }
 
-        private List<Venue> PopulateVenues(int cityId)
+        private List<VenueModel> PopulateVenues(int cityId)
         {
-            var venueList = new List<Venue>
+            var venueList = new List<VenueModel>
             {
-                new Venue
+                new VenueModel
                 {
                     VenueName = "<New Venue>", VenueId = -1
                 }
@@ -297,13 +311,13 @@ namespace Tenant.Mvc.Controllers
 
             if (cityId > 0)
             {
-                venueList.AddRange(_ticketsRepository.VenuesDbContext.GetVenues(cityId));
+                venueList.AddRange(_venueRepository.GetVenues(cityId));
             }
 
             return venueList;
         }
 
-        private static Concert PrepareData(ref int artistId, ref int cityId, ref int venueId, int eventId, List<Concert> eventList, List<Performer> artistList)
+        private static ConcertModel PrepareData(ref int artistId, ref int cityId, ref int venueId, int eventId, List<ConcertModel> eventList, List<PerformerModel> artistList)
         {
             #region - Prepare selections -
 
@@ -324,7 +338,7 @@ namespace Tenant.Mvc.Controllers
 
             #endregion
 
-            var selectedConcert = new Concert();
+            var selectedConcert = new ConcertModel();
 
             if (eventId > 0 && eventList.Any(a => a.ConcertId == eventId))
             {

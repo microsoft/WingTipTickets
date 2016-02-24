@@ -1,6 +1,7 @@
 ﻿using System.Web.Mvc;
-using Tenant.Mvc.Models.CustomersDB;
-using Tenant.Mvc.Repositories;
+using Tenant.Mvc.Core.Interfaces.Tenant;
+using Tenant.Mvc.Core.Models;
+using Tenant.Mvc.Models.DomainModels;
 
 namespace Tenant.Mvc.Controllers
 {
@@ -8,15 +9,19 @@ namespace Tenant.Mvc.Controllers
     {
         #region - Fields -
 
-        private readonly TicketsRepository _mainRepository;
+        private readonly ICustomerRepository _customerRepository;
 
         #endregion
 
         #region - Controllers -
 
-        public EventsController()
+        public EventsController(ICustomerRepository customerRepository)
         {
-            _mainRepository = new TicketsRepository(DisplayMessage);
+            // Setup Fields
+            _customerRepository = customerRepository;
+
+            // Setup Callbacks
+            _customerRepository.StatusCallback = DisplayMessage;
         }
 
         #endregion
@@ -25,9 +30,9 @@ namespace Tenant.Mvc.Controllers
 
         public ActionResult Index(string venueName = null)
         {
-            var customer = Session["SessionUser"] as Customer;
+            var customer = Session["SessionUser"] as CustomerModel;
 
-            return View(_mainRepository.GenerateMyEvents(customer, venueName));
+            return View(_customerRepository.GetCustomerEvents(customer, venueName));
         }
 
         #endregion

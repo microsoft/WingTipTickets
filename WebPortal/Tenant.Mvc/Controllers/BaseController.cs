@@ -12,6 +12,7 @@ namespace Tenant.Mvc.Controllers
 
         public BaseController()
         {
+            // Set up ViewBag data displayed on screen
             ViewBag.PrimaryDbServerName = ConfigurationManager.AppSettings["PrimaryDatabaseServer"];
         }
 

@@ -1,0 +1,90 @@
+﻿@using System.Security.Claims
+@using TenantProvisioning.Core.Helpers
+
+<!-- -------------------------------------------------------------------------------------------------------------------------- -->
+<!-- INTRODUCTION -->
+<!-- -------------------------------------------------------------------------------------------------------------------------- -->
+
+<div class="row">
+    <div class="col-xs-12 description">
+        WingtipTickets is a sample application that provides a ticketing solution to Tenants (Artists) using Microsoft’s rich cloud platform: Microsoft Azure. The purpose of WingtipTickets is to demonstrate the power of Microsoft Azure, from the perspective of an ISV, and isn’t intended to be a complete ticketing solution.
+    </div>
+</div>
+
+<div class="row spacer-25">
+</div>
+
+<!-- -------------------------------------------------------------------------------------------------------------------------- -->
+<!-- HEADER -->
+<!-- -------------------------------------------------------------------------------------------------------------------------- -->
+
+<div class="row row-underline">
+    <div class="col-sm-12">
+        <h3><b>PRICING MODELS</b></h3>
+    </div>
+</div>
+
+<div class="row">
+
+    <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+    <!-- STANDARD PLAN -->
+    <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+
+    <div class="col-xs-6 subsription-plan-left-div">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="standard-plan-header">
+                    STANDARD PLAN
+                </div>
+            </div>
+            <div class="col-xs-12 subsription-detail-div">
+                Dedicated Ticketing Solution
+            </div>
+            <div class="col-xs-12 subsription-detail-div">
+                Geographically Redundant WebSites
+            </div>
+            <div class="col-xs-12 subsription-detail-div">
+                Geographically Redundant Database Servers
+            </div>
+            <div class="col-xs-12 subsription-detail-div">
+                @if (ViewBag.Day1Visible)
+                { 
+                    <a href="@Url.Action("Index", "SignUp")" class="btn btn-warning" @if (ViewBag.Day1Provisioned) { <text> disabled="disabled" </text> }>Create Account</a>
+                }
+            </div>
+            <div class="col-xs-12 field-validation-error">
+                @if (ViewBag.ShowMessage)
+                {
+                    <text>Provisioning not completed: Go to <strong>'My Accounts'</strong> and Start Provisioning.</text>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+    <!-- PREMIUM PLAN -->
+    <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+
+    <div class="col-xs-6 subsription-plan-right-div">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="premium-plan-header">
+                    PREMIUM PLAN
+                </div>
+            </div>
+            <div class="col-xs-12">
+                All Standard Features<span class="glyphicon glyphicon-plus"></span>
+            </div>
+            <div class="col-xs-12 subsription-detail-div">
+                TBD
+            </div>
+            <div class="col-xs-12 subsription-detail-div">
+
+            </div>
+            <div class="col-xs-12 subsription-detail-div">
+                
+            </div>
+        </div>
+    </div>
+</div>
+

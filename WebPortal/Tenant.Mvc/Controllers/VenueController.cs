@@ -1,5 +1,5 @@
 ﻿using System.Web.Mvc;
-using Tenant.Mvc.Repositories;
+using Tenant.Mvc.Core.Interfaces.Tenant;
 
 namespace Tenant.Mvc.Controllers
 {
@@ -7,15 +7,19 @@ namespace Tenant.Mvc.Controllers
     {
         #region - Fields -
 
-        private readonly TicketsRepository _mainRepository;
+        private readonly IConcertRepository _concertRepository;
 
         #endregion
 
         #region - Controllers -
 
-        public VenueController()
+        public VenueController(IConcertRepository concertRepository)
         {
-            _mainRepository = new TicketsRepository(DisplayMessage);
+            // Setup Fields
+            _concertRepository = concertRepository;
+
+            // Setup Callbacks
+            _concertRepository.StatusCallback = DisplayMessage;
         }
 
         #endregion
@@ -24,7 +28,7 @@ namespace Tenant.Mvc.Controllers
 
         public ActionResult Index(int venueId = 0)
         {
-            return View(_mainRepository.GenerateEventListView(venueId));
+            return View(_concertRepository.GetConcerts(venueId));
         }
 
         #endregion

@@ -1,7 +1,7 @@
-﻿@model Tenant.Mvc.Models.DataForAdminPortalPage
-
-@using Tenant.Mvc.Models.ConcertsDB
-@using Tenant.Mvc.Models.VenuesDB
+﻿@model DataForAdminPortalPage
+@using Tenant.Mvc.Core.Enums
+@using Tenant.Mvc.Core.Models
+@using Tenant.Mvc.Models.DomainModels
 
 @{
     ViewBag.Title = "AdminPortal";
@@ -32,7 +32,7 @@
                         <div class="col-xs-11">
                             <div class="col-xs-5">
                                 <select id="slctCity" name="slctCity" class="form-control">
-                                    @foreach (City city in Model.Cities)
+                                    @foreach (CityModel city in Model.Cities)
                                     {
                                         <option value="@city.CityId" @(Model.SelectedCity == city.CityId ? "selected" : "")>@city.CityName</option>
                                     }
@@ -50,7 +50,7 @@
                         <div class="col-xs-11">
                             <div class="col-xs-5">
                                 <select id="slctVenue" name="slctvenue" class="form-control">
-                                    @foreach (Venue venue in Model.Venues)
+                                    @foreach (VenueModel venue in Model.Venues)
                                     {
                                         <option value="@venue.VenueId" @(Model.SelectedVenue == venue.VenueId ? "selected" : "")>@venue.VenueName</option>
                                     }
@@ -68,7 +68,7 @@
                         <div class="col-xs-11">
                             <div class="col-xs-5">
                                 <select id="slctEvent" name="slctEvent" class="form-control">
-                                    @foreach (Concert concert in Model.Events)
+                                    @foreach (ConcertModel concert in Model.Events)
                                     {
                                         <option value="@concert.ConcertId" @(Model.SelectedEvent.ConcertId == concert.ConcertId ? "selected" : "")>@concert.ConcertName</option>
                                     }
@@ -86,7 +86,7 @@
                         <div class="col-xs-11">
                             <div class="col-xs-5">
                                 <select id="slctArtist" name="slctArtist" class="form-control">
-                                    @foreach (Performer artist in Model.Artists)
+                                    @foreach (PerformerModel artist in Model.Artists)
                                     {
                                         <option value="@artist.PerformerId" @(Model.SelectedArtist == artist.PerformerId ? "selected" : "")>@artist.ShortName</option>
                                     }
@@ -146,13 +146,13 @@
                         </label>
                         <br />
                         <label class="radio-inline">
-                            <input style="height: auto;" name="saveToDatabase" id="saveToDatabase" value="primary" type="radio" @(Model.SelectedEvent == null || Model.SelectedEvent.SaveToDbServer == ShardDbServerTargetEnum.Primary ? "checked" : "")> Small
+                            <input style="height: auto;" name="saveToDatabase" id="saveToDatabase" value="primary" type="radio" @(Model.SelectedEvent == null || Model.SelectedEvent.SaveToDbServer == ServerTargetEnum.Primary ? "checked" : "")> Small
                         </label>
                         <label class="radio-inline">
-                            <input style="height: auto;" name="saveToDatabase" id="saveToDatabase" value="secondary" type="radio" @(Model.SelectedEvent.SaveToDbServer == ShardDbServerTargetEnum.Shard ? "checked" : "")> Medium
+                            <input style="height: auto;" name="saveToDatabase" id="saveToDatabase" value="secondary" type="radio" @(Model.SelectedEvent.SaveToDbServer == ServerTargetEnum.Shard ? "checked" : "")> Medium
                         </label>
                         <label class="radio-inline">
-                            <input style="height: auto;" name="saveToDatabase" id="saveToDatabase" value="secondary" type="radio" @(Model.SelectedEvent.SaveToDbServer == ShardDbServerTargetEnum.Shard ? "checked" : "")> Large
+                            <input style="height: auto;" name="saveToDatabase" id="saveToDatabase" value="secondary" type="radio" @(Model.SelectedEvent.SaveToDbServer == ServerTargetEnum.Shard ? "checked" : "")> Large
                         </label>
                     </div>
 

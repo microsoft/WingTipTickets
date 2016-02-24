@@ -1,0 +1,266 @@
+﻿@using System.Security.Claims
+@using TenantProvisioning.Core.Helpers
+@using TenantProvisioning.Mvc.Helpers
+@using Roles = TenantProvisioning.Core.Helpers.RoleNames
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <title>@ViewBag.Title</title>
+        @Styles.Render("~/Content/bootstrap")
+        @Styles.Render("~/Content/css")
+    </head>
+    <body>
+        
+        <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+        <!-- HEADER SECTION -->
+        <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+
+        <header>
+            <div class="container">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div>
+                                    <img class="logo-image pull-left" src="~/Content/Images/Logo.Jpg" />
+                                    <h1 class="logo-heading">wingtiptickets</h1>
+                                </div>
+                            </div>
+                            <div class="col-xs-6">
+                                
+                            </div>
+                        </div>
+                        <div class="row">
+                            <nav class="navbar navbar-default menu-bar-default">
+                                <div class="container-fluid no-padding">
+                                    
+                                    <div class="navbar-header">
+                                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
+                                            <span class="sr-only">Toggle navigation</span>
+                                            <span class="icon-bar"></span>
+                                            <span class="icon-bar"></span>
+                                            <span class="icon-bar"></span>
+                                        </button>
+                                    </div>
+
+                                    <div class="collapse navbar-collapse menu-bar " id="navbar-collapse">
+                                        <ul class="nav navbar-nav nav-menu">
+                                            
+                                            @{ var url = Request.Url != null ? Request.Url.ToString() : string.Empty; }
+                                            
+                                            <!-- HOME MENU ITEM -->
+                                            <li>
+                                                @Html.ActionLink("HOME", "Index", "Home", null, url.Contains("Home") || url[url.Length - 1].Equals('/') ? new { @class = "active" } : null)
+
+                                                @if (HttpContext.Current.User.Identity.IsAuthenticated)
+                                                {
+                                                    <span class="header-item-border"></span>
+                                                }
+                                            </li>
+                                            
+                                            <!-- MY ACCOUNT MENU ITEM -->
+                                            @if (HttpContext.Current.User.Identity.IsAuthenticated && HttpContext.Current.User.IsInRole(Roles.Tenant))
+                                            {
+                                                <li>
+                                                    @Html.ActionLink("MY ACCOUNT", "Index", "TenantView", null, url.Contains("TenantView") ? new { @class = "active" } : null)
+                                                    <span class="header-item-border"></span>
+                                                </li>
+                                            }
+                                            
+                                            <!-- ADMIN MENU ITEM -->
+                                            @if (HttpContext.Current.User.Identity.IsAuthenticated && HttpContext.Current.User.IsInRole(Roles.Administrator))
+                                            {
+                                                <li>
+                                                    @Html.ActionLink("ADMIN", "Index", "AdminView", null, url.Contains("AdminView") ? new { @class = "active" } : null)
+                                                </li>
+                                            }
+
+                                        </ul>
+
+                                        <ul class="nav navbar-nav nav-menu navbar-right">
+                                            
+                                            <!--LOG ON MENU ITEM -->
+                                            @if (HttpContext.Current.User.Identity.IsAuthenticated)
+                                            { 
+                                                <li>@Html.ActionLink(ClaimsPrincipal.Current.Identity.SplitName() + " [SIGN OFF]", "SignOut", "Account")</li>
+                                            }
+                                            else
+                                            {
+                                                <li>@Html.ActionLink("My Account [SIGN IN]", "Index", "Login")</li>
+                                            }
+
+                                        </ul>
+                                    </div>
+                                </div>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+        <!-- BODY SECTION -->
+        <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+
+        <div class ="content">
+            <div class ="container">
+
+                <div class="row spacer-50">
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-12">
+                        @RenderBody()
+                    </div>
+                </div>
+
+                <div class="row spacer-50">
+                </div>
+            </div>
+        </div>
+        
+        <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+        <!-- FOOTER SECTION -->
+        <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+
+        <div class="footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="col-xs-5">
+                            <div>
+                                <img class="logo-image pull-left" src="~/Content/Images/Logo.Jpg" />
+                                <h1 class="logo-heading">wingtiptickets</h1>
+                            </div>
+                        </div>
+                        <div class="col-xs-7 pull-right footer-menu">
+
+                            <div class="row">
+                                <div class="col-xs-12 text-right">
+                                    <a href="#">Terms</a>
+                                    <span class="footer-item-border"></span>
+                                    <a href="#">Privacy</a>
+                                    <span class="footer-item-border"></span>
+                                    <a href="#">Help</a>
+                                    <span class="footer-item-border"></span>
+                                    <a href="#">About</a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-12 text-right right-padding-20">
+                                    © 2015 wingtiptickets. All rights reserved.
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+        <!-- CONFIRM MODAL -->
+        <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+
+        <div class="modal fade" id="confirmModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    
+                    <div class="modal-header">
+                        <div class="row">
+                            <div class="col-xs-8">
+                                <img src="~/Content/Images/Logo.png" style="height: 70px;" />
+                            </div>
+                            <div class="col-xs-4 text-right" style="margin-top: 20px;">
+                                <span>CONFIRM</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="confirmationMessage" class="modal-body">
+                    </div>
+
+                    <div class="modal-footer">
+                        <button id="confirmYes" type="button" class="btn btn-info" style="width: 80px">YES</button>
+                        <button id="confirmNo" type="button" class="btn btn-default" data-dismiss="modal" style="width: 80px">NO</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+        <!-- HELP FIND DIRECTORY MODAL -->
+        <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+        
+        <div class="modal fade bs-help-find-directoy-modal" id="confirmModel" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <div class="row">
+                            <div class="col-xs-8">
+                                <img src="~/Content/Images/Logo.png" style="height: 70px;" />
+                            </div>
+                            <div class="col-xs-4 text-right" style="margin-top: 20px;">
+                                <span>CONFIRM</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <img src="~/Content/Images/directory.png" style="width: 100%" />
+
+                    <div class="modal-footer">
+                        <button id="close" type="button" class="btn btn-default" data-dismiss="modal" style="width: 80px">CLOSE</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+        <!-- ALERT MODAL -->
+        <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+
+        <div class="modal fade" id="alertModel" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <div class="row">
+                            <div class="col-xs-8">
+                                <img src="~/Content/Images/Logo.png" style="height: 70px;" />
+                            </div>
+                            <div class="col-xs-4 text-right" style="margin-top: 20px;">
+                                <span>NOTICE</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="alertMessage" class="modal-body">
+                    </div>
+
+                    <div class="modal-footer">
+                        <button id="alertDismiss" type="button" class="btn btn-info" style="width: 80px">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+        <!-- SCRIPTS SECTION -->
+        <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/bootstrap")
+        @RenderSection("scripts", required: false)
+
+        <script language="javascript" type="text/javascript">
+            $(document).ready(function () {
+                //
+            });
+        </script>
+
+    </body>
+</html>

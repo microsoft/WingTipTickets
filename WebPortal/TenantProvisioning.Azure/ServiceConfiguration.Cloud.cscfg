@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ServiceConfiguration serviceName="TenantProvisioning.Azure" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="4" osVersion="*" schemaVersion="2015-04.2.6">
+  <Role name="TenantProvisioning.Mvc">
+    <Instances count="1" />
+    <ConfigurationSettings>
+      <Setting name="Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString" value="DefaultEndpointsProtocol=https;AccountName=wingtipticketsstorage;AccountKey=ghbVIjTMnOEjBmsut95k7BHO5PvWTwbLu5HStTuTUfMQg2JluHey+zi9BFBZwk87gZUBqkKGXxE29rCVoCf7KQ==" />
+    </ConfigurationSettings>
+  </Role>
+</ServiceConfiguration>

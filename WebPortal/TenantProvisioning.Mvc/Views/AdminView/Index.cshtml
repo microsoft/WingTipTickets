@@ -1,0 +1,266 @@
+﻿@model TenantProvisioning.Mvc.Models.MyAccountViewModel
+@{
+    ViewBag.Title = "Admin";
+}
+
+<form class="form-horizontal">
+    
+    <div class="row row-underline">
+        <div class="col-sm-6">
+            <h3>Account Information</h3>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12">
+
+            <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+            <!-- COMPANIES TABLE -->
+            <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+            <table class="tenant-table">
+                
+                @foreach (var userAccount in Model.UserAccounts)
+                {
+                    <tr style="background-color: grey; color: white; font-size: 12pt">
+                        <td colspan="3">
+                            @userAccount.Username
+                        </td>
+                        <td class="text-right" colspan="3" style="padding: 10px;">
+                            <button id="DeleteTenant" class="btn btn-info" type="button" onclick="deprovisionServices('@userAccount.Username')">Delete Account</button>
+                        </td>
+                    </tr>
+                    <tr class="row-underline">
+                        <th>
+                            THEME
+                        </th>
+                        <th>
+                            PLAN
+                        </th>
+                        <th>
+                            STATUS
+                        </th>
+                        <th>
+
+                        </th>
+                    </tr>
+
+                    foreach (var tenant in userAccount.Tenants)
+                    {
+                        <tr>
+                            <td>
+                                @tenant.Theme
+                            </td>
+                            <td>
+                                @tenant.Plan
+                            </td>
+                            <td id="TenantStatus_@tenant.Id">
+                                @tenant.Status
+                            </td>
+                            <td class="text-right">
+                                <span id="BtnServiceSection_@tenant.Id" class="glyphicon glyphicon-plus" onclick="expandCollapseSection(@tenant.Id)"></span>
+                            </td>
+                        </tr>
+
+                        <tr id="TblServiceSection_@tenant.Id" style="display: none">
+                            <td colspan="5">
+
+                                <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+                                <!-- COMPANY SERVICES TABLE -->
+                                <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+
+                                <table class="service-table">
+                                    <tr class="row-underline">
+                                        <th>
+                                            AZURE RESOURCE
+                                        </th>
+                                        <th>
+                                            SERVICE NAME
+                                        </th>
+                                        <th>
+                                            STATUS
+                                        </th>
+                                    </tr>
+
+                                    @foreach (var service in tenant.Services)
+                                    {
+                                        <tr data-serviceid="@tenant.Id-@service.StatusId">
+                                            <td class="service">
+                                                @service.Service
+                                            </td>
+                                            <td class="name">
+                                                @service.Name
+                                            </td>
+                                            <td class="status">
+                                                <span id="Status_@tenant.Id-@service.StatusId" style="padding-right: 10px;" data-content="" onclick="showError('Status_@tenant.Id-@service.StatusId')" title="Click for more detail">
+                                                    @service.Status
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    }
+
+                                </table>
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    </div>
+
+</form>
+
+<!-- -------------------------------------------------------------------------------------------------------------------------- -->
+<!-- SCRIPTS -->
+<!-- -------------------------------------------------------------------------------------------------------------------------- -->
+
+@section scripts {
+    <script type="text/javascript">
+
+    var _intervalId;
+    var _errorsOccurred = false;
+
+    $(document).ready(function () {
+        // Start Status updates if provisioning
+        debugger;
+        if ("@ViewBag.PipelineRunning" == "True") {
+                updateStatusses();
+            }
+        });
+
+        function deprovisionServices(username)
+        {
+            debugger;
+            // Confirm the Delete
+            $('#confirmationMessage').html('Are you sure you want to <strong>DELETE</strong> this account?');
+            $('#confirmYes').click(function()
+            {
+                location.href = '@Url.Action("StartDeprovisioning", "AdminView")?username=' + username;
+            });
+
+            $('#confirmModel').modal({
+                backdrop: 'static'
+            });
+        }
+
+    function updateStatusses()
+    {
+        // Update at 2 second intervals
+        _intervalId = setInterval(function()
+        {
+            var errorsOccurred = false;
+            var provisioningCompleted = true;
+
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetStatusses", "AdminView")",
+                async: false,
+                dataType: 'json',
+                cache: false
+            }).done(function(data)
+            {
+                // Loop through tenants
+                for (var t = 0; t < data.Result.Tenants.length; t++)
+                {
+                    // Get tenant
+                    var tenant = data.Result.Tenants[t];
+
+                    // Loop through tenant services
+                    for (var s = 0; s < tenant.Services.length; s++)
+                    {
+                        // Get service
+                        var service = tenant.Services[s];
+
+                        // Find the element
+                        var serviceRow = $("[data-serviceId='" + tenant.TenantId + "-" + service.StatusId + "'");
+                        var status = serviceRow.children("td.status").children('span');
+
+                        // Set the error Message if Failed
+                        if (service.Status == 'Error' || service.Status == 'Warning')
+                        {
+                            status.addClass("field-validation-error");
+                            status.attr("data-content", service.Message);
+
+                            $("#btnProvision").show();
+                            $("#btnDeprovision").show();
+
+                            $("#btnProvision").html("Retry Provisioning");
+                        }
+                        else
+                        {
+                            status.removeClass("field-validation-error");
+                            status.attr("data-content", "");
+                        }
+
+                        // Set the Status Message
+                        status.html(service.Status);
+
+                        // Check for Errors
+                        errorsOccurred = errorsOccurred || tenant.ErrorsOccurred;
+
+                        // Check for Completion
+                        provisioningCompleted = provisioningCompleted && tenant.ProvisioningCompleted;
+                    }
+                };
+
+                // Run callback function if Completed
+                if (!errorsOccurred && provisioningCompleted)
+                {
+                    clearInterval(_intervalId);
+
+                    // Delete the Account
+                    $.ajax({
+                        type: "GET",
+                        url: "@Url.Action("DeleteAccount", "Account")",
+                        async: false,
+                        data: { username: '@ViewBag.Username' },
+                        dataType: 'json',
+                        cache: false
+                    }).done(function()
+                    {
+                        document.location = "@Url.Action("Index", "AdminView")";
+                    });
+                }
+            });
+        }, 2000);
+    }
+
+    function expandCollapseSection(tenantId) {
+        // Expand and collapse the service section
+        $("#TblServiceSection_" + tenantId).toggle();
+
+        var button = $("#BtnServiceSection_" + tenantId);
+
+        if (button.hasClass("glyphicon-plus"))
+        {
+            button.addClass("glyphicon-minus");
+            button.removeClass("glyphicon-plus");
+        } else
+        {
+            button.addClass("glyphicon-plus");
+            button.removeClass("glyphicon-minus");
+        }
+    }
+
+    function showError(name)
+    {
+        var elem = $("#" + name);
+        var value = elem.attr("data-content");
+
+        if (value != '')
+        {
+            // Show Alert
+            $('#alertMessage').html(value);
+            $('#alertDismiss').click(function()
+            {
+                // Hide the Model
+                $('#alertModel').modal('hide');
+            });
+
+            $('#alertModel').modal({
+                backdrop: 'static'
+            });
+        }
+    }
+
+    </script>
+}

@@ -1,0 +1,26 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "databaseName": {
+        "type": "string",
+        "defaultValue":"@DatabaseName"
+    },
+    "location": {
+        "type": "string",
+        "defaultValue":"@Location"
+    }
+  },
+  "resources": [
+  {
+       "apiVersion": "2015-04-08",
+       "type": "Microsoft.DocumentDb/databaseAccounts",
+       "name": "[parameters('databaseName')]", 
+       "location": "[parameters('location')]", 
+       "properties": {
+           "name": "[parameters('databaseName')]",
+           "databaseAccountOfferType":  "Standard"
+       }
+    }
+  ]
+}

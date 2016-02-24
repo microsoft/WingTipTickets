@@ -1,0 +1,97 @@
+﻿@model TenantProvisioning.Mvc.Models.LoginViewModel
+@{
+    ViewBag.Title = "LogIn";
+}
+
+<div class="row">
+    <div class="col-xs-12">
+        <h1>Sign In</h1>
+    </div>
+</div>
+
+<!-- -------------------------------------------------------------------------------------------------------------------------- -->
+<!-- AZURE INFORMATION -->
+<!-- -------------------------------------------------------------------------------------------------------------------------- -->
+
+<div class="row row-underline">
+    <div class="col-sm-12">
+        <h3>Sign-in to connect to your Azure AzureSubscription</h3>
+    </div>
+</div>
+
+<div class="spacer-15">
+</div>
+
+<div class="row">
+    
+    <div class="col-xs-4">
+        <div class="caption">
+            
+            <div id="btnOrganisationAccount" class="img-thumbnail" style="width: 100%">
+                <a href='@Url.Action("SignIn", "Account", new { isMsa = false, redirectToSignUp = @Model.RedirectToSignUp })' style="height: 64px;">
+                    <div class="col-xs-3">
+                        <img src="~/Content/Images/AccountOrganisation.png" />
+                    </div>
+                    <div class="col-xs-9">
+                        <h4>Work / School Account</h4>
+                        <h5>For a Microsoft corporate account, click here</h5>
+                    </div>
+                </a>
+            </div>
+                
+            <span id="btnBackMicrosoftAccount" class="glyphicon glyphicon-arrow-left" style="display: none; cursor: pointer"> Back</span>
+
+            <div id="btnMicrosoftAccount" class="img-thumbnail" style="width: 100%">
+                <a href='#' style="height: 64px;">
+                    <div class="col-xs-3">
+                        <img src="~/Content/Images/AccountMicrosoft.png" />
+                    </div>
+                    <div class="col-xs-9">
+                        <h4 style="text-align: left">Microsoft Account</h4>
+                        <h5>For a Directory name, click here</h5>
+                    </div>
+                </a>
+            </div>
+
+            @using (Html.BeginForm("SignIn", "Account", FormMethod.Get))
+            {
+                <div id="divMicrosoftAccount" style="display: none">
+                    <div class="input-group">
+                        
+                        <input type="hidden" name="isMsa" value="true"/>
+                        @Html.HiddenFor(m => m.RedirectToSignUp)
+
+                        <input name="directoryName" type="text" class="form-control" placeholder="Directory Name e.g. contoso.com" aria-describedby="basic-addon2" style="margin-top: 2px;">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="submit">Sign In</button>
+                        </span>
+                    </div>
+                    <a style="font-size: smaller; cursor: pointer" data-toggle="modal" data-target=".bs-help-find-directoy-modal">Help me find my directory name</a>
+                </div>
+            }
+        </div>
+    </div>
+
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $("#btnMicrosoftAccount").click(function () {
+                $("#btnOrganisationAccount").hide();
+
+                $("#btnBackMicrosoftAccount").show();
+                $("#divMicrosoftAccount").show("slow");
+            });
+
+            $("#btnBackMicrosoftAccount").click(function () {
+                $("#btnOrganisationAccount").show("slow");
+
+                $("#btnBackMicrosoftAccount").hide();
+                $("#divMicrosoftAccount").hide();                
+            });
+        });
+
+    </script>
+}

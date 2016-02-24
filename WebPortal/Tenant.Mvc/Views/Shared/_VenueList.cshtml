@@ -1,0 +1,22 @@
+﻿@model List<Tenant.Mvc.Core.Models.VenueModel>
+
+<div class="row box-dark">
+    <h3>Local Venues</h3>
+
+    <ul>
+        @{
+            if (Model != null && Model.Any())
+            {
+                foreach (var venue in Model.OrderBy(a => a.VenueName).GroupBy(a => a.VenueId).Select(a => a.First()).Take(2))
+                {
+                    <li>
+                        <a href="@Url.Action("Index", "Venue", new { venueId = venue.VenueId })">@venue.VenueName - @venue.ConcertQty Event(s)</a>
+                    </li>
+                }
+            }
+        }
+
+        <li><a href="@Url.Action("Index", "Venue")">See All Venues ></a></li>
+    </ul>
+</div>
+

@@ -1,15 +1,24 @@
 ﻿@using System.Configuration
-@model System.Web.Mvc.HandleErrorInfo
 
+@model HandleErrorInfo
 @{
     ViewBag.Title = "Error";
 }
 
 <div class="container">
+    
+    <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+    <!-- Title -->
+    <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+
     <h1 class="text-danger">An Error Occurred:</h1>
     <h3>@Model.Exception.Message</h3>
 
     <br/>
+    
+    <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+    <!-- Main Exception -->
+    <!-- -------------------------------------------------------------------------------------------------------------------------- -->
 
     @if (ConfigurationManager.AppSettings["ShowDetailedInformation"].ToLower() == "true")
     {
@@ -29,18 +38,21 @@
             </pre>
         </div>
 
+        <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+        <!-- Inner Exception -->
+        <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+
         if (@Model.Exception.InnerException != null)
         {
             <h2>InnerException Details</h2>
             <p>
                 <b>Message:</b> @Model.Exception.InnerException.Message<br />
             </p>
-             <div style="overflow: scroll">
-                 <pre>
-                @Model.Exception.InnerException.StackTrace
-            </pre>
-             </div>
+            <div style="overflow: scroll">
+                <pre>
+                    @Model.Exception.InnerException.StackTrace
+                </pre>
+            </div>
         }
-        
     }
 </div>

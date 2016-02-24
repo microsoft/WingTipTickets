@@ -1,0 +1,7 @@
+﻿@using System.Security.Claims
+@using TenantProvisioning.Core.Helpers
+@{
+    ViewBag.Title = "Home";
+}
+
+@Html.Action("Index", "Option", new { isDataCamp = false })

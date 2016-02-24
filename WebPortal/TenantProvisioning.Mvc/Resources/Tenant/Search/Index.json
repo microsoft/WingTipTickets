@@ -1,0 +1,23 @@
+{
+	"name": "concerts",  
+	"fields": [
+		{"name": "ConcertId", "type": "Edm.String", "key": "true", "filterable": "true", "retrievable": "true"},
+		{"name": "ConcertName", "type": "Edm.String", "retrievable": "true"},
+		{"name": "ConcertDate", "type": "Edm.DateTimeOffset", "filterable": "true", "facetable": "true", "sortable": "true", "retrievable": "true"},
+		{"name": "VenueId", "type": "Edm.Int32", "filterable": "true", "retrievable": "true"},
+		{"name": "VenueName", "type": "Edm.String", "filterable": "true", "facetable": "true"},
+		{"name": "VenueCity", "type": "Edm.String", "filterable": "true", "facetable": "true"},
+		{"name": "VenueState", "type": "Edm.String", "filterable": "true", "facetable": "true"},
+		{"name": "VenueCountry", "type": "Edm.String", "filterable": "true", "facetable": "true"},
+		{"name": "PerformerId", "type": "Edm.Int32", "filterable": "true", "retrievable": "true"},
+		{"name": "PeformerName", "type": "Edm.String", "filterable": "true", "facetable": "true"},
+		{"name": "FullTitle", "type": "Edm.String", "retrievable": "true", "searchable": "true"}
+	],
+	"suggesters": [
+		{
+			"name": "sg",
+			"searchMode": "analyzingInfixMatching",
+			"sourceFields": ["FullTitle"]
+		}
+	]
+}

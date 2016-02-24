@@ -1,8 +1,9 @@
 ﻿using Newtonsoft.Json;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using Tenant.Mvc.Models.VenuesDB;
-using Tenant.Mvc.Repositories;
+using Tenant.Mvc.Core.Interfaces.Tenant;
+using Tenant.Mvc.Core.Models;
+using Tenant.Mvc.Models.DomainModels;
 
 namespace Tenant.Mvc.Controllers
 {
@@ -10,17 +11,22 @@ namespace Tenant.Mvc.Controllers
     {
         #region - Fields -
 
-        private readonly VenueMetaDataRepository _venueMetaData;
-        private readonly TicketsRepository _mainRepository;
+        private readonly IVenueMetaDataRepository _venueMetaDataRepository;
+        private readonly IVenueRepository _venueRepository;
 
         #endregion
 
         #region - Constructors -
 
-        public VenueAdministrationController()
+        public VenueAdministrationController(IVenueMetaDataRepository venueMetaDataRepository, IVenueRepository venueRepository)
         {
-            _venueMetaData = new VenueMetaDataRepository();
-            _mainRepository = new TicketsRepository(DisplayMessage);
+            // Setup Fields
+            _venueMetaDataRepository = venueMetaDataRepository;
+            _venueRepository = venueRepository;
+
+            // Setup Callbacks
+            _venueMetaDataRepository.StatusCallback = DisplayMessage;
+            _venueRepository.StatusCallback = DisplayMessage;
         }
 
         #endregion
@@ -29,7 +35,7 @@ namespace Tenant.Mvc.Controllers
 
         public ActionResult Index()
         {
-            return View(_mainRepository.VenuesDbContext.GetVenues());
+            return View(_venueRepository.GetVenues());
         }
 
         #endregion
@@ -40,7 +46,7 @@ namespace Tenant.Mvc.Controllers
         public async Task<ActionResult> Edit(int id)
         {
             ViewBag.VenueId = id;
-            var metaData = await _venueMetaData.GetVenueMetaData(id) ?? new VenueMetaData
+            var metaData = await _venueMetaDataRepository.GetVenueMetaData(id) ?? new VenueMetaData
             {
                 VenueId = id, Data = new
                 {
@@ -57,7 +63,7 @@ namespace Tenant.Mvc.Controllers
 
             if (ModelState.IsValid)
             {
-                await _venueMetaData.SetVenueMetaData(id, deserializedData);
+                await _venueMetaDataRepository.SetVenueMetaData(id, deserializedData);
             }
 
             return RedirectToAction("Index");
