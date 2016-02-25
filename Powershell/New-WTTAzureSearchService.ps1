@@ -115,7 +115,7 @@ function New-WTTAzureSearchService
 			else
 			{
 				$adTenantName = $AzureActiveDirectoryTenantName
-				adTenant = $adTenantName
+				$adTenant = $adTenantName
 			} 
 
 			# Set well-known client ID for AzurePowerShell

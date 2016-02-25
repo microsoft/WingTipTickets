@@ -236,15 +236,11 @@ function New-WTTEnvironment
 			if ($WTTEnvironmentPrimaryServerLocation -eq "")
 			{
 				LineBreak
-				WriteLine("Finding V12.0 SQL Database Server capable region")
+				WriteLine("Finding SQL Database Server capable region")
 
 				if($AzureActiveDirectoryTenantName -eq "")
 				{
 					$azureSqlDatabaseServerV12RegionAvailability = Get-WTTSqlDatabaseServerV12RegionAvailability -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName
-				}
-				else
-				{
-					$azureSqlDatabaseServerV12RegionAvailability = Get-WTTSqlDatabaseServerV12RegionAvailability -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -AzureActiveDirectoryTenantName $AzureActiveDirectoryTenantName
 				}
 
 				# Location Found
@@ -360,7 +356,7 @@ function New-WTTEnvironment
 					'West Europe' {'West Europe'}
 					'East US' {'East US'}
 					'North Central US' {'East US'}
-					'EastUS2' {'East US'}
+					'East US 2' {'East US'}
 					'South Central US' {'East US'}
 					'Central US' {'East US'}
 					'North Central US' {'East US'}
@@ -414,11 +410,18 @@ function New-WTTEnvironment
 				$azureSecondarySqlDatabaseServer = Get-AzureRMSqlServer -ServerName $azureSqlDatabaseServerSecondaryName -ResourceGroupName $azureResourceGroupName -ErrorVariable azureSqlDatabaseServerSecondaryNameExists -ErrorAction SilentlyContinue                                 
 			}
 
-			# Deploy database
+			# Deploy Customer 1 database
 			if ($azurePrimarySqlDatabaseServer -ne $null)
 			{   
 				Deploy-DBSchema -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName -DatabaseEdition "Basic" -UserName $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -ServerLocation $WTTEnvironmentPrimaryServerLocation -DatabaseName $AzureSqlDatabaseName            
 				Populate-DBSchema -ServerName $azureSqlDatabaseServerPrimaryName -Username $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -DatabaseName $AzureSqlDatabaseName                    
+			}
+
+			# Deploy Customer2 database
+			if ($azurePrimarySqlDatabaseServer -ne $null)
+			{   
+				Deploy-DBSchema -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName -DatabaseEdition "Standard" -UserName $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -ServerLocation $WTTEnvironmentPrimaryServerLocation -DatabaseName "Customer2"           
+				Populate-DBSchema -ServerName $azureSqlDatabaseServerPrimaryName -Username $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -DatabaseName "Customer2"                   
 			}
 
 			if ($WTTEnvironmentPrimaryServerLocation -notcontains "" -and $wTTEnvironmentSecondaryServerLocation -notcontains "")                 
