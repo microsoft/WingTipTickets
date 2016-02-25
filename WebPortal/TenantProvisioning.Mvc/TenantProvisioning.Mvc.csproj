@@ -210,9 +210,6 @@
     <Content Include="Resources\ProductRecommendations\Database\Schema.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\ProductRecommendations\Packages\Mahout.jar">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Resources\Tenant\Database\Pop.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -276,9 +273,6 @@
     <Content Include="Content\Stylesheets\bootstrap-theme.css.map" />
     <Content Include="Content\Stylesheets\bootstrap.css.map" />
     <Content Include="Views\Option\Index.cshtml" />
-    <Content Include="Resources\ProductRecommendations\Packages\DataGenerator.zip">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Resources\ProductRecommendations\Scripts\PartitionProductUsage.hql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -315,9 +309,6 @@
     <Content Include="Resources\Tenant\Website\Deployment.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Tenant\Website\Package.zip">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Views\Version\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -329,6 +320,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Properties\PublishProfiles\" />
+    <Folder Include="Resources\ProductRecommendations\Packages\" />
     <Folder Include="Views\Account\" />
   </ItemGroup>
   <ItemGroup>
