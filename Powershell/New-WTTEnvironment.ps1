@@ -95,7 +95,19 @@ function New-WTTEnvironment
 		# Path to Azure ADF Web Site WebDeploy Package
 		[Parameter(Mandatory = $false)]
 		[Alias("ADFWebSiteDeployPackagePath")] 
-		[String]$azureADFWebSiteWebDeployPackagePath
+		[String]$azureADFWebSiteWebDeployPackagePath,
+		        
+        [Parameter(Mandatory = $false)]
+        [bool]
+        $deployADF,
+        
+        [Parameter(Mandatory = $false)]
+        [bool]
+        $deployDW,
+
+        [Parameter(Mandatory = $false)]
+        [string]
+        $installedAzurePowerShellVersion
 	)
 
 	Process
@@ -202,21 +214,22 @@ function New-WTTEnvironment
 
 			# Check installed PowerShell Version
 			WriteLabel("Checking for Azure PowerShell Version 1.0.1 or later")
-			$installedAzurePowerShellVersion = CheckInstalledPowerShellVersion
+			if($installedAzurePowerShellVersion -lt 1)
+            {
+                CheckInstalledPowerShellVersion
+			    if ($installedAzurePowerShellVersion -gt 0)
+			    {
+				    WriteValue("Done")
+			    }
+			    else
+			    {
+				    WriteValue("Failed")
+				    WriteError("Make sure that you are signed in and that PowerShell is not older than version 1.0.1.")
+				    WriteError("Please install from: http://azure.microsoft.com/en-us/downloads/, under Command-line tools, under Windows PowerShell, click Install")
 
-			if ($installedAzurePowerShellVersion -gt 0)
-			{
-				WriteValue("Done")
-			}
-			else
-			{
-				WriteValue("Failed")
-				WriteError("Make sure that you are signed in and that PowerShell is not older than version 1.0.1.")
-				WriteError("Please install from: http://azure.microsoft.com/en-us/downloads/, under Command-line tools, under Windows PowerShell, click Install")
-
-				break
-			}
-
+				    break
+			    }
+            }
 			# Silence Verbose Output
 			WriteLabel("Silencing Verbose Output")
 			$global:VerbosePreference = "SilentlyContinue"
@@ -303,11 +316,7 @@ function New-WTTEnvironment
 				{
 					$azurePrimarySqlDatabaseServer
 					$azureSecondarySqlDatabaseServer
-
-					# TODO: Returning the Location incorrectly. Single value with no spaces
-					#$wttenvironmentprimaryserverlocation = $azurePrimarySqlDatabaseServer.location
-					#$wttenvironmentsecondaryserverlocation = $azureSecondarySqlDatabaseServer.location
-				}
+			}
 
 				# Restart if Secondary SQL Server missing
 				elseif($azurePrimarySqlDatabaseServer -ne $null -and $azureSecondarySqlDatabaseServer -eq $null) 
@@ -315,7 +324,7 @@ function New-WTTEnvironment
 					LineBreak
 					WriteError("Removing '$azureResourceGroupName' Resource Group and all related resources.")
 
-					$null = Remove-AzureRMResourceGroup -Name $azureResourceGroupName -Force -PassThru
+					$null = Remove-AzureRMResourceGroup -Name $azureResourceGroupName -Force
 					$azureResourceGroupNameExists = $null
 					$azurePrimarySqlDatabaseServer = $null
 					$azureSecondarySqlDatabaseServer = $null
@@ -327,7 +336,7 @@ function New-WTTEnvironment
 					LineBreak
 					WriteError("Removing '$azureResourceGroupName' Resource Group and all related resources.")
 
-					$null = Remove-AzureRMResourceGroup -Name $azureResourceGroupName -Force -PassThru
+					$null = Remove-AzureRMResourceGroup -Name $azureResourceGroupName -Force
 					$azureResourceGroupNameExists = $null
 					$azurePrimarySqlDatabaseServer = $null
 					$azureSecondarySqlDatabaseServer = $null
@@ -525,25 +534,44 @@ function New-WTTEnvironment
 				Add-WTTAzureTrafficManagerEndpoint -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -AzurePrimaryWebSiteName $azureSqlDatabaseServerPrimaryName -AzureSecondaryWebSiteName $azureSqlDatabaseServerSecondaryName -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -AzureTrafficManagerEndpointStatus "Enabled" -AzureTrafficManagerResourceGroupName $azureResourceGroupName
 
 			}
+            
+            if($deployDW -ne 0)
+            {
+			    # Deploy Azure Data Warehouse on the primary database server. This may run for about 15 minutes.
+			    if ($azurePrimarySqlDatabaseServer -ne $null)
+			    {
+				    Deploy-WTTAzureDWDatabase -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName -ServerLocation $WTTEnvironmentPrimaryServerLocation -DatabaseEdition "DataWarehouse" -UserName $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -DWDatabaseName $AzureSqlDWDatabaseName
+			    }
+            }
+            elseif($deployDW -eq $null)
+            {
+            			    # Deploy Azure Data Warehouse on the primary database server. This may run for about 15 minutes.
+			    if ($azurePrimarySqlDatabaseServer -ne $null)
+			    {
+				    Deploy-WTTAzureDWDatabase -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName -ServerLocation $WTTEnvironmentPrimaryServerLocation -DatabaseEdition "DataWarehouse" -UserName $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -DWDatabaseName $AzureSqlDWDatabaseName
+			    }
+            }
 
-			# Deploy Azure Data Warehouse on the primary database server. This may run for about 15 minutes.
-			if ($azurePrimarySqlDatabaseServer -ne $null)
-			{
-				Deploy-WTTAzureDWDatabase -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName -ServerLocation $WTTEnvironmentPrimaryServerLocation -DatabaseEdition "DataWarehouse" -UserName $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -DWDatabaseName $AzureSqlDWDatabaseName
-			}
-
-			# Deploy ADF environment
-			New-WTTADFEnvironment -ApplicationName $WTTEnvironmentApplicationName -ResourceGroupName $azureResourceGroupName -Location $WTTEnvironmentPrimaryServerLocation -WebsiteHostingPlanName $azureSqlDatabaseServerPrimaryName -DatabaseServerName $azureSqlDatabaseServerPrimaryName -DatabaseName "Recommendations" -DatabaseEdition "Basic" -DatabaseUserName $AzureSqlDatabaseServerAdministratorUserName -DatabasePassword $AzureSqlDatabaseServerAdministratorPassword
+            if($deployADF -ne 0)
+            {
+			    # Deploy ADF environment
+			    New-WTTADFEnvironment -ApplicationName $WTTEnvironmentApplicationName -ResourceGroupName $azureResourceGroupName -Location $WTTEnvironmentPrimaryServerLocation -WebsiteHostingPlanName $azureSqlDatabaseServerPrimaryName -DatabaseServerName $azureSqlDatabaseServerPrimaryName -DatabaseName "Recommendations" -DatabaseEdition "Basic" -DatabaseUserName $AzureSqlDatabaseServerAdministratorUserName -DatabasePassword $AzureSqlDatabaseServerAdministratorPassword
+            }
+            elseif($deployADF -eq $null)
+            {
+            # Deploy ADF environment
+			    New-WTTADFEnvironment -ApplicationName $WTTEnvironmentApplicationName -ResourceGroupName $azureResourceGroupName -Location $WTTEnvironmentPrimaryServerLocation -WebsiteHostingPlanName $azureSqlDatabaseServerPrimaryName -DatabaseServerName $azureSqlDatabaseServerPrimaryName -DatabaseName "Recommendations" -DatabaseEdition "Basic" -DatabaseUserName $AzureSqlDatabaseServerAdministratorUserName -DatabasePassword $AzureSqlDatabaseServerAdministratorPassword
+            }
 
 			Start-Sleep -Seconds 30
 
 			# Set the Application Settings
-				$searchName = (Find-AzureRmResource -ResourceType Microsoft.Search/searchServices -ResourceGroupName $wTTEnvironmentApplicationName).name
-				$searchServicePrimaryManagementKey = Import-Clixml .\searchkey.xml
-				$documentDbPrimaryKey = Import-Clixml .\docdbkey.xml
+			$searchName = (Find-AzureRmResource -ResourceType Microsoft.Search/searchServices -ResourceGroupName $wTTEnvironmentApplicationName).name
+			$searchServicePrimaryManagementKey = Import-Clixml .\searchkey.xml
+			$documentDbPrimaryKey = Import-Clixml .\docdbkey.xml
 
-				Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -Websitename $azureSqlDatabaseServerPrimaryName -SearchName $searchName -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerSecondaryName $azureSqlDatabaseServerSecondaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey $documentDbPrimaryKey 
-				Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -Websitename $azureSqlDatabaseServerSecondaryName -SearchName $searchName -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerSecondaryName -AzureSqlDatabaseServerSecondaryName $azureSqlDatabaseServerPrimaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey $documentDbPrimaryKey
+			Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -Websitename $azureSqlDatabaseServerPrimaryName -SearchName $searchName -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerSecondaryName $azureSqlDatabaseServerSecondaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey $documentDbPrimaryKey 
+			Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -Websitename $azureSqlDatabaseServerSecondaryName -SearchName $searchName -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerSecondaryName -AzureSqlDatabaseServerSecondaryName $azureSqlDatabaseServerPrimaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey $documentDbPrimaryKey
 			
 
             # Enable Auditing on Azure SQL Database Server
@@ -613,22 +641,66 @@ function WriteError($error)
 	Write-Host "Error:" $error -foregroundcolor "red"
 }
 
-function CheckInstalledPowerShellVersion() 
+function Lsh([UInt32] $n, [Byte] $bits) 
+    {
+        $n * [Math]::Pow(2, $bits)
+    }
+
+# Returns a version number "a.b.c.d" as a two-element numeric
+# array. The first array element is the most significant 32 bits,
+# and the second element is the least significant 32 bits.
+function GetVersionStringAsArray([String] $version) 
 {
-	$installedVersion = (Get-Module AzureRM.Profile).Version
-	$minimumRequiredVersion = '1.0.1'
+    $parts = $version.Split(".")
+    if ($parts.Count -lt 3) 
+    {
+        for ($n = $parts.Count; $n -lt 3; $n++) 
+        {
+            $parts += "0"
+        }
+    }
+    [UInt32] ((Lsh $parts[0] 16))
+    [UInt32] ((Lsh $parts[1] 16))
+    [UInt32] ((Lsh $parts[2] 16))
+}
 
-	$ver1 = ($installedVersion)
-	$ver2 = ($minimumRequiredVersion)
+# Compares two version numbers "a.b.c.d". If $version1 < $version2,
+# returns -1. If $version1 = $version2, returns 0. If
+# $version1 > $version2, returns 1.
+function CheckInstalledPowerShellVersion
+{
+    #$context = (Get-AzureRmContext).Subscription.SubscriptionId
+    #$null = Set-AzureRmContext -SubscriptionId $context
+    #$installedVersion = ((Get-Module AzureRM.profile).Version -replace '\s','')
+    $installedVersion = Get-Module AzureRM.profile
+    $installedVersionVersion = $installedVersion.Version
+    $installedVersionVersion = $installedVersionVersion -replace '\s',''
+    $minimumRequiredVersion = '1.0.1'
+    $ver1 = GetVersionStringAsArray $installedVersionVersion
+    $ver2 = GetVersionStringAsArray $minimumRequiredVersion
+    if ($ver1[0] -lt $ver2[0]) 
+    {
+        $out = -1
+    }
+    elseif ($ver1[0] -eq $ver2[0]) 
+    {
+        if ($ver1[1] -lt $ver2[1]) 
+        {
+            $out = -1
+        }
+        elseif ($ver1[1] -ge $ver2[1]) 
+        {
+            $out = 1
+        }
+    } 
+    elseif ($ver1[2] -gt $ver2[2])
+    {
+        $out = 1
+    }    
+    else 
+    {
+        $out = 1
+    }
+    return $out
 
-	if ($ver1 -lt $ver2) 
-	{
-		$out = -1
-	}
-	else 
-	{
-		$out = 1
-	}
-
-	return $out
 }
