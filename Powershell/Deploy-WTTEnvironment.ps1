@@ -49,10 +49,12 @@
     LineBreak
     InitSubscription
     LineBreak
-    
+        
     WriteLabel("Checking for Azure PowerShell Version 1.0.1 or later") 
-	#$installedAzurePowerShellVersion = CheckInstalledPowerShellVersion
-	if((CheckInstalledPowerShellVersion) -gt -1)
+	##$installedAzurePowerShellVersion = CheckInstalledPowerShellVersion
+    $module = Get-Module AzureRM.profile
+    $installedAzurePowerShellVersion = CheckInstalledPowerShell $module
+	if ($installedAzurePowerShellVersion -gt 0)
 	    {
 		    WriteValue("Done")
 	    }
@@ -65,34 +67,55 @@
 		}
 
     if (!$WTTEnvironmentApplicationName)
+    {
+            
+            Do
+            {
+                Write-Host "Please enter your unique WTT Environment Name:" -ForegroundColor Green
+                $WTTEnvironmentApplicationName = Read-Host
+                $exists = (Get-AzureRmResourceGroup -Name $WTTEnvironmentApplicationName -ErrorAction Ignore).resourcegroupname
+                if(!$exists)
+                {
+                    $exists = $true
+                }
+                else
+                {
+                    WriteError("Resource Group Name Exists")
+                    $exists = $false
+
+                }
+            }until($exists -eq $true)
+    }
+           
+    if (!$WTTEnvironmentPrimaryServerLocation)
         {
-            Write-Host "Please enter your unique WTT Environment Name:" -ForegroundColor Green
-            $WTTEnvironmentApplicationName = Read-Host 
-        }
-        
-        if (!$WTTEnvironmentPrimaryServerLocation)
-        {
-            $locationList = 'East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast'
-            Write-Host "Available Azure Data Center Locations" -ForegroundColor Green
-            $locationList | Format-Table
+            #$locationList = 'East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast'
+            #Format-Table -InputObject $locationList
+            [array]$listLocation = 'East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast'
+            $Result = $listLocation | Format-Table $listLocation -Wrap | Out-String
+            Write-Host "Available Azure Data Center Locations:" -ForegroundColor Green
+            Write-Host $Result
             Write-Host "Please enter the primary location to deploy WTT Services:" -ForegroundColor Green
             $WTTEnvironmentPrimaryServerLocation = Read-Host
 
         }
         
     [int]$xMenuChoiceA = 0
-    while ( $xMenuChoiceA -lt 1 -or $xMenuChoiceA -gt 4 ){
+    while ( $xMenuChoiceA -lt 1 -or $xMenuChoiceA -gt 4 )
+    {
         Write-host "1. Base WingTip Tickets" -ForegroundColor Green
         Write-host "2. WingTip Tickets with Azure Data Factory" -ForegroundColor Green
         Write-host "3. WingTip Tickets with Azure Data Warehouse" -ForegroundColor Green
         Write-host "4. All of the WingTip Tickets Services" -ForegroundColor Green
-    [Int]$xMenuChoiceA = read-host "Please enter an option 1 to 4..." }
-        Switch( $xMenuChoiceA ){
-            1{new-wttenvironment -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -WTTEnvironmentPrimaryServerLocation $WTTEnvironmentPrimaryServerLocation -deployADF 0 -deployDW 1}
-            2{new-wttenvironment -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -WTTEnvironmentPrimaryServerLocation $WTTEnvironmentPrimaryServerLocation -deployADF 1 -deployDW 0}
-            3{new-wttenvironment -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -WTTEnvironmentPrimaryServerLocation $WTTEnvironmentPrimaryServerLocation -deployADF 0 -deployDW 1}
-            4{new-wttenvironment -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -WTTEnvironmentPrimaryServerLocation $WTTEnvironmentPrimaryServerLocation -deployADF 1 -deployDW 1}
-        }
+        [Int]$xMenuChoiceA = read-host "Please enter an option 1 to 4..." 
+    }
+    Switch( $xMenuChoiceA )
+    {
+        1{new-wttenvironment -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -WTTEnvironmentPrimaryServerLocation $WTTEnvironmentPrimaryServerLocation -deployADF 0 -deployDW 1}
+        2{new-wttenvironment -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -WTTEnvironmentPrimaryServerLocation $WTTEnvironmentPrimaryServerLocation -deployADF 1 -deployDW 0}
+        3{new-wttenvironment -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -WTTEnvironmentPrimaryServerLocation $WTTEnvironmentPrimaryServerLocation -deployADF 0 -deployDW 1}
+        4{new-wttenvironment -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -WTTEnvironmentPrimaryServerLocation $WTTEnvironmentPrimaryServerLocation -deployADF 1 -deployDW 1}
+    }
 }
 
 function InitSubscription()
@@ -210,12 +233,9 @@ function GetVersionStringAsArray([String] $version)
 # Compares two version numbers "a.b.c.d". If $version1 < $version2,
 # returns -1. If $version1 = $version2, returns 0. If
 # $version1 > $version2, returns 1.
-function CheckInstalledPowerShellVersion
+function CheckInstalledPowerShell($module)
 {
-    #$context = (Get-AzureRmContext).Subscription.SubscriptionId
-    #$null = Set-AzureRmContext -SubscriptionId $context
-    #$installedVersion = ((Get-Module AzureRM.profile).Version -replace '\s','')
-    $installedVersion = Get-Module AzureRM.profile
+    $installedVersion = $module
     $installedVersionVersion = $installedVersion.Version
     $installedVersionVersion = $installedVersionVersion -replace '\s',''
     $minimumRequiredVersion = '1.0.1'
@@ -244,7 +264,6 @@ function CheckInstalledPowerShellVersion
     {
         $out = 1
     }
-    return $out
-    $installedAzurePowerShellVersion = $out
-
+    
+    return $out   
 }
