@@ -8,9 +8,9 @@ namespace Tenant.Mvc.Core.Repositories.Tenant
     {
         #region - Implementation -
 
-        public List<VenueModel> GetVenues(int cityId = 0)
+        public List<VenueModel> GetVenues(int venueId = 0, int cityId = 0)
         {
-            return Context.Venues.GetVenues(cityId);
+            return Context.Venues.GetVenues(venueId, cityId);
         }
 
         public VenueModel GetVenueByVenueId(int venueId)

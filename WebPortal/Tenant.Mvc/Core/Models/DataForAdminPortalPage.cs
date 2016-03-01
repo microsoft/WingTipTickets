@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Tenant.Mvc.Models.DomainModels;
 
 namespace Tenant.Mvc.Core.Models
 {

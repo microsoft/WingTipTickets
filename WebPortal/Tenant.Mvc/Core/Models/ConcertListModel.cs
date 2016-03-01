@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Tenant.Mvc.Models.DomainModels;
 
 namespace Tenant.Mvc.Core.Models
 {

@@ -5,8 +5,6 @@ using System.Web.Mvc;
 using Tenant.Mvc.Core.Enums;
 using Tenant.Mvc.Core.Interfaces.Tenant;
 using Tenant.Mvc.Core.Models;
-using Tenant.Mvc.Models;
-using Tenant.Mvc.Models.DomainModels;
 
 namespace Tenant.Mvc.Controllers
 {
@@ -311,7 +309,7 @@ namespace Tenant.Mvc.Controllers
 
             if (cityId > 0)
             {
-                venueList.AddRange(_venueRepository.GetVenues(cityId));
+                venueList.AddRange(_venueRepository.GetVenues(cityId: cityId));
             }
 
             return venueList;

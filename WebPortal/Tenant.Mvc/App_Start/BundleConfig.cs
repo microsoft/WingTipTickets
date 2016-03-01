@@ -21,18 +21,9 @@ namespace Tenant.Mvc
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
                 "~/Content/Scripts/jquery-{version}.js"));
 
-            bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
-                "~/Content/Scripts/jquery.validate*"));
-
-            bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
-                "~/Content/Scripts/modernizr-*"));
-
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
                 "~/Content/Scripts/bootstrap.js",
                 "~/Content/Scripts/respond.js"));
-
-            bundles.Add(new ScriptBundle("~/bundles/sitelogic").Include(
-                "~/Content/Scripts/buy.js"));
         }
 
         private static void RegisterStyles(BundleCollection bundles)

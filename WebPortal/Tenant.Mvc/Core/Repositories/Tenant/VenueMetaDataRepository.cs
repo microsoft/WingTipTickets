@@ -28,14 +28,9 @@ namespace Tenant.Mvc.Core.Repositories.Tenant
         #region - Constructors -
 
         public VenueMetaDataRepository()
-            : this(WingtipTicketApp.Config.DocumentDbUri, WingtipTicketApp.Config.DocumentDbKey)
         {
-        }
-
-        public VenueMetaDataRepository(string endpointUri, string authorizationKey)
-        {
-            EndpointUri = new Uri(endpointUri);
-            AuthorizationKey = authorizationKey;
+            EndpointUri = new Uri(WingtipTicketApp.Config.DocumentDbUri);
+            AuthorizationKey = WingtipTicketApp.Config.DocumentDbKey;
 
             _documentClient = new DocumentClient(EndpointUri, AuthorizationKey);
         }

@@ -468,63 +468,69 @@ function New-WTTEnvironment
 				# Create service plans
 				LineBreak
 				# Create primary web application plan
-                WriteLabel("Creating Primary application service plan '$azureSqlDatabaseServerPrimaryName'")
+				WriteLabel("Creating Primary application service plan '$azureSqlDatabaseServerPrimaryName'")
 				$primaryAppPlan = ""
-                Do{
-                $primaryAppPlan = New-AzureRmAppServicePlan -name $azureSqlDatabaseServerPrimaryName -location $WTTEnvironmentPrimaryServerLocation -tier standard -resourcegroupname $azureresourcegroupname
-				if($primaryAppPlan.Name -eq $azureSqlDatabaseServerPrimaryName)
-                    {
-                        WriteValue("Successful")
-                    }
-                }While ($primaryAppPlan.Name -ne $azureSqlDatabaseServerPrimaryName)
 
-                # Create secondary web application plan
+				Do
+				{
+					$primaryAppPlan = New-AzureRmAppServicePlan -name $azureSqlDatabaseServerPrimaryName -location $WTTEnvironmentPrimaryServerLocation -tier standard -resourcegroupname $azureresourcegroupname
+					if($primaryAppPlan.Name -eq $azureSqlDatabaseServerPrimaryName)
+					{
+						WriteValue("Successful")
+					}
+				} While ($primaryAppPlan.Name -ne $azureSqlDatabaseServerPrimaryName)
+
+				# Create secondary web application plan
 				WriteLabel("Creating Secondary application service plan '$azureSqlDatabaseServerSecondaryName'")
 				$secondaryAppPlan = ""
-                Do{
-                $secondaryAppPlan = New-AzureRmAppServicePlan -name $azureSqlDatabaseServerSecondaryName -location $wTTEnvironmentSecondaryServerLocation -tier standard -resourcegroupname $azureresourcegroupname
-				if($secondaryAppPlan.Name -eq $azureSqlDatabaseServerSecondaryName)
-                    {
-                        WriteValue("Successful")
-                    }
-                }While($secondaryAppPlan.Name -ne $azureSqlDatabaseServerSecondaryName)
+
+				Do
+				{
+					$secondaryAppPlan = New-AzureRmAppServicePlan -name $azureSqlDatabaseServerSecondaryName -location $wTTEnvironmentSecondaryServerLocation -tier standard -resourcegroupname $azureresourcegroupname
+					if($secondaryAppPlan.Name -eq $azureSqlDatabaseServerSecondaryName)
+					{
+						WriteValue("Successful")
+					}
+				} While($secondaryAppPlan.Name -ne $azureSqlDatabaseServerSecondaryName)
 
 				# Create Web Applications
 				LineBreak
-                # Create Primary web application
-				WriteLabel("Creating Primary application '$azureSqlDatabaseServerPrimaryName'")
-                $primaryWebApp = ""
-                Do{
-				$primaryWebApp = New-AzureRMWebApp -Location $WTTEnvironmentPrimaryServerLocation -AppServicePlan $azureSqlDatabaseServerPrimaryName -ResourceGroupName $azureResourceGroupName -Name $azureSqlDatabaseServerPrimaryName
-				if($primaryWebApp.Name -eq $azureSqlDatabaseServerPrimaryName)
-                    {
-                        WriteValue("Successful")
-                    }
-                }While($primaryWebApp.Name -ne $azureSqlDatabaseServerPrimaryName)
 
-                # Create Secondary web application
+				# Create Primary web application
+				WriteLabel("Creating Primary application '$azureSqlDatabaseServerPrimaryName'")
+				$primaryWebApp = ""
+
+				Do
+				{
+					$primaryWebApp = New-AzureRMWebApp -Location $WTTEnvironmentPrimaryServerLocation -AppServicePlan $azureSqlDatabaseServerPrimaryName -ResourceGroupName $azureResourceGroupName -Name $azureSqlDatabaseServerPrimaryName
+					if($primaryWebApp.Name -eq $azureSqlDatabaseServerPrimaryName)
+					{
+						WriteValue("Successful")
+					}
+				} While($primaryWebApp.Name -ne $azureSqlDatabaseServerPrimaryName)
+
+				# Create Secondary web application
 				WriteLabel("Creating Secondary application '$azureSqlDatabaseServerSecondaryName'")
 				$secondaryWebApp = ""
-                Do{
-                $secondaryWebApp = New-AzureRMWebApp -Location $wTTEnvironmentSecondaryServerLocation -AppServicePlan $azureSqlDatabaseServerSecondaryName -ResourceGroupName $azureResourceGroupName -Name $azureSqlDatabaseServerSecondaryName
-				if($secondaryWebApp.Name -eq $azureSqlDatabaseServerSecondaryName)
-                    {
-                        WriteValue("Successful")
-                    }
-                }While($secondaryWebApp.Name -ne $azureSqlDatabaseServerSecondaryName)
+
+				Do
+				{
+					$secondaryWebApp = New-AzureRMWebApp -Location $wTTEnvironmentSecondaryServerLocation -AppServicePlan $azureSqlDatabaseServerSecondaryName -ResourceGroupName $azureResourceGroupName -Name $azureSqlDatabaseServerSecondaryName
+					if($secondaryWebApp.Name -eq $azureSqlDatabaseServerSecondaryName)
+					{
+						WriteValue("Successful")
+					}
+				} While($secondaryWebApp.Name -ne $azureSqlDatabaseServerSecondaryName)
 				start-sleep -s 120
 
 				# Deploy Web Applications
 				LineBreak
 				WriteLabel("Deploying Primary application '$azureWebSitePrimaryWebDeployPackageName'")
-                #Publish-AzureWebsiteProject -Name $azureSqlDatabaseServerPrimaryName -Package $azureWebSitePrimaryWebDeployPackagePath
 				Deploy-WTTWebApplication -WTTEnvironmentapplicationName $WTTEnvironmentApplicationName -ResourceGroupName $azureResourceGroupName -Websitename $azureSqlDatabaseServerPrimaryName -AzureWebSiteWebDeployPackagePath $AzureWebSiteWebDeployPackagePath -AzureWebSiteWebDeployPackageName $azureWebSitePrimaryWebDeployPackageName
-                #WriteValue("Successful")
+
 
 				WriteLabel("Deploying Secondary application '$azureWebSiteSecondaryWebDeployPackageName'")
-				#Publish-AzureWebsiteProject -Name $azureSqlDatabaseServerSecondaryName -Package $azureWebSiteSecondaryWebDeployPackagePath
                 Deploy-WTTWebApplication -WTTEnvironmentapplicationName $WTTEnvironmentApplicationName -ResourceGroupName $azureResourceGroupName -Websitename $azureSqlDatabaseServerSecondaryName -AzureWebSiteWebDeployPackagePath $AzureWebSiteWebDeployPackagePath -AzureWebSiteWebDeployPackageName $azureWebSiteSecondaryWebDeployPackageName
-				#WriteValue("Successful")
 
 				# Create Traffic Manager Profile
 				LineBreak
@@ -532,7 +538,6 @@ function New-WTTEnvironment
 
 				# Add Azure WebSite Endpoints to Traffic Manager Profile
 				Add-WTTAzureTrafficManagerEndpoint -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -AzurePrimaryWebSiteName $azureSqlDatabaseServerPrimaryName -AzureSecondaryWebSiteName $azureSqlDatabaseServerSecondaryName -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -AzureTrafficManagerEndpointStatus "Enabled" -AzureTrafficManagerResourceGroupName $azureResourceGroupName
-
 			}
             
             if($deployDW -ne 0)
@@ -572,12 +577,15 @@ function New-WTTEnvironment
 
 			Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -Websitename $azureSqlDatabaseServerPrimaryName -SearchName $searchName -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerSecondaryName $azureSqlDatabaseServerSecondaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey $documentDbPrimaryKey 
 			Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -Websitename $azureSqlDatabaseServerSecondaryName -SearchName $searchName -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerSecondaryName -AzureSqlDatabaseServerSecondaryName $azureSqlDatabaseServerPrimaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey $documentDbPrimaryKey
+<<<<<<< HEAD
 			
+=======
+>>>>>>> origin/develop
 
-            # Enable Auditing on Azure SQL Database Server
+			# Enable Auditing on Azure SQL Database Server
 			# Appears to be a name resolution issue if Auditing is enabled, as Azure Search will not redirect to the database server
 
-            if ($azurePrimarySqlDatabaseServer -ne $null)
+			if ($azurePrimarySqlDatabaseServer -ne $null)
 			{
 				LineBreak
 				WriteLabel("Setting Primary SQL Server Auditing Policy")
@@ -591,7 +599,7 @@ function New-WTTEnvironment
 				$setSecondaryAzureSqlDatabaseServerAuditingPolicy = Set-AzureRmSqlDatabaseServerAuditingPolicy -ResourceGroupName $azureResourceGroupName -ServerName $azureSqlDatabaseServerSecondaryName -StorageAccountName $azureStorageAccountName -TableIdentifier "wtt" -EventType PlainSQL_Success, PlainSQL_Failure, ParameterizedSQL_Success, ParameterizedSQL_Failure, StoredProcedure_Success, StoredProcedure_Success -WarningVariable null -WarningAction SilentlyContinue
 				WriteValue("Successful")
 			}
-			
+
 			WriteLabel("Traffic Manager URL")
 			WriteValue("$wTTEnvironmentApplicationName.trafficmanager.net")
 

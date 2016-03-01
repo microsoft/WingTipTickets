@@ -1,4 +1,4 @@
-﻿@model List<Tenant.Mvc.Core.Models.VenueModel>
+﻿@model List<Tenant.Mvc.Models.ConcertListViewModel.VenueViewModel>
 
 <div class="row box-light height-260">
     <h3>Nearby Cities</h3>
@@ -7,7 +7,7 @@
         @foreach (var venue in Model)
         {
             <li>
-                <a href="@Url.Action("Index", "City", new { cityId = venue.VenueCityModel.CityId })">@venue.VenueCityModel.CityName, @venue.VenueCityModel.StateModel.StateName</a>
+                <a href="@Url.Action("Index", "City", new { cityId = venue.CityId })">@venue.CityName, @venue.StateName</a>
             </li>
         }
 

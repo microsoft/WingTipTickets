@@ -3,7 +3,6 @@ using System.Web.Mvc;
 using System.Web.Security;
 using Tenant.Mvc.Core.Interfaces.Tenant;
 using Tenant.Mvc.Core.Models;
-using Tenant.Mvc.Models.DomainModels;
 
 namespace Tenant.Mvc.Controllers
 {

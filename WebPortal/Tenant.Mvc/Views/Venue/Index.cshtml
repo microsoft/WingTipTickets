@@ -1,4 +1,4 @@
-﻿@model Tenant.Mvc.Core.Models.ConcertListModel
+﻿@model Tenant.Mvc.Models.ConcertListViewModel
 @{
     ViewBag.Title = "Venues";
 }
@@ -11,7 +11,7 @@
     <div class="container">
         <div class="row">
             <div class="col-xs-12">
-                <h1> Venue Listing@(Model.SelectedVenue > 0 && Model.ConcertsList.Any(a => a.VenueId == Model.SelectedVenue) ? ": " + Model.ConcertsList.First(a => a.VenueId == Model.SelectedVenue).VenueModel.VenueName : "s")</h1>
+                <h1> Venue Listing@(Model.SelectedVenue > 0 && Model.VenueList.Any(a => a.VenueId == Model.SelectedVenue) ? ": " + Model.VenueList.First(a => a.VenueId == Model.SelectedVenue).VenueName : "s")</h1>
             </div>
         </div>
     </div>
@@ -33,9 +33,9 @@
 
         <div class="col-xs-8 no-padding">
             <div class="event-panel height-660">
-                @if (Model != null && Model.ConcertsList.Any())
+                @if (Model != null && Model.ConcertList.Any())
                 {
-                    @Html.Partial("_ConcertList", @Model.ConcertsList)
+                    @Html.Partial("_ConcertList", @Model.ConcertList)
                 }
             </div>
         </div>
@@ -45,17 +45,17 @@
             <!-- ------------------------------------------------------------------------------------------------------------------- -->
             <!-- City List -->
             <!-- ------------------------------------------------------------------------------------------------------------------- -->
-            @if (Model != null && Model.VenuesList.Any())
+            @if (Model != null && Model.VenueList.Any())
             {
-                @Html.Partial("_CityList", @Model.VenuesList.OrderBy(a => a.VenueCityModel.CityName).GroupBy(a => a.VenueCityModel.CityId).Select(a => a.First()).ToList())
+                @Html.Partial("_CityList", @Model.VenueList.OrderBy(a => a.CityName).GroupBy(a => a.CityId).Select(a => a.First()).ToList())
             }
 
             <!-- ------------------------------------------------------------------------------------------------------------------- -->
             <!-- Venue List -->
             <!-- ------------------------------------------------------------------------------------------------------------------- -->
-            @if (Model != null && Model.VenuesList.Any())
+            @if (Model != null && Model.VenueList.Any())
             {
-                @Html.Partial("_VenueList", @Model.VenuesList)
+                @Html.Partial("_VenueList", @Model.VenueList)
             }
 
             <!-- ------------------------------------------------------------------------------------------------------------------- -->

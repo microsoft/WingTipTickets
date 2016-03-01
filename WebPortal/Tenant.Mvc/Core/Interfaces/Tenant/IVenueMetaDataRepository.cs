@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using Tenant.Mvc.Core.Models;
-using Tenant.Mvc.Models.DomainModels;
 
 namespace Tenant.Mvc.Core.Interfaces.Tenant
 {

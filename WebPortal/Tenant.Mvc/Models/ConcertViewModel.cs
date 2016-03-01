@@ -20,16 +20,5 @@ namespace Tenant.Mvc.Models.ViewModels
         public int SeatSectionId { get; set; }
 
         public string PerformerName { get; set; }
-        // Old
-        
-        //public int VenueId { get; set; }
-        //public int PerformerId { get; set; }
-        
-        //public String Description { get; set; }
-        //public DateTime ConcertDate { get; set; }
-        //public int Duration { get; set; }
-        //public VenueViewModel Venue { get; set; }
-        //public PerformerViewModel Performer { get; set; }
-        //public ShardDbServerTargetEnum SaveToDbServer { get; set; }
     }
 }

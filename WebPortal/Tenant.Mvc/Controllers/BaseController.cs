@@ -1,19 +1,37 @@
 ﻿using System;
 using System.Configuration;
+using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Tenant.Mvc.Core.Interfaces.Tenant;
+using Tenant.Mvc.Models;
 
 namespace Tenant.Mvc.Controllers
 {
     public class BaseController : Controller
     {
+        #region - Fields -
+
+        private readonly IConcertRepository _concertRepository;
+        private readonly IVenueRepository _venueRepository;
+
+        #endregion
+
         #region - Controllers -
 
         public BaseController()
         {
             // Set up ViewBag data displayed on screen
             ViewBag.PrimaryDbServerName = ConfigurationManager.AppSettings["PrimaryDatabaseServer"];
+        }
+
+        public BaseController(IConcertRepository concertRepository, IVenueRepository venueRepository)
+            : this()
+        {
+            // Setup Fields
+            _concertRepository = concertRepository;
+            _venueRepository = venueRepository;
         }
 
         #endregion
@@ -29,6 +47,35 @@ namespace Tenant.Mvc.Controllers
         #endregion
 
         #region - Protected Methods -
+
+        protected ConcertListViewModel GetConcerts(int venueId = 0, int cityId = 0)
+        {
+            var concertList = _concertRepository.GetConcertList(venueId, cityId);
+            var venueList = _venueRepository.GetVenues(venueId, cityId);
+
+            return new ConcertListViewModel()
+            {
+                ConcertList = concertList.ConcertsList.Select(c => new ConcertListViewModel.ConcertViewModel()
+                {
+                    ConcertId = c.ConcertId,
+                    Name = c.ConcertName,
+                    Date = c.ConcertDate,
+                    Performer = c.PerformerModel.ShortName,
+                    Venue = c.VenueModel.VenueName
+
+                }).ToList(),
+                VenueList = venueList.Select(v => new ConcertListViewModel.VenueViewModel()
+                {
+                    VenueId = v.VenueId,
+                    VenueName = v.VenueName,
+                    CityId = v.VenueCityModel.CityId,
+                    CityName = v.VenueCityModel.CityName,
+                    StateId = v.VenueCityModel.StateModel.StateId,
+                    StateName = v.VenueCityModel.StateModel.StateName,
+                    ConcertCount = v.ConcertQty
+                }).ToList()
+            };
+        }
 
         protected void DisplayMessage(string content)
         {
