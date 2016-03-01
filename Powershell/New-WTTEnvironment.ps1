@@ -577,10 +577,6 @@ function New-WTTEnvironment
 
 			Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -Websitename $azureSqlDatabaseServerPrimaryName -SearchName $searchName -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerSecondaryName $azureSqlDatabaseServerSecondaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey $documentDbPrimaryKey 
 			Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -Websitename $azureSqlDatabaseServerSecondaryName -SearchName $searchName -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerSecondaryName -AzureSqlDatabaseServerSecondaryName $azureSqlDatabaseServerPrimaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey $documentDbPrimaryKey
-<<<<<<< HEAD
-			
-=======
->>>>>>> origin/develop
 
 			# Enable Auditing on Azure SQL Database Server
 			# Appears to be a name resolution issue if Auditing is enabled, as Azure Search will not redirect to the database server
@@ -677,9 +673,6 @@ function GetVersionStringAsArray([String] $version)
 # $version1 > $version2, returns 1.
 function CheckInstalledPowerShellVersion
 {
-    #$context = (Get-AzureRmContext).Subscription.SubscriptionId
-    #$null = Set-AzureRmContext -SubscriptionId $context
-    #$installedVersion = ((Get-Module AzureRM.profile).Version -replace '\s','')
     $installedVersion = Get-Module AzureRM.profile
     $installedVersionVersion = $installedVersion.Version
     $installedVersionVersion = $installedVersionVersion -replace '\s',''
