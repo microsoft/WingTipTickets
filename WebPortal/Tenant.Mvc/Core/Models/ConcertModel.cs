@@ -1,6 +1,5 @@
 ﻿using System;
 using Tenant.Mvc.Core.Enums;
-using Tenant.Mvc.Models.DomainModels;
 
 namespace Tenant.Mvc.Core.Models
 {

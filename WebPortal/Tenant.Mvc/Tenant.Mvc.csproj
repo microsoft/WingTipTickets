@@ -15,7 +15,7 @@
     <AssemblyName>Tenant.Mvc</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
-    <UseIISExpress>false</UseIISExpress>
+    <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -269,7 +269,6 @@
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
-    <Compile Include="App_Start\DataConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\UnityConfig.cs" />
@@ -287,6 +286,7 @@
     <Compile Include="Controllers\VersionController.cs" />
     <Compile Include="Core\Contexts\DatabaseContext.cs" />
     <Compile Include="Core\Interfaces\Tenant\IBaseRepository.cs" />
+    <Compile Include="Models\CustomerEventsViewModel.cs" />
     <Compile Include="Core\Models\PurchaseTicketsModel.cs" />
     <Compile Include="Core\Helpers\SqlDataReaderExtensions.cs" />
     <Compile Include="Core\Interfaces\Tenant\IArtistRepository.cs" />
@@ -296,18 +296,8 @@
     <Compile Include="Core\Interfaces\Tenant\ITicketRepository.cs" />
     <Compile Include="Core\Interfaces\Tenant\IVenueRepository.cs" />
     <Compile Include="Models\ConcertListViewModel.cs" />
-    <Compile Include="Models\PurchasedTicketViewModel.cs" />
-    <Compile Include="Models\EventsViewModel.cs" />
     <Compile Include="Core\Interfaces\Tenant\IVenueMetaDataRepository.cs" />
-    <Compile Include="Models\CityViewModel.cs" />
-    <Compile Include="Models\ConcertViewModel.cs" />
-    <Compile Include="Models\CountryViewModel.cs" />
     <Compile Include="Models\LookupViewModel.cs" />
-    <Compile Include="Models\PerformerViewModel.cs" />
-    <Compile Include="Models\PurchaseViewModel.cs" />
-    <Compile Include="Models\SeatSectionViewModel.cs" />
-    <Compile Include="Models\StateViewModel.cs" />
-    <Compile Include="Models\VenueViewModel.cs" />
     <Compile Include="Core\Repositories\Tenant\ArtistRepository.cs" />
     <Compile Include="Core\Repositories\Tenant\CityRepository.cs" />
     <Compile Include="Core\Repositories\Tenant\ConcertRepository.cs" />
@@ -333,7 +323,6 @@
     <Compile Include="Core\Models\DataForAdminPortalPage.cs" />
     <Compile Include="Core\Models\ConcertListModel.cs" />
     <Compile Include="Core\Models\CustomerEventsModel.cs" />
-    <Compile Include="Core\Models\AccountViewModels.cs" />
     <Compile Include="Core\Models\CatalogItem.cs" />
     <Compile Include="Core\Models\CatalogItemDetailsModel.cs" />
     <Compile Include="Core\Models\CatalogModel.cs" />
@@ -557,7 +546,6 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Home\ViewSearchResults.cshtml" />
     <Content Include="Views\VenueAdministration\Edit.cshtml" />
     <Content Include="Views\VenueAdministration\Index.cshtml" />
     <Content Include="Views\VenueAdministration\AddArtist.cshtml" />
@@ -600,7 +588,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>31369</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost/Tenant</IISUrl>
+          <IISUrl>http://localhost:31369/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

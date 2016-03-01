@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE html>
 <html>
     <head>
-        <title>@ViewBag.Title - @System.Environment.MachineName </title>
+        <title>@ViewBag.Title - @Environment.MachineName </title>
 
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,10 +10,9 @@
 
         @Styles.Render("~/styles/bootstrap")
         @Styles.Render("~/styles/site")
-        @Scripts.Render("~/bundles/modernizr")
 
+        <link href="@Href("~/Content/Stylesheets/Site.css")" rel="stylesheet">
         <link href="@Href(string.Format("~/Content/Themes/{0}.css", WingtipTicketApp.Config.TenantEventType))" rel="stylesheet">
-        <link href="~/Content/Stylesheets/bootstrap-select.css" rel="stylesheet">
     </head>
     <body>
 
@@ -55,7 +54,7 @@
                                 <div class="container-fluid no-padding">
 
                                     @using Tenant.Mvc                                    
-                                    @using Tenant.Mvc.Core.Models                                    @using Tenant.Mvc.Models.DomainModels
+                                    @using Tenant.Mvc.Core.Models
                                     @{
                                         var user = Session["SessionUser"] as CustomerModel;
                                     }
@@ -325,21 +324,16 @@
     
         @Scripts.Render("~/bundles/jquery")
         @Scripts.Render("~/bundles/bootstrap")
-        @Scripts.Render("~/bundles/sitelogic")
-    
+
         <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
         <script src="~/Content/Scripts/bootstrap-select.js"></script>
-        <script src="~/Content/Scripts/bootstrap-select.js"></script>
+        <link href="~/Content/Stylesheets/bootstrap-select.css" rel="stylesheet">
 
         @RenderSection("scripts", required: false)
 
         <script language="javascript" type="text/javascript">
 
             $(document).ready(function () {
-                $(".mnav").on("click", function () {
-                    $(".arrows").toggleClass("up-arrow");
-                });
-
                 $('.selectpicker').selectpicker();
 
                 $('#search').autocomplete({

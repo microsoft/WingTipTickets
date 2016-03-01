@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using Tenant.Mvc.Core.Models;
-using Tenant.Mvc.Models.DomainModels;
 using WingTipTickets;
 
 namespace Tenant.Mvc.Core.Contexts

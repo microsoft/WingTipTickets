@@ -4,7 +4,6 @@ using System.Data.SqlClient;
 using System.Linq;
 using Tenant.Mvc.Core.Helpers;
 using Tenant.Mvc.Core.Models;
-using Tenant.Mvc.Models.DomainModels;
 
 namespace Tenant.Mvc.Core.Contexts
 {
@@ -82,18 +81,24 @@ namespace Tenant.Mvc.Core.Contexts
 
             #region - Venue Methods -
 
-            public List<VenueModel> GetVenues(int cityId = 0)
+            public List<VenueModel> GetVenues(int venueId = 0, int cityId = 0)
             {
                 // Build the Script
-                var sqlScript = GetAllVenuesQuery;
-
-                if (cityId != 0)
-                {
-                    sqlScript = string.Format("{0} WHERE city.CityId = {1} ORDER BY Venue.VenueName", GetAllVenuesQuery, cityId);
-                }
+                const string sqlScript = GetAllVenuesQuery + " ORDER BY Venue.VenueName";
 
                 // Get the Venues
                 var venuesList = DataHelper.ExecuteReader(sqlScript, MapRowToVenue);
+
+                // Apply Filters
+                if (venueId != 0)
+                {
+                    venuesList = venuesList.Where(v => v.VenueId == venueId).ToList();
+                }
+
+                if (cityId != 0)
+                {
+                    venuesList = venuesList.Where(v => v.VenueCityModel.CityId == cityId).ToList();
+                }
 
                 return venuesList;
             }

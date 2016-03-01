@@ -1,4 +1,4 @@
-﻿namespace Tenant.Mvc.Models.ViewModels
+﻿namespace Tenant.Mvc.Models
 {
     public class LookupViewModel
     {

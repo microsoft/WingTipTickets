@@ -3,7 +3,6 @@ using Microsoft.Owin;
 using Owin;
 using Tenant.Mvc;
 using Tenant.Mvc.Core.Models;
-using Tenant.Mvc.Models.DomainModels;
 
 [assembly: OwinStartup(typeof(Startup))]
 namespace Tenant.Mvc

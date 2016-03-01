@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using Tenant.Mvc.Models.ViewModels;
 
-namespace Tenant.Mvc.Models.DomainModels
+namespace Tenant.Mvc.Models
 {
     public class ConcertListViewModel
     {
         #region - Properties -
 
-        public List<ConcertViewModel> ConcertsList { get; set; }
-        public List<VenueViewModel> VenuesList { get; set; }
+        public List<ConcertViewModel> ConcertList { get; set; }
+        public List<VenueViewModel> VenueList { get; set; }
         public int SelectedCity { get; set; }
         public int SelectedVenue { get; set; }
 
@@ -19,8 +18,8 @@ namespace Tenant.Mvc.Models.DomainModels
 
         public ConcertListViewModel()
         {
-            ConcertsList = new List<ConcertViewModel>();
-            VenuesList = new List<VenueViewModel>();
+            ConcertList = new List<ConcertViewModel>();
+            VenueList = new List<VenueViewModel>();
         }
 
         #endregion
@@ -38,15 +37,18 @@ namespace Tenant.Mvc.Models.DomainModels
             #endregion    
         }
 
-        //public class VenueViewModel
-        //{
-        //    public int VenueId { get; set; }
-        //    public String VenueName { get; set; }
-        //    public int Capacity { get; set; }
-        //    public String Description { get; set; }
-        //    public CityModel VenueCityModel { get; set; }
-        //    public List<SeatSection> VenueSeatSections { get; set; }
-        //    public int ConcertQty { get; set; }
-        //}
+        public class VenueViewModel
+        {
+            public int VenueId { get; set; }
+            public string VenueName { get; set; }
+
+            public int CityId { get; set; }
+            public string CityName { get; set; }
+
+            public int StateId { get; set; }
+            public string StateName { get; set; }
+
+            public int ConcertCount { get; set; }
+        }
     }
 }

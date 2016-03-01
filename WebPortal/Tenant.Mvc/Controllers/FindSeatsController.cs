@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using Tenant.Mvc.Core.Contexts;
 using Tenant.Mvc.Core.Interfaces.Tenant;
 using Tenant.Mvc.Core.Models;
-using Tenant.Mvc.Models.DomainModels;
-using Tenant.Mvc.Models.ViewModels;
+using Tenant.Mvc.Models;
 using WingTipTickets;
 
 namespace Tenant.Mvc.Controllers
@@ -81,16 +79,19 @@ namespace Tenant.Mvc.Controllers
             }
 
             // Switch off DocumentDb when running in the Development environment
+            VenueMetaData metaData = null;
             if (!WingtipTicketApp.Config.RunningInDev)
             {
-                //selectedConcert.VenueMetaData = ;
+                metaData = !WingtipTicketApp.Config.RunningInDev
+                               ? await _venueMetaDataRepository.GetVenueMetaData(selectedConcert.VenueId)
+                               : null;
             }
 
             // Map to ViewModel
             var viewModel = new FindSeatsViewModel()
             {
                 // Main Models
-                Concert = new ConcertViewModel()
+                Concert = new FindSeatsViewModel.ConcertViewModel()
                 {
                     ConcertId = selectedConcert.ConcertId,
                     ConcertName = selectedConcert.ConcertName,
@@ -109,10 +110,12 @@ namespace Tenant.Mvc.Controllers
                 TicketQuantities = GetTicketQuantities(),
                 
                 // MetaData
-                VenueMetaData = !WingtipTicketApp.Config.RunningInDev
-                    ? await _venueMetaDataRepository.GetVenueMetaData(selectedConcert.VenueId)
-                    : null,
-
+                VenueMetaData = metaData != null ? 
+                    new FindSeatsViewModel.VenueMetaDataViewModel()
+                    {
+                        VenueId = metaData.VenueId,
+                        Data = metaData.Data,
+                    } : null
             };
 
             return View(viewModel);

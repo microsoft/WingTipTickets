@@ -1,4 +1,4 @@
-﻿@model Tenant.Mvc.Core.Models.CustomerEventsModel
+﻿@model Tenant.Mvc.Models.CustomerEventsViewModel
 @{
     ViewBag.Title = "My Events";
 }
@@ -20,19 +20,24 @@
 
     <div class="row">
         <div class="col-xs-8 no-padding">
+            
+            <!-- ------------------------------------------------------------------------------------------------------------------- -->
+            <!-- Ticket List -->
+            <!-- ------------------------------------------------------------------------------------------------------------------- -->
+
             <div class="event-panel height-660">
                 @{
-                    if (Model != null && Model.PurchasedTickets != null)
+                    if (Model != null && Model.TicketList != null)
                     {
                         var ticketIndex = 0;
 
-                        foreach (var ticket in Model.PurchasedTickets)
+                        foreach (var ticket in Model.TicketList)
                         {
                             <div class="event-block">
                                 <div class="@((ticketIndex % 2) == 0 ? "event-date" : "event-date event-date-shaded")">
-                                    <span class="event-date-top">@ticket.EventDateTime.ToString("MMM").ToUpper()</span><br />
-                                    <span class="event-date-mid">@ticket.EventDateTime.Day</span><br />
-                                    <span class="event-date-btm">@ticket.EventDateTime.DayOfWeek.ToString().ToUpper().Substring(0, 3)</span><br />
+                                    <span class="event-date-top">@ticket.ConcertDate.ToString("MMM").ToUpper()</span><br />
+                                    <span class="event-date-mid">@ticket.ConcertDate.Day</span><br />
+                                    <span class="event-date-btm">@ticket.ConcertDate.DayOfWeek.ToString().ToUpper().Substring(0, 3)</span><br />
                                 </div>
 
                                 <div class="event-info">
@@ -52,7 +57,7 @@
                                     </ul>
                                     <ul>
                                         <li class="event-detail-heading">Time:</li>
-                                        <li class="highligted-text">@ticket.EventDateTime.ToString("t")</li>
+                                        <li class="highligted-text">@ticket.ConcertDate.ToString("t")</li>
 
                                         <li class="event-detail-heading">Seat:</li>
                                         <li class="highligted-text">@ticket.SeatName</li>
@@ -62,71 +67,47 @@
 
                             ticketIndex++;
                         }
+                        
+                        if (!Model.TicketList.Any())
+                        {
+                            <div><p>No Events or Tickets purchased</p></div>
+                        }
                     }
                 }
             </div>
         </div>
         
         <div class="col-xs-4">
+            
+            <!-- ------------------------------------------------------------------------------------------------------------------- -->
+            <!-- Venue List -->
+            <!-- ------------------------------------------------------------------------------------------------------------------- -->
 
             <div class="row box-light height-260">
                 <h3>My Venues</h3>
 
                 <ul>
-                    @if (Model != null && Model.MyVenues != null)
+                    @if (Model != null && Model.VenuesList != null)
                     {
-                        foreach (var venue in Model.MyVenues.OrderBy(a => a.VenueName))
+                        foreach (var venue in Model.VenuesList.OrderBy(a => a.VenueName))
                         {
                             <li>
-                                <a href="@Url.Action("Index", "Events", new { venueName = venue.VenueName })">@venue.VenueName <span class="highligted-text">(@venue.Capacity)</span></a>
+                                <a href="@Url.Action("Index", "Events", new { venueId = venue.VenueId })">@venue.VenueName <span class="highligted-text">(@venue.Capacity)</span></a>
                             </li>
                         }
                     }
+                    
+                    <li><a href="@Url.Action("Index", "Events")">See All Venues ></a></li>
                 </ul>
             </div>
 
-            <div class="row box-dark height-220">
-                <h3>Sort By Date</h3>
+            <!-- ------------------------------------------------------------------------------------------------------------------- -->
+            <!-- Date List -->
+            <!-- ------------------------------------------------------------------------------------------------------------------- -->
 
-                <ul>
-                    <li>
-                        <a href="#">November 2014</a>
-                    </li>
-                    <li>
-                        <a href="#">December 2014</a>
-                    </li>
-                    <li>
-                        <a href="#">January 2015</a>
-                    </li>
-                    <li>
-                        <a href="#">February 2015</a>
-                    </li>
-                    <li>
-                        <a href="#">See All Dates ></a>
-                    </li>
-                </ul>
-            </div>
+            @Html.Partial("_DateList")
 
         </div>
     </div>
 </div>
-
-@section Scripts
-{
-    <script type="text/javascript" language="javascript">
-
-        $('.event-performer').click(function ()
-        {
-            var concertId = $(this).attr("data-concertId");
-            var performerId = $(this).attr("data-performerId");
-            var venueId = $(this).attr("data-venueId");
-
-            $("#concertId").val(concertId);
-            $("#performerId").val(performerId);
-            $("#venueId").val(venueId);
-        });
-
-    </script>
-}
-
 

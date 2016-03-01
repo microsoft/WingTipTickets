@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Tenant.Mvc.Core.Interfaces.Tenant;
 using Tenant.Mvc.Core.Models;
 
@@ -18,7 +19,7 @@ namespace Tenant.Mvc.Core.Repositories.Tenant
             return Context.Customers.CreateUser(firstName, lastName, email, phonenumber, password);
         }
 
-        public CustomerEventsModel GetCustomerEvents(CustomerModel customerModel, string venueName = null)
+        public CustomerEventsModel GetCustomerEvents(CustomerModel customerModel, int? venueId = null)
         {
             var myEventsView = new CustomerEventsModel();
 
@@ -54,16 +55,27 @@ namespace Tenant.Mvc.Core.Repositories.Tenant
                     var index = myEventsView.PurchasedTickets.FindIndex(x => x.ConcertId == ticket.ConcertId && x.SectionName == tempTicket.SectionName);
                     myEventsView.PurchasedTickets[index].TicketQuantity++;
                 }
-                else
+                else if (venueId == null || tempTicket.VenueId == venueId)
                 {
                     myEventsView.PurchasedTickets.Add(tempTicket);
-                }
 
-                // Sort all events by date
-                if (myEventsView.PurchasedTickets != null && myEventsView.PurchasedTickets.Count > 0)
-                {
-                    myEventsView.PurchasedTickets.Sort((a, b) => a.EventDateTime.CompareTo(b.EventDateTime));
+                    if (!myEventsView.MyVenues.Exists(v => v.VenueId == tempTicket.VenueId))
+                    {
+                        var venue = venuesList.Find(v => v.VenueId.Equals(concert.VenueId));
+                        myEventsView.MyVenues.Add(new VenueModel()
+                        {
+                            VenueId = venue.VenueId,
+                            VenueName = venue.VenueName,
+                            Capacity = venue.Capacity
+                        });
+                    }
                 }
+            }
+
+            // Sort all events by date
+            if (myEventsView.PurchasedTickets != null && myEventsView.PurchasedTickets.Count > 0)
+            {
+                myEventsView.PurchasedTickets.Sort((a, b) => a.EventDateTime.CompareTo(b.EventDateTime));
             }
 
             return myEventsView;

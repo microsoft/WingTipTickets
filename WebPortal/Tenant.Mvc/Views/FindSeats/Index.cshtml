@@ -1,8 +1,7 @@
-﻿@model Tenant.Mvc.Models.ViewModels.FindSeatsViewModel
+﻿@model Tenant.Mvc.Models.FindSeatsViewModel
 
 @using Newtonsoft.Json;
 @using Tenant.Mvc.Core.Models
-@using Tenant.Mvc.Models.DomainModels
 
 @{
     ViewBag.Title = "Find Seats";
@@ -25,7 +24,7 @@
     <div class="row row-underline-dark">
         <div class="col-xs-12 col-md-12">
             <h2>@Model.Concert.VenueName - @Model.Concert.ConcertName</h2>
-            <h3>Details: @Model.Concert.PerformerName</h3>
+            <h3>Performer: @Model.Concert.PerformerName</h3>
         </div>
     </div>
 
@@ -240,7 +239,7 @@
             var seatSectionId = $("#Concert_SeatSectionId").val();
             var quantity = $("#Concert_Quantity").val();
             
-            var price = $("#Concert_SeatSectionId option:selected").text().split(":")[0].replace("$","");
+            var price = $("#Concert_SeatSectionId option:selected").text().split(":")[0].replace("$","").replace(",00","");
             var total = price * quantity;
 
             // Set Purchase Fields

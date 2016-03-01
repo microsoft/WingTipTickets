@@ -50,6 +50,7 @@ namespace WingTipTickets
         protected void Application_Start()
         {
             InitializeConfig();
+            InitializeSearchService();
 
             AreaRegistration.RegisterAllAreas();
             GlobalConfiguration.Configure(WebApiConfig.Register);
@@ -57,7 +58,6 @@ namespace WingTipTickets
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            //DataConfig.Configure();
             UnityConfig.RegisterComponents();
         }
 
@@ -69,6 +69,13 @@ namespace WingTipTickets
         {
             Config = ReadAppConfig();
             return true;
+        }
+
+        public static void InitializeSearchService()
+        {
+            var searchServiceClient = new SearchServiceClient(Config.SearchServiceName, new SearchCredentials(Config.SearchServiceKey));
+
+            SearchIndexClient = searchServiceClient.Indexes.GetClient("concerts");
         }
 
         public static string GetTenantConnectionString()

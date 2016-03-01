@@ -1,6 +1,7 @@
 ﻿using System;
+using Tenant.Mvc.Models.ViewModels;
 
-namespace Tenant.Mvc.Models.ViewModels
+namespace Tenant.Mvc.Models
 {
     public class CityViewModel
     {

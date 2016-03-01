@@ -7,7 +7,6 @@ using System.Web.Mvc;
 using Tenant.Mvc.Core.Interfaces.Recommendations;
 using Tenant.Mvc.Core.Models;
 using Tenant.Mvc.Core.Telemetry;
-using Tenant.Mvc.Models.DomainModels;
 
 namespace Tenant.Mvc.Controllers
 {
