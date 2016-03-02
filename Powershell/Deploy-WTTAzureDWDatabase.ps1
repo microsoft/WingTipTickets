@@ -128,27 +128,28 @@ function Deploy-WTTAzureDWDatabase
 					WriteValue("Successful")
 
 					$DWServer = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains "primary" -ExpandProperties).properties.FullyQualifiedDomainName
-                    # Set working location
-                    Push-Location -StackName wtt
+					# Set working location
+					Push-Location -StackName wtt
 					# Create Database tables
 					ForEach($file in Get-ChildItem ".\Scripts\Datawarehouse" -Filter *.sql)
 					{
 						WriteLabel("Executing Script '$file'")
-                        $result = Invoke-Sqlcmd -Username "$UserName@$ServerName" -Password $Password -ServerInstance $DWServer -Database $DWDatabaseName -InputFile ".\Scripts\Datawarehouse\$file" -QueryTimeout 0
+						$result = Invoke-Sqlcmd -Username "$UserName@$ServerName" -Password $Password -ServerInstance $DWServer -Database $DWDatabaseName -InputFile ".\Scripts\Datawarehouse\$file" -QueryTimeout 0
 						WriteValue("Successful")
 					}
-                    # Set working location
-                    Pop-Location -StackName wtt
+
+					# Set working location
+					Pop-Location -StackName wtt
 
 					# Downgrade to 400 units
 					WriteLabel("Downgrading DataWarehouse database to 400 Units")
 					$null = Set-AzureRmSqlDatabase -RequestedServiceObjectiveName "DW400" -ServerName $ServerName -DatabaseName $DWDatabaseName -ResourceGroupName $WTTEnvironmentApplicationName
 					WriteValue("Successful")
 
-                    WriteLabel("Pausing DataWarehouse database")
-                    $null = Suspend-AzureRMSqlDatabase –ResourceGroupName $WTTEnvironmentApplicationName –ServerName $ServerName –DatabaseName $DWDatabaseName
-                    WriteValue("Successful")
-                    Start-Sleep -s 180
+					WriteLabel("Pausing DataWarehouse database")
+					$null = Suspend-AzureRMSqlDatabase –ResourceGroupName $WTTEnvironmentApplicationName –ServerName $ServerName –DatabaseName $DWDatabaseName
+					WriteValue("Successful")
+					Start-Sleep -s 180
 				}
 			}
 			Catch

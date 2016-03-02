@@ -310,6 +310,21 @@ function Populate-DBSchema
 						Set @venueIndex = @venueIndex + 1
 					End
 
+					UPDATE	TicketLevels
+					SET		Description = 
+								CASE
+									WHEN TicketPrice = 55.00 THEN '219-221'
+									WHEN TicketPrice = 60.00 THEN '218-214'
+									WHEN TicketPrice = 65.00 THEN '222-226'
+									WHEN TicketPrice = 70.00 THEN '210-213'
+									WHEN TicketPrice = 75.00 THEN '201-204'
+									WHEN TicketPrice = 80.00 THEN '114-119'
+									WHEN TicketPrice = 85.00 THEN '120-126'
+									WHEN TicketPrice = 90.00 THEN '104-110'
+									WHEN TicketPrice = 95.00 THEN '111-113'
+									ELSE '101-103'
+								END
+
 					Set Identity_Insert [dbo].[TicketLevels] Off
 				"
 

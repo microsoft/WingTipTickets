@@ -96,18 +96,18 @@ function New-WTTEnvironment
 		[Parameter(Mandatory = $false)]
 		[Alias("ADFWebSiteDeployPackagePath")] 
 		[String]$azureADFWebSiteWebDeployPackagePath,
-		        
-        [Parameter(Mandatory = $false)]
-        [bool]
-        $deployADF,
-        
-        [Parameter(Mandatory = $false)]
-        [bool]
-        $deployDW,
 
-        [Parameter(Mandatory = $false)]
-        [string]
-        $installedAzurePowerShellVersion
+		[Parameter(Mandatory = $false)]
+		[bool]
+		$deployADF,
+
+		[Parameter(Mandatory = $false)]
+		[bool]
+		$deployDW,
+
+		[Parameter(Mandatory = $false)]
+		[string]
+		$installedAzurePowerShellVersion
 	)
 
 	Process
@@ -215,21 +215,21 @@ function New-WTTEnvironment
 			# Check installed PowerShell Version
 			WriteLabel("Checking for Azure PowerShell Version 1.0.1 or later")
 			if($installedAzurePowerShellVersion -lt 1)
-            {
-                CheckInstalledPowerShellVersion
-			    if ($installedAzurePowerShellVersion -gt 0)
-			    {
-				    WriteValue("Done")
-			    }
-			    else
-			    {
-				    WriteValue("Failed")
-				    WriteError("Make sure that you are signed in and that PowerShell is not older than version 1.0.1.")
-				    WriteError("Please install from: http://azure.microsoft.com/en-us/downloads/, under Command-line tools, under Windows PowerShell, click Install")
+			{
+				CheckInstalledPowerShellVersion
+				if ($installedAzurePowerShellVersion -gt 0)
+				{
+					WriteValue("Done")
+				}
+				else
+				{
+					WriteValue("Failed")
+					WriteError("Make sure that you are signed in and that PowerShell is not older than version 1.0.1.")
+					WriteError("Please install from: http://azure.microsoft.com/en-us/downloads/, under Command-line tools, under Windows PowerShell, click Install")
 
-				    break
-			    }
-            }
+					break
+				}
+			}
 			# Silence Verbose Output
 			WriteLabel("Silencing Verbose Output")
 			$global:VerbosePreference = "SilentlyContinue"
@@ -467,6 +467,7 @@ function New-WTTEnvironment
 
 				# Create service plans
 				LineBreak
+
 				# Create primary web application plan
 				WriteLabel("Creating Primary application service plan '$azureSqlDatabaseServerPrimaryName'")
 				$primaryAppPlan = ""
@@ -492,8 +493,6 @@ function New-WTTEnvironment
 						WriteValue("Successful")
 					}
 				} While($secondaryAppPlan.Name -ne $azureSqlDatabaseServerSecondaryName)
-
-				# Create Web Applications
 				LineBreak
 
 				# Create Primary web application
@@ -513,8 +512,7 @@ function New-WTTEnvironment
 				WriteLabel("Creating Secondary application '$azureSqlDatabaseServerSecondaryName'")
 				$secondaryWebApp = ""
 
-				Do
-				{
+				Do{
 					$secondaryWebApp = New-AzureRMWebApp -Location $wTTEnvironmentSecondaryServerLocation -AppServicePlan $azureSqlDatabaseServerSecondaryName -ResourceGroupName $azureResourceGroupName -Name $azureSqlDatabaseServerSecondaryName
 					if($secondaryWebApp.Name -eq $azureSqlDatabaseServerSecondaryName)
 					{
@@ -528,9 +526,8 @@ function New-WTTEnvironment
 				WriteLabel("Deploying Primary application '$azureWebSitePrimaryWebDeployPackageName'")
 				Deploy-WTTWebApplication -WTTEnvironmentapplicationName $WTTEnvironmentApplicationName -ResourceGroupName $azureResourceGroupName -Websitename $azureSqlDatabaseServerPrimaryName -AzureWebSiteWebDeployPackagePath $AzureWebSiteWebDeployPackagePath -AzureWebSiteWebDeployPackageName $azureWebSitePrimaryWebDeployPackageName
 
-
 				WriteLabel("Deploying Secondary application '$azureWebSiteSecondaryWebDeployPackageName'")
-                Deploy-WTTWebApplication -WTTEnvironmentapplicationName $WTTEnvironmentApplicationName -ResourceGroupName $azureResourceGroupName -Websitename $azureSqlDatabaseServerSecondaryName -AzureWebSiteWebDeployPackagePath $AzureWebSiteWebDeployPackagePath -AzureWebSiteWebDeployPackageName $azureWebSiteSecondaryWebDeployPackageName
+				Deploy-WTTWebApplication -WTTEnvironmentapplicationName $WTTEnvironmentApplicationName -ResourceGroupName $azureResourceGroupName -Websitename $azureSqlDatabaseServerSecondaryName -AzureWebSiteWebDeployPackagePath $AzureWebSiteWebDeployPackagePath -AzureWebSiteWebDeployPackageName $azureWebSiteSecondaryWebDeployPackageName
 
 				# Create Traffic Manager Profile
 				LineBreak
@@ -539,34 +536,42 @@ function New-WTTEnvironment
 				# Add Azure WebSite Endpoints to Traffic Manager Profile
 				Add-WTTAzureTrafficManagerEndpoint -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -AzurePrimaryWebSiteName $azureSqlDatabaseServerPrimaryName -AzureSecondaryWebSiteName $azureSqlDatabaseServerSecondaryName -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -AzureTrafficManagerEndpointStatus "Enabled" -AzureTrafficManagerResourceGroupName $azureResourceGroupName
 			}
-            
-            if($deployDW -ne 0)
-            {
-			    # Deploy Azure Data Warehouse on the primary database server. This may run for about 15 minutes.
-			    if ($azurePrimarySqlDatabaseServer -ne $null)
-			    {
-				    Deploy-WTTAzureDWDatabase -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName -ServerLocation $WTTEnvironmentPrimaryServerLocation -DatabaseEdition "DataWarehouse" -UserName $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -DWDatabaseName $AzureSqlDWDatabaseName
-			    }
-            }
-            elseif($deployDW -eq $null)
-            {
-            			    # Deploy Azure Data Warehouse on the primary database server. This may run for about 15 minutes.
-			    if ($azurePrimarySqlDatabaseServer -ne $null)
-			    {
-				    Deploy-WTTAzureDWDatabase -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName -ServerLocation $WTTEnvironmentPrimaryServerLocation -DatabaseEdition "DataWarehouse" -UserName $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -DWDatabaseName $AzureSqlDWDatabaseName
-			    }
-            }
 
-            if($deployADF -ne 0)
-            {
-			    # Deploy ADF environment
-			    New-WTTADFEnvironment -ApplicationName $WTTEnvironmentApplicationName -ResourceGroupName $azureResourceGroupName -Location $WTTEnvironmentPrimaryServerLocation -WebsiteHostingPlanName $azureSqlDatabaseServerPrimaryName -DatabaseServerName $azureSqlDatabaseServerPrimaryName -DatabaseName "Recommendations" -DatabaseEdition "Basic" -DatabaseUserName $AzureSqlDatabaseServerAdministratorUserName -DatabasePassword $AzureSqlDatabaseServerAdministratorPassword
-            }
-            elseif($deployADF -eq $null)
-            {
-            # Deploy ADF environment
-			    New-WTTADFEnvironment -ApplicationName $WTTEnvironmentApplicationName -ResourceGroupName $azureResourceGroupName -Location $WTTEnvironmentPrimaryServerLocation -WebsiteHostingPlanName $azureSqlDatabaseServerPrimaryName -DatabaseServerName $azureSqlDatabaseServerPrimaryName -DatabaseName "Recommendations" -DatabaseEdition "Basic" -DatabaseUserName $AzureSqlDatabaseServerAdministratorUserName -DatabasePassword $AzureSqlDatabaseServerAdministratorPassword
-            }
+			if($deployDW -ne 0)
+			{
+				# Deploy Azure Data Warehouse on the primary database server. This may run for about 15 minutes.
+				if ($azurePrimarySqlDatabaseServer -ne $null)
+				{
+					Deploy-WTTAzureDWDatabase -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName -ServerLocation $WTTEnvironmentPrimaryServerLocation -DatabaseEdition "DataWarehouse" -UserName $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -DWDatabaseName $AzureSqlDWDatabaseName
+				}
+			}
+			elseif($deployDW -eq $null)
+			{
+				# Deploy Azure Data Warehouse on the primary database server. This may run for about 15 minutes.
+				if ($azurePrimarySqlDatabaseServer -ne $null)
+				{
+					Deploy-WTTAzureDWDatabase -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName -ServerLocation $WTTEnvironmentPrimaryServerLocation -DatabaseEdition "DataWarehouse" -UserName $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -DWDatabaseName $AzureSqlDWDatabaseName
+				}
+			}
+			elseif($deployDW -eq $null)
+			{
+				# Deploy Azure Data Warehouse on the primary database server. This may run for about 15 minutes.
+				if ($azurePrimarySqlDatabaseServer -ne $null)
+				{
+					Deploy-WTTAzureDWDatabase -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName -ServerLocation $WTTEnvironmentPrimaryServerLocation -DatabaseEdition "DataWarehouse" -UserName $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -DWDatabaseName $AzureSqlDWDatabaseName
+				}
+			}
+
+			if($deployADF -ne 0)
+			{
+				# Deploy ADF environment
+				New-WTTADFEnvironment -ApplicationName $WTTEnvironmentApplicationName -ResourceGroupName $azureResourceGroupName -Location $WTTEnvironmentPrimaryServerLocation -WebsiteHostingPlanName $azureSqlDatabaseServerPrimaryName -DatabaseServerName $azureSqlDatabaseServerPrimaryName -DatabaseName "Recommendations" -DatabaseEdition "Basic" -DatabaseUserName $AzureSqlDatabaseServerAdministratorUserName -DatabasePassword $AzureSqlDatabaseServerAdministratorPassword
+			}
+			elseif($deployADF -eq $null)
+			{
+				# Deploy ADF environment
+				New-WTTADFEnvironment -ApplicationName $WTTEnvironmentApplicationName -ResourceGroupName $azureResourceGroupName -Location $WTTEnvironmentPrimaryServerLocation -WebsiteHostingPlanName $azureSqlDatabaseServerPrimaryName -DatabaseServerName $azureSqlDatabaseServerPrimaryName -DatabaseName "Recommendations" -DatabaseEdition "Basic" -DatabaseUserName $AzureSqlDatabaseServerAdministratorUserName -DatabasePassword $AzureSqlDatabaseServerAdministratorPassword
+			}
 
 			Start-Sleep -Seconds 30
 
@@ -613,8 +618,8 @@ function IIf($If, $Right, $Wrong)
 	If ($If) 
 	{
 		return $Right
-	} 
-	Else 
+	}
+	Else
 	{
 		return $Wrong
 	}
@@ -646,26 +651,26 @@ function WriteError($error)
 }
 
 function Lsh([UInt32] $n, [Byte] $bits) 
-    {
-        $n * [Math]::Pow(2, $bits)
-    }
+{
+	$n * [Math]::Pow(2, $bits)
+}
 
 # Returns a version number "a.b.c.d" as a two-element numeric
 # array. The first array element is the most significant 32 bits,
 # and the second element is the least significant 32 bits.
 function GetVersionStringAsArray([String] $version) 
 {
-    $parts = $version.Split(".")
-    if ($parts.Count -lt 3) 
-    {
-        for ($n = $parts.Count; $n -lt 3; $n++) 
-        {
-            $parts += "0"
-        }
-    }
-    [UInt32] ((Lsh $parts[0] 16))
-    [UInt32] ((Lsh $parts[1] 16))
-    [UInt32] ((Lsh $parts[2] 16))
+	$parts = $version.Split(".")
+	if ($parts.Count -lt 3) 
+	{
+		for ($n = $parts.Count; $n -lt 3; $n++) 
+		{
+			$parts += "0"
+		}
+	}
+	[UInt32] ((Lsh $parts[0] 16))
+	[UInt32] ((Lsh $parts[1] 16))
+	[UInt32] ((Lsh $parts[2] 16))
 }
 
 # Compares two version numbers "a.b.c.d". If $version1 < $version2,
@@ -673,35 +678,36 @@ function GetVersionStringAsArray([String] $version)
 # $version1 > $version2, returns 1.
 function CheckInstalledPowerShellVersion
 {
-    $installedVersion = Get-Module AzureRM.profile
-    $installedVersionVersion = $installedVersion.Version
-    $installedVersionVersion = $installedVersionVersion -replace '\s',''
-    $minimumRequiredVersion = '1.0.1'
-    $ver1 = GetVersionStringAsArray $installedVersionVersion
-    $ver2 = GetVersionStringAsArray $minimumRequiredVersion
-    if ($ver1[0] -lt $ver2[0]) 
-    {
-        $out = -1
-    }
-    elseif ($ver1[0] -eq $ver2[0]) 
-    {
-        if ($ver1[1] -lt $ver2[1]) 
-        {
-            $out = -1
-        }
-        elseif ($ver1[1] -ge $ver2[1]) 
-        {
-            $out = 1
-        }
-    } 
-    elseif ($ver1[2] -gt $ver2[2])
-    {
-        $out = 1
-    }    
-    else 
-    {
-        $out = 1
-    }
-    return $out
+	$installedVersion = Get-Module AzureRM.profile
+	$installedVersionVersion = $installedVersion.Version
+	$installedVersionVersion = $installedVersionVersion -replace '\s',''
+	$minimumRequiredVersion = '1.0.1'
+	$ver1 = GetVersionStringAsArray $installedVersionVersion
+	$ver2 = GetVersionStringAsArray $minimumRequiredVersion
 
+	if ($ver1[0] -lt $ver2[0]) 
+	{
+		$out = -1
+	}
+	elseif ($ver1[0] -eq $ver2[0]) 
+	{
+		if ($ver1[1] -lt $ver2[1]) 
+		{
+			$out = -1
+		}
+		elseif ($ver1[1] -ge $ver2[1]) 
+		{
+			$out = 1
+		}
+	} 
+	elseif ($ver1[2] -gt $ver2[2])
+	{
+		$out = 1
+	}    
+	else 
+	{
+		$out = 1
+	}
+
+	return $out
 }

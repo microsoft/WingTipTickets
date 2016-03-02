@@ -75,19 +75,19 @@ function New-WTTAzureSqlDatabaseServer
 					If($newAzureSqlDatabaseServer.ServerName -eq $AzureSqlDatabaseServerName) 
 					{
 						WriteValue("Successful")
-                        WriteLabel("Adding firewall rule to allow access from all IP Addresses")
+						WriteLabel("Adding firewall rule to allow access from all IP Addresses")
 						$newAzureSqlFirewallRule1 = New-AzureRMSqlServerFirewallRule -FirewallRuleName AllOpen -StartIPAddress 0.0.0.0 -EndIPAddress 255.255.255.255 -ServerName $AzureSqlDatabaseServerName -ResourceGroup $AzureSqlDatabaseServerResourceGroupName -WarningVariable newAzureSqlFirewallRule1Errors -WarningAction SilentlyContinue
 						WriteValue("Successful")
-						
+
 						WriteLabel("Adding firewall rule to allow access from all Azure Services")
 						$newAzureSqlFirewallRule2 = New-AzureRMSqlServerFirewallRule -AllowAllAzureIPs -ServerName $AzureSqlDatabaseServerName -ResourceGroup $AzureSqlDatabaseServerResourceGroupName -WarningVariable newAzureSqlFirewallRule2Errors -WarningAction SilentlyContinue
 						WriteValue("Successful")
 
 					}
-                    else
-                    {
-                       WriteValue("Unsuccessful")
-                    }               
+					else
+					{
+						WriteValue("Unsuccessful")
+					}
 
 				}
 			}

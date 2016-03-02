@@ -88,11 +88,6 @@ function New-WTTADFEnvironment
 				CreateDatabase
 				CreateSchema
 				PopulateDatabase
-                
-				# Create and Deploy Website
-				CreateWebsite
-				DeployWebsite($storageAccountKey)
-				SetWebsiteConfig
 
 				# Create DataFactory
 				CreateDataFactory
@@ -159,22 +154,6 @@ function CreateDatabase()
 		WriteLabel("Creating database '$DatabaseName'")
 		$null = New-AzureRMSqlDatabase -ResourceGroupName $ApplicationName -ServerName $DatabaseServerName -DatabaseName $DatabaseName -Edition $DatabaseEdition
 		WriteValue("Successful")
-
-		# Test the Connection to the Database
-		#$ConnectionString = "Server=tcp:$DatabaseServerName.database.windows.net; Database=$DatabaseName; User ID=$DatabaseUserName; Password=$DatabasePassword; Trusted_Connection=False; Encrypt=True;"
-		#$Connection = New-object system.data.SqlClient.SqlConnection($ConnectionString)
-
-		# Open the connection to the Database
-		#WriteLabel("Testing database connection")
-		#$Connection.Open()
-
-		#If(!$Connection)
-		#{
-		#	WriteValue("Failed")
-		#	throw "Failed to Connect $ConnectionString"
-		#}
-
-		#WriteValue("Successful")
 	} 
 	Catch 
 	{
@@ -185,15 +164,14 @@ function CreateDatabase()
 
 function CreateSchema
 {
-    
 	Try
 	{
 		# Create Database Schema
 		WriteLabel("Creating Database Schema")
-        Push-Location -StackName wtt
-        $DatabaseServer = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains "primary" -ExpandProperties).properties.FullyQualifiedDomainName
-        $result = Invoke-Sqlcmd -Username "$DatabaseUserName@$DatabaseServerName" -Password $DatabasePassword -ServerInstance $DatabaseServer -Database $DatabaseName -InputFile ".\Resources\DataFactory\Database\Schema.sql" -QueryTimeout 0
-        Pop-Location -StackName wtt
+		Push-Location -StackName wtt
+		$DatabaseServer = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains "primary" -ExpandProperties).properties.FullyQualifiedDomainName
+		$result = Invoke-Sqlcmd -Username "$DatabaseUserName@$DatabaseServerName" -Password $DatabasePassword -ServerInstance $DatabaseServer -Database $DatabaseName -InputFile ".\Resources\DataFactory\Database\Schema.sql" -QueryTimeout 0
+		Pop-Location -StackName wtt
 		WriteValue("Successful")
 	}
 	Catch
@@ -201,20 +179,18 @@ function CreateSchema
 		WriteValue("Failed")
 		throw $Error
 	}
-    
 }
 
 function PopulateDatabase
 {
-    
 	Try
 	{
 		# Populate Database
 		WriteLabel("Populating Database")
-        Push-Location -StackName wtt
-        $DatabaseServer = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains "primary" -ExpandProperties).properties.FullyQualifiedDomainName
-        $result = Invoke-Sqlcmd -Username "$DatabaseUserName@$DatabaseServerName" -Password $DatabasePassword -ServerInstance $DatabaseServer -Database $DatabaseName -InputFile ".\Resources\DataFactory\Database\Populate.sql" -QueryTimeout 0
-        Pop-Location -StackName wtt
+		Push-Location -StackName wtt
+		$DatabaseServer = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains "primary" -ExpandProperties).properties.FullyQualifiedDomainName
+		$result = Invoke-Sqlcmd -Username "$DatabaseUserName@$DatabaseServerName" -Password $DatabasePassword -ServerInstance $DatabaseServer -Database $DatabaseName -InputFile ".\Resources\DataFactory\Database\Populate.sql" -QueryTimeout 0
+		Pop-Location -StackName wtt
 		WriteValue("Successful")
 	}
 	Catch
@@ -222,82 +198,6 @@ function PopulateDatabase
 		WriteValue("Failed")
 		throw $Error
 	}
-    
-}
-
-function CreateWebsite()
-{
-	Try
-	{
-		# Create website under Primary location
-		WriteLabel("Creating web application '$DatabaseName'")
-		$null = New-AzureRMWebApp -Location $Location -AppServicePlan $WebsiteHostingPlanName -ResourceGroupName $ResourceGroupName -Name $ApplicationName$DatabaseName
-		WriteValue("Successful")
-	}
-	Catch
-	{
-		WriteValue("Failed")
-		throw $Error
-	}
-}
-
-function DeployWebsite($storageAccountKey)
-{
-	Try
-	{
-		$containerName = "deployment-files"
-
-		# Get the storage account context
-		$context = New-AzureStorageContext –StorageAccountName $ApplicationName -StorageAccountKey $storageAccountKey -ea silentlycontinue
-		If ($context -eq $null) { throw "Invalid storage account name and/or storage key provided" }
-
-		# Find the Container
-		$container = Get-AzureStorageContainer -context $context | Where-Object { $_.Name -eq $containerName }
-
-		If ($container -eq $null)
-		{
-			# Create the Container
-			New-AzureStorageContainer -Name $containerName -Permission "Blob" -context $context >> setup-log.txt
-		}
-
-		# Upload Deployment Package
-		WriteLabel("Uploading Deployment Package")
-		Set-AzureStorageBlobContent -File ".\packages\ProductRecommendations.zip" -Container $containerName -Context $context -Blob "recommendations-package.zip" -Force
-		WriteValue("Successful")
-
-		# Build Paths
-		$templateFilePath = (Get-Item -Path ".\" -Verbose).FullName + "\Resources\DataFactory\Website\Deployment.json"
-		$packageUri = "https://$ApplicationName.blob.core.windows.net/deployment-files/recommendations-package.zip"
-
-		# Deploy application
-		WriteLabel("Deploying Web Application '$DatabaseName'")
-		$null = New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -Name $DatabaseName -Mode "Incremental" -TemplateFile $templateFilePath -siteName $ApplicationName$DatabaseName -hostingPlanName $WebsiteHostingPlanName -siteLocation $Location -sku "Standard" -packageUri $packageUri
-		WriteValue("Successful")
-	}
-	Catch
-	{
-		WriteValue("Failed")
-		throw $Error
-	}
-}
-
-function SetWebsiteConfig()
-{
-	# Update website config
-	WriteLabel("Updating Config Settings")
-
-	$settings = New-Object Hashtable
-	$settings = 
-	@{
-		"SqlServer" = "$DatabaseServerName.database.windows.net" ;
-		"SqlDB" = $DatabaseName; 
-		"SqlUserID" = $DatabaseUserName; 
-		"SqlPassword" = $DatabasePassword
-	}
-
-	$null = Set-AzureRMWebApp -AppSettings $settings -Name $ApplicationName$DatabaseName -ResourceGroupName $ResourceGroupName
-
-	WriteValue("Successful")
 }
 
 function CreateDataFactory()

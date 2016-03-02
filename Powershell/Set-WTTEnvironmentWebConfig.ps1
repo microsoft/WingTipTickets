@@ -89,7 +89,6 @@ function Set-WTTEnvironmentWebConfig
 				$AzureSqlDatabaseName = "Customer1"
 			}
 
-
 			$ADFWebSite = (Find-AzureRmResource -ResourceType Microsoft.Web/sites -ResourceNameContains "recommendations" -ExpandProperties).Name
 
 			if ($ADFWebSite -like "*recommendations*")
@@ -99,25 +98,35 @@ function Set-WTTEnvironmentWebConfig
 			else
 			{
 				$adfwebsite ="ProductRecWebAppMissing"
-			}		
+			}
 			$docDBName = "https://$azureDocumentDbName.documents.azure.com:443/"
 
 			# Build web application settings
 			$settings = New-Object Hashtable
 			$settings = 
 			@{
-				    "TenantName" = "$WTTEnvironmentApplicationName"; 
-					"DatabaseUserName" = "$AzureSqlDatabaseServerAdministratorUserName"; 
-					"DatabaseUserPassword" = "$AzureSqlDatabaseServerAdministratorPassword"; 
-					"PrimaryDatabaseServer" = "$AzureSqlDatabaseServerPrimaryName"; 
-					"SecondaryDatabaseServer" = "$AzureSqlDatabaseServerSecondaryName"; 
-					"TenantDbName" = "$AzureSqlDatabaseName"; 
+					# Tenant Settings
+					"TenantName" = "$WTTEnvironmentApplicationName"; 
+					"TenantEventType" = "pop"; # This is not set from main script, used the default
+					"TenantPrimaryDatabaseServer" = "$AzureSqlDatabaseServerPrimaryName"; 
+					"TenantSecondaryDatabaseServer" = "$AzureSqlDatabaseServerSecondaryName";
+					"TenantDatabase" = "$AzureSqlDatabaseName"; 
+
+					# Recommendation Setings
+					"RecommendationDatabaseServer" = "$AzureSqlDatabaseServerPrimaryName";
+					"RecommendationDatabase" = "$";
+
+					# Shared Settings
+					"DatabaseUser" = "$AzureSqlDatabaseServerAdministratorUserName"; 
+					"DatabasePassword" = "$AzureSqlDatabaseServerAdministratorPassword"; 
+					"AuditingEnabled" = "false" # This is not set from main script, used the default
+					"RunningInDev" = "false";
+
+					# Keys
 					"SearchServiceKey" = "$SearchServicePrimaryManagementKey"; 
 					"SearchServiceName" = "$SearchName"; 
-					"DocumentDbServiceEndpointUri" = "$docDBName"; 
-					"DocumentDbServiceAuthorizationKey" = "$documentDbPrimaryKey";
-					"RecommendationSiteUrl" = "$ADFWebSite";
-                    "RunningInDev" = "false";
+					"DocumentDbUri" = "$docDBName"; 
+					"DocumentDbKey" = "$documentDbPrimaryKey";
 			}
 
 			# Add the settings to the website
