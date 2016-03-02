@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Tenant.Mvc.Core.Models.VenueModel>
+﻿@model Tenant.Mvc.Models.VenueIndexViewModel
 
 <div class="page-heading">
     <div class="container">
@@ -9,6 +9,10 @@
         </div>
     </div>
 </div>
+
+<!-- -------------------------------------------------------------------------------------------------------------------------- -->
+<!-- Venue List -->
+<!-- -------------------------------------------------------------------------------------------------------------------------- -->
 
 <div class="container">
     <fieldset>
@@ -25,7 +29,7 @@
                         <th>Description</th>
                     </tr>
 
-                    @foreach (var item in Model)
+                    @foreach (var item in Model.Venues)
                     {
                         <tr>
                             <td>

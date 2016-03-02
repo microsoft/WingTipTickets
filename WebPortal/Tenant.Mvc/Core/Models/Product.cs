@@ -4,6 +4,8 @@ namespace Tenant.Mvc.Core.Models
 {
     public class Product
     {
+        #region - Properties -
+
         public Int64 Id;
 
         public string Name;
@@ -19,5 +21,7 @@ namespace Tenant.Mvc.Core.Models
         public int Price;
 
         public int PlayCount { get; set; }
+
+        #endregion
     }
 }

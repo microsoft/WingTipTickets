@@ -22,6 +22,8 @@ namespace Tenant.Mvc.Models
 
         #endregion
 
+        #region - Class VenueViewModel -
+
         public class VenueViewModel
         {
             public int VenueId { get; set; }
@@ -35,6 +37,10 @@ namespace Tenant.Mvc.Models
 
             public int Capacity { get; set; }
         }
+
+        #endregion
+
+        #region - Class PurchasedTicketViewModel -
 
         public class PurchasedTicketViewModel
         {
@@ -51,5 +57,7 @@ namespace Tenant.Mvc.Models
             public string SectionName { get; set; }
             public string SeatName { get; set; }
         }
+
+        #endregion
     }
 }

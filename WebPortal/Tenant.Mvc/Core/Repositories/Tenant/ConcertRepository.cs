@@ -68,10 +68,10 @@ namespace Tenant.Mvc.Core.Repositories.Tenant
             return Context.Concerts.SaveNewConcert(concertName, concertDescription, concertDateTime, saveToDatabase, concertVenueId, performerId);
         }
 
-        public bool DeleteConcert(String concertId)
+        public bool DeleteConcert(int concertId)
         {
             var concertDeleted = false;
-            var concertToDelete = Context.Concerts.GetConcertById(Int32.Parse(concertId));
+            var concertToDelete = Context.Concerts.GetConcertById(concertId);
 
             if (concertToDelete != null)
             {

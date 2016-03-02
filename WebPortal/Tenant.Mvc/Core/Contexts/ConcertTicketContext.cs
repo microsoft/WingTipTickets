@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using Tenant.Mvc.Core.Models;
 using WingTipTickets;
 
@@ -26,10 +27,9 @@ namespace Tenant.Mvc.Core.Contexts
                         {
                             sdAdapter.Fill(dsTickets);
 
-                            foreach (DataRow drTicket in dsTickets.Tables[0].Rows)
-                            {
-                                ticketList.Add(new ConcertTicket(Convert.ToInt32(drTicket[0].ToString()), Convert.ToInt32(drTicket[1].ToString()), drTicket[2].ToString(), Convert.ToInt32(drTicket[4].ToString()), Convert.ToInt32(drTicket[3].ToString()), 0, Convert.ToDateTime(drTicket[5].ToString())));
-                            }
+                            ticketList.AddRange(
+                                from DataRow drTicket in dsTickets.Tables[0].Rows 
+                                select new ConcertTicket(Convert.ToInt32(drTicket[0].ToString()), Convert.ToInt32(drTicket[1].ToString()), drTicket[2].ToString(), Convert.ToInt32(drTicket[4].ToString()), Convert.ToInt32(drTicket[3].ToString()), 0, Convert.ToDateTime(drTicket[5].ToString())));
                         }
                     }
                 }

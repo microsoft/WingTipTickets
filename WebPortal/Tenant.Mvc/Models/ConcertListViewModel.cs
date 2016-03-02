@@ -24,18 +24,20 @@ namespace Tenant.Mvc.Models
 
         #endregion
 
+        #region - Class ConcertViewModel -
+
         public class ConcertViewModel
         {
-            #region - Properties -
-
             public int ConcertId { get; set; }
             public string Name { get; set; }
             public string Performer { get; set; }
             public string Venue { get; set; }
-            public DateTime Date { get; set; }
-
-            #endregion    
+            public DateTime Date { get; set; }   
         }
+
+        #endregion
+
+        #region - Class VenueViewModel -
 
         public class VenueViewModel
         {
@@ -50,5 +52,7 @@ namespace Tenant.Mvc.Models
 
             public int ConcertCount { get; set; }
         }
+
+        #endregion
     }
 }

@@ -286,6 +286,9 @@
     <Compile Include="Controllers\VersionController.cs" />
     <Compile Include="Core\Contexts\DatabaseContext.cs" />
     <Compile Include="Core\Interfaces\Tenant\IBaseRepository.cs" />
+    <Compile Include="Core\Models\ApplicationDbContext.cs" />
+    <Compile Include="Models\EventAdministrationViewModel.cs" />
+    <Compile Include="Models\VenueIndexViewModel.cs" />
     <Compile Include="Models\CustomerEventsViewModel.cs" />
     <Compile Include="Core\Models\PurchaseTicketsModel.cs" />
     <Compile Include="Core\Helpers\SqlDataReaderExtensions.cs" />
@@ -320,14 +323,13 @@
     <Compile Include="Core\Contexts\CustomerContext.cs" />
     <Compile Include="Core\Models\CustomerModel.cs" />
     <Compile Include="Core\Models\ConcertTicket.cs" />
-    <Compile Include="Core\Models\DataForAdminPortalPage.cs" />
     <Compile Include="Core\Models\ConcertListModel.cs" />
     <Compile Include="Core\Models\CustomerEventsModel.cs" />
     <Compile Include="Core\Models\CatalogItem.cs" />
     <Compile Include="Core\Models\CatalogItemDetailsModel.cs" />
     <Compile Include="Core\Models\CatalogModel.cs" />
     <Compile Include="Core\Models\EventHubs.cs" />
-    <Compile Include="Core\Models\IdentityModels.cs" />
+    <Compile Include="Core\Models\ApplicationUser.cs" />
     <Compile Include="Core\Helpers\DataHelper.cs" />
     <Compile Include="Core\Models\Country.cs" />
     <Compile Include="Core\Models\PerformerModel.cs" />
@@ -548,7 +550,6 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\VenueAdministration\Edit.cshtml" />
     <Content Include="Views\VenueAdministration\Index.cshtml" />
-    <Content Include="Views\VenueAdministration\AddArtist.cshtml" />
     <Content Include="Views\Events\Index.cshtml" />
     <Content Include="Views\City\Index.cshtml" />
     <Content Include="Views\FindSeats\Index.cshtml" />

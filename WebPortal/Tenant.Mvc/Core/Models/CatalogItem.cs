@@ -5,6 +5,8 @@ namespace Tenant.Mvc.Core.Models
 {
     public class CatalogItem
     {
+        #region - Properties -
+
         public Int64 Id;
 
         public string Name;
@@ -39,5 +41,7 @@ namespace Tenant.Mvc.Core.Models
                 return string.Format(CultureInfo.InvariantCulture, "{0} instead of ${1} ({2} off)", CurrentPrice, OriginalPrice, PromotionDiscount);
             }
         }
+
+        #endregion
     }
 }

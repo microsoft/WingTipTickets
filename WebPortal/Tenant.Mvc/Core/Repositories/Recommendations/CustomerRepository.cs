@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
@@ -10,6 +11,8 @@ namespace Tenant.Mvc.Core.Repositories.Recommendations
 {
     public class CustomerRepository : ICustomerRepository, IUserStore<CustomerRec>
     {
+        #region - Public Methods -
+
         public CustomerRec GetCustomerByName(string customer)
         {
             using(var conn = WingtipTicketApp.CreateRecommendationSqlConnection())
@@ -18,7 +21,7 @@ namespace Tenant.Mvc.Core.Repositories.Recommendations
                 using(var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = "SELECT * FROM Customers WHERE Name = @Name";
-                    cmd.Parameters.Add(new SqlParameter("Name", System.Data.SqlDbType.NVarChar) { Value = customer });
+                    cmd.Parameters.Add(new SqlParameter("Name", SqlDbType.NVarChar) { Value = customer });
                     using(var reader = cmd.ExecuteReader())
                     {
                         if(!reader.Read())
@@ -45,7 +48,7 @@ namespace Tenant.Mvc.Core.Repositories.Recommendations
                 using (var cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = "SELECT * FROM Customers WHERE Id = @Id";
-                    cmd.Parameters.Add(new SqlParameter("Id", System.Data.SqlDbType.BigInt) { Value = id });
+                    cmd.Parameters.Add(new SqlParameter("Id", SqlDbType.BigInt) { Value = id });
                     using (var reader = cmd.ExecuteReader())
                     {
                         if (!reader.Read())
@@ -73,6 +76,8 @@ namespace Tenant.Mvc.Core.Repositories.Recommendations
         {
             return Task.Factory.StartNew(() => GetCustomerByName(userName));
         }
+
+        #endregion
 
         #region - Not Implemented -
 

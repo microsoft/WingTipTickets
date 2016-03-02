@@ -11,6 +11,6 @@ namespace Tenant.Mvc.Core.Interfaces.Tenant
         ConcertListModel GetConcertList(int venueId = 0, int cityId = 0);
         List<ConcertModel> GetConcerts(int venueId = 0, bool orderByName = false);
         ConcertModel SaveNewConcert(string concertName, string concertDescription, DateTime concertDateTime, ServerTargetEnum saveToDatabase, int concertVenueId, int performerId);
-        bool DeleteConcert(string concertId);
+        bool DeleteConcert(int concertId);
     }
 }

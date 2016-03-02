@@ -100,7 +100,7 @@ namespace Tenant.Mvc.Core.Contexts
                     venuesList = venuesList.Where(v => v.VenueCityModel.CityId == cityId).ToList();
                 }
 
-                return venuesList;
+                return venuesList.Distinct().ToList();
             }
 
             public VenueModel GetVenueByVenueId(int venueId)

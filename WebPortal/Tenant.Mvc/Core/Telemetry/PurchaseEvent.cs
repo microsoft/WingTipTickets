@@ -4,6 +4,8 @@ namespace Tenant.Mvc.Core.Telemetry
 {
     public class PurchaseEvent
     {
+        #region - Properties -
+
         public Int64 CustomerId { get; set; }
 
         public Int64 ProductId { get; set; }
@@ -13,5 +15,7 @@ namespace Tenant.Mvc.Core.Telemetry
         public int Price { get; set; }
 
         public DateTime PurchaseTime { get; set; }
+
+        #endregion
     }
 }

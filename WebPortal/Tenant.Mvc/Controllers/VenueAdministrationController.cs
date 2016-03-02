@@ -1,8 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Newtonsoft.Json;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using Tenant.Mvc.Core.Interfaces.Tenant;
 using Tenant.Mvc.Core.Models;
+using Tenant.Mvc.Models;
 
 namespace Tenant.Mvc.Controllers
 {
@@ -34,7 +37,28 @@ namespace Tenant.Mvc.Controllers
 
         public ActionResult Index()
         {
-            return View(_venueRepository.GetVenues());
+            var domainModel = _venueRepository.GetVenues();
+
+            var viewModel = new VenueIndexViewModel()
+            {
+                Venues = new List<VenueIndexViewModel.VenueViewModel>()
+            };
+
+            foreach (var venue in domainModel)
+            {
+                if (viewModel.Venues.All(v => v.VenueId != venue.VenueId))
+                {
+                    viewModel.Venues.Add(new VenueIndexViewModel.VenueViewModel()
+                    {
+                        VenueId = venue.VenueId,
+                        VenueName = venue.VenueName,
+                        Capacity = venue.Capacity,
+                        Description = venue.Description
+                    });
+                }
+            }
+
+            return View(viewModel);
         }
 
         #endregion

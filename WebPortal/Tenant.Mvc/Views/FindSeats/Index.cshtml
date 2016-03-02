@@ -28,7 +28,10 @@
         </div>
     </div>
 
-    <!-- Ticket quantity & section selection dialog -->
+    <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+    <!-- Ticket Quantity Section -->
+    <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+
     <div class="row">
         <div class="col-xs-12">
             @using (Html.BeginForm("Index", "FindSeats", FormMethod.Post))
@@ -72,6 +75,10 @@
                 </div>
             }
         </div>
+        
+        <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+        <!-- Venue Data -->
+        <!-- -------------------------------------------------------------------------------------------------------------------------- -->
 
         <div class="col-xs-12 img-div">
 
@@ -93,7 +100,7 @@
                     </div>
                 </div>
 
-                @if (ViewBag.VenueMetaData != null)
+                @if (Model.VenueMetaData != null)
                 {
                     <div id="documentdb-meta-template" class="row">
                         <div class="col-xs-5">
@@ -107,7 +114,7 @@
                 }
             </div>
 
-            @if (ViewBag.VenueMetaData != null)
+            @if (Model.VenueMetaData != null)
             {
                 <div class="row">
                     <div class="col-xs-12">
@@ -116,7 +123,10 @@
                 </div>
             }
 
-            <!-- Modal -->
+            <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+            <!-- MetaData Dialog -->
+            <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+
             <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
@@ -136,7 +146,10 @@
     </div>
 </div>
 
-<!-- Ticket purchase dialog -->
+<!-- -------------------------------------------------------------------------------------------------------------------------- -->
+<!-- Ticket Purchase Dialog -->
+<!-- -------------------------------------------------------------------------------------------------------------------------- -->
+
 <div id="purchaseTicketModel" class="modal fade modal-tickets" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -227,7 +240,9 @@
     </div>
 </div>
 
-
+<!-- -------------------------------------------------------------------------------------------------------------------------- -->
+<!-- Script Section -->
+<!-- -------------------------------------------------------------------------------------------------------------------------- -->
 
 <script src="~/Content/Scripts/jquery-1.9.1.min.js"></script>
 <script>
@@ -260,11 +275,11 @@
     });
 </script>
 
-@if (ViewBag.VenueMetaData != null)
+@if (Model.VenueMetaData != null)
 {
     <script>
         (function () {
-            var meta = @Html.Raw(JsonConvert.SerializeObject(ViewBag.VenueMetaData));
+            var meta = @Html.Raw(JsonConvert.SerializeObject(@Model.VenueMetaData));
             meta = meta.Data;
 
             var template = $("#documentdb-meta-template");

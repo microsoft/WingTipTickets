@@ -7,6 +7,8 @@ namespace Tenant.Mvc.Models
 {
     public class FindSeatsViewModel
     {
+        #region - Properties -
+
         public ConcertViewModel Concert { get; set; }
         public PurchaseViewModel Purchase { get; set; }
         public VenueMetaDataViewModel VenueMetaData { get; set; }
@@ -15,6 +17,10 @@ namespace Tenant.Mvc.Models
         public SelectList TicketQuantities { get; set; }
         public SelectList ExpirationMonths { get; set; }
         public SelectList ExpirationYears { get; set; }
+
+        #endregion
+
+        #region - Class ConcertViewModel -
 
         public class ConcertViewModel
         {
@@ -34,6 +40,10 @@ namespace Tenant.Mvc.Models
             public string PerformerName { get; set; }
         }
 
+        #endregion
+
+        #region - Class PurchaseViewModel -
+
         public class PurchaseViewModel
         {
             [Required]
@@ -51,6 +61,10 @@ namespace Tenant.Mvc.Models
             public int? CardExpirationYear { get; set; }
         }
 
+        #endregion
+
+        #region - Class VenueMetaDataViewModel -
+
         public class VenueMetaDataViewModel
         {
             #region - Properties -
@@ -64,5 +78,7 @@ namespace Tenant.Mvc.Models
 
             #endregion
         }
+
+        #endregion
     }
 }
