@@ -89,16 +89,6 @@ function Set-WTTEnvironmentWebConfig
 				$AzureSqlDatabaseName = "Customer1"
 			}
 
-			$ADFWebSite = (Find-AzureRmResource -ResourceType Microsoft.Web/sites -ResourceNameContains "recommendations" -ExpandProperties).Name
-
-			if ($ADFWebSite -like "*recommendations*")
-			{
-				$ADFWebSite = [string](get-azurermwebapp -name $ADFWebsite).HostNames
-			}
-			else
-			{
-				$adfwebsite ="ProductRecWebAppMissing"
-			}
 			$docDBName = "https://$azureDocumentDbName.documents.azure.com:443/"
 
 			# Build web application settings
@@ -114,7 +104,7 @@ function Set-WTTEnvironmentWebConfig
 
 					# Recommendation Setings
 					"RecommendationDatabaseServer" = "$AzureSqlDatabaseServerPrimaryName";
-					"RecommendationDatabase" = "$";
+					"RecommendationDatabase" = "Recommendations";
 
 					# Shared Settings
 					"DatabaseUser" = "$AzureSqlDatabaseServerAdministratorUserName"; 

@@ -1,4 +1,4 @@
-<#
+﻿<#
 .Synopsis
 	WingtipTickets (WTT) Demo Environment.
 .DESCRIPTION
@@ -45,24 +45,19 @@ function New-WTTAzureSearchService
 		# Azure SQL Database Name
 		[Parameter(Mandatory=$false)]
 		[String]
-		$AzureSqlDatabaseName,
-
-		# Azure Active Directory Tenant Name
-		[Parameter(Mandatory=$false)]
-		[String]
-		$AzureActiveDirectoryTenantName
+		$AzureSqlDatabaseName
 	)
 
 	Process
 	{
 		# Check Defaults
-		if ($WTTEnvironmentApplicationName.Length -gt 15)
+		if ($WTTEnvironmentApplicationName.Length -gt 60)
 		{
-			$wTTEnvironmentApplicationName = $WTTEnvironmentApplicationName.Substring(0,15)
+			$wTTEnvironmentApplicationName = $WTTEnvironmentApplicationName.Substring(0,60)
 		}
 		else
 		{
-			$wTTEnvironmentApplicationName = $WTTEnvironmentApplicationName
+			$wTTEnvironmentApplicationName = $WTTEnvironmentApplicationName.ToLower()
 		}
 
 		if($AzureSqlDatabaseServerPrimaryName -eq "")
@@ -87,137 +82,92 @@ function New-WTTAzureSearchService
 
 		try
 		{
-			# Load ADAL Assemblies
-			$adal = "${env:ProgramFiles(x86)}\Microsoft SDKs\Azure\PowerShell\ServiceManagement\Azure\Services\Microsoft.IdentityModel.Clients.ActiveDirectory.dll"
-			$adalforms = "${env:ProgramFiles(x86)}\Microsoft SDKs\Azure\PowerShell\ServiceManagement\Azure\Services\Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms.dll"
-			$null = [System.Reflection.Assembly]::LoadFrom($adal)
-			$null = [System.Reflection.Assembly]::LoadFrom($adalforms)
-
-			# Get Service Admin Live Email Id since we don't have native access to the Azure Active Directory Tenant Name from within Azure PowerShell
-			[string]$adTenantAdminEmailId = (Get-AzureSubscription -Current -ExtendedDetails).AccountAdminLiveEmailId
-
-			if ($AzureActiveDirectoryTenantName -eq "")
-			{
-				if ($adTenantAdminEmailId.Contains("@microsoft.com"))
-				{
-					$adTenantName = "microsoft"
-					$adTenant = "$adTenantName.onmicrosoft.com"
-				}
-				else
-				{
-					[string]$adTenantNameNoAtSign = ($adTenantAdminEmailId).Replace("@","")
-					$adTenantNameIndexofLastPeriod = $adTenantNameNoAtSign.LastIndexOf(".")
-					$adTenantNameTemp = $adTenantNameNoAtSign.Substring(0,$adTenantNameIndexofLastPeriod)
-					$adTenantName = ($adTenantNameTemp).Replace(".","")
-					$adTenant = "$adTenantName.onmicrosoft.com"
-				}
-			}
-			else
-			{
-				$adTenantName = $AzureActiveDirectoryTenantName
-				$adTenant = $adTenantName
-			} 
-
-			# Set well-known client ID for AzurePowerShell
-			$clientId = "1950a258-227b-4e31-a9cf-717495945fc2" 
-			# Set redirect URI for Azure PowerShell
-			$redirectUri = "urn:ietf:wg:oauth:2.0:oob"
-			# Set Resource URI to Azure Service Management API
-			$resourceAppIdURI = "https://management.core.windows.net/"
-			# Set Authority to Azure AD Tenant
-			$authority = "https://login.windows.net/$adTenant"
-			# Create Authentication Context tied to Azure AD Tenant
-			$authContext = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext" -ArgumentList $authority
-			# Acquire token
-			$authResult = $authContext.AcquireToken($resourceAppIdURI, $clientId, $redirectUri, "Auto")
-
-			# API header
-			$headerDate = '2014-10-01'
-			$authHeader = $authResult.CreateAuthorizationHeader()
-			# Set HTTP request headers to include Authorization header
-			$headers = @{"x-ms-version"="$headerDate";"Authorization" = $authHeader}
-
-			# Generate the API URI
-			$azureSubscription = (Get-AzureSubscription -Current -ExtendedDetails)
-			$azureSubscriptionID = $azureSubscription.SubscriptionID            
-			$listSearchServicesURL = "https://management.azure.com/subscriptions/$azureSubscriptionID/resourceGroups/$WTTEnvironmentResourceGroupName/providers/Microsoft.Search/searchServices?api-version=2015-02-28"
-			$azureDatacenterLocationsListURL = "https://management.azure.com/providers/Microsoft.Search?api-version=2015-01-01"
-			$azureSearchServiceIndexerDatasourceURL = "https://$wTTEnvironmentApplicationName.search.windows.net/datasources?api-version=2015-02-28"
-			$azureSearchServiceIndexerURL = "https://$wTTEnvironmentApplicationName.search.windows.net/indexers?api-version=2015-02-28"
-			$azureSearchServiceIndexURL = "https://$wTTEnvironmentApplicationName.search.windows.net/indexes?api-version=2015-02-28"
-			$azureResourceProvidersURL = "https://management.azure.com/subscriptions/$azureSubscriptionID/providers?api-version=2015-01-01" 
-			[string]$azureSearchResourceProviderNamespace = "Microsoft.Search"            
-			$azureSearchResourceProviderURL = "https://management.azure.com/subscriptions/$azureSubscriptionID/providers/$azureSearchResourceProviderNamespace" + "?api-version=2015-01-01"           
-
 			# Register Azure Search as a provider
 			$status = Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Search
 			if ($status -ne "Registered")
 			{
-			Register-AzureRmResourceProvider -ProviderNamespace Microsoft.Search -Force
+			    $null = Register-AzureRmResourceProvider -ProviderNamespace Microsoft.Search -Force
 			}
 
-			# Retrieve the List of Azure Search Services via the REST API
-			$listSearchServices = @()
-			$listSearchServices = Invoke-RestMethod -Uri $listSearchServicesURL -Method "GET" -Headers $headers            
+            WriteLabel("Checking for Azure Search Service $WTTEnvironmentApplicationName")
+            $listSearchService = Find-AzureRmResource -ResourceGroupNameContains $WTTEnvironmentResourceGroupName -ResourceType Microsoft.Search/searchServices -ExpandProperties
+            if($listSearchService.Name -eq $wTTEnvironmentApplicationName)
+            {
+                WriteValue("Failed")
+                WriteError("$wTTEnvironmentApplicationName Search Service already exists")
+                break
+            }
+            else
+            {
+                WriteValue("Success")
+            }
 
-			# Retrieve the List of Azure Datacenter Locations accessible to the current subscription via the REST API
-			$azureDatacenterLocationsList = @()
-			$azureDatacenterLocationsList = Invoke-RestMethod -Uri $azureDatacenterLocationsListURL -Method "GET" -Headers $headers               
-			[System.Collections.ArrayList]$locationsList = @()
-
-			[int]$i = 0
-			for ([int]$i = 0; $i -le $azureDatacenterLocationsList.resourceTypes.Count; $i++)         
+                       
+            #Get list of Search Service locations and add to an array
+            $listSearchServicesLocations = (Get-AzureRmResourceProvider -ListAvailable | Where-Object {$_.ProviderNamespace -eq 'Microsoft.Search'}).locations   
+            [System.Collections.ArrayList]$listSearchServicesLocation = @()
+            foreach ($location in $listSearchServicesLocations)         
 			{
-				if($azureDatacenterLocationsList.resourceTypes[$i].resourceType -eq "searchServices")
-				{
-					$searchServicesResourceTypeIndex = $i
-				}
-			}            
-
-			foreach ($location in $azureDatacenterLocationsList.resourceTypes[$searchServicesResourceTypeIndex].locations)         
-			{
-				$null = $locationsList.Add($location)
+				$null = $listSearchServicesLocation.Add($location)
 			}
+            
+            WriteLabel("Deploying Azure Search Service $WTTEnvironmentApplicationName")
+            if($listSearchService.sku.name -ne "free")
+            {
+                foreach($searchLocation in $listSearchServicesLocation)
+                {  
+                    try
+                    {
+                        $newSearchService = New-AzureRmResourceGroupDeployment -ResourceGroupName $WTTEnvironmentResourceGroupName -TemplateUri "https://gallery.azure.com/artifact/20151001/Microsoft.Search.1.0.9/DeploymentTemplates/searchServiceDefaultTemplate.json" -nameFromTemplate $wTTEnvironmentApplicationName -sku free -location $AzureSearchServiceLocation -partitionCount 1 -replicaCount 1
+                        $newSearchServiceExists = (Find-AzureRmResource -ResourceType "Microsoft.Search" -ResourceNameContains $wTTEnvironmentApplicationName -ExpandProperties).properties.state
+                        $newSearchServiceExistsnow = $false
+                        if($newSearchServiceExists -eq "Ready")
+                        {
+                            $newSearchServiceExistsnow = $true
+                            WriteValue("Success")
+                            break
+                        }       
+                    }
+                    catch
+                    {
+                        $ErrorActionPreference = "Continue"
+                    }
+                }
+            }
 
-			#if the $AzureSearchServiceLocation doesn't support Azure Search, then use a location that does
-			if ($locationsList -notcontains $AzureSearchServiceLocation)
-			{
-				$AzureSearchServiceLocation = $locationsList[0]
-			}
+            else
+            {
+                foreach($searchLocation in $listSearchServicesLocation)
+                {  
+                    try
+                    {
+                        $newSearchService = New-AzureRmResourceGroupDeployment -ResourceGroupName $WTTEnvironmentResourceGroupName -TemplateUri "https://gallery.azure.com/artifact/20151001/Microsoft.Search.1.0.9/DeploymentTemplates/searchServiceDefaultTemplate.json" -nameFromTemplate $wTTEnvironmentApplicationName -sku standard -location $AzureSearchServiceLocation -partitionCount 1 -replicaCount 1
+                        $newSearchServiceExists = (Find-AzureRmResource -ResourceType "Microsoft.Search" -ResourceNameContains $wTTEnvironmentApplicationName -ExpandProperties).properties.state
+                        $newSearchServiceExistsnow = $false
+                        if($newSearchServiceExists -eq "Ready")
+                        {
+                            $newSearchServiceExistsnow = $true
+                            WriteValue("Success")
+                            break
+                        }                 
+                    }
+                    catch
+                    {
+                        $ErrorActionPreference = "Continue"
+                    }
+                }  
+            }
+            #Deploy Azure Search Service index
+            $azureSubscriptionID = (Get-AzureRmContext).Subscription.SubscriptionId
+			$createSearchServiceURL = "https://management.azure.com/subscriptions/$azureSubscriptionID/resourceGroups/$WTTEnvironmentResourceGroupName/providers/Microsoft.Search/searchServices/$wTTEnvironmentApplicationName" + "?api-version=2015-02-28"    
+            $azureSearchServiceIndexURL = "https://$wTTEnvironmentApplicationName.search.windows.net/indexes?api-version=2015-02-28"
+            $azureSearchServiceIndexerURL = "https://$wTTEnvironmentApplicationName.search.windows.net/indexers?api-version=2015-02-28"
+            $azureSearchServiceIndexerDatasourceURL = "https://$wTTEnvironmentApplicationName.search.windows.net/datasources?api-version=2015-02-28"
+            $searchServiceManagementKey = Invoke-AzureRmResourceAction -ResourceGroupName $WTTEnvironmentResourceGroupName -ResourceName $wTTEnvironmentApplicationName -ResourceType Microsoft.Search/searchServices -Action listAdminkeys -Force
+            $primaryKey = $searchServiceManagementKey.PrimaryKey
+			$headers = @{"api-key"=$primaryKey}                
 
-			# if the Search Service exists, retrieve the Primary Key via the REST API    
-			if (($listSearchServices.value | Where({$_.name -eq $wTTEnvironmentApplicationName}).Count -gt 0))
-			{   
-				$searchServiceManagementKeyURL = "https://management.azure.com/subscriptions/$azureSubscriptionID/resourceGroups/$WTTEnvironmentResourceGroupName/providers/Microsoft.Search/searchServices/$wTTEnvironmentApplicationName/listAdminKeys?api-version=2015-02-28"
-				$searchServiceManagementKey = Invoke-RestMethod -Uri $searchServiceManagementKeyURL -Method "POST" -Headers $headers                                
-			}
-
-			# if the Search Service doesn't exist, create it via the REST API
-			else
-			{
-				$newSearchServiceJsonBody = "{ 
-					""location"": ""$AzureSearchServiceLocation"", 
-					""properties"": { 
-						""sku"": { 
-							""name"": ""free"" 
-						}
-					} 
-				}"
-
-				# Create Service
-				$createSearchServiceURL = "https://management.azure.com/subscriptions/$azureSubscriptionID/resourceGroups/$WTTEnvironmentResourceGroupName/providers/Microsoft.Search/searchServices/$wTTEnvironmentApplicationName" + "?api-version=2015-02-28"
-				$createSearchService = Invoke-RestMethod -Uri $createSearchServiceURL -Method "PUT" -Body $newSearchServiceJsonBody -Headers $headers -ContentType "application/json"
-				Start-Sleep -Seconds 30
-
-				# Get management Keys
-				# once created, retrieve the Primary Key via the REST API    
-				$searchServiceManagementKeyURL = "https://management.azure.com/subscriptions/$azureSubscriptionID/resourceGroups/$WTTEnvironmentResourceGroupName/providers/Microsoft.Search/searchServices/$wTTEnvironmentApplicationName/listAdminKeys?api-version=2015-02-28"
-				$searchServiceManagementKey = Invoke-RestMethod -Uri $searchServiceManagementKeyURL -Method "POST" -Headers $headers                
-
-				$primaryKey = $searchServiceManagementKey.PrimaryKey
-				$headers = @{"x-ms-version"="$headerDate";"Authorization" = $authHeader;"api-key"=$primaryKey}                
-
-				$newSearchServiceIndexerDatasourceJsonBody = "{
+			$newSearchServiceIndexerDatasourceJsonBody = "{
 					""name"": ""concerts"",  
 					""fields"": [
 						{""name"": ""ConcertId"", ""type"": ""Edm.String"", ""key"": ""true"", ""filterable"": ""true"", ""retrievable"": ""true""},
@@ -241,10 +191,10 @@ function New-WTTAzureSearchService
 					] 
 				}" 
 
-				# Create Index                  
-				$createSearchServiceIndex = Invoke-RestMethod -Uri $azureSearchServiceIndexURL -Method "POST" -Body $newSearchServiceIndexerDatasourceJsonBody -Headers $headers -ContentType "application/json"
+			# Create Index                  
+			$createSearchServiceIndex = Invoke-RestMethod -Uri $azureSearchServiceIndexURL -Method "POST" -Body $newSearchServiceIndexerDatasourceJsonBody -Headers $headers -ContentType "application/json"
 
-				$newSearchServiceIndexerDatasourceJsonBody = "{ 
+			$newSearchServiceIndexerDatasourceJsonBody = "{ 
 				""name"": ""concertssql"", 
 				""type"": ""azuresql"",
 				""credentials"": { ""connectionString"": ""Server=tcp:$AzureSqlDatabaseServerPrimaryName.database.windows.net,1433;Database=$AzureSqlDatabaseName;User ID=$AzureSqlDatabaseServerAdministratorUserName;Password=$AzureSqlDatabaseServerAdministratorPassword;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"" },
@@ -255,22 +205,21 @@ function New-WTTAzureSearchService
 				} 
 				}"
 
-				# Create indexer datasource
-				$createSearchServiceIndexerDatasource = Invoke-RestMethod -Uri $azureSearchServiceIndexerDatasourceURL -Method "POST" -Body $newSearchServiceIndexerDatasourceJsonBody -Headers $headers -ContentType "application/json"
+			# Create indexer datasource
+			$createSearchServiceIndexerDatasource = Invoke-RestMethod -Uri $azureSearchServiceIndexerDatasourceURL -Method "POST" -Body $newSearchServiceIndexerDatasourceJsonBody -Headers $headers -ContentType "application/json"
 
-				$newSearchServiceIndexerJsonBody = "{ 
+			$newSearchServiceIndexerJsonBody = "{ 
 					""name"": ""fromsql"",
 					""dataSourceName"": ""concertssql"",
 					""targetIndexName"": ""concerts"",
 					""schedule"": { ""interval"": ""PT5M"", ""startTime"" : ""2015-01-01T00:00:00Z"" }
 				}"
 
-				# Create indexer
-				$createSearchServiceIndexer = Invoke-RestMethod -Uri $azureSearchServiceIndexerURL -Method "POST" -Body $newSearchServiceIndexerJsonBody -Headers $headers -ContentType "application/json"
-			}
-
-			$searchServiceManagementKey.PrimaryKey | Export-Clixml .\searchkey.xml -force        
-
+			# Create indexer
+			$createSearchServiceIndexer = Invoke-RestMethod -Uri $azureSearchServiceIndexerURL -Method "POST" -Body $newSearchServiceIndexerJsonBody -Headers $headers -ContentType "application/json"
+            
+            $primaryKey | Export-Clixml .\searchkey.xml -force
+			
 		}
 		Catch
 		{
