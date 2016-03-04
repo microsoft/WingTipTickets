@@ -134,6 +134,6 @@ if ( $numErrors -gt 0 )
   WriteError("Refer to adfdeploy-log.txt to investigate the errors")
 }
 else {
-  WriteValude("Successful")
+  WriteValue("Successful")
 }
 LineBreak
