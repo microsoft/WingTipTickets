@@ -122,8 +122,7 @@ function Set-WTTEnvironmentWebConfig
 			# Add the settings to the website
 			$null = Set-AzureRMWebApp -AppSettings $settings -Name $websiteName -ResourceGroupName $WTTEnvironmentApplicationName
 
-			# Restart the website - (Not sure that this is needed, try without first)
-			Restart-AzureRMWebApp -Name $websiteName -ResourceGroupName $WTTEnvironmentApplicationName
+			$null = Restart-AzureRMWebApp -Name $websiteName -ResourceGroupName $WTTEnvironmentApplicationName
 			
 			WriteValue("Successful")
 		}
