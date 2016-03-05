@@ -1,0 +1,18 @@
+DROP EXTERNAL TABLE asb.DimConcert;
+DROP EXTERNAL TABLE asb.DimCurrency;
+DROP EXTERNAL TABLE asb.DimDate;
+DROP EXTERNAL TABLE asb.DimGeography;
+DROP EXTERNAL TABLE asb.DimPerformer;
+DROP EXTERNAL TABLE asb.DimPromotion;
+DROP EXTERNAL TABLE asb.DimSalesTerritory;
+DROP EXTERNAL TABLE asb.DimVenue;
+DROP EXTERNAL TABLE asb.FactSales;
+DROP TABLE stage.DimConcert;
+DROP TABLE stage.DimCurrency;
+DROP TABLE stage.DimDate;
+DROP TABLE stage.DimGeography;
+DROP TABLE stage.DimPerformer;
+DROP TABLE stage.DimPromotion;
+DROP TABLE stage.DimSalesTerritory;
+DROP TABLE stage.DimVenue;
+DROP TABLE stage.FactSales;

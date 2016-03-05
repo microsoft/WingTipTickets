@@ -22,6 +22,7 @@ body
     font-size: 12pt;
     font-weight: normal;
     line-height: 30px;
+    overflow-x: hidden;
 }
 
 header 
@@ -294,8 +295,8 @@ legend {
     bottom: 0;
     left: 0px;
     color: #000000;
-    font-size: 40px;
-    padding: 20px;
+    font-size: 32px;
+    padding: 25px;
     line-height: 43px;
 }
 

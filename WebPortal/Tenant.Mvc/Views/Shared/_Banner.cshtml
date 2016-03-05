@@ -1,0 +1,16 @@
+﻿@model Tenant.Mvc.Models.ConcertListViewModel.ConcertViewModel
+
+<div class="banner">
+    <div class="row">
+        <img src="~/Content/img/@WingtipTicketApp.Config.TenantEventType/banner-01.jpg" class="img-responsive" style="width: 100%">
+    </div>
+    <div class="banner-home-left">
+        <div class="banner-caption">
+            <span class="banner-splitter">@Model.Performer</span> @Model.Name
+        </div>
+    </div>
+    <div class="banner-home-right">
+        @Html.ActionLink("Find Seats", "Index", "FindSeats", new { concertId = @Model.ConcertId }, new { @Class = "" })
+    </div>
+</div>
+

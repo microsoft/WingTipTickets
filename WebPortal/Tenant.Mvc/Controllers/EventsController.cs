@@ -1,6 +1,8 @@
-﻿using System.Web.Mvc;
-using Tenant.Mvc.Models.CustomersDB;
-using Tenant.Mvc.Repositories;
+﻿using System.Linq;
+using System.Web.Mvc;
+using Tenant.Mvc.Core.Interfaces.Tenant;
+using Tenant.Mvc.Core.Models;
+using Tenant.Mvc.Models;
 
 namespace Tenant.Mvc.Controllers
 {
@@ -8,26 +10,53 @@ namespace Tenant.Mvc.Controllers
     {
         #region - Fields -
 
-        private readonly TicketsRepository _mainRepository;
+        private readonly ICustomerRepository _customerRepository;
 
         #endregion
 
         #region - Controllers -
 
-        public EventsController()
+        public EventsController(ICustomerRepository customerRepository)
         {
-            _mainRepository = new TicketsRepository(DisplayMessage);
+            // Setup Fields
+            _customerRepository = customerRepository;
+
+            // Setup Callbacks
+            _customerRepository.StatusCallback = DisplayMessage;
         }
 
         #endregion
 
         #region - Index Views -
 
-        public ActionResult Index(string venueName = null)
+        public ActionResult Index(int? venueId = null)
         {
-            var customer = Session["SessionUser"] as Customer;
+            var customer = Session["SessionUser"] as CustomerModel;
+            var domainModel = _customerRepository.GetCustomerEvents(customer, venueId);
 
-            return View(_mainRepository.GenerateMyEvents(customer, venueName));
+            var viewModel = new CustomerEventsViewModel()
+            {
+                TicketList = domainModel.PurchasedTickets.Select(t => new CustomerEventsViewModel.PurchasedTicketViewModel()
+                {
+                    ConcertId = t.ConcertId,
+                    ConcertDate = t.EventDateTime,
+                    PerformerId = t.PerformerId,
+                    PerformerName = t.PerformerName,
+                    VenueId = t.VenueId,
+                    VenueName = t.VenueName,
+                    SeatName = t.SeatName,
+                    SectionName = t.SectionName,
+                    TicketQuantity = t.TicketQuantity,
+                }).ToList(),
+                VenuesList = domainModel.MyVenues.Select(v => new CustomerEventsViewModel.VenueViewModel()
+                {
+                    VenueId = v.VenueId,
+                    VenueName = v.VenueName,
+                    Capacity = v.Capacity
+                }).ToList()
+            };
+
+            return View(viewModel);
         }
 
         #endregion

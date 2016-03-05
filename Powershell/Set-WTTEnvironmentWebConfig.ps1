@@ -1,196 +1,135 @@
-<#
+﻿<#
 .Synopsis
-    WingtipTickets (WTT) Demo Environment.
- .DESCRIPTION
-    This script is used to edit the Application Settings values of the web.config file in the Azure WebSites WebDeploy Zip Package.
- .EXAMPLE
-    Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName <string> -AzureWebSiteWebDeployPackageName <string> -SearchServicePrimaryManagementKey <string>
+	WingtipTickets (WTT) Demo Environment.
+.DESCRIPTION
+	This script is used to edit the Application Settings values of the web.config file in the Azure WebSites WebDeploy Zip Package.
+.EXAMPLE
+	Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName <string> -AzureWebSiteWebDeployPackageName <string> -SearchServicePrimaryManagementKey <string>
 #>
 function Set-WTTEnvironmentWebConfig
 {
-    [CmdletBinding()]
-    Param
-    (   
-        # WTT Environment Application Name
-        [Parameter(Mandatory=$true)]
-        [String]
-        $WTTEnvironmentApplicationName,
+	[CmdletBinding()]
+	Param
+	(
+		# WTT Environment Application Name
+		[Parameter(Mandatory=$true)]
+		[String]
+		$WTTEnvironmentApplicationName,
 
-        # Primary Azure SQL Database Server Name
-        [Parameter(Mandatory=$false)]
-        [String]
-        $AzureSqlDatabaseServerPrimaryName,
+		# WTT Environment Application Name
+		[Parameter(Mandatory=$true)]
+		[String]
+		$Websitename,
 
-        # Secondary Azure SQL Database Server Name
-        [Parameter(Mandatory=$false)]
-        [String]
-        $AzureSqlDatabaseServerSecondaryName,
+		# Primary Azure SQL Database Server Name
+		[Parameter(Mandatory=$false)]
+		[String]
+		$AzureSqlDatabaseServerPrimaryName,
 
-        # Azure SQL Database Server Administrator User Name
-        [Parameter(Mandatory=$false)]
-        [String]
-        $AzureSqlDatabaseServerAdministratorUserName,
+		# Secondary Azure SQL Database Server Name
+		[Parameter(Mandatory=$false)]
+		[String]
+		$AzureSqlDatabaseServerSecondaryName,
 
-        # Azure SQL Database Server Adminstrator Password
-        [Parameter(Mandatory=$false)]
-        [String]
-        $AzureSqlDatabaseServerAdministratorPassword,
-        
-        # Azure SQL Database Name
-        [Parameter(Mandatory=$false)]
-        [String]
-        $AzureSqlDatabaseName,
+		# Azure SQL Database Server Administrator User Name
+		[Parameter(Mandatory=$false)]
+		[String]
+		$AzureSqlDatabaseServerAdministratorUserName,
 
-        # Path to Azure Web Site WebDeploy Package
-        [Parameter(Mandatory = $false)] 
-        [String]$AzureWebSiteWebDeployPackagePath, 
-                        
-        # Azure Search Service Primary Management Key
-        [Parameter(Mandatory = $true)] 
-        [String]$SearchServicePrimaryManagementKey,  
+		# Azure SQL Database Server Adminstrator Password
+		[Parameter(Mandatory=$false)]
+		[String]
+		$AzureSqlDatabaseServerAdministratorPassword,
+
+		# Azure SQL Database Name
+		[Parameter(Mandatory=$false)]
+		[String]
+		$AzureSqlDatabaseName,
+
+		# Path to Azure Web Site WebDeploy Package
+		[Parameter(Mandatory = $false)] 
+		[String]$AzureWebSiteWebDeployPackagePath, 
+		
+		# Azure Search Service Name
+		[Parameter(Mandatory = $true)] 
+		[String]$SearchName,
+
+		# Azure Search Service Primary Management Key
+		[Parameter(Mandatory = $true)] 
+		[String]$SearchServicePrimaryManagementKey,
 
 		# Azure DocumentDb Name
-        [Parameter(Mandatory = $false)] 
-        [String]$azureDocumentDbName,   
+		[Parameter(Mandatory = $false)]
+		[String]$azureDocumentDbName,
 
 		# Azure DocumentDb Key
-        [Parameter(Mandatory = $false)] 
-        [String]$documentDbPrimaryKey  		
-    )
-    Process
-    {   
-        try
-        {
-            if($AzureSqlDatabaseServerAdministratorUserName -eq "")
-            {
-                $AzureSqlDatabaseServerAdministratorUserName = "developer"
-            }
+		[Parameter(Mandatory = $false)] 
+		[String]$documentDbPrimaryKey
+	)
 
-            if($AzureSqlDatabaseServerAdministratorPassword -eq "")
-            {
-                $AzureSqlDatabaseServerAdministratorPassword = "P@ssword1"
-            }
+	Process
+	{
+		try
+		{
+			WriteLabel("Setting Config Settings")
 
-            if($AzureSqlDatabaseServerVersion -eq "")
-            {
-                $AzureSqlDatabaseServerVersion = "12.0"
-            }
+			# Check Defaults
+			if($AzureSqlDatabaseServerAdministratorUserName -eq "")
+			{
+				$AzureSqlDatabaseServerAdministratorUserName = "developer"
+			}
 
-            if($AzureSqlDatabaseName -eq "")
-            {
-                $AzureSqlDatabaseName = "Customer1"
-            }
-     
-            if($AzureWebSiteWebDeployPackagePath -eq "")
-            {
-                $AzureWebSiteWebDeployPackagePath = (Get-Item -Path ".\" -Verbose).FullName + "\Packages"
-            }
-            
-            if($AzureSqlDatabaseServerPrimaryName -eq "")
-            {
-                $AzureSqlDatabaseServerPrimaryName = $WTTEnvironmentApplicationName + "primary"
-            }
-            if($AzureSqlDatabaseServerSecondaryName -eq "")
-            {
-                $AzureSqlDatabaseServerSecondaryName = $WTTEnvironmentApplicationName + "secondary"                    
-            }
+			if($AzureSqlDatabaseServerAdministratorPassword -eq "")
+			{
+				$AzureSqlDatabaseServerAdministratorPassword = "P@ssword1"
+			}
 
-                        
+			if($AzureSqlDatabaseName -eq "")
+			{
+				$AzureSqlDatabaseName = "Customer1"
+			}
 
-            # Open zip and find the particular file (assumes only one inside the Zip file)
-            $fileToEdit = "web.config"
-            Add-Type -assembly  System.IO.Compression.FileSystem            
-            $webDeployPackage = [System.IO.Compression.ZipFile]::Open($AzureWebSiteWebDeployPackagePath,"Update")
-            $desiredWebConfigFile = $webDeployPackage.Entries | Where({$_.name -eq $fileToEdit})   
-            if($desiredWebConfigFile.Count -gt 1)
-            {
-                foreach($webConfigFile in $desiredWebConfigFile)                
-                {
-                    if ($webConfigFile.FullName -notcontains "Views")
-                    {
-                        $desiredWebConfigFile = $webConfigFile
-                    }
-                }
-            }
-            
-            # Read the contents of the web.config file
-            $webConfigFile = [System.IO.StreamReader]($desiredWebConfigFile).Open()            
-            [xml]$webConfig = [xml]$webConfigFile.ReadToEnd()
-            $webConfigFile.Close()
-            
-            # Set the appSetttings values 
-            $obj = $webConfig.configuration.appSettings.add | where {$_.Key -eq 'TenantName'}
-            $obj.value = $WTTEnvironmentApplicationName
+			$docDBName = "https://$azureDocumentDbName.documents.azure.com:443/"
 
-            $obj = $webConfig.configuration.appSettings.add | where {$_.Key -eq 'DatabaseUserName'}
-            $obj.value = $AzureSqlDatabaseServerAdministratorUserName
+			# Build web application settings
+			$settings = New-Object Hashtable
+			$settings = 
+			@{
+					# Tenant Settings
+					"TenantName" = "$WTTEnvironmentApplicationName"; 
+					"TenantEventType" = "pop"; # This is not set from main script, used the default
+					"TenantPrimaryDatabaseServer" = "$AzureSqlDatabaseServerPrimaryName"; 
+					"TenantSecondaryDatabaseServer" = "$AzureSqlDatabaseServerSecondaryName";
+					"TenantDatabase" = "$AzureSqlDatabaseName"; 
 
-            $obj = $webConfig.configuration.appSettings.add | where {$_.Key -eq 'DatabaseUserPassword'}
-            $obj.value = $AzureSqlDatabaseServerAdministratorPassword        
-        
-            $obj = $webConfig.configuration.appSettings.add | where {$_.Key -eq 'PrimaryDatabaseServer'}
-            $obj.value = $AzureSqlDatabaseServerPrimaryName
+					# Recommendation Setings
+					"RecommendationDatabaseServer" = "$AzureSqlDatabaseServerPrimaryName";
+					"RecommendationDatabase" = "Recommendations";
 
-            $obj = $webConfig.configuration.appSettings.add | where {$_.Key -eq 'SecondaryDatabaseServer'}
-            $obj.value = $AzureSqlDatabaseServerSecondaryName
+					# Shared Settings
+					"DatabaseUser" = "$AzureSqlDatabaseServerAdministratorUserName"; 
+					"DatabasePassword" = "$AzureSqlDatabaseServerAdministratorPassword"; 
+					"AuditingEnabled" = "false" # This is not set from main script, used the default
+					"RunningInDev" = "false";
 
-            $obj = $webConfig.configuration.appSettings.add | where {$_.Key -eq 'TenantDbName'}
-            $obj.value = $AzureSqlDatabaseName
+					# Keys
+					"SearchServiceKey" = "$SearchServicePrimaryManagementKey"; 
+					"SearchServiceName" = "$SearchName"; 
+					"DocumentDbUri" = "$docDBName"; 
+					"DocumentDbKey" = "$documentDbPrimaryKey";
+			}
 
-            $obj = $webConfig.configuration.appSettings.add | where {$_.Key -eq 'SearchServiceKey'}
-            $obj.value = $SearchServicePrimaryManagementKey
+			# Add the settings to the website
+			$null = Set-AzureRMWebApp -AppSettings $settings -Name $websiteName -ResourceGroupName $WTTEnvironmentApplicationName
 
-            if ($WTTEnvironmentApplicationName.Length -gt 15)
-            {
-                $wTTEnvironmentApplicationName = $WTTEnvironmentApplicationName.Substring(0,15)
-            }
-            else
-            {
-                $wTTEnvironmentApplicationName = $WTTEnvironmentApplicationName
-            }                        
-
-            $obj = $webConfig.configuration.appSettings.add | where {$_.Key -eq 'SearchServiceName'}
-            $obj.value = $wTTEnvironmentApplicationName
+			$null = Restart-AzureRMWebApp -Name $websiteName -ResourceGroupName $WTTEnvironmentApplicationName
 			
-			# New DocumentDb Keys
-			$obj = $webConfig.configuration.appSettings.add | where {$_.Key -eq 'DocumentDbServiceEndpointUri'}
-            $azureDocDBObj = ("https://$azureDocumentDbName.documents.azure.com:443/")
-            $obj.value = $azureDocDBObj 
-			
-			$obj = $webConfig.configuration.appSettings.add | where {$_.Key -eq 'DocumentDbServiceAuthorizationKey'}
-            $obj.value = $documentDbPrimaryKey
-                        
-            $formattedXml = Format-XML -xml $webConfig.OuterXml
-            
-            # Write the changes and close the zip file
-            $webConfigFileFinal = [System.IO.StreamWriter]($desiredWebConfigFile).Open()            
-            $webConfigFileFinal.BaseStream.SetLength(0)
-            $webConfigFileFinal.Write($formattedXml)            
-            $webConfigFileFinal.Close()
-            $webDeployPackage.Dispose()
-        }
-        catch
-        {            
-            Write-Host $Error
-        }
-    }
+			WriteValue("Successful")
+		}
+		catch
+		{
+			WriteError($Error)
+		}
+	}
 }
 
-function Format-XML ([xml]$xml, $indent=2) 
-{ 
-    try
-    {
-        $StringWriter = New-Object System.IO.StringWriter 
-        $XmlWriter = New-Object System.XMl.XmlTextWriter $StringWriter 
-        $xmlWriter.Formatting = "indented" 
-        $xmlWriter.Indentation = $Indent 
-        $xml.WriteContentTo($XmlWriter) 
-        $XmlWriter.Flush() 
-        $StringWriter.Flush() 
-        Write-Output $StringWriter.ToString() 
-    }
-    catch
-    {            
-        Write-Host $Error
-    }
-}

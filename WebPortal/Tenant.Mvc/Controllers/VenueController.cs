@@ -1,21 +1,18 @@
 ﻿using System.Web.Mvc;
-using Tenant.Mvc.Repositories;
+using Tenant.Mvc.Core.Interfaces.Tenant;
 
 namespace Tenant.Mvc.Controllers
 {
     public class VenueController : BaseController
     {
-        #region - Fields -
-
-        private readonly TicketsRepository _mainRepository;
-
-        #endregion
-
         #region - Controllers -
 
-        public VenueController()
+        public VenueController(IConcertRepository concertRepository, IVenueRepository venueRepository)
+            : base(concertRepository, venueRepository)
         {
-            _mainRepository = new TicketsRepository(DisplayMessage);
+            // Setup Callbacks
+            concertRepository.StatusCallback = DisplayMessage;
+            venueRepository.StatusCallback = DisplayMessage;
         }
 
         #endregion
@@ -24,7 +21,9 @@ namespace Tenant.Mvc.Controllers
 
         public ActionResult Index(int venueId = 0)
         {
-            return View(_mainRepository.GenerateEventListView(venueId));
+            var viewModel = GetConcerts(venueId);
+
+            return View(viewModel);
         }
 
         #endregion

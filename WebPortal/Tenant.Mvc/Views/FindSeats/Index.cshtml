@@ -1,9 +1,7 @@
-﻿@model Tenant.Mvc.Models.ConcertsDB.Concert
+﻿@model Tenant.Mvc.Models.FindSeatsViewModel
 
-@using Microsoft.Ajax.Utilities
 @using Newtonsoft.Json;
-@using Tenant.Mvc
-@using Tenant.Mvc.Models.CustomersDB
+@using Tenant.Mvc.Core.Models
 
 @{
     ViewBag.Title = "Find Seats";
@@ -14,13 +12,10 @@
         <div class="col-xs-12 ">
             <div class="banner">
                 <div class="row">
-                    <img src="~/Content/img/@WingtipTicketApp.Config.TenantEventTypeGenre/banner-01.jpg" class="img-responsive" style="width: 100%">
+                    <img src="~/Content/img/@WingtipTicketApp.Config.TenantEventType/banner-01.jpg" class="img-responsive" style="width: 100%">
                 </div>
                 <div class="banner-findseats">
-                    @if (Model != null && Model.Performer != null)
-                    {
-                        <div class="banner-caption"><span class="banner-splitter">@Model.Performer.ShortName</span> @Model.ConcertDate.ToString("dddd MMM. dd, yyyy h tt")</div>
-                    }
+                    <div class="banner-caption"><span class="banner-splitter">@Model.Concert.PerformerName</span> @Model.Concert.ConcertDate.ToString("dddd MMM. dd, yyyy h tt")</div>
                 </div>
             </div>
         </div>
@@ -28,27 +23,27 @@
 
     <div class="row row-underline-dark">
         <div class="col-xs-12 col-md-12">
-            <h2>@Model.Venue.VenueName - @Model.ConcertName</h2>
-            <h3>Details: @Model.Performer.ShortName</h3>
+            <h2>@Model.Concert.VenueName - @Model.Concert.ConcertName</h2>
+            <h3>Performer: @Model.Concert.PerformerName</h3>
         </div>
     </div>
 
-    <!-- Ticket quantity & section selection dialog -->
+    <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+    <!-- Ticket Quantity Section -->
+    <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+
     <div class="row">
         <div class="col-xs-12">
             @using (Html.BeginForm("Index", "FindSeats", FormMethod.Post))
             {
+                @Html.HiddenFor(m => m.Concert.ConcertId)
+                
                 <div class="form-group">
                     <div class="col-xs-2">
                         <label>Quantity</label>
                     </div>
                     <div class="col-xs-1">
-                        <select id="slctQuantity" name="slctQuantity" class="form-control">
-                            @for (var i = 1; i <= 5; i++)
-                            {
-                                <option value="@i.ToString()">@i.ToString()</option>
-                            }
-                        </select>
+                        @Html.DropDownListFor(m => m.Concert.Quantity, @Model.TicketQuantities, new { @class = "form-control" })
                     </div>
                 </div>
 
@@ -60,19 +55,14 @@
                         <label>Price & Section</label>
                     </div>
                     <div class="col-xs-3">
-                        <select id="slctPriceSection" name="slctPriceSection" class="form-control">
-                            @foreach (var seatLevels in Model.Venue.VenueSeatSections)
-                            {
-                                <option value="@(seatLevels.TicketPrice + "|" + seatLevels.TicketLevelId)">$@seatLevels.TicketPrice: @seatLevels.TicketLevelDescription</option>
-                            }
-                        </select>
+                        @Html.DropDownListFor(m => m.Concert.SeatSectionId, @Model.SeatSections, new { @class = "form-control" })
                     </div>
                 </div>
 
                 <div class="pull-right">
-                    @if ((Session["SessionUser"] as Customer) != null)
+                    @if ((Session["SessionUser"] as CustomerModel) != null)
                     {
-                        <button id="puchaseTicket" type="button" class="btn btn-themed-secondary pull-right" data-toggle="modal" data-target=".modal-tickets" data-backdrop="static" data-keyboard="false">
+                        <button id="puchaseTicket" type="button" class="btn btn-themed-secondary pull-right">
                             Purchase tickets &#62;
                         </button>
                     }
@@ -85,11 +75,15 @@
                 </div>
             }
         </div>
+        
+        <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+        <!-- Venue Data -->
+        <!-- -------------------------------------------------------------------------------------------------------------------------- -->
 
         <div class="col-xs-12 img-div">
 
             <div class="col-xs-12 col-md-6">
-                <img class="img-responsive" src="~/Content/img/@WingtipTicketApp.Config.TenantEventTypeGenre/floor-plan.jpg" />
+                <img class="img-responsive" src="~/Content/img/@WingtipTicketApp.Config.TenantEventType/floor-plan.jpg" />
             </div>
 
             <div id="documentdb-meta-parent" class=" col-xs-12 col-md-6">
@@ -102,11 +96,11 @@
                         <label class="pull-left">Name</label>
                     </div>
                     <div class="col-xs-7">
-                        <label class="pull-right"> @Model.Venue.VenueName</label>
+                        <label class="pull-right"> @Model.Concert.VenueName</label>
                     </div>
                 </div>
 
-                @if (ViewBag.VenueMetaData != null)
+                @if (Model.VenueMetaData != null)
                 {
                     <div id="documentdb-meta-template" class="row">
                         <div class="col-xs-5">
@@ -119,7 +113,8 @@
 
                 }
             </div>
-            @if (ViewBag.VenueMetaData != null)
+
+            @if (Model.VenueMetaData != null)
             {
                 <div class="row">
                     <div class="col-xs-12">
@@ -128,14 +123,17 @@
                 </div>
             }
 
-            <!-- Modal -->
+            <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+            <!-- MetaData Dialog -->
+            <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+
             <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-body">
-                            @if (ViewBag.VenueMetaData != null)
+                            @if (Model.VenueMetaData != null)
                             {
-                                <pre style="text-align:left">@Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.VenueMetaData, Formatting.Indented).ToString()</pre>
+                                <pre style="text-align:left">@JsonConvert.SerializeObject(Model.VenueMetaData, Formatting.Indented)</pre>
                             }
                         </div>
                         <div class="modal-footer">
@@ -148,15 +146,18 @@
     </div>
 </div>
 
-<!-- Ticket purchase dialog -->
-<div class="modal fade modal-tickets" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" data-ticketcount="0">
+<!-- -------------------------------------------------------------------------------------------------------------------------- -->
+<!-- Ticket Purchase Dialog -->
+<!-- -------------------------------------------------------------------------------------------------------------------------- -->
+
+<div id="purchaseTicketModel" class="modal fade modal-tickets" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
 
             <div class="modal-header">
                 <div class="row">
                     <div class="col-xs-8">
-                        <img src="~/Content/img/@WingtipTicketApp.Config.TenantEventTypeGenre/ticketmaestro-logo.jpg" class="img-responsive pull-left">
+                        <img src="~/Content/img/@WingtipTicketApp.Config.TenantEventType/ticketmaestro-logo.jpg" class="img-responsive pull-left">
                         <h1 class="logo-heading">@WingtipTicketApp.Config.TenantName.ToLower()</h1>
                     </div>
                     <div class="col-xs-4">
@@ -178,36 +179,34 @@
                         <h3>Ticket Information</h3>
 
                         <ul>
-                            <li>Event: @Model.ConcertName</li>
-                            <li>Venue: @Model.Venue.VenueName</li>
-                            <li>Date:  @String.Format("{0:D}", Model.ConcertDate)</li>
+                            <li>Event: @Model.Concert.ConcertName</li>
+                            <li>Venue: @Model.Concert.VenueName</li>
+                            <li>Date:  @String.Format("{0:D}", Model.Concert.ConcertDate)</li>
                         </ul>
                         <ul>
-                            <li id="liTicketQuantity">Tickets: 1 General Admission</li>
-                            <li id="liPrice">Total Cost: $@Model.Venue.VenueSeatSections[0].TicketPrice</li>
+                            <li id="liTicketQuantity">Tickets: <span id="spanTicketQty"></span> General Admission</li>
+                            <li id="liPrice">Total Cost: $<span id="spanTotal"></span></li>
                         </ul>
                     </div>
 
                     <div class="col-sm-12 col-md-6 ticket-info">
                         @using (Html.BeginForm("PurchaseTicketsWithCreditCard", "FindSeats", FormMethod.Post, new { @class = "form-horizontal" }))
                         {
-                            <input type="hidden" name="concertId" value="@Model.ConcertId" />
-                            <input type="hidden" name="customerId" value="@((Session["SessionUser"] is Customer) ? (Session["SessionUser"] as Customer).CustomerId : 1)" />
-                            <input type="hidden" name="ticketPrice" value="@(Convert.ToInt32(Model.Venue.VenueSeatSections[0].TicketPrice))" />
-                            <input type="hidden" name="ticketCount" value="1" />
-                            <input type="hidden" name="seatMapId" value="@(Convert.ToInt32(Model.Venue.VenueSeatSections[0].TicketLevelId))" />
+                            @Html.HiddenFor(m => m.Purchase.ConcertId)
+                            @Html.HiddenFor(m => m.Purchase.Quantity)
+                            @Html.HiddenFor(m => m.Purchase.SeatSectionId)
 
                             <h3>Payment Information</h3>
 
                             <div class="form-group">
                                 <div class="col-xs-12">
-                                    <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Name On Card">
+                                    @Html.TextBoxFor(m => m.Purchase.CardHolder, new { @class = "form-control", @placeholder = "Name On Card" })
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <div class="col-xs-12">
-                                    <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Card Number (No Dashes)">
+                                    @Html.TextBoxFor(m => m.Purchase.CardNumber, new { @class = "form-control", @placeholder = "Card Number (No Dashes)" })
                                 </div>
                             </div>
 
@@ -216,27 +215,10 @@
                                     <label class="subscript hidden-xs">Expiration Date</label>
                                 </div>
                                 <div class="col-xs-6">
-                                    <select class="form-control">
-                                        <option>Month</option>
-                                        @{
-                                            for (var i = 1; i < 13; i++)
-                                            {
-                                                <option>@i</option>
-                                            }
-                                        }
-                                    </select>
-
+                                    @Html.DropDownListFor(m => m.Purchase.CardExpirationMonth, @Model.ExpirationMonths, new { @class = "form-control", @placeholder = "Month" })
                                 </div>
                                 <div class="col-xs-6">
-                                    <select class="form-control">
-                                        <option>Year</option>
-                                        @{
-                                            for (var i = 2015; i < 2021; i++)
-                                            {
-                                                <option>@i</option>
-                                            }
-                                        }
-                                    </select>
+                                    @Html.DropDownListFor(m => m.Purchase.CardExpirationYear, @Model.ExpirationYears, new { @class = "form-control", @placeholder = "Year" })
                                 </div>
                             </div>
 
@@ -250,7 +232,7 @@
                                     </button>
                                 </div>
                             </div>
-                                            }
+                        }
                     </div>
                 </div>
             </div>
@@ -258,20 +240,55 @@
     </div>
 </div>
 
-@if (ViewBag.VenueMetaData != null)
+<!-- -------------------------------------------------------------------------------------------------------------------------- -->
+<!-- Script Section -->
+<!-- -------------------------------------------------------------------------------------------------------------------------- -->
+
+<script src="~/Content/Scripts/jquery-1.9.1.min.js"></script>
+<script>
+    $( document ).ready(function() {
+        $("#puchaseTicket").click(function()
+        {
+            // Get Values
+            var concertId = $("#Concert_ConcertId").val();
+            var seatSectionId = $("#Concert_SeatSectionId").val();
+            var quantity = $("#Concert_Quantity").val();
+            
+            var price = $("#Concert_SeatSectionId option:selected").text().split(":")[0].replace("$","").replace(",00","");
+            var total = price * quantity;
+
+            // Set Purchase Fields
+            $("#Purchase_ConcertId").val(concertId);
+            $("#Purchase_SeatSectionId").val(seatSectionId);
+            $("#Purchase_Quantity").val(quantity);
+
+            // Set Dialog Fields
+            $("#spanTicketQty").html(quantity);
+            $("#spanTotal").html(total + ".00");
+
+            // Show the Modal
+            $('#purchaseTicketModel').modal({
+                keyboard: false,
+                backdrop: 'static',
+            });
+        });
+    });
+</script>
+
+@if (Model.VenueMetaData != null)
 {
-    <script src="~/Content/Scripts/jquery-1.9.1.min.js"></script>
     <script>
         (function () {
-            var meta = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.VenueMetaData));
+            var meta = @Html.Raw(JsonConvert.SerializeObject(@Model.VenueMetaData));
             meta = meta.Data;
+
             var template = $("#documentdb-meta-template");
             var parent = $("#documentdb-meta-parent");
 
             template.hide();
             template.remove();
 
-            var AddItem = function(label, value){
+            var addItem = function(label, value){
                 var clone = template.clone();
                 clone.removeAttr("id");
 
@@ -296,9 +313,9 @@
 
             console.log("Adding dynamic elements to the page from Document DB.");
             $.each(meta, function(key, value){
-                AddItem(key, value);
+                addItem(key, value);
             });
-
         })();
+    
     </script>
 }

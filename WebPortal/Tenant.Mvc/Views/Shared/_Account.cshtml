@@ -1,0 +1,25 @@
+﻿@using Tenant.Mvc
+@using Tenant.Mvc.Core.Models
+
+<div class="row box-light">
+    <h3>
+        <span class="box-light-splitter">my</span>@WingtipTicketApp.Config.TenantName.ToLower()
+    </h3>
+
+    <p>Update your list of favorites and <br />never miss an event!</p>  
+
+    @{
+        var user = Session["SessionUser"] as CustomerModel;
+        
+        if (user != null && Startup.SessionUsers.Contains(user))
+        {
+            @Html.ActionLink("Sign Off", "Logout", "Account", new { }, new { @class = "btn btn-themed-secondary", @style = "width: 100%" })
+        }
+        else
+        {
+            <a href="#" class="btn btn-themed-secondary" style="width: 100%" data-toggle="modal" data-target=".bs-example-modal-lg">Sign In</a>
+            <a href="#" class="btn btn-themed-secondary" style="width: 100%" data-toggle="modal" data-target=".bs-example-modal-lg">Create Account</a>
+        }
+    }
+</div>
+

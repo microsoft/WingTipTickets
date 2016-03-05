@@ -1,0 +1,18 @@
+﻿@model List<Tenant.Mvc.Models.ConcertListViewModel.VenueViewModel>
+
+<div class="row box-light height-260">
+    <h3>Nearby Cities</h3>
+
+    <ul>
+        @foreach (var venue in Model)
+        {
+            <li>
+                <a href="@Url.Action("Index", "City", new { cityId = venue.CityId })">@venue.CityName, @venue.StateName</a>
+            </li>
+        }
+
+        <li>
+            <a href="@Url.Action("Index", "City")">See All Cities ></a>
+        </li>
+    </ul>
+</div>

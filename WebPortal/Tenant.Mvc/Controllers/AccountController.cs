@@ -1,7 +1,8 @@
 ﻿using System.Linq;
 using System.Web.Mvc;
-using Tenant.Mvc.Models.CustomersDB;
-using Tenant.Mvc.Repositories;
+using System.Web.Security;
+using Tenant.Mvc.Core.Interfaces.Tenant;
+using Tenant.Mvc.Core.Models;
 
 namespace Tenant.Mvc.Controllers
 {
@@ -9,15 +10,19 @@ namespace Tenant.Mvc.Controllers
     {
         #region - Fields -
 
-        private readonly TicketsRepository _ticketsRepository;
+        private readonly ICustomerRepository _customerRepository;
 
         #endregion
 
         #region - Constructors -
 
-        public AccountController()
+        public AccountController(ICustomerRepository customerRepository)
         {
-            _ticketsRepository = new TicketsRepository(DisplayMessage);
+            // Setup Fields
+            _customerRepository = customerRepository;
+
+            // Setup Callbacks
+            _customerRepository.StatusCallback = DisplayMessage;
         }
 
         #endregion
@@ -31,28 +36,32 @@ namespace Tenant.Mvc.Controllers
             {
                 DisplayMessage("Please type your email and password.");
             }
+
+            if (_customerRepository.Login(loginUsername, loginPassword))
+            {
+                var customer = (CustomerModel)Session["SessionUser"];
+
+                FormsAuthentication.RedirectFromLoginPage(string.Format("{0} {1}", customer.FirstName, customer.LastName), false);
+            }
             else
             {
-                _ticketsRepository.CustomerDbContext.Login(loginUsername, loginPassword);
+                DisplayMessage("The username and password supplied is not correct.");
             }
-
-            if (ControllerContext.HttpContext.Request.UrlReferrer != null)
-            {
-            return new RedirectResult(ControllerContext.HttpContext.Request.UrlReferrer.AbsoluteUri);
-        }
 
             return RedirectToAction("Index", "Home");
         }
 
         public ActionResult Logout()
         {
-            if (Session["SessionUser"] != null)
+            if (User.Identity.IsAuthenticated)
             {
-                if (Startup.SessionUsers.Contains(Session["SessionUser"] as Customer))
+                if (Startup.SessionUsers.Contains(Session["SessionUser"] as CustomerModel))
                 {
-                    Startup.SessionUsers.Remove(Session["SessionUser"] as Customer);
+                    Startup.SessionUsers.Remove(Session["SessionUser"] as CustomerModel);
                     Session["SessionUser"] = null;
                 }
+
+                FormsAuthentication.SignOut();
             }
 
             return RedirectToAction("Index", "Home");
@@ -71,16 +80,12 @@ namespace Tenant.Mvc.Controllers
             }
             else if (Startup.SessionUsers.Any(a => a.Email == email))
             {
-                    DisplayMessage("User already exists in session.");
+                DisplayMessage("User already exists in session.");
             }
-                else
-            {
-                _ticketsRepository.CustomerDbContext.CreateUser(firstName, lastName, email, phonenumber, password);
-        }
 
-            if (ControllerContext.HttpContext.Request.UrlReferrer != null)
-                {
-                return new RedirectResult(ControllerContext.HttpContext.Request.UrlReferrer.AbsoluteUri);
+            if (_customerRepository.CreateUser(firstName, lastName, email, phonenumber, password))
+            {
+                FormsAuthentication.RedirectFromLoginPage(email, true);
             }
 
             return RedirectToAction("Index", "Home");

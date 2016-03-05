@@ -1,0 +1,142 @@
+﻿
+/* Set padding to keep content from hitting the edges */
+body {
+    padding: 15px;
+    overflow-x: hidden;
+}
+
+/*ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}*/
+
+/* Breaks WingTipTickets Styles */
+/*li {
+    float: left;
+    width: 200px;
+}*/
+
+
+/* Set width on the form input elements since they're 100% wide by default */
+/*input,
+select,
+textarea {
+    max-width: 280px;
+}*/
+
+/* styles for validation helpers */
+.field-validation-error {
+    color: #b94a48;
+}
+
+.field-validation-valid {
+    display: none;
+}
+
+input.input-validation-error {
+    border: 1px solid #b94a48;
+}
+
+input[type="checkbox"].input-validation-error {
+    border: 0 none;
+}
+
+.validation-summary-errors {
+    color: #b94a48;
+}
+
+.validation-summary-valid {
+    display: none;
+}
+
+.spinner{
+    width:32px;
+    height:32px;
+}
+
+
+.itemRow {
+    margin: 5px;
+}
+
+.col-md-4 h2 a {
+    color: #006699;
+    text-decoration: none;
+}
+
+.col-md-4 p {
+    font-size: 16px;
+    color: #ff0000;
+}
+
+.itemCell {
+    font-family: verdana;
+    border: 1px solid #46484D;
+    box-shadow: 5px 5px 2px #888888;
+    border-radius: 5px;   
+    margin: 10px;
+    width: 30% !important;
+}
+
+
+.body-content {
+    margin-left: auto;
+    margin-right: auto;
+    width: 85%;
+}
+
+.buy-button {
+    color: #fff;
+    background-color: #006699;    
+}
+
+
+.menu {
+    background-color: #6E7D85;
+    height: 35px;
+    margin: 5px;
+}
+.menuwrap {
+    background-color: #6E7D85;
+    padding-top: 7px;
+    padding-right: 4px;
+    padding-left: 4px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border: 0px;
+}
+.current {
+  color: #ff0000 !important;
+}
+
+.outer {
+    border-bottom: 1px solid #46484D;
+    border-left: 1px solid #46484D;
+    border-right: 1px solid #46484D;  
+     border-radius: 15px;   
+}
+
+.menu ul {
+  margin: 0px;
+  padding: 0px;
+}
+
+menu ul li {
+    display: inline-block;
+    padding-top: 5px;
+    padding-left: 20px;
+    padding-bottom: 4px;
+    padding-right: 20px;
+    border: 1px solid #54565C;
+    border-bottom: 0px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.menu ul li a {
+  color: #f9f9f9;
+  font-weight: bold;
+  text-decoration: none;
+}

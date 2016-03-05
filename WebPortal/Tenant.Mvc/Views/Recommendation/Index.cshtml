@@ -1,18 +1,99 @@
-﻿@using Tenant.Mvc
-@model Tenant.Mvc.Models.View.RecommendationModel
-@{  
-    var recommendationSiteUrl = WingtipTicketApp.Config.RecommendationSiteUrl;
+﻿@model Tenant.Mvc.Core.Models.CatalogModel
+@{
+    ViewBag.Title = "Recommendation Index";
 }
 
-<div class="container">
-    <div class="row">
-        <div class="col-xs-12 no-padding">
-            <iframe class="recommendation-panel height-660" src="@Model.RecommendationSiteUrl">
-               
-            </iframe>
+<!-- ------------------------------------------------------------------------------------------------------------------- -->
+<!-- Heading Bar -->
+<!-- ------------------------------------------------------------------------------------------------------------------- -->
+
+<div class="page-heading">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <h1>Recommendations</h1>
+            </div>
         </div>
     </div>
 </div>
 
+<!-- ------------------------------------------------------------------------------------------------------------------- -->
+<!-- Content -->
+<!-- ------------------------------------------------------------------------------------------------------------------- -->
 
+<div class="container">
+    <div class="row spacer-25">
+    </div>
 
+    <div class="row">
+        <div class="col-xs-12 no-padding">
+               
+            <!-- ------------------------------------------------------------------------------------------------------------------- -->
+            <!-- Recommendations -->
+            <!-- ------------------------------------------------------------------------------------------------------------------- -->
+
+            @if (@User.Identity.IsAuthenticated)
+            {
+                <h2 style="color: grey;">Top Recommendations for @User.Identity.Name:</h2>
+                <br />
+
+                if (Model.RecommendedItems.Any())
+                {
+                    <div class="row">
+                        @{ var recommendedItems = Model.RecommendedItems.ToArray(); }
+
+                        @foreach (var item in recommendedItems)
+                        {
+                            <div class="col-md-4">
+                                <h3>
+                                    <a href="@Url.Action("Details", "Recommendation", new { Id = item.Id })" style="color: sienna;">@item.Name</a>
+                                </h3>
+                                <p style="color: darkgrey;">
+                                    @item.TitlesCount Concerts available
+                                </p>
+                                <p>
+                                    <a class="btn btn-default buy-button" data-id="@item.Id" style="background-color: #e77a39;">Find Seats</a>
+                                </p>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <h2 style="color: grey;">No recommendations yet</h2>
+                }
+            }
+
+            <!-- ------------------------------------------------------------------------------------------------------------------- -->
+            <!-- Ticket Venues -->
+            <!-- ------------------------------------------------------------------------------------------------------------------- -->
+
+            @if (!User.Identity.IsAuthenticated)
+            {
+                <div class="outer">
+                    <div class="menuwrap">
+                        <div class="menu">
+                            <ul>
+                                <li><a class="text-center" href="#">Ticket Venues</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row itemRow">
+                        @{ var items = Model.CatalogItems.ToArray(); }
+
+                        @foreach (var item in items)
+                        {
+                            <div class="col-md-4">
+                                <h3>
+                                    <a href="@Url.Action("Details", "Recommendation", new { Id = item.Id })" style="color: sienna;">@item.Name</a> 
+                                </h3>
+                                <p style="color: darkgrey;">@item.TitlesCount Concerts available</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>

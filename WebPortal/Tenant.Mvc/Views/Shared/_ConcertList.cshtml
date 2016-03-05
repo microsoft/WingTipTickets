@@ -1,0 +1,30 @@
+﻿@model List<Tenant.Mvc.Models.ConcertListViewModel.ConcertViewModel>
+
+@{
+    if (Model != null)
+    {
+        var concertIndex = 0;
+
+        foreach (var concert in Model)
+        {
+            <div class="event-block">
+                <div class="@(concertIndex % 2 == 0 ? "event-date" : "event-date event-date-shaded")">
+                    <span class="event-date-top">@concert.Date.ToString("MMM").ToUpper()</span><br />
+                    <span class="event-date-mid">@concert.Date.Day</span><br />
+                    <span class="event-date-btm">@concert.Date.DayOfWeek.ToString().ToUpper().Substring(0, 3)</span><br />
+                </div>
+
+                <div class="event-info">
+                    <h3 class="event-performer">@concert.Performer</h3>
+                    <p class="event-venue">@concert.Venue</p>
+                </div>
+
+                <div class="event-button">
+                    @Html.ActionLink("Find Seats", "Index", "FindSeats", new { concertId = concert.ConcertId }, new { @class = "btn btn-themed-secondary" })
+                </div>
+            </div>
+
+            concertIndex++;
+        }
+    }
+}
