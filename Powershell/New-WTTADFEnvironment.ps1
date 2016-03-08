@@ -80,6 +80,7 @@ function New-WTTADFEnvironment
 
 				# Get StorageAccount Key
 				$storageAccountKey = GetStorageAccountKey
+                CreateStorageContainer($storageAccountKey)
 
 				# Set up Mapping Dictionary
 				SetupMappingDictionary($storageAccountKey)
@@ -126,6 +127,25 @@ function GetStorageAccountKey()
 	$storageAccountkey = (Get-AzureRMStorageAccountKey -ResourceGroupName $ResourceGroupName -storageAccountName $ApplicationName).Key1
 
 	return $storageAccountKey
+}
+
+function CreateStorageContainer($storageAccountKey)
+{
+        try{
+            # Get Context
+            $context = New-AzureStorageContext -storageAccountName $ApplicationName -StorageAccountKey $storageAccountKey
+                        
+            # Create the container to store blob
+            $container = New-AzureStorageContainer -Name 'productrec' -Context $context -ErrorAction Stop        
+        }catch{
+            if($error[0].CategoryInfo.Category -eq 'ResourceExists'){
+                Write-Host 'resource exists.'
+            }else{
+                Write-Host 'error.'
+            }
+        }
+        Write-Host 'created.'
+        
 }
 
 function SetupMappingDictionary($StorageAccountKey)
