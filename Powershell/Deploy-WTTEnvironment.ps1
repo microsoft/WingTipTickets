@@ -14,10 +14,15 @@
 		[String]
 		$WTTEnvironmentPrimaryServerLocation,
     
-        $deployADF,
-   
-        $deployDW
+        #This parameter is used by deploy-wttenvironment.ps1
+		[Parameter(Mandatory = $false)]
+        [string]
+		$deployADF,
 
+        #This parameter is used by deploy-wttenvironment.ps1
+		[Parameter(Mandatory = $false)]
+        [string]
+		$deployDW
 	)
 
     Clear
@@ -52,10 +57,10 @@
     WriteLabel("Initializing Azure Subscription")
     LineBreak
     InitSubscription
+    Start-Sleep -Seconds 10
     LineBreak
         
     WriteLabel("Checking for Azure PowerShell Version 1.0.1 or later") 
-	##$installedAzurePowerShellVersion = CheckInstalledPowerShellVersion
     $module = Get-Module AzureRM.profile
     $installedAzurePowerShellVersion = CheckInstalledPowerShell $module
 	if ($installedAzurePowerShellVersion -gt 0)
@@ -75,7 +80,7 @@
             
             Do
             {
-                Write-Host "Please enter your unique WTT Environment Name:" -ForegroundColor Green
+                WriteReadLabel("Enter your unique WTT Environment Name")
                 $WTTEnvironmentApplicationName = Read-Host
                 $exists = (Get-AzureRmResourceGroup -Name $WTTEnvironmentApplicationName -ErrorAction Ignore).resourcegroupname
                 if(!$exists)
@@ -93,25 +98,23 @@
            
     if (!$WTTEnvironmentPrimaryServerLocation)
         {
-            #$locationList = 'East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast'
-            #Format-Table -InputObject $locationList
             [array]$listLocation = 'East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast'
             $Result = $listLocation | Format-Table $listLocation -Wrap | Out-String
-            Write-Host "Available Azure Data Center Locations:" -ForegroundColor Green
-            Write-Host $Result
-            Write-Host "Please enter the primary location to deploy WTT Services:" -ForegroundColor Green
+            WriteLabelSwitch("Available Azure Data Center Locations")
+            WriteLine($Result)
+            WriteReadLabel("Enter the primary location to deploy WTT Services")
             $WTTEnvironmentPrimaryServerLocation = Read-Host
-
         }
         
     [int]$xMenuChoiceA = 0
     while ( $xMenuChoiceA -lt 1 -or $xMenuChoiceA -gt 4 )
     {
-        Write-host "1. Base WingTip Tickets" -ForegroundColor Green
-        Write-host "2. WingTip Tickets with Azure Data Factory" -ForegroundColor Green
-        Write-host "3. WingTip Tickets with Azure Data Warehouse" -ForegroundColor Green
-        Write-host "4. All of the WingTip Tickets Services" -ForegroundColor Green
-        [Int]$xMenuChoiceA = read-host "Please enter an option 1 to 4..." 
+        WriteLabelSwitch("1. Base WingTip Tickets")
+        WriteLabelSwitch("2. WingTip Tickets with Azure Data Factory")
+        WriteLabelSwitch("3. WingTip Tickets with Azure Data Warehouse")
+        WriteLabelSwitch("4. All of the WingTip Tickets Services")
+        WriteReadLabel("Enter an option 1 to 4..." )
+        [Int]$xMenuChoiceA = read-host
     }
     Switch( $xMenuChoiceA )
     {
@@ -152,9 +155,10 @@ function InitSubscription()
                 }
 
         LineBreak
-        WriteValue("Your Azure Subscriptions: ")
+        WriteLabel("Your Azure Subscriptions: ")
         $subList | Format-Table RowNumber,SubscriptionId,SubscriptionName -AutoSize
-        $rowNum = Read-Host 'Enter the row number (1 -'$subCount') of a subscription'
+        WriteReadLabel("Enter the row number (1 - $subCount) of a subscription")
+        $rowNum = Read-Host 
 
         while( ([int]$rowNum -lt 1) -or ([int]$rowNum -gt [int]$subCount))
             {
@@ -162,11 +166,15 @@ function InitSubscription()
                 $rowNum = Read-Host 'Enter subscription row number'                     
             }
         $global:subscriptionID = $subList[$rowNum-1].SubscriptionId;
+        $global:subscriptionName = $subList[$rowNum-1].SubscriptionName;
         }
     #switch to appropriate subscription
     try
         {
-            Select-AzureRMSubscription -SubscriptionId $global:subscriptionID
+            WriteLabel("Selecting Subscription")
+            $null = Select-AzureRMSubscription -SubscriptionId $global:subscriptionID
+            WriteValue($global:subscriptionName)
+            
         } 
     catch 
         {
@@ -199,6 +207,17 @@ function WriteLine($label)
 function WriteLabel($label)
 {
 	Write-Host $label": " -nonewline -foregroundcolor "yellow"
+}
+
+function WriteReadLabel($label)
+{
+	Write-Host $label": " -nonewline -foregroundcolor Green
+}
+
+
+function WriteLabelSwitch($label)
+{
+	Write-Host $label": " -foregroundcolor "yellow"
 }
 
 function WriteValue($value)
