@@ -93,6 +93,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Commands\PurchaseTicketsCommand.cs" />
+    <Compile Include="Components\DatabaseLoader.cs" />
     <Compile Include="Helpers\ConfigHelper.cs" />
     <Compile Include="Helpers\ErrorDetectionStrategy.cs" />
     <Compile Include="Helpers\DatabaseHelper.cs" />

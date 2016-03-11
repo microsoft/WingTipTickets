@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Windows.Input;
 using ElasticLoadGenerator.Commands;
+using ElasticLoadGenerator.Components;
 
 namespace ElasticLoadGenerator.Models
 {
@@ -31,6 +32,7 @@ namespace ElasticLoadGenerator.Models
 
         #region - Properties -
 
+        public DatabaseLoader DatabaseLoader { get; set; }
         public ICommand PurchaseTicketsCommand { get; set; }
 
         public string DatabaseServer
@@ -142,17 +144,15 @@ namespace ElasticLoadGenerator.Models
             _startEnabled = true;
 
             // Setup Commands
-            InitializCommands();
+            PurchaseTicketsCommand = new PurchaseTicketsCommand(this);
+
+            // Setup Workers
+            DatabaseLoader = new DatabaseLoader(this);
         }
 
         #endregion
 
         #region - Private Methods -
-
-        private void InitializCommands()
-        {
-            PurchaseTicketsCommand = new PurchaseTicketsCommand(this);
-        }
 
         private void SetValue<T>(T value, ref T field, string propertyName)
         {
