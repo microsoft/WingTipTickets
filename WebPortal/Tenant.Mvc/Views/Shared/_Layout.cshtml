@@ -12,6 +12,8 @@
         @Styles.Render("~/styles/site")
 
         <link href="@Href("~/Content/Stylesheets/Site.css")" rel="stylesheet">
+        <link href="@Href("~/Content/powerbi.css")" rel="stylesheet" />
+
         <link href="@Href(string.Format("~/Content/Themes/{0}.css", WingtipTicketApp.Config.TenantEventType))" rel="stylesheet">
     </head>
     <body>
@@ -108,6 +110,7 @@
                                                     <ul class="dropdown-menu">
                                                         <li><a href="@Url.Action("Index", "VenueAdministration")" class="nav-menu-dropdown-item">Venue Administration</a></li>
                                                         <li><a href="@Url.Action("Index", "EventAdministration")" class="nav-menu-dropdown-item">Event Administration</a></li>
+                                                        <li><a href="@Url.Action("Index", "Reports")" class="nav-menu-dropdown-item">Reports</a></li>
                                                     </ul>
                                                     <span class="menu-border"></span>                                                
                                                 </li>                                            
@@ -327,6 +330,8 @@
 
         <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
         <script src="~/Content/Scripts/bootstrap-select.js"></script>
+        <script src="~/Scripts/powerbi.js"></script>
+
         <link href="~/Content/Stylesheets/bootstrap-select.css" rel="stylesheet">
 
         @RenderSection("scripts", required: false)

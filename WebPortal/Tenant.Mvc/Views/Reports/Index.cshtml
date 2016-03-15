@@ -1,0 +1,76 @@
+﻿@model Tenant.Mvc.Models.ReportsViewModel
+
+@{
+    ViewBag.Title = "PowerBI Reports";
+}
+
+<div class="page-heading">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <h1>PowerBI Reports:</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container">
+
+    <div class="row spacer-25">
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 no-padding">
+
+        @using (Html.BeginForm("Index", "Reports", FormMethod.Post, new { @class = "form-inline" }))
+        {
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label>Available Reports:</label>
+                        @Html.DropDownListFor(model => model.SelectedReportId, @Model.Reports, new { @class = "form-control", style = "width: 200px; margin-left: 10px;" })
+                    </div>
+
+                    <div class="form-group pull-right">
+                        <button type="submit" class="btn btn-default btn-themed-secondary" style="margin-bottom: 0px;">Show Report</button>
+                    </div>
+                </div>
+            </div>
+            }
+
+        </div>
+    </div>
+
+    @*@if (Model.Report != null)
+    {
+        <div class="row">
+            <div class="col-xs-12 no-padding">
+                @Html.PowerBIAccessToken(Model.AccessToken)
+                @Html.PowerBIReportFor(m => m.Report, new { style = "height:85vh" })
+            </div>
+        </div>
+    }*@
+
+</div>
+
+@if (Model.Report != null)
+{
+    <div class="row">
+        <div class="col-xs-12">
+            @Html.PowerBIAccessToken(Model.AccessToken)
+            @Html.PowerBIReportFor(m => m.Report, new { style = "height:85vh" })
+        </div>
+    </div>
+}
+
+<!-- -------------------------------------------------------------------------------------------------------------------------- -->
+<!-- Script Section -->
+<!-- -------------------------------------------------------------------------------------------------------------------------- -->
+
+<script src="~/Content/Scripts/jquery-1.9.1.min.js"></script>
+<script>
+    $(document).ready(function () {
+
+    });
+</script>

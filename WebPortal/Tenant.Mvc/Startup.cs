@@ -14,6 +14,7 @@ namespace Tenant.Mvc
         public void Configuration(IAppBuilder app)
         {
             SessionUsers = new List<CustomerModel>();
+            ConfigurePowerBI(app);
         }
     }
 }
