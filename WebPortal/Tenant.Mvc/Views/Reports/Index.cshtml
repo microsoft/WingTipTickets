@@ -42,16 +42,6 @@
         </div>
     </div>
 
-    @*@if (Model.Report != null)
-    {
-        <div class="row">
-            <div class="col-xs-12 no-padding">
-                @Html.PowerBIAccessToken(Model.AccessToken)
-                @Html.PowerBIReportFor(m => m.Report, new { style = "height:85vh" })
-            </div>
-        </div>
-    }*@
-
 </div>
 
 @if (Model.Report != null)

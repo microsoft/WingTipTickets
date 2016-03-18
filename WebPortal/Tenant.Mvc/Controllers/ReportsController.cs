@@ -13,6 +13,8 @@ namespace Tenant.Mvc.Controllers
 {
     public class ReportsController : Controller
     {
+        #region - Index View -
+
         [HttpGet]
         public ActionResult Index()
         {
@@ -39,13 +41,17 @@ namespace Tenant.Mvc.Controllers
             return View(viewModel);
         }
 
+        #endregion
+
+        #region - Private Methods -
+
         private SelectList FetchReports(string reportId)
         {
             var devToken = PowerBIToken.CreateDevToken(ConfigHelper.PowerbiWorkspaceCollection, ConfigHelper.PowerbiWorkspaceId);
 
             using (var client = CreatePowerBIClient(devToken))
             {
-                var reportsResponse = client.Reports.GetReports();
+                var reportsResponse = client.Reports.GetReports(ConfigHelper.PowerbiWorkspaceCollection, ConfigHelper.PowerbiWorkspaceId.ToString());
 
                 return new SelectList(reportsResponse.Value.ToList(), "Id", "Name", reportId);
             }
@@ -56,7 +62,7 @@ namespace Tenant.Mvc.Controllers
             var devToken = PowerBIToken.CreateDevToken(ConfigHelper.PowerbiWorkspaceCollection, ConfigHelper.PowerbiWorkspaceId);
             using (var client = CreatePowerBIClient(devToken))
             {
-                var reports = client.Reports.GetReports();
+                var reports = client.Reports.GetReports(ConfigHelper.PowerbiWorkspaceCollection, ConfigHelper.PowerbiWorkspaceId.ToString());
                 var report = reports.Value.FirstOrDefault(r => r.Id == reportId);
 
                 var embedToken = PowerBIToken.CreateReportEmbedToken(ConfigHelper.PowerbiWorkspaceCollection, ConfigHelper.PowerbiWorkspaceId, Guid.Parse(report.Id));
@@ -84,10 +90,16 @@ namespace Tenant.Mvc.Controllers
             return client;
         }
 
+        #endregion
+
+        #region - FetchReportResult Class -
+
         public class FetchReportResult
         {
             public Report Report { get; set; }
             public string AccessToken { get; set; }
         }
+
+        #endregion
     }
 }

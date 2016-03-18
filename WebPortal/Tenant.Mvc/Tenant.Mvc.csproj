@@ -110,17 +110,20 @@
     <Reference Include="Microsoft.Owin.Security.OpenIdConnect">
       <HintPath>..\packages\Microsoft.Owin.Security.OpenIdConnect.3.0.1\lib\net45\Microsoft.Owin.Security.OpenIdConnect.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.PowerBI">
-      <HintPath>..\packages\Microsoft.PowerBI.Core.1.0.2-preview\lib\net45\Microsoft.PowerBI.dll</HintPath>
+    <Reference Include="Microsoft.PowerBI.Api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.PowerBI.Api.1.0.6-preview\lib\portable-net45+win+wpa81\Microsoft.PowerBI.Api.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.PowerBI.Api">
-      <HintPath>..\packages\Microsoft.PowerBI.Api.1.0.2-preview\lib\portable-net45+win+wpa81\Microsoft.PowerBI.Api.dll</HintPath>
+    <Reference Include="Microsoft.PowerBI.AspNet.Mvc, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.PowerBI.Mvc.1.0.6-preview\lib\net45\Microsoft.PowerBI.AspNet.Mvc.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.PowerBI.AspNet.Mvc">
-      <HintPath>..\packages\Microsoft.PowerBI.Mvc.1.0.2-preview\lib\net45\Microsoft.PowerBI.AspNet.Mvc.dll</HintPath>
+    <Reference Include="Microsoft.PowerBI.Core">
+      <HintPath>..\packages\Microsoft.PowerBI.Core.1.0.6-preview\lib\net45\Microsoft.PowerBI.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.PowerBI.Owin.Security">
-      <HintPath>..\packages\Microsoft.PowerBI.Owin.Security.1.0.2-preview\lib\net45\Microsoft.PowerBI.Owin.Security.dll</HintPath>
+    <Reference Include="Microsoft.PowerBI.Owin.Security, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.PowerBI.Owin.Security.1.0.6-preview\lib\net45\Microsoft.PowerBI.Owin.Security.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

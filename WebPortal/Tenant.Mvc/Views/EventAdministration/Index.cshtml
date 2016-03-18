@@ -128,7 +128,9 @@
 {
     <script type="text/javascript" language="javascript">
 
-        $(document).ready(function ()
+        var reloadingLists = false;
+
+        $(document).ready(function()
         {
             ToggleNewCity();
             ToggleNewVenue();
@@ -141,53 +143,110 @@
 
         $('#CityId').change(function()
         {
-            window.location.href = 'EventAdministration?artistId=' + $("#ArtistId").val() + '&cityId=' + $(this).val();
+            UpdateDropDownValues(UpdateVenues);
         });
 
         $('#VenueId').change(function()
         {
-            window.location.href = 'EventAdministration?artistId=' + $("#ArtistId").val() + '&cityId=' + $("#CityId").val() + '&venueId=' + $(this).val();
+            UpdateDropDownValues(UpdateEvents);
+            
         });
 
         $('#EventId').change(function()
         {
-            window.location.href = 'EventAdministration?cityId=' + $("#CityId").val() + '&venueId=' + $("#VenueId").val() + '&eventId=' + $(this).val();
+            UpdateDropDownValues(UpdateArtists);
         });
 
-        $('#ArtistId').change(function()
+        function UpdateDropDownValues(callbackFunction)
         {
-            window.location.href = 'EventAdministration?artistId=' + $(this).val() + '&cityId=' + $("#CityId").val() + '&venueId=' + $("#VenueId").val() + '&eventId=' + $("#EventId").val();
-        });
+            var selectedArtistId = $("#ArtistId").val();
+            var selectedCityId = $("#CityId").val();
+            var selectedVenueId = $("#VenueId").val();
+            var selectedEventId = $("#EventId").val();
+
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("UpdateLookups", "EventAdministration")',
+                data: { artistId: selectedArtistId, cityId: selectedCityId, venueId: selectedVenueId, eventId: selectedEventId },
+                dataType: "json",
+                success: callbackFunction,
+                error: function (jqXHR, textStatus, errorThrown) {
+                    debugger;
+                }
+            });
+        }
+
+        function UpdateVenues(data)
+        {
+            UpdateDropDown(data.model.Venues, "#VenueId", 0);
+
+            $("#EventId").val(0);
+            $("#ArtistId").val(0);
+        }
+
+        function UpdateEvents(data)
+        {
+            UpdateDropDown(data.model.Events, "#EventId", 0);
+
+            $("#ArtistId").val(0);
+        }
+
+        function UpdateArtists(data)
+        {
+            UpdateDropDown(data.model.Artists, "#ArtistId", 0);
+        }
+
+        function UpdateDropDown(values, name, selectedValue)
+        {
+            $(name).empty();
+
+            $.each(values, function () {
+                $(name).append($("<option />").val(this.Value).text(this.Text));
+            });
+
+            $(name).val(selectedValue);
+        }
 
         function ToggleNewCity()
         {
-            if ($("#CityId").val() == "-1") {
+            if ($("#CityId").val() == "-1")
+            {
                 $("#NewCity").removeAttr("disabled");
-            } else {
+            } else
+            {
                 $("#NewCity").attr("disabled", "disabled");
             }
         }
 
-        function ToggleNewVenue() {
-            if ($("#VenueId").val() == "-1") {
+        function ToggleNewVenue()
+        {
+            if ($("#VenueId").val() == "-1")
+            {
                 $("#NewVenue").removeAttr("disabled");
-            } else {
+            } else
+            {
                 $("#NewVenue").attr("disabled", "disabled");
             }
         }
 
-        function ToggleNewEvent() {
-            if ($("#EventId").val() == "-1") {
+        function ToggleNewEvent()
+        {
+            if ($("#EventId").val() == "-1")
+            {
                 $("#NewEvent").removeAttr("disabled");
-            } else {
+            } else
+            {
                 $("#NewEvent").attr("disabled", "disabled");
             }
         }
 
-        function ToggleNewArtist() {
-            if ($("#ArtistId").val() == "-1") {
+        function ToggleNewArtist()
+        {
+            if ($("#ArtistId").val() == "-1")
+            {
                 $("#NewArtist").removeAttr("disabled");
-            } else {
+            } else
+            {
                 $("#NewArtist").attr("disabled", "disabled");
             }
         }
@@ -197,19 +256,22 @@
             if ($('#EventId').val() >= -1 && $('#CityId').val() >= -1 && $('#VenueId').val() >= -1)
             {
                 $("#addEvent").removeAttr("disabled");
-            } else {
+            } else
+            {
                 $("#addEvent").attr("disabled", "disabled");
             }
         }
 
         function ToggleDelete()
         {
-            if ($('#EventId').val() >= 0 && $('#CityId').val() >= 0 && $('#VenueId').val() >= 0) {
+            if ($('#EventId').val() >= 0 && $('#CityId').val() >= 0 && $('#VenueId').val() >= 0)
+            {
                 $("#deleteEvent").removeAttr("disabled");
-            } else {
+            } else
+            {
                 $("#deleteEvent").attr("disabled", "disabled");
             }
         }
 
-</script>
+    </script>
 }
