@@ -49,7 +49,7 @@
 
 		# Upload Deployment Package
 		WriteLabel("Uploading Deployment Package")
-		Set-AzureStorageBlobContent -File "$AzureWebSiteWebDeployPackagePath\$AzureWebSiteWebDeployPackageName" -Container $containerName -Context $context -Blob $AzureWebSiteWebDeployPackageName -Force
+		$null = Set-AzureStorageBlobContent -File "$AzureWebSiteWebDeployPackagePath\$AzureWebSiteWebDeployPackageName" -Container $containerName -Context $context -Blob $AzureWebSiteWebDeployPackageName -Force
 		WriteValue("Successful")
 
 		# Build Paths

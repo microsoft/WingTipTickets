@@ -141,7 +141,7 @@ function Deploy-WTTAzureDWDatabase
 					ForEach($file in Get-ChildItem ".\Scripts\Datawarehouse" -Filter *.sql)
 					{
 						WriteLabel("Executing Script '$file'")
-						$result = Invoke-Sqlcmd -Username "$UserName@$ServerName" -Password $Password -ServerInstance $DWServer -Database $DWDatabaseName -InputFile ".\Scripts\Datawarehouse\$file" -QueryTimeout 0
+						$result = Invoke-Sqlcmd -Username "$UserName@$ServerName" -Password $Password -ServerInstance $DWServer -Database $DWDatabaseName -InputFile ".\Scripts\Datawarehouse\$file" -QueryTimeout 0 -SuppressProviderContextWarning
 						WriteValue("Successful")
 					}
 

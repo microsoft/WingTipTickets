@@ -126,7 +126,7 @@ foreach($file in $files)
 WriteValue("Successful")
 
 LineBreak
-WriteLabel( "Use Case: $ResourceGroupName :")
+WriteLabel("ADF $ResourceGroupName Deployment")
 $numErrors =  $Error.Count - $oldErrors
 if ( $numErrors -gt 0 )
 {

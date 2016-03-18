@@ -55,6 +55,7 @@ function Populate-DBSchema
 
 			$Connection = New-object system.data.SqlClient.SqlConnection($ConnectionString)
 			$Command = New-Object System.Data.SqlClient.SqlCommand('',$Connection)
+            $Command.CommandTimeout = 0
 
 			# Open the connection to the Database
 			WriteLabel("Connecting to database")
