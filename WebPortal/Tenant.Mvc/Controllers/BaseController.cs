@@ -81,7 +81,7 @@ namespace Tenant.Mvc.Controllers
         {
             if (!string.IsNullOrWhiteSpace(content))
             {
-                TempData["msg"] = string.Format("<script>alert(\"{0}\");</script>", content);
+                TempData["msg"] = string.Format("<script>showAlert(\'{0}\', '{1}');</script>", "Confirmation", content);
             }
         }
 

@@ -130,16 +130,18 @@
 
         var reloadingLists = false;
 
+        // ======================================
+        // Document Ready
+        // ======================================
+
         $(document).ready(function()
         {
-            ToggleNewCity();
-            ToggleNewVenue();
-            ToggleNewEvent();
-            ToggleNewArtist();
-
-            ToggleAdd();
-            ToggleDelete();
+            UpdateControlStates();
         });
+
+        // ======================================
+        // Events
+        // ======================================
 
         $('#CityId').change(function()
         {
@@ -155,6 +157,15 @@
         {
             UpdateDropDownValues(UpdateArtists);
         });
+
+        $('#ArtistId').change(function ()
+        {
+            UpdateControlStates();
+        });
+
+        // ======================================
+        // Ajax Helpers
+        // ======================================
 
         function UpdateDropDownValues(callbackFunction)
         {
@@ -176,24 +187,29 @@
             });
         }
 
+        // ======================================
+        // Ajax Callbacks
+        // ======================================
+
         function UpdateVenues(data)
         {
             UpdateDropDown(data.model.Venues, "#VenueId", 0);
-
             $("#EventId").val(0);
             $("#ArtistId").val(0);
+            UpdateControlStates();
         }
 
         function UpdateEvents(data)
         {
             UpdateDropDown(data.model.Events, "#EventId", 0);
-
             $("#ArtistId").val(0);
+            UpdateControlStates();
         }
 
         function UpdateArtists(data)
         {
             UpdateDropDown(data.model.Artists, "#ArtistId", 0);
+            UpdateControlStates();
         }
 
         function UpdateDropDown(values, name, selectedValue)
@@ -208,57 +224,34 @@
             $(name).val(selectedValue);
         }
 
-        function ToggleNewCity()
+        // ======================================
+        // Control States
+        // ======================================
+
+        function UpdateControlStates()
         {
-            if ($("#CityId").val() == "-1")
-            {
-                $("#NewCity").removeAttr("disabled");
-            }
-            else
-            {
-                $("#NewCity").attr("disabled", "disabled");
-            }
+            ToggleRelatedTextDisabled("#CityId", "#NewCity");
+            ToggleRelatedTextDisabled("#VenueId", "#NewVenue");
+            ToggleRelatedTextDisabled("#EventId", "#NewEvent");
+            ToggleRelatedTextDisabled("#ArtistId", "#NewArtist");
+            ToggleAdd();
+            ToggleDelete();
         }
 
-        function ToggleNewVenue()
+        function ToggleRelatedTextDisabled(dropdownName, textboxName)
         {
-            if ($("#VenueId").val() == "-1")
-            {
-                $("#NewVenue").removeAttr("disabled");
+            if ($(dropdownName).val() == "0") {
+                $(textboxName).removeAttr("disabled");
             }
-            else
-            {
-                $("#NewVenue").attr("disabled", "disabled");
-            }
-        }
-
-        function ToggleNewEvent()
-        {
-            if ($("#EventId").val() == "-1")
-            {
-                $("#NewEvent").removeAttr("disabled");
-            }
-            else
-            {
-                $("#NewEvent").attr("disabled", "disabled");
-            }
-        }
-
-        function ToggleNewArtist()
-        {
-            if ($("#ArtistId").val() == "-1")
-            {
-                $("#NewArtist").removeAttr("disabled");
-            }
-            else
-            {
-                $("#NewArtist").attr("disabled", "disabled");
+            else {
+                $(textboxName).attr("disabled", "disabled");
+                $(textboxName).val("");
             }
         }
 
         function ToggleAdd()
         {
-            if ($('#EventId').val() >= -1 && $('#CityId').val() >= -1 && $('#VenueId').val() >= -1)
+            if ($('#EventId').val() >= 0 && $('#CityId').val() >= 0 && $('#VenueId').val() >= 0)
             {
                 $("#addEvent").removeAttr("disabled");
             }
@@ -270,7 +263,7 @@
 
         function ToggleDelete()
         {
-            if ($('#EventId').val() >= 0 && $('#CityId').val() >= 0 && $('#VenueId').val() >= 0)
+            if ($('#EventId').val() > 0 && $('#CityId').val() > 0 && $('#VenueId').val() > 0)
             {
                 $("#deleteEvent").removeAttr("disabled");
             }
