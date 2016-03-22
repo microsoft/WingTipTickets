@@ -149,7 +149,6 @@
         $('#VenueId').change(function()
         {
             UpdateDropDownValues(UpdateEvents);
-            
         });
 
         $('#EventId').change(function()
@@ -170,7 +169,8 @@
                 data: { artistId: selectedArtistId, cityId: selectedCityId, venueId: selectedVenueId, eventId: selectedEventId },
                 dataType: "json",
                 success: callbackFunction,
-                error: function (jqXHR, textStatus, errorThrown) {
+                error: function (jqXHR, textStatus, errorThrown)
+                {
                     debugger;
                 }
             });
@@ -200,7 +200,8 @@
         {
             $(name).empty();
 
-            $.each(values, function () {
+            $.each(values, function ()
+            {
                 $(name).append($("<option />").val(this.Value).text(this.Text));
             });
 
@@ -212,7 +213,8 @@
             if ($("#CityId").val() == "-1")
             {
                 $("#NewCity").removeAttr("disabled");
-            } else
+            }
+            else
             {
                 $("#NewCity").attr("disabled", "disabled");
             }
@@ -223,7 +225,8 @@
             if ($("#VenueId").val() == "-1")
             {
                 $("#NewVenue").removeAttr("disabled");
-            } else
+            }
+            else
             {
                 $("#NewVenue").attr("disabled", "disabled");
             }
@@ -234,7 +237,8 @@
             if ($("#EventId").val() == "-1")
             {
                 $("#NewEvent").removeAttr("disabled");
-            } else
+            }
+            else
             {
                 $("#NewEvent").attr("disabled", "disabled");
             }
@@ -245,7 +249,8 @@
             if ($("#ArtistId").val() == "-1")
             {
                 $("#NewArtist").removeAttr("disabled");
-            } else
+            }
+            else
             {
                 $("#NewArtist").attr("disabled", "disabled");
             }
@@ -256,7 +261,8 @@
             if ($('#EventId').val() >= -1 && $('#CityId').val() >= -1 && $('#VenueId').val() >= -1)
             {
                 $("#addEvent").removeAttr("disabled");
-            } else
+            }
+            else
             {
                 $("#addEvent").attr("disabled", "disabled");
             }
@@ -267,7 +273,8 @@
             if ($('#EventId').val() >= 0 && $('#CityId').val() >= 0 && $('#VenueId').val() >= 0)
             {
                 $("#deleteEvent").removeAttr("disabled");
-            } else
+            }
+            else
             {
                 $("#deleteEvent").attr("disabled", "disabled");
             }

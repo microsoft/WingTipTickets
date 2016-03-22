@@ -110,7 +110,7 @@
                                                     <ul class="dropdown-menu">
                                                         <li><a href="@Url.Action("Index", "VenueAdministration")" class="nav-menu-dropdown-item">Venue Administration</a></li>
                                                         <li><a href="@Url.Action("Index", "EventAdministration")" class="nav-menu-dropdown-item">Event Administration</a></li>
-                                                        <li><a href="@Url.Action("Index", "Reports")" class="nav-menu-dropdown-item">PowerBI Reports</a></li>
+                                                        <li><a href="@Url.Action("Index", "Reports")" class="nav-menu-dropdown-item">Reports</a></li>
                                                     </ul>
                                                     <span class="menu-border"></span>                                                
                                                 </li>                                            
@@ -269,18 +269,18 @@
                                 {
                                     <h3 class="form-heading">Returning Users</h3>
 
-                                        <div class="form-group">
-                                            <input type="email" class="form-control" name="loginUsername" placeholder="User Name">
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="password" class="form-control" name="loginPassword" placeholder="Password">
-                                        </div>
+                                    <div class="form-group">
+                                        <input type="email" class="form-control" name="loginUsername" placeholder="User Name">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="password" class="form-control" name="loginPassword" placeholder="Password">
+                                    </div>
 
-                                        <div>
-                                            <a href="#">Forgot Password?</a>
-                                        </div>
+                                    <div>
+                                        <a href="#">Forgot Password?</a>
+                                    </div>
 
-                                        <button type="submit" class="btn btn-block btn-themed" id="currentCustomerRegistration" name="currentCustomerRegistration" data-backdrop="static" data-keyboard="false">Sign In</button>
+                                    <button type="submit" class="btn btn-block btn-themed" id="currentCustomerRegistration" name="currentCustomerRegistration" data-backdrop="static" data-keyboard="false">Sign In</button>
                                 }
                             </div>
 
@@ -289,30 +289,68 @@
                                 {
                                     <h3 class="form-heading">New Account</h3>
 
-                                        <div class="form-group">
-                                            <input type="text" class="form-control" name="firstName" placeholder="First Name">
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="text" class="form-control" name="lastName" placeholder="Last Name">
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="email" class="form-control" name="email" placeholder="Email Address">
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="email" class="form-control" name="confirmEmail" placeholder="Confirm Email">
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="text" class="form-control" name="phonenumber" placeholder="Phone Number">
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="password" class="form-control" name="password" placeholder="Password">
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="password" class="form-control" name="confirmPassword" placeholder="Confirm Password">
-                                        </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" name="firstName" placeholder="First Name">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" name="lastName" placeholder="Last Name">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="email" class="form-control" name="email" placeholder="Email Address">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="email" class="form-control" name="confirmEmail" placeholder="Confirm Email">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" name="phonenumber" placeholder="Phone Number">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="password" class="form-control" name="password" placeholder="Password">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="password" class="form-control" name="confirmPassword" placeholder="Confirm Password">
+                                    </div>
 
-                                        <button type="submit" class="btn btn-block btn-themed" id="newCustomerRegistration" name="newCustomerRegistration">Create Account</button>
+                                    <button type="submit" class="btn btn-block btn-themed" id="newCustomerRegistration" name="newCustomerRegistration">Create Account</button>
                                 }
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+        <!-- Confirmation Modal -->
+        <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+
+        <div class="modal fade" id="AlertModal" tabindex="-1" role="dialog" @*aria-labelledby="ConfirmationModal"*@ @*aria-hidden="true"*@>
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <div class="row">
+                            <div class="col-xs-8">
+                                <h1 id="AlertHeading" class="logo-heading" style="padding: 0px; height: 40px;">Confirmation</h1>
+                            </div>
+                            <div class="col-xs-4">
+                                <h2 class="sub-heading" style="padding: 5px">
+                                    <button type="button" class="btn-close" data-dismiss="modal">
+                                        <span aria-hidden="true">&times;</span>
+                                        <span class="sr-only">Close</span>
+                                    </button>
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="row">
+
+                            <div class="col-xs-12">
+                                <p id="AlertMessage"></p>
+                                <button type="button" class="btn btn-block btn-themed" id="currentCustomerRegistration" name="currentCustomerRegistration" data-dismiss="modal" data-backdrop="static" data-keyboard="false">Close</button>
                             </div>
 
                         </div>
@@ -345,6 +383,13 @@
                     source: "@Url.Action("AutoCompleteEvents", "Home")"
                 });
             });
+
+            function showAlert(heading, message)
+            {
+                $('#AlertHeading').html(heading);
+                $('#AlertMessage').html(message);
+                $('#AlertModal').modal('show');
+            }
 
         </script>
 
