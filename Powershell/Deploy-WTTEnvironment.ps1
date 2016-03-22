@@ -82,6 +82,11 @@
             {
                 WriteReadLabel("Enter your unique WTT Environment Name")
                 $WTTEnvironmentApplicationName = Read-Host
+                if(!$WTTEnvironmentApplicationName)
+                {
+                    WriteError("WTT Environment Name has not been provided")
+                    $WTTEnvironmentApplicationName
+                }
                 $exists = (Get-AzureRmResourceGroup -Name $WTTEnvironmentApplicationName -ErrorAction Ignore).resourcegroupname
                 if(!$exists)
                 {
