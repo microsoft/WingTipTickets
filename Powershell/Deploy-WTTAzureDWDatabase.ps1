@@ -133,7 +133,7 @@ function Deploy-WTTAzureDWDatabase
                     {
                         WriteValue("Successful")
                     }
-                    $testSQLConnection = Test-WTTAzureSQLConnection -ServerName $ServerName -UserName $UserName -Password $Password -DatabaseName $DatabaseName -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName
+                    $testSQLConnection = Test-WTTAzureSQLConnection -ServerName $ServerName -UserName $UserName -Password $Password -DatabaseName $DWDatabaseName -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName
                     if ($testSQLConnection -notlike "success")
                     {
                         WriteError("Unable to connect to SQL Server")
