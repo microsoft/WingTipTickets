@@ -1,7 +1,7 @@
 <#
 .Synopsis
 	Azure Sql Databases - Dummy Data Population
-.DESCRIPTIOn
+.DESCRIPTION
 	This script is used to populate dummy data for use with the WingtipTickets application.
 .EXAMPLE
 	Populate-DBSchema 'ServerName', 'UserName', 'Password', 'DatabaseName'
@@ -68,63 +68,69 @@ function Populate-DBSchema
 
 			# Clean Tables
 			LineBreak
+
+			WriteLabel("Cleaning ApplicationDefaults table")
+			$Command.CommandText = "DELETE FROM ApplicationDefault"
+			$Result = $Command.ExecuteNonQuery()
+			WriteValue("Successful")
+
 			WriteLabel("Cleaning Customers table")
-			$Command.CommandText = "Delete From Customers"
+			$Command.CommandText = "DELETE FROM Customers"
 			$Result = $Command.ExecuteNonQuery()
 			WriteValue("Successful")
 
 			WriteLabel("Cleaning Organizers table")
-			$Command.CommandText = "Delete From Organizers"
+			$Command.CommandText = "DELETE FROM Organizers"
 			$Result = $Command.ExecuteNonQuery()
 			WriteValue("Successful")
 
 			WriteLabel("Cleaning SeatSection table")
-			$Command.CommandText = "Delete From SeatSection"
+			$Command.CommandText = "DELETE FROM SeatSection"
 			$Result = $Command.ExecuteNonQuery()
 			WriteValue("Successful")
 
 			WriteLabel("Cleaning Venues table")
-			$Command.CommandText = "Delete From Venues"
+			$Command.CommandText = "DELETE FROM Venues"
 			$Result = $Command.ExecuteNonQuery()
 			WriteValue("Successful")
 
 			WriteLabel("Cleaning City table")
-			$Command.CommandText = "Delete From City"
+			$Command.CommandText = "DELETE FROM City"
 			$Result = $Command.ExecuteNonQuery()
 			WriteValue("Successful")
 
 			WriteLabel("Cleaning States table")
-			$Command.CommandText = "Delete From States"
+			$Command.CommandText = "DELETE FROM States"
 			$Result = $Command.ExecuteNonQuery()
 			WriteValue("Successful")
 
 			WriteLabel("Cleaning Country table")
-			$Command.CommandText = "Delete From Country"
+			$Command.CommandText = "DELETE FROM Country"
 			$Result = $Command.ExecuteNonQuery()
 			WriteValue("Successful")
 
 			WriteLabel("Cleaning WebSiteActionLog table")
-			$Command.CommandText = "Delete From WebSiteActionLog"
+			$Command.CommandText = "DELETE FROM WebSiteActionLog"
 			$Result = $Command.ExecuteNonQuery()
 			WriteValue("Successful")
 
 			WriteLabel("Cleaning Concerts table")
-			$Command.CommandText = "Delete From Concerts"
+			$Command.CommandText = "DELETE FROM Concerts"
 			$Result = $Command.ExecuteNonQuery()
 			WriteValue("Successful")
 
 			WriteLabel("Cleaning Performers table")
-			$Command.CommandText = "Delete From Performers"
+			$Command.CommandText = "DELETE FROM Performers"
 			$Result = $Command.ExecuteNonQuery()
 			WriteValue("Successful")
 
 			WriteLabel("Cleaning TicketLevels table")
-			$Command.CommandText = "Delete From TicketLevels"
+			$Command.CommandText = "DELETE FROM TicketLevels"
 			$Result = $Command.ExecuteNonQuery()
 			WriteValue("Successful")
 
 			WriteLabel("Cleaning Tickets table")
-			$Command.CommandText = "Delete From Tickets"
+			$Command.CommandText = "DELETE FROM Tickets"
 			$Result = $Command.ExecuteNonQuery()
 			WriteValue("Successful")
 
@@ -145,9 +151,11 @@ function Populate-DBSchema
 			WriteLabel("Populating Countries table")
 			$Command.CommandText =
 				"
-					Set Identity_Insert [dbo].[Country] On 
-					Insert [dbo].[Country] ([CountryId], [CountryName], [Description]) Values (1, N'United States', NULL)
-					Set Identity_Insert [dbo].[Country] Off
+					SET Identity_Insert [dbo].[Country] ON
+
+					INSERT [dbo].[Country] ([CountryId], [CountryName], [Description]) VALUES (1, N'United States', NULL)
+
+					SET Identity_Insert [dbo].[Country] OFF
 				"
 
 			$Result = $Command.ExecuteNonQuery()
@@ -157,18 +165,20 @@ function Populate-DBSchema
 			WriteLabel("Populating States table")
 			$Command.CommandText =
 				"
-					Set Identity_Insert [dbo].[States] On
-					Insert [dbo].[States] ([StateId], [StateName], [Description], [CountryId]) Values (1, N'CA', NULL, 1)
-					Insert [dbo].[States] ([StateId], [StateName], [Description], [CountryId]) Values (2, N'CO', NULL, 1)
-					Insert [dbo].[States] ([StateId], [StateName], [Description], [CountryId]) Values (3, N'FL', NULL, 1)
-					Insert [dbo].[States] ([StateId], [StateName], [Description], [CountryId]) Values (4, N'MA', NULL, 1)
-					Insert [dbo].[States] ([StateId], [StateName], [Description], [CountryId]) Values (5, N'MI', NULL, 1)
-					Insert [dbo].[States] ([StateId], [StateName], [Description], [CountryId]) Values (6, N'NY', NULL, 1)
-					Insert [dbo].[States] ([StateId], [StateName], [Description], [CountryId]) Values (7, N'OR', NULL, 1)
-					Insert [dbo].[States] ([StateId], [StateName], [Description], [CountryId]) Values (8, N'TX', NULL, 1)
-					Insert [dbo].[States] ([StateId], [StateName], [Description], [CountryId]) Values (9, N'UT', NULL, 1)
-					Insert [dbo].[States] ([StateId], [StateName], [Description], [CountryId]) Values (10, N'WA', NULL, 1)
-					Set Identity_Insert [dbo].[States] Off
+					SET Identity_Insert [dbo].[States] ON
+
+					INSERT [dbo].[States] ([StateId], [StateName], [Description], [CountryId]) VALUES (1, N'CA', NULL, 1)
+					INSERT [dbo].[States] ([StateId], [StateName], [Description], [CountryId]) VALUES (2, N'CO', NULL, 1)
+					INSERT [dbo].[States] ([StateId], [StateName], [Description], [CountryId]) VALUES (3, N'FL', NULL, 1)
+					INSERT [dbo].[States] ([StateId], [StateName], [Description], [CountryId]) VALUES (4, N'MA', NULL, 1)
+					INSERT [dbo].[States] ([StateId], [StateName], [Description], [CountryId]) VALUES (5, N'MI', NULL, 1)
+					INSERT [dbo].[States] ([StateId], [StateName], [Description], [CountryId]) VALUES (6, N'NY', NULL, 1)
+					INSERT [dbo].[States] ([StateId], [StateName], [Description], [CountryId]) VALUES (7, N'OR', NULL, 1)
+					INSERT [dbo].[States] ([StateId], [StateName], [Description], [CountryId]) VALUES (8, N'TX', NULL, 1)
+					INSERT [dbo].[States] ([StateId], [StateName], [Description], [CountryId]) VALUES (9, N'UT', NULL, 1)
+					INSERT [dbo].[States] ([StateId], [StateName], [Description], [CountryId]) VALUES (10, N'WA', NULL, 1)
+
+					SET Identity_Insert [dbo].[States] OFF
 				"
 
 			$Result = $Command.ExecuteNonQuery()
@@ -178,19 +188,21 @@ function Populate-DBSchema
 			WriteLabel("Populating City table")
 			$Command.CommandText =
 				"
-					Set Identity_Insert [dbo].[City] On 
-					Insert [dbo].[City] ([CityId], [CityName], [Description], [StateId]) Values (1, N'Los Angeles', NULL, 1)
-					Insert [dbo].[City] ([CityId], [CityName], [Description], [StateId]) Values (2, N'Denver', NULL, 2)
-					Insert [dbo].[City] ([CityId], [CityName], [Description], [StateId]) Values (3, N'Jacksonville', NULL, 3)
-					Insert [dbo].[City] ([CityId], [CityName], [Description], [StateId]) Values (4, N'Boston', NULL, 4)
-					Insert [dbo].[City] ([CityId], [CityName], [Description], [StateId]) Values (5, N'Detroit', NULL, 5)
-					Insert [dbo].[City] ([CityId], [CityName], [Description], [StateId]) Values (6, N'Syracuse', NULL, 6)
-					Insert [dbo].[City] ([CityId], [CityName], [Description], [StateId]) Values (7, N'Portland', NULL, 7)
-					Insert [dbo].[City] ([CityId], [CityName], [Description], [StateId]) Values (8, N'Austin', NULL, 8)
-					Insert [dbo].[City] ([CityId], [CityName], [Description], [StateId]) Values (9, N'Salt Lake City', NULL, 9)
-					Insert [dbo].[City] ([CityId], [CityName], [Description], [StateId]) Values (10, N'Seattle', NULL, 10)
-					Insert [dbo].[City] ([CityId], [CityName], [Description], [StateId]) Values (11, N'Spokane', NULL, 10)
-					Set Identity_Insert [dbo].[City] Off
+					SET Identity_Insert [dbo].[City] ON 
+
+					INSERT [dbo].[City] ([CityId], [CityName], [Description], [StateId]) VALUES (1, N'Los Angeles', NULL, 1)
+					INSERT [dbo].[City] ([CityId], [CityName], [Description], [StateId]) VALUES (2, N'Denver', NULL, 2)
+					INSERT [dbo].[City] ([CityId], [CityName], [Description], [StateId]) VALUES (3, N'Jacksonville', NULL, 3)
+					INSERT [dbo].[City] ([CityId], [CityName], [Description], [StateId]) VALUES (4, N'Boston', NULL, 4)
+					INSERT [dbo].[City] ([CityId], [CityName], [Description], [StateId]) VALUES (5, N'Detroit', NULL, 5)
+					INSERT [dbo].[City] ([CityId], [CityName], [Description], [StateId]) VALUES (6, N'Syracuse', NULL, 6)
+					INSERT [dbo].[City] ([CityId], [CityName], [Description], [StateId]) VALUES (7, N'Portland', NULL, 7)
+					INSERT [dbo].[City] ([CityId], [CityName], [Description], [StateId]) VALUES (8, N'Austin', NULL, 8)
+					INSERT [dbo].[City] ([CityId], [CityName], [Description], [StateId]) VALUES (9, N'Salt Lake City', NULL, 9)
+					INSERT [dbo].[City] ([CityId], [CityName], [Description], [StateId]) VALUES (10, N'Seattle', NULL, 10)
+					INSERT [dbo].[City] ([CityId], [CityName], [Description], [StateId]) VALUES (11, N'Spokane', NULL, 10)
+
+					SET Identity_Insert [dbo].[City] OFF
 				"
 
 			$Result = $Command.ExecuteNonQuery()
@@ -200,20 +212,22 @@ function Populate-DBSchema
 			WriteLabel("Populating Venues table")
 			$Command.CommandText =
 				"
-					Set Identity_Insert [dbo].[Venues] On 
-					Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) Values (1, N'Conrad Fischer Stands', 1000, N'', 1)
-					Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) Values (2, N'Hayden Lawrence Gardens', 1000, N'', 2)
-					Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) Values (3, N'Rene Charron Highrise', 1000, N'', 3)
-					Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) Values (4, N'Aldo Richter Hall', 1000, N'', 4)
-					Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) Values (5, N'Harriet Collier Auditorium', 1000, N'', 5)
-					Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) Values (6, N'Samuel Boyle Center', 1000, N'', 6)
-					Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) Values (7, N'Millie Stevens Memorial Plaza', 1000, N'', 7)
-					Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) Values (8, N'Louisa Zimmerman Stadium', 1000, N'', 8)
-					Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) Values (9, N'Lara Ehrle Amphitheter', 1000, N'', 9)
-					Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) Values (10, N'Antione Lacroix Dome', 1000, N'', 10)
-					Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) Values (11, N'Claude LAngelier Field', 1000, N'', 11)
-					Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) Values (12, N'Maya Haynes Arena', 1000, N'', 10)
-					Set Identity_Insert [dbo].[Venues] Off
+					SET Identity_Insert [dbo].[Venues] ON 
+
+					INSERT [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) VALUES (1, N'Conrad Fischer Stands', 1000, N'', 1)
+					INSERT [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) VALUES (2, N'Hayden Lawrence Gardens', 1000, N'', 2)
+					INSERT [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) VALUES (3, N'Rene Charron Highrise', 1000, N'', 3)
+					INSERT [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) VALUES (4, N'Aldo Richter Hall', 1000, N'', 4)
+					INSERT [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) VALUES (5, N'Harriet Collier Auditorium', 1000, N'', 5)
+					INSERT [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) VALUES (6, N'Samuel Boyle Center', 1000, N'', 6)
+					INSERT [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) VALUES (7, N'Millie Stevens Memorial Plaza', 1000, N'', 7)
+					INSERT [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) VALUES (8, N'Louisa Zimmerman Stadium', 1000, N'', 8)
+					INSERT [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) VALUES (9, N'Lara Ehrle Amphitheter', 1000, N'', 9)
+					INSERT [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) VALUES (10, N'Antione Lacroix Dome', 1000, N'', 10)
+					INSERT [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) VALUES (11, N'Claude LAngelier Field', 1000, N'', 11)
+					INSERT [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) VALUES (12, N'Maya Haynes Arena', 1000, N'', 10)
+
+					SET Identity_Insert [dbo].[Venues] OFF
 				"
 
 			$Result = $Command.ExecuteNonQuery()
@@ -223,29 +237,29 @@ function Populate-DBSchema
 			WriteLabel("Populating SeatSection table")
 			$Command.CommandText =
 				"
-					Set Identity_Insert [dbo].[SeatSection] On
+					SET Identity_Insert [dbo].[SeatSection] ON
 
-					Declare @index numeric = 1
-					Declare @venueIndex numeric = 1
-					Declare @seatIndex numeric = 1
+					DECLARE @index numeric = 1
+					DECLARE @venueIndex numeric = 1
+					DECLARE @seatIndex numeric = 1
 
-					While @venueIndex <= 12
-					Begin
-						Set @seatIndex = 1
+					WHILE @venueIndex <= 12
+					BEGIN
+						SET @seatIndex = 1
 
-						While @seatIndex <= 10
-						Begin
-							Insert [dbo].[SeatSection] ([SeatSectionId], [SeatCount], [VenueId], [Description])
+						WHILE @seatIndex <= 10
+						BEGIN
+							INSERT [dbo].[SeatSection] ([SeatSectionId], [SeatCount], [VenueId], [Description])
 							Values (@index, 100, @venueIndex, N'')
 
-							Set @index = @index + 1
-							Set @seatIndex = @seatIndex + 1
-						End
+							SET @index = @index + 1
+							SET @seatIndex = @seatIndex + 1
+						END
 
-						Set @venueIndex = @venueIndex + 1
-					End
+						SET @venueIndex = @venueIndex + 1
+					END
 
-					Set Identity_Insert [dbo].[SeatSection] Off
+					SET Identity_Insert [dbo].[SeatSection] OFF
 				"
 
 			$Result = $Command.ExecuteNonQuery()
@@ -255,20 +269,22 @@ function Populate-DBSchema
 			WriteLabel("Populating Concerts table")
 			$Command.CommandText =
 				"
-					Set Identity_Insert [dbo].[Concerts] On 
-					Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (1, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-01-28 00:54:01.870' AS DateTime), 3, 1, 1, 0)
-					Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (2, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-01-29 00:54:01.877' AS DateTime), 3, 2, 1, 0)
-					Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (3, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-01-30 00:54:01.880' AS DateTime), 3, 3, 1, 0)
-					Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (4, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-01-31 00:54:01.887' AS DateTime), 3, 4, 1, 0)
-					Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (5, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-02-01 00:54:01.890' AS DateTime), 3, 5, 1, 0)
-					Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (6, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-02-02 00:54:01.893' AS DateTime), 3, 6, 1, 0)
-					Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (7, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-02-03 00:54:01.897' AS DateTime), 3, 7, 1, 0)
-					Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (8, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-02-04 00:54:01.900' AS DateTime), 3, 8, 1, 0)
-					Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (9, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-02-05 00:54:01.903' AS DateTime), 3, 9, 1, 0)
-					Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (10, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-02-06 00:54:01.907' AS DateTime), 3, 10, 1, 0)
-					Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (11, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-02-07 00:54:01.910' AS DateTime), 3, 11, 1, 0)
-					Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (12, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-02-08 00:54:01.910' AS DateTime), 3, 12, 1, 0)
-					Set Identity_Insert [dbo].[Concerts] Off
+					SET Identity_Insert [dbo].[Concerts] ON 
+
+					INSERT [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) VALUES (1, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-01-28 00:54:01.870' AS DateTime), 3, 1, 1, 0)
+					INSERT [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) VALUES (2, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-01-29 00:54:01.877' AS DateTime), 3, 2, 1, 0)
+					INSERT [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) VALUES (3, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-01-30 00:54:01.880' AS DateTime), 3, 3, 1, 0)
+					INSERT [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) VALUES (4, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-01-31 00:54:01.887' AS DateTime), 3, 4, 1, 0)
+					INSERT [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) VALUES (5, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-02-01 00:54:01.890' AS DateTime), 3, 5, 1, 0)
+					INSERT [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) VALUES (6, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-02-02 00:54:01.893' AS DateTime), 3, 6, 1, 0)
+					INSERT [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) VALUES (7, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-02-03 00:54:01.897' AS DateTime), 3, 7, 1, 0)
+					INSERT [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) VALUES (8, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-02-04 00:54:01.900' AS DateTime), 3, 8, 1, 0)
+					INSERT [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) VALUES (9, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-02-05 00:54:01.903' AS DateTime), 3, 9, 1, 0)
+					INSERT [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) VALUES (10, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-02-06 00:54:01.907' AS DateTime), 3, 10, 1, 0)
+					INSERT [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) VALUES (11, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-02-07 00:54:01.910' AS DateTime), 3, 11, 1, 0)
+					INSERT [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) VALUES (12, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-02-08 00:54:01.910' AS DateTime), 3, 12, 1, 0)
+
+					SET Identity_Insert [dbo].[Concerts] OFF
 				"
 
 			$Result = $Command.ExecuteNonQuery()
@@ -279,7 +295,9 @@ function Populate-DBSchema
 			$Command.CommandText =
 				"
 					SET IDENTITY_INSERT [dbo].[Performers] ON 
+
 					INSERT [dbo].[Performers] ([PerformerId], [FirstName], [LastName], [Skills], [ContactNbr], [ShortName]) VALUES (1, N'Julie', N'Plantes', N'PopMusic', CAST(1234567891 AS Numeric(15, 0)), N'Julie and the Plantes')                
+
 					SET IDENTITY_INSERT [dbo].[Performers] OFF
 				"
 
@@ -290,26 +308,26 @@ function Populate-DBSchema
 			WriteLabel("Populating TicketLevels table")
 			$Command.CommandText =
 				"
-					Set Identity_Insert [dbo].[TicketLevels] On 
+					SET Identity_Insert [dbo].[TicketLevels] ON 
 
-					Declare @index numeric = 1
-					Declare @venueIndex numeric = 1
-					Declare @seatIndex numeric = 1
+					DECLARE @index numeric = 1
+					DECLARE @venueIndex numeric = 1
+					DECLARE @seatIndex numeric = 1
 
-					While @venueIndex <= 12
-					Begin
-						Set @seatIndex = 1
+					WHILE @venueIndex <= 12
+					BEGIN
+						SET @seatIndex = 1
 
-						While @seatIndex <= 10
-						Begin
-							Insert [dbo].[TicketLevels] ([TicketLevelId], [TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice])
+						WHILE @seatIndex <= 10
+						BEGIN
+							INSERT [dbo].[TicketLevels] ([TicketLevelId], [TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice])
 							Values (@index, null, N'Level-' + Cast(@index as nvarchar(8)), @index, @venueIndex, 50 + (5*@seatIndex))
-							Set @index = @index + 1
-							Set @seatIndex = @seatIndex + 1
-						End
+							SET @index = @index + 1
+							SET @seatIndex = @seatIndex + 1
+						END
 
-						Set @venueIndex = @venueIndex + 1
-					End
+						SET @venueIndex = @venueIndex + 1
+					END
 
 					UPDATE	TicketLevels
 					SET		Description = 
@@ -326,7 +344,7 @@ function Populate-DBSchema
 									ELSE '101-103'
 								END
 
-					Set Identity_Insert [dbo].[TicketLevels] Off
+					SET Identity_Insert [dbo].[TicketLevels] OFF
 				"
 
 			$Result = $Command.ExecuteNonQuery()
