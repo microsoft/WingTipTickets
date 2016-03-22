@@ -1,14 +1,14 @@
 ﻿@model Tenant.Mvc.Models.ReportsViewModel
 
 @{
-    ViewBag.Title = "PowerBI Reports";
+    ViewBag.Title = "Reports";
 }
 
 <div class="page-heading">
     <div class="container">
         <div class="row">
             <div class="col-xs-12">
-                <h1>PowerBI Reports:</h1>
+                <h1>Reports:</h1>
             </div>
         </div>
     </div>
@@ -33,6 +33,7 @@
                     </div>
 
                     <div class="form-group pull-right">
+                        <button type="button" class="btn btn-info" style="margin-bottom: 0px;" onclick="UpdateDefaultReport()">Set as Default</button>
                         <button type="submit" class="btn btn-default btn-themed-secondary" style="margin-bottom: 0px;">Show Report</button>
                     </div>
                 </div>
@@ -58,9 +59,29 @@
 <!-- Script Section -->
 <!-- -------------------------------------------------------------------------------------------------------------------------- -->
 
-<script src="~/Content/Scripts/jquery-1.9.1.min.js"></script>
-<script>
-    $(document).ready(function () {
+@section Scripts
+{
+    <script type="text/javascript" language="javascript">
 
-    });
-</script>
+    function UpdateDefaultReport() {
+        var selectedReportId = $("#SelectedReportId").val();
+        var selectedReportText = $("#SelectedReportId option:selected").text();
+
+        $.ajax({
+                type: "POST",
+                url: '@Url.Action("UpdateDefaultReport", "Reports")',
+                data: { reportId: selectedReportId },
+                dataType: "json",
+                success: function()
+                {
+                    showAlert("Confirmation", "The <strong>'" + selectedReportText + "'</strong> report has been set as the default");
+                },
+                error: function (jqXHR, textStatus, errorThrown)
+                {
+                    debugger;
+                }
+            });
+    }
+
+    </script>
+}

@@ -1,26 +1,58 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
-using Microsoft.Ajax.Utilities;
 using Microsoft.PowerBI.Api.Beta;
 using Microsoft.PowerBI.Api.Beta.Models;
 using Microsoft.PowerBI.Security;
 using Microsoft.Rest;
 using Tenant.Mvc.Core.Helpers;
+using Tenant.Mvc.Core.Interfaces.Tenant;
 using Tenant.Mvc.Models;
 
 namespace Tenant.Mvc.Controllers
 {
-    public class ReportsController : Controller
+    public class ReportsController : BaseController
     {
+        #region - Fields -
+
+        private const string DefaultReportCode = "DefaultReportId";
+
+        #endregion
+
+        #region - Fields -
+
+        private readonly IApplicationDefaultsRepository _defaultsRepository;
+
+        #endregion
+
+        #region - Controllers -
+
+        public ReportsController(IApplicationDefaultsRepository defaultsRepository)
+        {
+            // Setup Fields
+            _defaultsRepository = defaultsRepository;
+
+            // Setup Callbacks
+            _defaultsRepository.StatusCallback = DisplayMessage;
+        }
+
+        #endregion
+
         #region - Index View -
 
         [HttpGet]
         public ActionResult Index()
         {
+            // Get the default report
+            var defaultReport = FetchReport(_defaultsRepository.GetApplicationDefault(DefaultReportCode));
+
+            // Build up the view model
             var viewModel = new ReportsViewModel()
             {
-                Reports = FetchReports(null)
+                SelectedReportId = new Guid(defaultReport.Report.Id),
+                Reports = FetchReports(defaultReport.Report.Id),
+                Report = defaultReport.Report,
+                AccessToken = defaultReport.AccessToken
             };
 
             return View(viewModel);
@@ -29,12 +61,11 @@ namespace Tenant.Mvc.Controllers
         [HttpPost]
         public ActionResult Index(ReportsViewModel viewModel)
         {
-            // Refresh the Available reports
-            viewModel.Reports = FetchReports(viewModel.SelectedReportId.ToString());
-
-            // Get the Report
+            // Get the selected report
             var reportResult = FetchReport(viewModel.SelectedReportId.ToString());
 
+            // Build up the view model
+            viewModel.Reports = FetchReports(viewModel.SelectedReportId.ToString());
             viewModel.Report = reportResult.Report;
             viewModel.AccessToken = reportResult.AccessToken;
 
@@ -88,6 +119,18 @@ namespace Tenant.Mvc.Controllers
             };
 
             return client;
+        }
+
+        #endregion
+
+        #region - Page Helpers -
+
+        [HttpPost]
+        public JsonResult UpdateDefaultReport(string reportId)
+        {
+            _defaultsRepository.SetApplicationDefault(DefaultReportCode, reportId);
+
+            return Json(new { succeeded = true }, JsonRequestBehavior.AllowGet);
         }
 
         #endregion

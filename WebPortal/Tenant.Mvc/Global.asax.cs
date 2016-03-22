@@ -80,30 +80,26 @@ namespace WingTipTickets
 
         public static string GetTenantConnectionString()
         {
-            return BuildConnectionString(Config.TenantDatabaseServer, Config.TenantDatabase, Config.DatabaseUser, Config.DatabasePassword);
+            return Config.RunningInDev
+                ? ConfigurationManager.ConnectionStrings["tenantConnection"].ConnectionString
+                : BuildConnectionString(Config.TenantDatabaseServer, Config.TenantDatabase, Config.DatabaseUser, Config.DatabasePassword);
         }
 
         public static string GetRecommendationConnectionString()
         {
-            return BuildConnectionString(Config.RecommendationDatabaseServer, Config.RecommendationDatabase, Config.DatabaseUser, Config.DatabasePassword);
+            return Config.RunningInDev
+                ? ConfigurationManager.ConnectionStrings["recommendationConnection"].ConnectionString
+                : BuildConnectionString(Config.RecommendationDatabaseServer, Config.RecommendationDatabase, Config.DatabaseUser, Config.DatabasePassword);
         }
 
         public static SqlConnection CreateTenantSqlConnection()
         {
-            var connectionString = Config.RunningInDev 
-                ? ConfigurationManager.ConnectionStrings["tenantConnection"].ConnectionString
-                : GetTenantConnectionString();
-
-            return new SqlConnection(connectionString);
+            return new SqlConnection(GetTenantConnectionString());
         }
 
         public static SqlConnection CreateRecommendationSqlConnection()
         {
-            var connectionString = Config.RunningInDev
-                ? ConfigurationManager.ConnectionStrings["recommendationConnection"].ConnectionString
-                : GetRecommendationConnectionString();
-
-            return new SqlConnection(connectionString); 
+            return new SqlConnection(GetRecommendationConnectionString()); 
         }
 
         #endregion

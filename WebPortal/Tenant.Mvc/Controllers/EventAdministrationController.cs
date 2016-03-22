@@ -467,7 +467,6 @@ namespace Tenant.Mvc.Controllers
         #endregion
 
         #region - Page Helpers -
-
         
         [HttpGet]
         public JsonResult UpdateLookups(int artistId, int cityId, int venueId, int eventId)

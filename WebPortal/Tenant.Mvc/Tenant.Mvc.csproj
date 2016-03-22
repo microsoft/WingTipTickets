@@ -192,6 +192,7 @@
       <HintPath>..\packages\Microsoft.Net.Http.2.2.22\lib\net45\System.Net.Http.Primitives.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Spatial, Version=5.6.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -326,10 +327,67 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\VenueController.cs" />
     <Compile Include="Controllers\VersionController.cs" />
+    <Compile Include="Core\Contexts\ApplicationDefault.cs">
+      <DependentUpon>WingTipTicketModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Contexts\City.cs">
+      <DependentUpon>WingTipTicketModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Contexts\Concert.cs">
+      <DependentUpon>WingTipTicketModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Contexts\Customer.cs">
+      <DependentUpon>WingTipTicketModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Contexts\CustomerCreditCard.cs">
+      <DependentUpon>WingTipTicketModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Core\Contexts\DatabaseContext.cs" />
+    <Compile Include="Core\Contexts\Organizer.cs">
+      <DependentUpon>WingTipTicketModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Contexts\Performer.cs">
+      <DependentUpon>WingTipTicketModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Contexts\State.cs">
+      <DependentUpon>WingTipTicketModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Contexts\sysdiagram.cs">
+      <DependentUpon>WingTipTicketModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Contexts\Ticket.cs">
+      <DependentUpon>WingTipTicketModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Contexts\TicketLevel.cs">
+      <DependentUpon>WingTipTicketModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Contexts\Venue.cs">
+      <DependentUpon>WingTipTicketModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Contexts\WebSiteActionLog.cs">
+      <DependentUpon>WingTipTicketModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Contexts\WingTipTicketEntities.cs" />
+    <Compile Include="Core\Contexts\WingTipTicketModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>WingTipTicketModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Contexts\WingTipTicketModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>WingTipTicketModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Contexts\WingTipTicketModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>WingTipTicketModel.edmx</DependentUpon>
+    </Compile>
     <Compile Include="Core\Helpers\ConfigHelper.cs" />
+    <Compile Include="Core\Interfaces\Tenant\IApplicationDefaultsRepository.cs" />
     <Compile Include="Core\Interfaces\Tenant\IBaseRepository.cs" />
     <Compile Include="Core\Models\ApplicationDbContext.cs" />
+    <Compile Include="Core\Repositories\Tenant\ApplicationDefaultsRepository.cs" />
     <Compile Include="Models\EventAdministrationViewModel.cs" />
     <Compile Include="Models\ReportsViewModel.cs" />
     <Compile Include="Models\VenueIndexViewModel.cs" />
@@ -453,6 +511,16 @@
     <Content Include="Content\Stylesheets\bootstrap.css" />
     <Content Include="Content\Stylesheets\bootstrap.min.css" />
     <Content Include="Content\Stylesheets\Site.css" />
+    <Content Include="Core\Contexts\WingTipTicketModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>WingTipTicketModel.edmx</DependentUpon>
+      <LastGenOutput>WingTipTicketModel.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Core\Contexts\WingTipTicketModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>WingTipTicketModel.edmx</DependentUpon>
+      <LastGenOutput>WingTipTicketModel.cs</LastGenOutput>
+    </Content>
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Img\Classical\arrow-whitebg.jpg" />
@@ -564,6 +632,13 @@
     <Content Include="Content\Img\WingTipTickets\up.png" />
     <Content Include="Content\Stylesheets\bootstrap-theme.css.map" />
     <Content Include="Content\Stylesheets\bootstrap.css.map" />
+    <EntityDeploy Include="Core\Contexts\WingTipTicketModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>WingTipTicketModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Core\Contexts\WingTipTicketModel.edmx.diagram">
+      <DependentUpon>WingTipTicketModel.edmx</DependentUpon>
+    </Content>
     <None Include="Properties\PublishProfiles\AutoProvisioner.pubxml" />
     <None Include="Properties\PublishProfiles\Deployment-Primary.pubxml" />
     <None Include="Properties\PublishProfiles\Deployment-Secondary.pubxml" />
@@ -618,6 +693,9 @@
     <Content Include="packages.config">
       <SubType>Designer</SubType>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
