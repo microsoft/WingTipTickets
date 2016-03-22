@@ -134,6 +134,20 @@ function Populate-DBSchema
 			$Result = $Command.ExecuteNonQuery()
 			WriteValue("Successful")
 
+			# Populate ApplicationDefaults Table
+			WriteLabel("Populating ApplicationDefaults table")
+			$Command.CommandText =
+				"
+					SET Identity_Insert [dbo].[ApplicationDefault] ON
+					
+					INSERT [dbo].[ApplicationDefault] ([ApplicationDefaultId], [Code], [Value]) VALUES (1, 'DefaultReportId', 'a1fb60c9-3cef-4bb4-af2a-5e1b39114214')
+					
+					SET Identity_Insert [dbo].[ApplicationDefault] OFF
+				"
+
+			$Result = $Command.ExecuteNonQuery()
+			WriteValue("Successful")
+
 			# Populate Customers Table
 			$Command.CommandText =
 				"INSERT INTO [dbo].[Customers]([FirstName], [LastName], [Email], [Password]) VALUES 
@@ -152,9 +166,9 @@ function Populate-DBSchema
 			$Command.CommandText =
 				"
 					SET Identity_Insert [dbo].[Country] ON
-
+					
 					INSERT [dbo].[Country] ([CountryId], [CountryName], [Description]) VALUES (1, N'United States', NULL)
-
+					
 					SET Identity_Insert [dbo].[Country] OFF
 				"
 
@@ -166,7 +180,7 @@ function Populate-DBSchema
 			$Command.CommandText =
 				"
 					SET Identity_Insert [dbo].[States] ON
-
+					
 					INSERT [dbo].[States] ([StateId], [StateName], [Description], [CountryId]) VALUES (1, N'CA', NULL, 1)
 					INSERT [dbo].[States] ([StateId], [StateName], [Description], [CountryId]) VALUES (2, N'CO', NULL, 1)
 					INSERT [dbo].[States] ([StateId], [StateName], [Description], [CountryId]) VALUES (3, N'FL', NULL, 1)
@@ -177,7 +191,7 @@ function Populate-DBSchema
 					INSERT [dbo].[States] ([StateId], [StateName], [Description], [CountryId]) VALUES (8, N'TX', NULL, 1)
 					INSERT [dbo].[States] ([StateId], [StateName], [Description], [CountryId]) VALUES (9, N'UT', NULL, 1)
 					INSERT [dbo].[States] ([StateId], [StateName], [Description], [CountryId]) VALUES (10, N'WA', NULL, 1)
-
+					
 					SET Identity_Insert [dbo].[States] OFF
 				"
 
@@ -189,7 +203,7 @@ function Populate-DBSchema
 			$Command.CommandText =
 				"
 					SET Identity_Insert [dbo].[City] ON 
-
+					
 					INSERT [dbo].[City] ([CityId], [CityName], [Description], [StateId]) VALUES (1, N'Los Angeles', NULL, 1)
 					INSERT [dbo].[City] ([CityId], [CityName], [Description], [StateId]) VALUES (2, N'Denver', NULL, 2)
 					INSERT [dbo].[City] ([CityId], [CityName], [Description], [StateId]) VALUES (3, N'Jacksonville', NULL, 3)
@@ -201,7 +215,7 @@ function Populate-DBSchema
 					INSERT [dbo].[City] ([CityId], [CityName], [Description], [StateId]) VALUES (9, N'Salt Lake City', NULL, 9)
 					INSERT [dbo].[City] ([CityId], [CityName], [Description], [StateId]) VALUES (10, N'Seattle', NULL, 10)
 					INSERT [dbo].[City] ([CityId], [CityName], [Description], [StateId]) VALUES (11, N'Spokane', NULL, 10)
-
+					
 					SET Identity_Insert [dbo].[City] OFF
 				"
 
@@ -213,7 +227,7 @@ function Populate-DBSchema
 			$Command.CommandText =
 				"
 					SET Identity_Insert [dbo].[Venues] ON 
-
+					
 					INSERT [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) VALUES (1, N'Conrad Fischer Stands', 1000, N'', 1)
 					INSERT [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) VALUES (2, N'Hayden Lawrence Gardens', 1000, N'', 2)
 					INSERT [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) VALUES (3, N'Rene Charron Highrise', 1000, N'', 3)
@@ -226,7 +240,7 @@ function Populate-DBSchema
 					INSERT [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) VALUES (10, N'Antione Lacroix Dome', 1000, N'', 10)
 					INSERT [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) VALUES (11, N'Claude LAngelier Field', 1000, N'', 11)
 					INSERT [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) VALUES (12, N'Maya Haynes Arena', 1000, N'', 10)
-
+					
 					SET Identity_Insert [dbo].[Venues] OFF
 				"
 
@@ -270,7 +284,7 @@ function Populate-DBSchema
 			$Command.CommandText =
 				"
 					SET Identity_Insert [dbo].[Concerts] ON 
-
+					
 					INSERT [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) VALUES (1, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-01-28 00:54:01.870' AS DateTime), 3, 1, 1, 0)
 					INSERT [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) VALUES (2, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-01-29 00:54:01.877' AS DateTime), 3, 2, 1, 0)
 					INSERT [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) VALUES (3, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-01-30 00:54:01.880' AS DateTime), 3, 3, 1, 0)
@@ -283,7 +297,7 @@ function Populate-DBSchema
 					INSERT [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) VALUES (10, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-02-06 00:54:01.907' AS DateTime), 3, 10, 1, 0)
 					INSERT [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) VALUES (11, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-02-07 00:54:01.910' AS DateTime), 3, 11, 1, 0)
 					INSERT [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) VALUES (12, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-02-08 00:54:01.910' AS DateTime), 3, 12, 1, 0)
-
+					
 					SET Identity_Insert [dbo].[Concerts] OFF
 				"
 
@@ -295,9 +309,9 @@ function Populate-DBSchema
 			$Command.CommandText =
 				"
 					SET IDENTITY_INSERT [dbo].[Performers] ON 
-
+					
 					INSERT [dbo].[Performers] ([PerformerId], [FirstName], [LastName], [Skills], [ContactNbr], [ShortName]) VALUES (1, N'Julie', N'Plantes', N'PopMusic', CAST(1234567891 AS Numeric(15, 0)), N'Julie and the Plantes')                
-
+					
 					SET IDENTITY_INSERT [dbo].[Performers] OFF
 				"
 
