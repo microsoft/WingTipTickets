@@ -76,7 +76,6 @@ function Deploy-WTTAzureDWDatabase
 
 	Process 
 	{
-        Import-Module sqlps -Force -ErrorAction SilentlyContinue
 		# Set Defaults
 		$dbServerExists=$true
 		$dbExists=$true
