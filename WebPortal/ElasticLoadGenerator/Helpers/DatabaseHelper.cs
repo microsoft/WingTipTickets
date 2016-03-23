@@ -1,6 +1,12 @@
 using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Windows.Documents;
+using ElasticPoolLoadGenerator.Models;
 
-namespace ElasticLoadGenerator.Helpers
+namespace ElasticPoolLoadGenerator.Helpers
 {
     public static class DatabaseHelper
     {
@@ -34,6 +40,58 @@ namespace ElasticLoadGenerator.Helpers
             }
 
             return batchQuery;
+        }
+
+        public static List<LookupViewModel> GetConcerts(string connectionString)
+        {
+            // Build up the Concert Query
+            const string query = "SELECT Id = ConcertId, Description = ConcertName + ' (' + V.VenueName + ')' FROM Concerts C JOIN Venues V ON V.VenueId = C.VenueId";
+
+            return GetLookupData(query, connectionString);
+        }
+
+        public static List<LookupViewModel> GetTicketLevels(string connectionString, int concertId)
+        {
+            // Build up the TicketLevel Query
+            string query = "SELECT Id = TicketLevelId, Description = 'Sections ' + Description + ' ($' + CAST(TicketPrice AS varchar) + ')' FROM TicketLevels WHERE ConcertId = " + concertId;
+
+            return GetLookupData(query, connectionString);
+        }
+
+        public static List<LookupViewModel> GetCustomers(string connectionString)
+        {
+            // Build up the Customer Query
+            const string query = "SELECT Id = CustomerId, Description = Firstname + ' ' + LastName FROM Customers";
+
+            return GetLookupData(query, connectionString);
+        }
+
+        #endregion
+
+        #region - Private Methods -
+
+        private static List<LookupViewModel> GetLookupData(string query, string connectionString)
+        {
+            var lookups = new List<LookupViewModel>();
+
+            var connection = new SqlConnection(connectionString);
+            var dataset = new DataSet();
+            var reader = new SqlDataAdapter(query, connection);
+
+            reader.Fill(dataset);
+
+            if (dataset.Tables.Count > 0 && dataset.Tables[0].Rows.Count > 0)
+            {
+                lookups.AddRange(
+                    from DataRow row in dataset.Tables[0].Rows
+                    select new LookupViewModel()
+                    {
+                        Id = Convert.ToInt32(row["Id"]), 
+                        Description = row["Description"].ToString()
+                    });
+            }
+
+            return lookups;
         }
 
         #endregion

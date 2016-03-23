@@ -24,7 +24,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{46ACB0
 EndProject
 Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "Tenant.Azure", "Tenant.Azure\Tenant.Azure.ccproj", "{61A81297-D041-48FC-ACA7-E8DD034B1951}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElasticLoadGenerator", "ElasticLoadGenerator\ElasticLoadGenerator.csproj", "{A4FE7AA0-8B0A-41CD-AF86-504380FC0DDE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElasticPoolLoadGenerator", "ElasticPoolLoadGenerator\ElasticPoolLoadGenerator.csproj", "{A4FE7AA0-8B0A-41CD-AF86-504380FC0DDE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElasticLoadGenerator", "ElasticLoadGenerator\ElasticLoadGenerator.csproj", "{D97823D7-F5B6-4EFF-A370-5A746519C8AA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -118,6 +120,22 @@ Global
 		{A4FE7AA0-8B0A-41CD-AF86-504380FC0DDE}.Portable-Release|Any CPU.Build.0 = Release|Any CPU
 		{A4FE7AA0-8B0A-41CD-AF86-504380FC0DDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A4FE7AA0-8B0A-41CD-AF86-504380FC0DDE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D97823D7-F5B6-4EFF-A370-5A746519C8AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D97823D7-F5B6-4EFF-A370-5A746519C8AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D97823D7-F5B6-4EFF-A370-5A746519C8AA}.Net40-Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D97823D7-F5B6-4EFF-A370-5A746519C8AA}.Net40-Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D97823D7-F5B6-4EFF-A370-5A746519C8AA}.Net40-Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D97823D7-F5B6-4EFF-A370-5A746519C8AA}.Net40-Release|Any CPU.Build.0 = Release|Any CPU
+		{D97823D7-F5B6-4EFF-A370-5A746519C8AA}.Net45-Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D97823D7-F5B6-4EFF-A370-5A746519C8AA}.Net45-Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D97823D7-F5B6-4EFF-A370-5A746519C8AA}.Net45-Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D97823D7-F5B6-4EFF-A370-5A746519C8AA}.Net45-Release|Any CPU.Build.0 = Release|Any CPU
+		{D97823D7-F5B6-4EFF-A370-5A746519C8AA}.Portable-Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D97823D7-F5B6-4EFF-A370-5A746519C8AA}.Portable-Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D97823D7-F5B6-4EFF-A370-5A746519C8AA}.Portable-Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D97823D7-F5B6-4EFF-A370-5A746519C8AA}.Portable-Release|Any CPU.Build.0 = Release|Any CPU
+		{D97823D7-F5B6-4EFF-A370-5A746519C8AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D97823D7-F5B6-4EFF-A370-5A746519C8AA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

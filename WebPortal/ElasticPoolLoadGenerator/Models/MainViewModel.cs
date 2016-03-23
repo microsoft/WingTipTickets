@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Input;
 using ElasticPoolLoadGenerator.Commands;
-using ElasticPoolLoadGenerator.Helpers;
-using ElasticPoolLoadGenerator.Interfaces;
+using ElasticPoolLoadGenerator.Components;
 
 namespace ElasticPoolLoadGenerator.Models
 {
@@ -18,10 +16,6 @@ namespace ElasticPoolLoadGenerator.Models
         private string _username;
         private string _password;
 
-        private int _concertId;
-        private int _ticketLevelId;
-        private int _customerId;
-
         private int _bulkPurchaseQty;
         private int _ticketsPurchased;
         private double _purchasesPerSecond;
@@ -30,79 +24,21 @@ namespace ElasticPoolLoadGenerator.Models
         private string _loadingDatabase;
         private string _statusText;
         private string _startText;
-        private bool _fieldsEnabled;
-        private bool _isDualDatabaseLoad;
+        private bool _startEnabled;
 
         private TimeSpan _duration;
-        private List<LookupViewModel> _concerts;
-        private List<LookupViewModel> _ticketLevels;
-        private List<LookupViewModel> _customers;
-
 
         #endregion
 
+        #region - Properties -
 
-        #region - Miscelaneous Properties -
-
-        public IDatabaseLoader DatabaseLoader { get; set; }
-
+        public DatabaseLoader DatabaseLoader { get; set; }
         public ICommand PurchaseTicketsCommand { get; set; }
-
-        #endregion
-
-        #region - Collection Properties -
-
-        public List<LookupViewModel> Concerts
-        {
-            get { return _concerts; }
-            set
-            {
-                if (_concerts != value)
-                {
-                    _concerts = value;
-                    OnPropertyChanged("Concerts");
-                }
-            }
-        }
-
-        public List<LookupViewModel> TicketLevels
-        {
-            get { return _ticketLevels; }
-            set
-            {
-                if (_ticketLevels != value)
-                {
-                    _ticketLevels = value;
-                    OnPropertyChanged("TicketLevels");
-                }
-            }
-        }
-
-        public List<LookupViewModel> Customers
-        {
-            get { return _customers; }
-            set
-            {
-                if (_customers != value)
-                {
-                    _customers = value;
-                    OnPropertyChanged("Customers");
-                }
-            }
-        }
-
-        #endregion
-
-        #region - Binding Properties -
 
         public string DatabaseServer
         {
             get { return _databaseServer; }
-            set
-            {
-                SetValue(value, ref _databaseServer, "DatabaseServer");
-                UpdateAllDropDowns();
-            }
+            set { SetValue(value, ref _databaseServer, "DatabaseServer"); }
         }
 
         public string PrimaryDatabase
@@ -127,28 +63,6 @@ namespace ElasticPoolLoadGenerator.Models
         {
             get { return _password; }
             set { SetValue(value, ref _password, "Password"); }
-        }
-
-        public int ConcertId
-        {
-            get { return _concertId; }
-            set
-            {
-                SetValue(value, ref _concertId, "ConcertId");
-                UpdateConcertDropDown();
-            }
-        }
-
-        public int TicketLevelId
-        {
-            get { return _ticketLevelId; }
-            set { SetValue(value, ref _ticketLevelId, "TicketLevelId"); }
-        }
-
-        public int CustomerId
-        {
-            get { return _customerId; }
-            set { SetValue(value, ref _customerId, "CustomerId"); }
         }
 
         public int BulkPurchaseQty
@@ -193,10 +107,10 @@ namespace ElasticPoolLoadGenerator.Models
             set { SetValue(value, ref _startText, "StartText"); }
         }
 
-        public bool FieldsEnabled
+        public bool StartEnabled
         {
-            get { return  _fieldsEnabled; }
-            set { SetValue(value, ref _fieldsEnabled, "FieldsEnabled"); }
+            get { return _startEnabled; }
+            set { SetValue(value, ref _startEnabled, "StartEnabled"); }
         }
 
         public TimeSpan Duration
@@ -205,14 +119,7 @@ namespace ElasticPoolLoadGenerator.Models
             set { SetValue(value, ref _duration, "Duration"); }
         }
 
-        public bool IsDualDatabaseLoad
-        {
-            get { return _isDualDatabaseLoad; }
-            set { SetValue(value, ref _isDualDatabaseLoad, "IsDualDatabaseLoad"); }
-        }
-
         #endregion
-
 
         #region - Constructors -
 
@@ -234,53 +141,18 @@ namespace ElasticPoolLoadGenerator.Models
             _statusText = "";
             _loadingDatabase = "";
             _startText = "Start";
-            _fieldsEnabled = true;
-            _isDualDatabaseLoad = false;
+            _startEnabled = true;
 
-            // Setup Commands & Collections
+            // Setup Commands
             PurchaseTicketsCommand = new PurchaseTicketsCommand(this);
 
-            _concerts = new List<LookupViewModel>();
-            _ticketLevels = new List<LookupViewModel>();
-            _customers = new List<LookupViewModel>();
+            // Setup Workers
+            DatabaseLoader = new DatabaseLoader(this);
         }
 
         #endregion
 
-
         #region - Private Methods -
-
-        private void UpdateAllDropDowns()
-        {
-            try
-            {
-                // Create Connection string & Update drop downs
-                var connectionString = DatabaseHelper.ConstructConnectionString(DatabaseServer, PrimaryDatabase, Username, Password);
-
-                Concerts = DatabaseHelper.GetConcerts(connectionString);
-                TicketLevels = DatabaseHelper.GetTicketLevels(connectionString, ConcertId);
-                Customers = DatabaseHelper.GetCustomers(connectionString);
-            }
-            catch
-            {
-                LoadingDatabase = "Could not Connect!";
-            }
-        }
-
-        private void UpdateConcertDropDown()
-        {
-            try
-            {
-                // Create Connection string & Update drop downs
-                var connectionString = DatabaseHelper.ConstructConnectionString(DatabaseServer, PrimaryDatabase, Username, Password);
-
-                TicketLevels = DatabaseHelper.GetTicketLevels(connectionString, ConcertId);
-            }
-            catch
-            {
-                LoadingDatabase = "Could not Connect!";
-            }
-        }
 
         private void SetValue<T>(T value, ref T field, string propertyName)
         {

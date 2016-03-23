@@ -75,20 +75,23 @@
         <TextBlock Name="TbInformation" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Left" Text="Server Information" FontSize="16" TextDecorations="Underline" FontWeight="Bold" />
 
         <TextBlock Name="TbServer" Grid.Row="1" Grid.Column="0" Text="Database Server"  />
-        <TextBox Name="TxtServer" Grid.Row="1" Grid.Column="2" Text="{Binding DatabaseServer}" Margin="6,12,0,12" IsEnabled="{Binding FieldsEnabled}" />
+        <TextBox Name="TxtServer" Grid.Row="1" Grid.Column="2" Text="{Binding DatabaseServer}" Margin="6,12,0,12" IsEnabled="{Binding StartEnabled}" />
 
-        <TextBlock Name="TbConcert" Grid.Row="2" Grid.Column="0" Text="Concert"  />
-        <ComboBox Name="CmbConcert" Grid.Row="2" Grid.Column="2" ItemsSource="{Binding Concerts, Mode=TwoWay}" DisplayMemberPath="Description" SelectedValuePath="Id" SelectedValue="{Binding ConcertId}" Margin="6,12,10,12" IsEnabled="{Binding FieldsEnabled}" />
+        <TextBlock Name="TbPrimary" Grid.Row="2" Grid.Column="0" Text="Primary Database" />
+        <TextBox Name="TxtPrimary" Grid.Row="2" Grid.Column="2" Text="{Binding PrimaryDatabase}" Margin="6,12,0,12" IsEnabled="{Binding StartEnabled}" />
 
-        <TextBlock Name="TbTicketLevel" Grid.Row="3" Grid.Column="0" Text="Ticket Level"  />
-        <ComboBox Name="CmbTicketLevel" Grid.Row="3" Grid.Column="2" ItemsSource="{Binding TicketLevels}" DisplayMemberPath="Description" SelectedValuePath="Id" SelectedValue="{Binding TicketLevelId}" Margin="6,12,10,12" IsEnabled="{Binding FieldsEnabled}" />
+        <TextBlock Name="TbSecondary" Grid.Row="3" Grid.Column="0" Text="Secondary Database" />
+        <TextBox Name="TxtSecondary" Grid.Row="3" Grid.Column="2" Text="{Binding SecondaryDatabase}" Margin="6,12,0,12" IsEnabled="{Binding StartEnabled}" />
 
-        <TextBlock Name="TbCustomer" Grid.Row="4" Grid.Column="0" Text="Customer"  />
-        <ComboBox Name="CmbCustomer" Grid.Row="4" Grid.Column="2" ItemsSource="{Binding Customers}" DisplayMemberPath="Description" SelectedValuePath="Id" SelectedValue="{Binding CustomerId}" Margin="6,12,10,12" IsEnabled="{Binding FieldsEnabled}" />
+        <TextBlock Name="TbUsername" Grid.Row="4" Grid.Column="0" Text="Username" />
+        <TextBox Name="TxtUsername" Grid.Row="4" Grid.Column="2" Text="{Binding Username}" Margin="6,12,0,12" IsEnabled="{Binding StartEnabled}" />
 
-        <TextBlock Name="TbIsDualDatabaseLoad" Grid.Row="5" Grid.Column="0" Text="Load Multiple databases"  />
-        <CheckBox Name="CbIsDualDatabaseLoad" Grid.Row="5" Grid.Column="2" IsChecked="{Binding IsDualDatabaseLoad}" Margin="6,20,0,12" IsEnabled="{Binding FieldsEnabled}"></CheckBox>
-        
+        <TextBlock Name="TbPassword" Grid.Row="5" Grid.Column="0" Text="Password" />
+        <TextBox Name="TxtPassword" Grid.Row="5" Grid.Column="2" Text="{Binding Password}" Margin="6,12,0,12" IsEnabled="{Binding StartEnabled}" />
+
+        <TextBlock Name="TbBulkPurchase" Grid.Row="6" Grid.Column="0" Text="Batch Size" />
+        <TextBox Name="TxtBulkPurchase" Grid.Row="6" Grid.Column="2" Width="50" Text="{Binding BulkPurchaseQty}" Margin="6,12,0,12" IsEnabled="{Binding StartEnabled}" />
+
         <Button Grid.Row="9" Grid.Column="2" Content="{Binding StartText}" Command="{Binding PurchaseTicketsCommand, Mode=OneWay}" IsEnabled="{Binding StartEnabled}" />
 
         <!-- ========================================================== -->

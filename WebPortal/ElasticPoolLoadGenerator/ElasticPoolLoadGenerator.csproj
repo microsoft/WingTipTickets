@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D97823D7-F5B6-4EFF-A370-5A746519C8AA}</ProjectGuid>
+    <ProjectGuid>{A4FE7AA0-8B0A-41CD-AF86-504380FC0DDE}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ElasticPoolLoadGenerator</RootNamespace>
@@ -93,13 +93,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Commands\PurchaseTicketsCommand.cs" />
-    <Compile Include="Interfaces\IDatabaseLoader.cs" />
-    <Compile Include="Components\SingleDatabaseLoader.cs" />
-    <Compile Include="Components\DualDatabaseLoader.cs" />
+    <Compile Include="Components\DatabaseLoader.cs" />
     <Compile Include="Helpers\ConfigHelper.cs" />
     <Compile Include="Helpers\ErrorDetectionStrategy.cs" />
     <Compile Include="Helpers\DatabaseHelper.cs" />
-    <Compile Include="Models\LookupViewModel.cs" />
     <Compile Include="Models\MainViewModel.cs" />
     <Page Include="Forms\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
