@@ -390,6 +390,7 @@
     <Compile Include="Core\Repositories\Tenant\ApplicationDefaultsRepository.cs" />
     <Compile Include="Models\EventAdministrationViewModel.cs" />
     <Compile Include="Models\ReportsViewModel.cs" />
+    <Compile Include="Models\UploadFileViewModel.cs" />
     <Compile Include="Models\VenueIndexViewModel.cs" />
     <Compile Include="Models\CustomerEventsViewModel.cs" />
     <Compile Include="Core\Models\PurchaseTicketsModel.cs" />
@@ -475,11 +476,14 @@
     <Content Include="Content\powerbi.css" />
     <Content Include="Content\Scripts\bootstrap-select.js" />
     <Content Include="Content\Scripts\buy.js" />
+    <Content Include="Content\Scripts\jquery.fileupload-ui.js" />
+    <Content Include="Content\Scripts\jquery.fileupload.js" />
     <Content Include="Content\Scripts\modernizr-2.6.2.js" />
     <Content Include="Content\Scripts\respond.js" />
     <Content Include="Content\Scripts\respond.min.js" />
     <None Include="Content\Scripts\_references.js" />
     <Content Include="Content\Stylesheets\bootstrap-select.css" />
+    <Content Include="Content\Stylesheets\jquery.fileupload.css" />
     <Content Include="Content\Stylesheets\Recommendation.css" />
     <Content Include="Content\Themes\Classical.css" />
     <Content Include="Content\Fonts\glyphicons-halflings-regular.svg" />
@@ -688,6 +692,7 @@
     <Content Include="Views\Shared\_CityList.cshtml" />
     <Content Include="Views\Shared\_DateList.cshtml" />
     <Content Include="Views\Reports\Index.cshtml" />
+    <Content Include="Views\Reports\Upload.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

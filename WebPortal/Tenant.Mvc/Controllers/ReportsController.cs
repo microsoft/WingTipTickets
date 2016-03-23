@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Web;
 using System.Web.Mvc;
 using Microsoft.PowerBI.Api.Beta;
 using Microsoft.PowerBI.Api.Beta.Models;
@@ -74,6 +78,43 @@ namespace Tenant.Mvc.Controllers
 
         #endregion
 
+        #region - Upload View -
+
+        [HttpGet]
+        public ActionResult Upload()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public JsonResult UploadFiles()
+        {
+            var results = new List<UploadFileViewModel>();
+
+            foreach (string file in Request.Files)
+            {
+                var postedFile = Request.Files[file];
+
+                if (postedFile == null || postedFile.ContentLength == 0)
+                {
+                    continue;
+                }
+
+                UploadReport(postedFile);
+
+                results.Add(new UploadFileViewModel()
+                {
+                    Name = postedFile.FileName,
+                    Length = postedFile.ContentLength,
+                    Type = postedFile.ContentType
+                });
+            }
+
+            return Json(results, JsonRequestBehavior.AllowGet);
+        }
+
+        #endregion
+
         #region - Private Methods -
 
         private SelectList FetchReports(string reportId)
@@ -105,6 +146,24 @@ namespace Tenant.Mvc.Controllers
                 };
 
                 return result;
+            }
+        }
+
+        private void UploadReport(HttpPostedFileBase postedFile)
+        {
+            // Create a dev token for import
+            var devToken = PowerBIToken.CreateDevToken(ConfigHelper.PowerbiWorkspaceCollection, ConfigHelper.PowerbiWorkspaceId);
+            using (var client = CreatePowerBIClient(devToken))
+            {
+                // Import PBIX file from the file stream
+                var import = client.Imports.PostImportWithFile(ConfigHelper.PowerbiWorkspaceCollection, ConfigHelper.PowerbiWorkspaceId.ToString(), postedFile.InputStream, Path.GetFileNameWithoutExtension(postedFile.FileName));
+
+                // Example of polling the import to check when the import has succeeded.
+                while (import.ImportState != "Succeeded" && import.ImportState != "Failed")
+                {
+                    import = client.Imports.GetImportById(ConfigHelper.PowerbiWorkspaceCollection, ConfigHelper.PowerbiWorkspaceId.ToString(), import.Id);
+                    Thread.Sleep(1000);
+                }
             }
         }
 

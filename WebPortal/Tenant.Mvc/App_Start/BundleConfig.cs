@@ -19,7 +19,10 @@ namespace Tenant.Mvc
         private static void RegisterScripts(BundleCollection bundles)
         {
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
-                "~/Content/Scripts/jquery-{version}.js"));
+                "~/Content/Scripts/jquery-{version}.js",
+                "~/Content/Scripts/jquery.ui.widget.js",
+                "~/Content/Scripts/jquery.fileupload.js",
+                "~/Content/Scripts/jquery.fileupload-ui.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
                 "~/Content/Scripts/bootstrap.js",
@@ -30,7 +33,8 @@ namespace Tenant.Mvc
         {
             bundles.Add(new StyleBundle("~/styles/site").Include(
                 "~/Content/Stylesheets/site.css",
-                "~/Content/Stylesheets/recommendation.css"));
+                "~/Content/Stylesheets/recommendation.css",
+                "~/Content/Stylesheets/jquery.fileupload.css"));
 
             bundles.Add(new StyleBundle("~/styles/bootstrap").Include(
                 "~/Content/Stylesheets/bootstrap-theme.css",
