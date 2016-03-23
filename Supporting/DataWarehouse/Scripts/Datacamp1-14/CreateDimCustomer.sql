@@ -162,5 +162,5 @@ GO
 -- ================================================================
 
 IF OBJECT_ID('asb.DimCustomer') IS NOT NULL
-    DROP TABLE asb.DimCustomer;
+    DROP EXTERNAL TABLE asb.DimCustomer;
 GO
