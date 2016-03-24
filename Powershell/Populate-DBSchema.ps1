@@ -75,6 +75,12 @@ function Populate-DBSchema
 
 			    # Clean Tables
 			    LineBreak
+
+				WriteLabel("Cleaning ApplicationDefaults table")
+				$Command.CommandText = "DELETE FROM ApplicationDefault"
+				$Result = $Command.ExecuteNonQuery()
+				WriteValue("Successful")
+ 
 			    WriteLabel("Cleaning Customers table")
 			    $Command.CommandText = "Delete From Customers"
 			    $Result = $Command.ExecuteNonQuery()
@@ -134,6 +140,20 @@ function Populate-DBSchema
 			    $Command.CommandText = "Delete From Tickets"
 			    $Result = $Command.ExecuteNonQuery()
 			    WriteValue("Successful")
+
+				# Populate ApplicationDefaults Table
+				WriteLabel("Populating ApplicationDefaults table")
+				$Command.CommandText =
+					"
+						SET Identity_Insert [dbo].[ApplicationDefault] ON
+						
+						INSERT [dbo].[ApplicationDefault] ([ApplicationDefaultId], [Code], [Value]) VALUES (1, 'DefaultReportId', 'a1fb60c9-3cef-4bb4-af2a-5e1b39114214')
+						
+						SET Identity_Insert [dbo].[ApplicationDefault] OFF
+					"
+
+				$Result = $Command.ExecuteNonQuery()
+				WriteValue("Successful")
 
 			    # Populate Customers Table
 			    $Command.CommandText =
