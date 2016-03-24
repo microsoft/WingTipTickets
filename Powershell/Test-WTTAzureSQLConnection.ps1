@@ -83,7 +83,7 @@ Function Test-WTTAzureSQLConnection
 		    }
 	        catch 
             {
-		        if ($Retrycount -gt 3)
+		        if ($Retrycount -gt 6)
                 {
 			        Write-Host "Could not send Information after 3 retrys."
 			        $Stoploop = $true

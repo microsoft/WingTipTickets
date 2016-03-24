@@ -123,15 +123,23 @@ function Deploy-WTTAzureDWDatabase
                     
                     # Create database using 2000 units
 					WriteLabel("Creating database '$DWDatabaseName'")
-					$azureDWExist = New-AzureRMSqlDatabase -RequestedServiceObjectiveName "DW2000" -ServerName $ServerName -DatabaseName $DWDatabaseName -Edition $DatabaseEdition -ResourceGroupName $WTTEnvironmentApplicationName -Verbose:$false
-                    if(!$azureDWExist)
+					
+                    $dwExist = $false
+                    Do
                     {
-					    WriteValue("Unsuccessful")
-                    }
-                    else
-                    {
-                        WriteValue("Successful")
-                    }
+                        $azureDWExist = New-AzureRMSqlDatabase -RequestedServiceObjectiveName "DW2000" -ServerName $ServerName -DatabaseName $DWDatabaseName -Edition $DatabaseEdition -ResourceGroupName $WTTEnvironmentApplicationName -Verbose:$false
+                        if(!$azureDWExist)
+                        {
+					        WriteValue("Unsuccessful")
+                            $dwExist = $false
+                        }
+                        else
+                        {
+                            WriteValue("Successful")
+                            $dwExist = $true
+                        }
+                    }While($dwExist -eq $false)
+
                     $testSQLConnection = Test-WTTAzureSQLConnection -ServerName $ServerName -UserName $UserName -Password $Password -DatabaseName $DWDatabaseName -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName
                     if ($testSQLConnection -notlike "success")
                     {
