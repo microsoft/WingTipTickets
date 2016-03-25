@@ -201,5 +201,5 @@ WebPortal/TenantProvisioning.Mvc/Resources/Tenant/Website/Package.zip
 !ProductRecDataGenerator.zip
 !ProductRecommendations.zip
 !SecondaryPackage.zip
-Powershell/Packages/PrimaryPackage.zip
-Powershell/Packages/SecondaryPackage.zip
+!Powershell/Packages/PrimaryPackage.zip
+!Powershell/Packages/SecondaryPackage.zip
