@@ -70,8 +70,23 @@ function New-WTTAzureSqlDatabaseServer
 					WriteLabel("Creating SQL Server '$AzureSqlDatabaseServerName'")
 
 					$sqlAdministratorCredentials = new-object System.Management.Automation.PSCredential($AzureSqlDatabaseServerAdministratorUserName, ($AzureSqlDatabaseServerAdministratorPassword | ConvertTo-SecureString -asPlainText -Force))
-					$newAzureSqlDatabaseServer = New-AzureRMSqlServer -ResourceGroupName $AzureSqlDatabaseServerResourceGroupName -ServerName $AzureSqlDatabaseServerName -Location $AzureSqlDatabaseServerLocation -ServerVersion $AzureSqlDatabaseServerVersion –SqlAdministratorCredentials $sqlAdministratorCredentials -ErrorVariable newAzureSqlDatabaseServerErrors -ErrorAction Stop
 
+                    $serverExists = $false
+                    Do
+                    {
+            
+            		    $newAzureSqlDatabaseServer = New-AzureRMSqlServer -ResourceGroupName $AzureSqlDatabaseServerResourceGroupName -ServerName $AzureSqlDatabaseServerName -Location $AzureSqlDatabaseServerLocation -ServerVersion $AzureSqlDatabaseServerVersion –SqlAdministratorCredentials $sqlAdministratorCredentials -ErrorVariable newAzureSqlDatabaseServerErrors -ErrorAction Stop
+                        If($newAzureSqlDatabaseServer.ServerName -eq $AzureSqlDatabaseServerName) 
+                        {
+                            $serverExists = $true
+                        }
+                        else
+                        {
+                            $serverExists = $false
+                        }
+
+                    }While($serverExists = $false)
+                    
 					If($newAzureSqlDatabaseServer.ServerName -eq $AzureSqlDatabaseServerName) 
 					{
 						WriteValue("Successful")

@@ -130,8 +130,9 @@ function Deploy-WTTAzureDWDatabase
                         $azureDWExist = New-AzureRMSqlDatabase -RequestedServiceObjectiveName "DW2000" -ServerName $ServerName -DatabaseName $DWDatabaseName -Edition $DatabaseEdition -ResourceGroupName $WTTEnvironmentApplicationName -Verbose:$false
                         if(!$azureDWExist)
                         {
-					        WriteValue("Unsuccessful")
+					        WriteValue("Unsuccessful, Retrying")
                             $dwExist = $false
+                            Start-Sleep -Seconds 60
                         }
                         else
                         {

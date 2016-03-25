@@ -430,6 +430,7 @@ function New-WTTEnvironment
 			    {   
 				    Deploy-DBSchema -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName -DatabaseEdition "Basic" -UserName $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -ServerLocation $WTTEnvironmentPrimaryServerLocation -DatabaseName $AzureSqlDatabaseName            
 				    Populate-DBSchema -ServerName $azureSqlDatabaseServerPrimaryName -Username $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -DatabaseName $AzureSqlDatabaseName
+                    Start-Sleep -Seconds 30
                     $azureSqlDatabase = Find-AzureRmResource -ResourceType "Microsoft.Sql/servers/databases" -ResourceNameContains $AzureSqlDatabaseName -ResourceGroupNameContains $WTTEnvironmentApplicationName
 
                     if ($azureSqlDatabase -eq $null)
@@ -463,6 +464,7 @@ function New-WTTEnvironment
 			    {   
 				    Deploy-DBSchema -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName -DatabaseEdition "Standard" -UserName $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -ServerLocation $WTTEnvironmentPrimaryServerLocation -DatabaseName "Customer2"           
 				    Populate-DBSchema -ServerName $azureSqlDatabaseServerPrimaryName -Username $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -DatabaseName "Customer2"                   
+                    Start-Sleep -Seconds 30
                     $azureSqlDatabase = Find-AzureRmResource -ResourceType "Microsoft.Sql/servers/databases" -ResourceNameContains "Customer2" -ResourceGroupNameContains $WTTEnvironmentApplicationName
 
                     if ($azureSqlDatabase -eq $null)
@@ -481,6 +483,7 @@ function New-WTTEnvironment
                         }
                         else
                         {
+                            $ScaleRequest = Set-AzureRmSqlDatabase -DatabaseName "Customer2" -ServerName $azureSqlDatabaseServerPrimaryName -ResourceGroupName $azureResourceGroupName -RequestedServiceObjectiveName "S2"
                             $dbExists  = $true
                         }
                     }
@@ -621,6 +624,7 @@ function New-WTTEnvironment
                     {
                         If (New-Object System.Net.Sockets.TCPClient -ArgumentList "$azureSqlDatabaseServerPrimaryName.database.windows.net",1433) 
                         { 
+                            $azureStorageAccountName = $auditStorage.Name
                             $setPrimaryAzureSqlDatabaseServerAuditingPolicy = Set-AzureRmSqlDatabaseServerAuditingPolicy -ResourceGroupName $azureResourceGroupName -ServerName $azureSqlDatabaseServerPrimaryName -StorageAccountName $azureStorageAccountName -TableIdentifier "wtt" -EventType PlainSQL_Success, PlainSQL_Failure, ParameterizedSQL_Success, ParameterizedSQL_Failure, StoredProcedure_Success, StoredProcedure_Success -WarningVariable null -WarningAction SilentlyContinue                                                 
                             $sqlAudit = $true
                         } 
@@ -640,6 +644,7 @@ function New-WTTEnvironment
                     {
                         If (New-Object System.Net.Sockets.TCPClient -ArgumentList "$azureSqlDatabaseServerPrimaryName.database.windows.net",1433) 
                         { 
+                            $azureStorageAccountName = $auditStorage.Name
                             $setSecondaryAzureSqlDatabaseServerAuditingPolicy = Set-AzureRmSqlDatabaseServerAuditingPolicy -ResourceGroupName $azureResourceGroupName -ServerName $azureSqlDatabaseServerSecondaryName -StorageAccountName $azureStorageAccountName -TableIdentifier "wtt" -EventType PlainSQL_Success, PlainSQL_Failure, ParameterizedSQL_Success, ParameterizedSQL_Failure, StoredProcedure_Success, StoredProcedure_Success -WarningVariable null -WarningAction SilentlyContinue
                             $sqlAudit = $true
                         } 
