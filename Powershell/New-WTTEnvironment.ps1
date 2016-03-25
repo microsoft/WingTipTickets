@@ -440,7 +440,9 @@ function New-WTTEnvironment
                     }
                     else
                     {
+                        Push-Location -StackName wtt
                         $result = Invoke-Sqlcmd -Username "$AzureSqlDatabaseServerAdministratorUserName@$azureSqlDatabaseServerPrimaryName" -Password $AzureSqlDatabaseServerAdministratorPassword  -ServerInstance "$azureSqlDatabaseServerPrimaryName.database.windows.net" -Database $AzureSqlDatabaseName -Query "Select * from Customers;" -QueryTimeout 0 -SuppressProviderContextWarning
+                        Pop-Location -StackName wtt
                         if($result -eq $null)
                         {
                             WriteError("Customer1 Database is not deployed")
@@ -474,7 +476,9 @@ function New-WTTEnvironment
                     }
                     else
                     {
+                        Push-Location -StackName wtt
                         $result = Invoke-Sqlcmd -Username "$AzureSqlDatabaseServerAdministratorUserName@$azureSqlDatabaseServerPrimaryName" -Password $AzureSqlDatabaseServerAdministratorPassword -ServerInstance "$azureSqlDatabaseServerPrimaryName.database.windows.net" -Database "Customer2" -Query "Select * from Customers;" -QueryTimeout 0 -SuppressProviderContextWarning
+                        Pop-Location -StackName wtt
                         if($result -eq $null)
                         {
                             WriteError("Customer2 Database is not deployed")
