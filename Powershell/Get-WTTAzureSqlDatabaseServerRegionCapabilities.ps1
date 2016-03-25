@@ -9,9 +9,8 @@
 function Get-WTTAzureSqlDatabaseServerRegionCapabilities
 {
 	Process
-	{ 
-		#Add-AzureAccount
-		try
+	{
+        try
 		{
 			$azureDatacenterLocationsList = (Get-AzureRmResourceProvider -ListAvailable | Where-Object {$_.ProviderNamespace -eq 'Microsoft.Sql'}).Locations
 			$azureDatacenterLocationsList = ($azureDatacenterLocationsList -replace '\s','').ToLower()
