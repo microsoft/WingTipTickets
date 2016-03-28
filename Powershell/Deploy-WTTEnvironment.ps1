@@ -77,15 +77,12 @@
 
     if (!$WTTEnvironmentApplicationName)
     {
-            
             Do
             {
-                WriteReadLabel("Enter your unique WTT Environment Name")
-                $WTTEnvironmentApplicationName = Read-Host
-                if(!$WTTEnvironmentApplicationName)
+                while( ($WTTEnvironmentApplicationName -lt 1))
                 {
-                    WriteError("WTT Environment Name has not been provided")
-                    $WTTEnvironmentApplicationName
+                    WriteReadLabel("Enter your unique WTT Environment Name")
+                    $WTTEnvironmentApplicationName = Read-Host                 
                 }
                 $exists = (Get-AzureRmResourceGroup -Name $WTTEnvironmentApplicationName -ErrorAction Ignore).resourcegroupname
                 if(!$exists)
@@ -102,14 +99,17 @@
     }
            
     if (!$WTTEnvironmentPrimaryServerLocation)
+    {
+        [array]$listLocation = 'East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast'
+        $Result = $listLocation | Format-Table $listLocation -Wrap | Out-String
+        WriteLabelSwitch("Available Azure Data Center Locations")
+        WriteLine($Result)
+        while($WTTEnvironmentPrimaryServerLocation -lt 1)
         {
-            [array]$listLocation = 'East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast'
-            $Result = $listLocation | Format-Table $listLocation -Wrap | Out-String
-            WriteLabelSwitch("Available Azure Data Center Locations")
-            WriteLine($Result)
             WriteReadLabel("Enter the primary location to deploy WTT Services")
-            $WTTEnvironmentPrimaryServerLocation = Read-Host
+            [string]$WTTEnvironmentPrimaryServerLocation = Read-Host
         }
+    }
         
     [int]$xMenuChoiceA = 0
     while ( $xMenuChoiceA -lt 1 -or $xMenuChoiceA -gt 4 )
