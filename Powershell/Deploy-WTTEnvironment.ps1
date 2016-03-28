@@ -92,8 +92,8 @@
                 else
                 {
                     WriteError("Resource Group Name Exists")
+                    $WTTEnvironmentApplicationName = " "
                     $exists = $false
-
                 }
             }until($exists -eq $true)
     }

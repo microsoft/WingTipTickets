@@ -441,7 +441,7 @@ function New-WTTEnvironment
                     else
                     {
                         Push-Location -StackName wtt
-                        $result = Invoke-Sqlcmd -Username "$AzureSqlDatabaseServerAdministratorUserName@$azureSqlDatabaseServerPrimaryName" -Password $AzureSqlDatabaseServerAdministratorPassword  -ServerInstance "$azureSqlDatabaseServerPrimaryName.database.windows.net" -Database $AzureSqlDatabaseName -Query "Select * from Customers;" -QueryTimeout 0 -SuppressProviderContextWarning
+                        $result = Invoke-Sqlcmd -Username "$AzureSqlDatabaseServerAdministratorUserName@$azureSqlDatabaseServerPrimaryName" -Password $AzureSqlDatabaseServerAdministratorPassword -ServerInstance "$azureSqlDatabaseServerPrimaryName.database.windows.net" -Database $AzureSqlDatabaseName -Query "Select * from Customers;" -QueryTimeout 0 -SuppressProviderContextWarning
                         Pop-Location -StackName wtt
                         if($result -eq $null)
                         {
@@ -479,7 +479,7 @@ function New-WTTEnvironment
                         Push-Location -StackName wtt
                         $result = Invoke-Sqlcmd -Username "$AzureSqlDatabaseServerAdministratorUserName@$azureSqlDatabaseServerPrimaryName" -Password $AzureSqlDatabaseServerAdministratorPassword -ServerInstance "$azureSqlDatabaseServerPrimaryName.database.windows.net" -Database "Customer2" -Query "Select * from Customers;" -QueryTimeout 0 -SuppressProviderContextWarning
                         Pop-Location -StackName wtt
-                        if($result -eq $null)
+                        if([string]$result -eq $null)
                         {
                             WriteError("Customer2 Database is not deployed")
                             Remove-AzureRmSqlDatabase -ServerName $azureSqlDatabaseServerPrimaryName -DatabaseName "Customer2" -Force -ErrorAction SilentlyContinue
@@ -566,9 +566,11 @@ function New-WTTEnvironment
 
 			# Deploy Web Applications
 			LineBreak
-			WriteLabel("Deploying Primary application '$azureWebSitePrimaryWebDeployPackageName'")
+			WriteLabel("Deploying Primary application '$azureSqlDatabaseServerPrimaryName'")
+            LineBreak
 			Deploy-WTTWebApplication -WTTEnvironmentapplicationName $WTTEnvironmentApplicationName -ResourceGroupName $azureResourceGroupName -Websitename $azureSqlDatabaseServerPrimaryName -AzureWebSiteWebDeployPackagePath $AzureWebSiteWebDeployPackagePath -AzureWebSiteWebDeployPackageName $azureWebSitePrimaryWebDeployPackageName
-			WriteLabel("Deploying Secondary application '$azureWebSiteSecondaryWebDeployPackageName'")
+			WriteLabel("Deploying Secondary application '$azureSqlDatabaseServerSecondaryName'")
+            LineBreak
 			Deploy-WTTWebApplication -WTTEnvironmentapplicationName $WTTEnvironmentApplicationName -ResourceGroupName $azureResourceGroupName -Websitename $azureSqlDatabaseServerSecondaryName -AzureWebSiteWebDeployPackagePath $AzureWebSiteWebDeployPackagePath -AzureWebSiteWebDeployPackageName $azureWebSiteSecondaryWebDeployPackageName
 
 			# Create Traffic Manager Profile
