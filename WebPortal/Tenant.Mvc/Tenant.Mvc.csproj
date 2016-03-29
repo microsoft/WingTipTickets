@@ -473,14 +473,16 @@
     <Content Include="Content\Img\Rock\icon3.png" />
     <Content Include="Content\Img\Rock\logo.png" />
     <Content Include="Content\Img\Rock\search.png" />
-    <Content Include="Content\powerbi.css" />
+    <Content Include="Content\Stylesheets\powerbi.css" />
     <Content Include="Content\Scripts\bootstrap-select.js" />
     <Content Include="Content\Scripts\buy.js" />
     <Content Include="Content\Scripts\jquery.fileupload-ui.js" />
     <Content Include="Content\Scripts\jquery.fileupload.js" />
+    <Content Include="Content\Scripts\jquery.ui.widget.js" />
     <Content Include="Content\Scripts\modernizr-2.6.2.js" />
     <Content Include="Content\Scripts\respond.js" />
     <Content Include="Content\Scripts\respond.min.js" />
+    <Content Include="Content\Scripts\jquery.ui-1.11.4.js" />
     <None Include="Content\Scripts\_references.js" />
     <Content Include="Content\Stylesheets\bootstrap-select.css" />
     <Content Include="Content\Stylesheets\jquery.fileupload.css" />
@@ -646,7 +648,7 @@
     <None Include="Properties\PublishProfiles\AutoProvisioner.pubxml" />
     <None Include="Properties\PublishProfiles\Deployment-Primary.pubxml" />
     <None Include="Properties\PublishProfiles\Deployment-Secondary.pubxml" />
-    <Content Include="Scripts\powerbi.js" />
+    <Content Include="Content\Scripts\powerbi.js" />
     <Content Include="SqlScripts\TrimConcerts.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
