@@ -16,8 +16,6 @@ namespace ElasticPoolLoadGenerator.Components
         #region - Fields -
 
         private double _totalElapsedSeconds;
-        private bool _loadingPrimaryDatabase;
-        private bool _isSleeping;
 
         private readonly BackgroundWorker _worker;
         private readonly MainViewModel _model;
@@ -31,9 +29,7 @@ namespace ElasticPoolLoadGenerator.Components
         public SingleDatabaseLoader(MainViewModel viewModel)
         {
             _model = viewModel;
-            _isSleeping = false;
             _startTime = DateTime.Now;
-            _loadingPrimaryDatabase = true;
 
             // Setup the Background Worker
             _worker = new BackgroundWorker
@@ -136,7 +132,6 @@ namespace ElasticPoolLoadGenerator.Components
         private void ReportProgress(double ticketsPurchased, DateTime loadStartTime, string database = "")
         {
             // Calculate values
-            var percentage = Convert.ToInt32(_totalElapsedSeconds / ConfigHelper.Runtime * 100);
             var loadElapsedSeconds = (DateTime.Now - loadStartTime).TotalSeconds;
 
             // Build value object
@@ -144,21 +139,15 @@ namespace ElasticPoolLoadGenerator.Components
             {
                 ElapsedMinutes = Convert.ToInt32(_totalElapsedSeconds / 60),
                 TotalMinutes = Convert.ToInt32(ConfigHelper.Runtime / 60),
-
-                PurchasesPerSecond = !_isSleeping
-                    ? Math.Round(ticketsPurchased / loadElapsedSeconds, 2)
-                    : default(double),
-
-                LoadingDatabase = !_isSleeping
-                    ? string.Format("Loading: {0}", database)
-                    : string.Format("Sleeping for {0} minutes", Convert.ToInt32(ConfigHelper.Sleeptime / 60))
+                PurchasesPerSecond = Math.Round(ticketsPurchased / loadElapsedSeconds, 2),
+                LoadingDatabase = string.Format("Loading: {0}", database)
             };
 
             // Check for NaN
             values.PurchasesPerSecond = !double.IsNaN(values.PurchasesPerSecond) ? values.PurchasesPerSecond : 0d;
 
             // Report on Progress
-            _worker.ReportProgress(percentage, values);
+            _worker.ReportProgress(0, values);
         }
 
         private void UpdateTotalValues()
@@ -202,7 +191,7 @@ namespace ElasticPoolLoadGenerator.Components
 
             // Update the model
             _model.ProgressValue = e.ProgressPercentage;
-            _model.StatusText = string.Format("{0} of {1} Minutes", values.ElapsedMinutes, values.TotalMinutes);
+            _model.StatusText = "Loading until manually stopped";
             _model.PurchasesPerSecond = values.PurchasesPerSecond;
             _model.LoadingDatabase = values.LoadingDatabase;
         }
