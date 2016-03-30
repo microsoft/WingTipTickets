@@ -216,10 +216,17 @@ function CreateDataFactory()
 	{
 		# Create DataFactory
 		WriteLabel("Creating Data Factory '$ApplicationName'")
-		$dataFactory = New-AzureRMDataFactory -Name $ApplicationName -location 'West US' -ResourceGroupName $ResourceGroupName -Force  | out-null
-		WriteValue("Successful")
+		$dataFactory = New-AzureRMDataFactory -Name $ApplicationName -location 'West US' -ResourceGroupName $ResourceGroupName -Force -ErrorAction Stop  | out-null
+        if($dataFactory -eq $null)
+        {
+            WriteValue("Failed")
 
-		return $dataFactory
+        }
+        else
+        {
+		    WriteValue("Successful")
+            return $dataFactory
+        }
 	}
 	Catch 
 	{
@@ -230,7 +237,6 @@ function CreateDataFactory()
 
 function PopulateProductRecommendation($StorageAccountKey)
 {
-	WriteLabel("Deploying DataFactory Content")
     LineBreak
 
 	# Remove files in temp directory
