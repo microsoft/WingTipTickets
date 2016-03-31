@@ -127,7 +127,7 @@ namespace ElasticPoolLoadGenerator.Components
                         ReportProgress(ticketsPurchased, loadStartTime, database);
 
                         // Minimize tickets added
-                        Thread.Sleep(50);
+                        Thread.Sleep(5);
                     }
                 }
                 while (ticketsPurchased < ConfigHelper.LoadRecordLimit);

@@ -7,7 +7,7 @@
         
         Title="Elastic Pool - Load Generator" 
         Width="951.25" 
-        Height="548.75" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" SizeToContent="WidthAndHeight">
+        Height="548.75" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" SizeToContent="WidthAndHeight">
 
     <!-- ========================================================== -->
     <!-- Grid Definition and Styles -->
@@ -105,7 +105,7 @@
     		PointerLength="85" 
     		PointerCapRadius="35" 
     		MinValue="0" 
-    		MaxValue="2000" 
+    		MaxValue="12000" 
     		MajorDivisionsCount="10" 
     		MinorDivisionsCount="5" 
     		CurrentValue="{Binding PurchasesPerSecond}"    		
@@ -133,7 +133,11 @@
             Grid.Column="4" 
             Grid.RowSpan="7" Height="300" Width="313"/>
 
-        <TextBlock Grid.Row="6" Grid.Column="4" HorizontalAlignment="Center" VerticalAlignment="Bottom" Text="tickets/sec" />
+        <StackPanel Orientation="Horizontal" Grid.Row="6" Grid.Column="4" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+            <TextBlock Text="{Binding PurchasesPerSecond}" />
+            <TextBlock Text="tickets/sec" />
+        </StackPanel>
+        
         <TextBlock Grid.Row="7" Grid.Column="4" HorizontalAlignment="Center" Text="{Binding LoadingDatabase}" FontWeight="Bold" />
 
         <TextBlock Grid.Row="8" Grid.Column="4" HorizontalAlignment="Center" Text="{Binding StatusText}" />

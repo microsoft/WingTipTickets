@@ -100,20 +100,19 @@ namespace ElasticPoolLoadGenerator.Components
             {
                 sqlConnection.Open(retryPolicy);
 
-                do
+                using (var cmd = new SqlCommand(batchQuery, sqlConnection.Current))
                 {
-                    if (_worker.CancellationPending)
+                    do
                     {
-                        break;
-                    }
+                        if (_worker.CancellationPending)
+                        {
+                            break;
+                        }
 
-                    var transaction = sqlConnection.BeginTransaction();
-
-                    using (var cmd = new SqlCommand(batchQuery, sqlConnection.Current, (SqlTransaction)transaction))
-                    {
                         // Run the batch insert script
+                        cmd.Transaction = (SqlTransaction)sqlConnection.BeginTransaction(); ;
                         cmd.ExecuteNonQueryWithRetry(retryPolicy);
-                        transaction.Commit();
+                        cmd.Transaction.Commit();
 
                         // Update Values
                         ticketsPurchased += _model.BulkPurchaseQty;
@@ -122,10 +121,10 @@ namespace ElasticPoolLoadGenerator.Components
                         ReportProgress(ticketsPurchased, loadStartTime, _model.PrimaryDatabase);
 
                         // Minimize tickets added
-                        Thread.Sleep(50);
+                        Thread.Sleep(5);
                     }
+                    while (_totalElapsedSeconds < 6 * 60 * 60); // Quit this after 6 hours
                 }
-                while (_totalElapsedSeconds < 6 * 60 * 60); // Quit this after 6 hours
             }
         }
 
