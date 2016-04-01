@@ -49,28 +49,34 @@
 
 		# Upload Deployment Package
 		WriteLabel("Uploading Deployment Package")
-		Set-AzureStorageBlobContent -File "$AzureWebSiteWebDeployPackagePath\$AzureWebSiteWebDeployPackageName" -Container $containerName -Context $context -Blob $AzureWebSiteWebDeployPackageName -Force
+		$null = Set-AzureStorageBlobContent -File "$AzureWebSiteWebDeployPackagePath\$AzureWebSiteWebDeployPackageName" -Container $containerName -Context $context -Blob $AzureWebSiteWebDeployPackageName -Force
 		WriteValue("Successful")
 
 		# Build Paths
 		$templateFilePath = (Get-Item -Path ".\" -Verbose).FullName + "\Resources\DataFactory\Website\Deployment.json"
 		$packageUri = "https://$WTTEnvironmentApplicationName.blob.core.windows.net/deployment-files/$AzureWebSiteWebDeployPackageName"
 
-		WriteLabel("Deploying Web Application '$DatabaseName'")
+		WriteLabel("Deploying Web Application '$Websitename'")
 		#$webSiteExist = Get-AzureRmWebApp -ResourceGroupName $ResourceGroupName -Name $Websitename
 		$webSiteExist = Get-AzureRmResource -ResourceName $Websitename -ResourceType Microsoft.Web/sites -ExpandProperties -ResourceGroupName $ResourceGroupName
 		if($webSiteExist -ne $null)
 		{
-			# Deploy application
-			$webDeployment = New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -Name $Websitename -TemplateFile $templateFilePath -siteName $Websitename -Mode Incremental -hostingPlanName $Websitename -packageUri $packageUri -sitelocation $webSiteExist.Location -sku $webSiteExist.Properties.sku
-			if($webDeployment.ProvisioningState -eq "Failed")
-			{
-				WriteValue("Unsuccessful")
-			}
-			Else
-			{
-			WriteValue("Successful")
-			}
+            $siteExists = $false
+            Do
+            {
+			    # Deploy application
+			    $webDeployment = New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -Name $Websitename -TemplateFile $templateFilePath -siteName $Websitename -Mode Incremental -hostingPlanName $Websitename -packageUri $packageUri -sitelocation $webSiteExist.Location -sku $webSiteExist.Properties.sku
+			    if($webDeployment.ProvisioningState -eq "Failed")
+			    {
+				    WriteValue("Unsuccessful, Retrying")
+                    $siteExists = $false
+    			}
+			    Else
+			    {
+			        WriteValue("Successful")
+                    $siteExists = $true
+			    }
+            }Until($siteExists = $true)
 		}
 		else
 		{

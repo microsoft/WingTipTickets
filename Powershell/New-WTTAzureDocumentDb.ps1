@@ -39,11 +39,15 @@ function New-WTTAzureDocumentDb
 
 		# Create DocumentDb Account
 		New-AzureRmResource -resourceName $WTTDocumentDbName -Location $WTTDocumentDbLocation -ResourceGroupName $WTTResourceGroupName -ResourceType "Microsoft.DocumentDb/databaseAccounts" -ApiVersion 2015-04-08 -PropertyObject @{"name" = $WTTDocumentDbName; "databaseAccountOfferType" = "Standard"} -force
-
-		# Get the primary key
-		$documentDBPrimaryKey = (Invoke-AzureRmResourceAction -ResourceGroupName $WTTResourceGroupName -ResourceName $WTTDocumentDbName -ResourceType Microsoft.DocumentDb/databaseAccounts -Action listkeys -ApiVersion 2015-04-08 -Force).primarymasterkey
-		$documentDbPrimaryKey | Export-Clixml .\docdbkey.xml -Force
-		WriteValue("Successful")
+		$docDBDeployed = (Get-AzureRmResource -ResourceName $WTTDocumentDbName -ResourceGroupName $WTTResourceGroupName -ExpandProperties).Properties.provisioningstate
+        if($docDBDeployed -eq "Succeeded")
+        {
+            WriteValue("Successful")
+        }
+        Else
+        {
+            WriteError("Failed")
+        }
 	}
 	Catch
 	{

@@ -45,101 +45,148 @@ namespace Tenant.Mvc.Controllers
         public ActionResult Index(int artistId = 0, int cityId = 0, int venueId = 0, int eventId = 0)
         {
             var artistList = PopulateArtists();
-            var cityList = PopulateCities();
-            var venueList = PopulateVenues(cityId);
             var eventList = PopulateEvents(venueId);
 
-            PrepareData(ref artistId, ref cityId, ref venueId, eventId, eventList.ToList(), artistList.ToList());
-
-            return View(new EventAdministrationViewModel
+            var viewModel = new EventAdministrationViewModel()
             {
                 CityId = cityId,
                 VenueId = venueId,
                 EventId = eventId,
                 ArtistId = artistId,
+            };
 
-                Artists = new SelectList(artistList, "Value", "Description", artistId),
-                Cities = new SelectList(cityList, "Value", "Description", cityId),
-                Venues = new SelectList(venueList, "Value", "Description", venueId),
-                Events = new SelectList(eventList, "Value", "Description", eventId),
-                Years = GetYears(),
-                Months = GetMonths(),
-                Days = GetDays(),
-            });
+            PrepareData(ref artistId, ref cityId, ref venueId, eventId, eventList.ToList(), artistList.ToList());
+            UpdateLookupValues(viewModel);
+
+            return View(viewModel);
         }
 
         [HttpPost]
         public ActionResult Index(EventAdministrationViewModel viewModel, String addEvent, String deleteEvent)
         {
-            #region - Update lookups  -
+            UpdateLookupValues(viewModel);
 
-            viewModel.Artists = new SelectList(PopulateArtists(), "Value", "Description", viewModel.ArtistId);
-            viewModel.Cities = new SelectList(PopulateCities(), "Value", "Description", viewModel.CityId);
-            viewModel.Venues = new SelectList(PopulateVenues(viewModel.CityId), "Value", "Description", viewModel.VenueId);
-            viewModel.Events = new SelectList(PopulateEvents(viewModel.VenueId), "Value", "Description", viewModel.EventId);
-            viewModel.Years = GetYears();
-            viewModel.Months = GetMonths();
-            viewModel.Days = GetDays();
-
-            #endregion
-
-            #region - Delete Event if Requested -
-
+            // Run operations
             if ((deleteEvent != null) && (String.IsNullOrEmpty(addEvent)))
             {
-                //var concertId = Request.Form["slctEvent"];
-
-                if (viewModel.EventId <= 0)
+                if (!DeleteEvent(viewModel))
                 {
-                    DisplayMessage("Event name is required to delete. Cannot Continue.");
+                    return View(viewModel);
+                }
+            }
+            else
+            {
+                PerformerModel artistFromDb;
+                CityModel cityModelFromDb;
+                VenueModel venueModelFromDb;
 
+                // Validate the model
+                if (!IsArtistValid(viewModel) || !IsCityValid(viewModel) || !IsVenueValid(viewModel) || !IsEventValid(viewModel))
+                {
                     return View(viewModel);
                 }
 
-                _concertRepository.DeleteConcert(viewModel.EventId);
+                // Upsert the data
+                if (!UpsertArtist(viewModel, out artistFromDb))
+                {
+                    return View(viewModel);
+                }
 
-                return RedirectToAction("Index", "Home");
+                if (!UpsertCity(viewModel, out cityModelFromDb))
+                {
+                    return View(viewModel);
+                }
+
+                if (!UpsertVenue(viewModel, cityModelFromDb, out venueModelFromDb))
+                {
+                    return View(viewModel);
+                }
+
+                if (!UpsertEvent(viewModel, venueModelFromDb, artistFromDb))
+                {
+                    return View(viewModel);
+                }
             }
 
-            #endregion
+            // Operations succeeded redirect to Home
+            return RedirectToAction("Index", "Home");
+        }
 
+        #endregion
 
-            #region - Check Artist -
+        #region - Validation Methods -
 
-            //var selectedArtistId = Request.Form["slctArtist"];
-
+        private bool IsArtistValid(EventAdministrationViewModel viewModel)
+        {
+            // Check if New Artist specified
             if (viewModel.ArtistId == -1 && String.IsNullOrEmpty(viewModel.NewArtist))
             {
                 DisplayMessage("Event Artist is empty. Need Artist to Add. Cannot Continue.");
-                return View(viewModel);
+                return false;
             }
 
-            #endregion
+            // Check to ensure that user entered two words, which denote first and last name
+            if (viewModel.ArtistId == -1 && viewModel.NewArtist.Count(a => a == ' ') != 1)
+            {
+                DisplayMessage(String.Format("Artist name '{0}' must contain one first name and one last name. Cannot Continue.", viewModel.NewArtist));
+                return false;
+            }
 
-            #region - Find/Add Artists -
+            return true;
+        }
 
-            // First add artist if it doesn't exist
-            PerformerModel artistFromDb;
+        private bool IsCityValid(EventAdministrationViewModel viewModel)
+        {
+            if (viewModel.CityId == -1 && String.IsNullOrEmpty(viewModel.NewCity))
+            {
+                DisplayMessage(" Event CityName is empty. Need CityName to Add. Cannot Continue.");
+                return false;
+            }
 
-            if (!String.IsNullOrWhiteSpace(viewModel.NewArtist))
+            return true;
+        }
+
+        private bool IsVenueValid(EventAdministrationViewModel viewModel)
+        {
+            if (viewModel.VenueId == -1 && String.IsNullOrEmpty(viewModel.NewVenue))
+            {
+                DisplayMessage(" Event VenueName is empty. Need Event VenueName to Add. Cannot Continue.");
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool IsEventValid(EventAdministrationViewModel viewModel)
+        {
+            if (string.IsNullOrWhiteSpace(viewModel.NewEvent) || viewModel.Day == -1 || viewModel.Month == -1 || viewModel.Year == -1)
+            {
+                DisplayMessage("Event name or date values are invalid. Cannot Continue.");
+                return false;
+            }
+
+            return true;
+        }
+
+        #endregion
+
+        #region - Upsert Methods -
+
+        private bool UpsertArtist(EventAdministrationViewModel viewModel, out PerformerModel artistFromDb)
+        {
+            // Add artist if it doesn't exist
+            if (!string.IsNullOrWhiteSpace(viewModel.NewArtist))
             {
                 artistFromDb = _artistRepository.GetArtistByName(viewModel.NewArtist.Trim());
 
                 if (artistFromDb == null)
                 {
-                    // Check to ensure that user entered two words, which denote first and last name.
-                    if (viewModel.NewArtist.Count(a => a == ' ') != 1)
-                    {
-                        DisplayMessage(String.Format("Artist name '{0}' must contain one first name and one last name. Cannot Continue.", viewModel.NewArtist));
-                        return View(viewModel);
-                    }
-
                     artistFromDb = _artistRepository.AddNewArtist(viewModel.NewArtist);
 
                     if (artistFromDb == null)
                     {
                         DisplayMessage(String.Format("Failed to add new Artist '{0}'. Cannot Continue.", viewModel.NewArtist));
-                        return View(viewModel);
+                        return false;
                     }
                 }
             }
@@ -148,27 +195,13 @@ namespace Tenant.Mvc.Controllers
                 artistFromDb = _artistRepository.GetArtistById(viewModel.ArtistId);
             }
 
-            #endregion
+            return true;
+        }
 
-
-            #region - Check City -
-
-            //var selectedCityId = Request.Form["slctCity"];
-
-            if (viewModel.CityId == -1 && String.IsNullOrEmpty(viewModel.NewCity))
-            {
-                DisplayMessage(" Event CityName is empty. Need CityName to Add. Cannot Continue.");
-                return View(viewModel);
-            }
-
-            #endregion
-
-            #region - Find/Add City -
-
-            // Then add city if it doesn't exist
-            CityModel cityModelFromDb;
-
-            if (!String.IsNullOrWhiteSpace(viewModel.NewCity))
+        private bool UpsertCity(EventAdministrationViewModel viewModel, out CityModel cityModelFromDb)
+        {
+            // Add city if it doesn't exist
+            if (!string.IsNullOrWhiteSpace(viewModel.NewCity))
             {
                 cityModelFromDb = _cityRepository.GetCityByName(viewModel.NewCity.Trim());
 
@@ -179,7 +212,7 @@ namespace Tenant.Mvc.Controllers
                     if (cityModelFromDb == null)
                     {
                         DisplayMessage(String.Format(" Failed to add new City '{0}'. Cannot Continue.", viewModel.NewCity));
-                        return View(viewModel);
+                        return false;
                     }
                 }
             }
@@ -188,63 +221,81 @@ namespace Tenant.Mvc.Controllers
                 cityModelFromDb = _cityRepository.GetCityById(viewModel.CityId);
             }
 
-            #endregion
+            return true;
+        }
 
-            #region - Check Venue -
-
-            //var selectedVenueId = Request.Form["slctVenue"];
-
-            if (viewModel.VenueId == -1 && String.IsNullOrEmpty(viewModel.NewVenue))
+        private bool UpsertVenue(EventAdministrationViewModel viewModel, CityModel cityModelFromDb, out VenueModel venueModelFromDb)
+        {
+            // Add venue if it doesn't exist
+            if (!string.IsNullOrWhiteSpace(viewModel.NewVenue))
             {
-                DisplayMessage(" Event VenueName is empty. Need Event VenueName to Add. Cannot Continue.");
-                return View(viewModel);
+                venueModelFromDb = _venueRepository.GetVenues().FirstOrDefault(ven => String.CompareOrdinal(ven.VenueName, viewModel.NewVenue.Trim()) == 0);
+
+                if (venueModelFromDb == null)
+                {
+                    venueModelFromDb = _venueRepository.AddNewVenue(viewModel.NewVenue, cityModelFromDb.CityId);
+
+                    if (venueModelFromDb == null)
+                    {
+                        DisplayMessage(String.Format(" Failed to add new Venue '{0}'. Cannot Continue.", viewModel.NewVenue));
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                venueModelFromDb = _venueRepository.GetVenues().FirstOrDefault(ven => ven.VenueId == viewModel.VenueId);
             }
 
-            #endregion
+            return true;
+        }
 
-            #region - Find/Add Venue -
-
-            // Try to get the venue
-            var venueModelForConcert = (!String.IsNullOrWhiteSpace(viewModel.NewVenue) 
-                ? _venueRepository.GetVenues().FirstOrDefault(ven => String.CompareOrdinal(ven.VenueName, viewModel.NewVenue.Trim()) == 0) 
-                : _venueRepository.GetVenues().FirstOrDefault(ven => ven.VenueId == viewModel.VenueId)) ?? _venueRepository.AddNewVenue(viewModel.NewVenue, cityModelFromDb.CityId);
-
-
-            #endregion
-
-
-            #region - Check Event -
-
-            if (String.IsNullOrWhiteSpace(viewModel.NewEvent) || viewModel.Day == -1 || viewModel.Month == -1 || viewModel.Year == -1)
-            {
-                DisplayMessage("Event name or date values are invalid. Cannot Continue.");
-                return View(viewModel);
-            }
-
-            #endregion
-
-            #region - Find/Add Event -
-
-            // Last, add concert/event
+        private bool UpsertEvent(EventAdministrationViewModel viewModel, VenueModel venueModelForConcert, PerformerModel artistFromDb)
+        {
+            // Add event if it doesn't exist
             const ServerTargetEnum saveToShardDb = ServerTargetEnum.Primary;
             var eventDateTime = new DateTime(viewModel.Year, viewModel.Month, viewModel.Day, 20, 0, 0);
 
             if (_concertRepository.SaveNewConcert(viewModel.NewEvent, viewModel.Description, eventDateTime, saveToShardDb, venueModelForConcert.VenueId, artistFromDb.PerformerId) == null)
             {
                 DisplayMessage(String.Format(" Failed to add new concert event. \'{0}\'", viewModel.NewEvent));
-                return View(viewModel);
+                return false;
             }
 
             DisplayMessage(string.Format("Successfully added new event {0}.", viewModel.NewEvent));
-
-            return RedirectToAction("Index", "Home");
-
-            #endregion
+            return true;
         }
 
         #endregion
 
-        #region - Private Methods -
+        #region - Delete Methods -
+
+        private bool DeleteEvent(EventAdministrationViewModel viewModel)
+        {
+            if (viewModel.EventId <= 0)
+            {
+                DisplayMessage("Event name is required to delete. Cannot Continue.");
+                return false;
+            }
+
+            _concertRepository.DeleteConcert(viewModel.EventId);
+            return true;
+        }
+
+        #endregion
+
+        #region - Data Methods -
+
+        private void UpdateLookupValues(EventAdministrationViewModel viewModel)
+        {
+            viewModel.Artists = new SelectList(PopulateArtists(), "Value", "Description", viewModel.ArtistId);
+            viewModel.Cities = new SelectList(PopulateCities(), "Value", "Description", viewModel.CityId);
+            viewModel.Venues = new SelectList(PopulateVenues(viewModel.CityId), "Value", "Description", viewModel.VenueId);
+            viewModel.Events = new SelectList(PopulateEvents(viewModel.VenueId), "Value", "Description", viewModel.EventId);
+            viewModel.Years = GetYears();
+            viewModel.Months = GetMonths();
+            viewModel.Days = GetDays();
+        }
 
         private SelectList GetYears()
         {
@@ -300,7 +351,7 @@ namespace Tenant.Mvc.Controllers
         {
             var eventList = new List<LookupViewModel>()
             {
-                new LookupViewModel (-1, "<New Event>")
+                new LookupViewModel (0, "<New Event>")
             };
 
             foreach (var venue in _concertRepository
@@ -320,7 +371,7 @@ namespace Tenant.Mvc.Controllers
         {
             var cityList = new List<LookupViewModel>()
             {
-                new LookupViewModel(-1, "<New City>")
+                new LookupViewModel(0, "<New City>")
             };
 
             foreach (var venue in _cityRepository
@@ -340,7 +391,7 @@ namespace Tenant.Mvc.Controllers
         {
             var artistList = new List<LookupViewModel>()
             {
-                new LookupViewModel(-1, "<New Artist>")
+                new LookupViewModel(0, "<New Artist>")
             };
 
             foreach (var venue in _artistRepository
@@ -360,7 +411,7 @@ namespace Tenant.Mvc.Controllers
         {
             var venueList = new List<LookupViewModel>()
             {
-                new LookupViewModel(-1, "<New Venue>")
+                new LookupViewModel(0, "<New Venue>")
             };
 
             foreach (var venue in _venueRepository
@@ -411,6 +462,26 @@ namespace Tenant.Mvc.Controllers
             {
                 selectedConcert.ConcertId = -1;
             }
+        }
+
+        #endregion
+
+        #region - Page Helpers -
+        
+        [HttpGet]
+        public JsonResult UpdateLookups(int artistId, int cityId, int venueId, int eventId)
+        {
+            var viewModel = new EventAdministrationViewModel()
+            {
+                CityId = cityId,
+                VenueId = venueId,
+                EventId = eventId,
+                ArtistId = artistId,
+            };
+
+            UpdateLookupValues(viewModel);
+
+            return Json(new { model = viewModel }, JsonRequestBehavior.AllowGet);
         }
 
         #endregion

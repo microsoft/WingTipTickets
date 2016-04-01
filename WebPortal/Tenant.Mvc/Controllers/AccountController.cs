@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Web.Mvc;
 using System.Web.Security;
+using Microsoft.Ajax.Utilities;
 using Tenant.Mvc.Core.Interfaces.Tenant;
 using Tenant.Mvc.Core.Models;
 
@@ -41,7 +42,9 @@ namespace Tenant.Mvc.Controllers
             {
                 var customer = (CustomerModel)Session["SessionUser"];
 
-                FormsAuthentication.RedirectFromLoginPage(string.Format("{0} {1}", customer.FirstName, customer.LastName), false);
+                FormsAuthentication.SetAuthCookie(string.Format("{0} {1}", customer.FirstName, customer.LastName), false);
+
+                return Redirect(Request.UrlReferrer.ToString());
             }
             else
             {
@@ -85,7 +88,9 @@ namespace Tenant.Mvc.Controllers
 
             if (_customerRepository.CreateUser(firstName, lastName, email, phonenumber, password))
             {
-                FormsAuthentication.RedirectFromLoginPage(email, true);
+                FormsAuthentication.SetAuthCookie(email, true);
+
+                return Redirect(Request.UrlReferrer.ToString());
             }
 
             return RedirectToAction("Index", "Home");

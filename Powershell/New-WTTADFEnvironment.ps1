@@ -21,16 +21,6 @@ function New-WTTADFEnvironment
 		[String]
 		$ResourceGroupName,
 
-		# Resource Group Location
-		[Parameter(Mandatory=$true)]
-		[String]
-		$Location,
-		
-		# Website Hosting Plan Name
-		[Parameter(Mandatory=$true)]
-		[String]
-		$WebsiteHostingPlanName,
-
 		# SQL Database Server Name
 		[Parameter(Mandatory=$true)]
 		[String]
@@ -131,21 +121,34 @@ function GetStorageAccountKey()
 
 function CreateStorageContainer($storageAccountKey)
 {
+<<<<<<< HEAD
+=======
+        WriteLabel("Creating Storage Container")
+>>>>>>> develop
         try{
             # Get Context
             $context = New-AzureStorageContext -storageAccountName $ApplicationName -StorageAccountKey $storageAccountKey
                         
             # Create the container to store blob
+<<<<<<< HEAD
             $container = New-AzureStorageContainer -Name 'productrec' -Context $context -ErrorAction Stop        
+=======
+            $container = New-AzureStorageContainer -Name 'productrec' -Context $context -ErrorAction Stop
+            WriteValue("Successful")      
+>>>>>>> develop
         }catch{
             if($error[0].CategoryInfo.Category -eq 'ResourceExists'){
                 Write-Host 'resource exists.'
             }else{
                 Write-Host 'error.'
             }
+<<<<<<< HEAD
         }
         Write-Host 'created.'
         
+=======
+        }       
+>>>>>>> develop
 }
 
 function SetupMappingDictionary($StorageAccountKey)
@@ -226,10 +229,17 @@ function CreateDataFactory()
 	{
 		# Create DataFactory
 		WriteLabel("Creating Data Factory '$ApplicationName'")
-		$dataFactory = New-AzureRMDataFactory -Name $ApplicationName -location 'West US' -ResourceGroupName $ResourceGroupName -Force  | out-null
-		WriteValue("Successful")
+		$dataFactory = New-AzureRMDataFactory -Name $ApplicationName -location 'West US' -ResourceGroupName $ResourceGroupName -Force -ErrorAction Stop  | out-null
+        if($dataFactory -eq $null)
+        {
+            WriteValue("Failed")
 
-		return $dataFactory
+        }
+        else
+        {
+		    WriteValue("Successful")
+            return $dataFactory
+        }
 	}
 	Catch 
 	{
@@ -240,7 +250,7 @@ function CreateDataFactory()
 
 function PopulateProductRecommendation($StorageAccountKey)
 {
-	WriteLabel("Deploying DataFactory Content")
+    LineBreak
 
 	# Remove files in temp directory
 	$files = Get-ChildItem "temp\json\*" -Include *.json -Recurse -ErrorAction Stop
@@ -325,8 +335,6 @@ function PopulateProductRecommendation($StorageAccountKey)
 
 	# Deploy the pipelines/data sets and linked services
 	Invoke-Expression "$scriptPath $argumentList >> setup-log.txt"
-
-	WriteValue("Successful")
 }
 
 function Update-JSONFile( $file )

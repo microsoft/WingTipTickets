@@ -75,17 +75,14 @@ foreach($file in $files)
 }
 WriteValue("Successful")
 
-
-WriteLabel("Creating ADF DataSets...")
 $files = Get-ChildItem "$JsonFilesFolder\DataSets\*" -Include *.json -Recurse -ErrorAction Stop
 
 if($files.Count -eq 0)
 {
     Throw "No files are found in the location specified. Please double-check the folder."
 }
-WriteValue("Successful")
 
-WriteLabel("Creating ADF LinkedServices...")
+WriteLabel("Creating ADF Data Set...")
 $files2 = @()
 foreach($file in $files)
 {
@@ -98,16 +95,14 @@ foreach($file in $files)
 }
 WriteValue("Successful")
 
-WriteLabel("Creating ADF Pipelines...")
 $files = Get-ChildItem "$JsonFilesFolder\Pipelines\*" -Include *.json -Recurse -ErrorAction Stop
 
 if($files.Count -eq 0)
 {
     Throw "No files are found in the location specified. Please double-check the folder."
 }
-WriteValue("Successful")
 
-WriteLabel("Creating ADF LinkedServices...")
+WriteLabel("Creating ADF Pipelines...")
 $files2 = @()
 foreach($file in $files)
 {
@@ -126,7 +121,7 @@ foreach($file in $files)
 WriteValue("Successful")
 
 LineBreak
-WriteLabel( "Use Case: $ResourceGroupName :")
+WriteLabel("ADF $ResourceGroupName Deployment")
 $numErrors =  $Error.Count - $oldErrors
 if ( $numErrors -gt 0 )
 {

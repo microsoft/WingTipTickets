@@ -58,12 +58,13 @@ namespace Tenant.Mvc
         private static void RegisterTenantComponents(UnityContainer container)
         {
             // Register tenant components
-            container.RegisterType<TenantInterfaces.IConcertRepository, TenantRepositories.ConcertRepository>();
-            container.RegisterType<TenantInterfaces.ICustomerRepository, TenantRepositories.CustomerRepository>();
+            container.RegisterType<TenantInterfaces.IApplicationDefaultsRepository, TenantRepositories.ApplicationDefaultsRepository>();
             container.RegisterType<TenantInterfaces.IArtistRepository, TenantRepositories.ArtistRepository>();
             container.RegisterType<TenantInterfaces.ICityRepository, TenantRepositories.CityRepository>();
-            container.RegisterType<TenantInterfaces.IVenueRepository, TenantRepositories.VenueRepository>();
+            container.RegisterType<TenantInterfaces.IConcertRepository, TenantRepositories.ConcertRepository>();
+            container.RegisterType<TenantInterfaces.ICustomerRepository, TenantRepositories.CustomerRepository>();
             container.RegisterType<TenantInterfaces.ITicketRepository, TenantRepositories.TicketRepository>();
+            container.RegisterType<TenantInterfaces.IVenueRepository, TenantRepositories.VenueRepository>();
             container.RegisterType<TenantInterfaces.IVenueMetaDataRepository, TenantRepositories.VenueMetaDataRepository>();
         }
 

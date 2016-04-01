@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using Tenant.Mvc.Core.Interfaces.Tenant;
 using Tenant.Mvc.Core.Models;
 using Tenant.Mvc.Models;
+using WingTipTickets;
 
 namespace Tenant.Mvc.Controllers
 {
@@ -78,7 +79,11 @@ namespace Tenant.Mvc.Controllers
             }
 
             // Switch off DocumentDb when running in the Development environment
-            var metaData = await _venueMetaDataRepository.GetVenueMetaData(selectedConcert.VenueId);
+            VenueMetaData metaData = null;
+            if (!WingtipTicketApp.Config.RunningInDev)
+            {
+                metaData = await _venueMetaDataRepository.GetVenueMetaData(selectedConcert.VenueId);
+            }
 
             // Map to ViewModel
             var viewModel = new FindSeatsViewModel()

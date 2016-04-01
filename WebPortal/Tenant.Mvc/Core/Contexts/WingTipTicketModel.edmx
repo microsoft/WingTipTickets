@@ -1,0 +1,529 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="WingTipTicketsTenantPriModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="ApplicationDefault">
+          <Key>
+            <PropertyRef Name="ApplicationDefaultId" />
+          </Key>
+          <Property Name="ApplicationDefaultId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="varchar" MaxLength="50" />
+          <Property Name="Value" Type="varchar(max)" />
+        </EntityType>
+        <EntityType Name="City">
+          <Key>
+            <PropertyRef Name="CityId" />
+          </Key>
+          <Property Name="CityId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CityName" Type="varchar" MaxLength="50" />
+          <Property Name="Description" Type="varchar" MaxLength="100" />
+          <Property Name="StateId" Type="int" />
+        </EntityType>
+        <EntityType Name="Concerts">
+          <Key>
+            <PropertyRef Name="ConcertId" />
+          </Key>
+          <Property Name="ConcertId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ConcertName" Type="varchar" MaxLength="50" />
+          <Property Name="Description" Type="varchar" MaxLength="100" />
+          <Property Name="ConcertDate" Type="datetime" />
+          <Property Name="Duration" Type="int" />
+          <Property Name="VenueId" Type="int" />
+          <Property Name="PerformerId" Type="int" />
+          <Property Name="SaveToDbServerType" Type="int" />
+          <Property Name="RowVersion" Type="timestamp" StoreGeneratedPattern="Computed" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CustomerCreditCard">
+          <Key>
+            <PropertyRef Name="CustomerCreditCardI" />
+          </Key>
+          <Property Name="CustomerCreditCardI" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CustomerId" Type="int" />
+          <Property Name="NameOnCard" Type="varchar" MaxLength="30" />
+          <Property Name="CardType" Type="varchar" MaxLength="25" />
+          <Property Name="CardNumber" Type="varchar" MaxLength="30" />
+          <Property Name="ExpiryMonth" Type="int" />
+          <Property Name="ExpiryYear" Type="int" />
+          <Property Name="SecurityCode" Type="varchar" MaxLength="25" />
+        </EntityType>
+        <EntityType Name="Customers">
+          <Key>
+            <PropertyRef Name="CustomerId" />
+          </Key>
+          <Property Name="CustomerId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FirstName" Type="varchar" MaxLength="25" />
+          <Property Name="LastName" Type="varchar" MaxLength="25" />
+          <Property Name="Email" Type="varchar" MaxLength="50" />
+          <Property Name="ContactNbr" Type="varchar" MaxLength="30" />
+          <Property Name="Password" Type="varchar" MaxLength="50" />
+          <Property Name="CreditCardNbr" Type="varchar" MaxLength="50" />
+          <Property Name="LastKnownLocation" Type="geography" />
+          <Property Name="Address" Type="varchar" MaxLength="50" />
+          <Property Name="CityId" Type="int" />
+          <Property Name="Fax" Type="varchar" MaxLength="30" />
+        </EntityType>
+        <EntityType Name="Organizers">
+          <Key>
+            <PropertyRef Name="OrganizerId" />
+          </Key>
+          <Property Name="OrganizerId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FirstName" Type="varchar" MaxLength="25" />
+          <Property Name="LastName" Type="varchar" MaxLength="25" />
+          <Property Name="Email" Type="varchar" MaxLength="50" />
+          <Property Name="ContactNbr" Type="numeric" Precision="15" Scale="0" />
+          <Property Name="Password" Type="varchar" MaxLength="50" />
+          <Property Name="Address" Type="varchar" MaxLength="50" />
+          <Property Name="CityId" Type="int" />
+          <Property Name="Fax" Type="varchar" MaxLength="30" />
+        </EntityType>
+        <EntityType Name="Performers">
+          <Key>
+            <PropertyRef Name="PerformerId" />
+          </Key>
+          <Property Name="PerformerId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FirstName" Type="varchar" MaxLength="30" />
+          <Property Name="LastName" Type="varchar" MaxLength="30" />
+          <Property Name="Skills" Type="varchar" MaxLength="100" />
+          <Property Name="ContactNbr" Type="numeric" Precision="15" Scale="0" />
+          <Property Name="ShortName" Type="varchar" MaxLength="30" />
+          <Property Name="RowVersion" Type="timestamp" StoreGeneratedPattern="Computed" Nullable="false" />
+        </EntityType>
+        <EntityType Name="States">
+          <Key>
+            <PropertyRef Name="StateId" />
+          </Key>
+          <Property Name="StateId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="StateName" Type="varchar" MaxLength="50" />
+          <Property Name="Description" Type="varchar" MaxLength="100" />
+          <Property Name="CountryId" Type="int" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="principal_id" Type="int" Nullable="false" />
+          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version" Type="int" />
+          <Property Name="definition" Type="varbinary(max)" />
+        </EntityType>
+        <EntityType Name="TicketLevels">
+          <Key>
+            <PropertyRef Name="TicketLevelId" />
+          </Key>
+          <Property Name="TicketLevelId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TicketLevel" Type="varchar" MaxLength="25" />
+          <Property Name="Description" Type="varchar" MaxLength="100" />
+          <Property Name="SeatSectionId" Type="int" />
+          <Property Name="ConcertId" Type="int" />
+          <Property Name="TicketPrice" Type="numeric" Precision="10" Scale="2" />
+        </EntityType>
+        <EntityType Name="Tickets">
+          <Key>
+            <PropertyRef Name="TicketId" />
+          </Key>
+          <Property Name="TicketId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CustomerId" Type="int" />
+          <Property Name="Name" Type="varchar" MaxLength="50" />
+          <Property Name="TicketLevelId" Type="int" />
+          <Property Name="ConcertId" Type="int" />
+          <Property Name="PurchaseDate" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Venues">
+          <Key>
+            <PropertyRef Name="VenueId" />
+          </Key>
+          <Property Name="VenueId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="VenueName" Type="varchar" MaxLength="50" />
+          <Property Name="Capacity" Type="int" />
+          <Property Name="Description" Type="varchar" MaxLength="100" />
+          <Property Name="CityId" Type="int" />
+          <Property Name="RowVersion" Type="timestamp" StoreGeneratedPattern="Computed" Nullable="false" />
+        </EntityType>
+        <EntityType Name="WebSiteActionLog">
+          <Key>
+            <PropertyRef Name="WebSiteActionLogId" />
+          </Key>
+          <Property Name="WebSiteActionLogId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="VenueId" Type="int" />
+          <Property Name="Action" Type="varchar" MaxLength="100" />
+          <Property Name="UpdatedBy" Type="int" />
+          <Property Name="UpdatedDate" Type="datetime" />
+        </EntityType>
+        <EntityContainer Name="WingTipTicketsTenantPriModelStoreContainer">
+          <EntitySet Name="ApplicationDefault" EntityType="Self.ApplicationDefault" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="City" EntityType="Self.City" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Concerts" EntityType="Self.Concerts" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CustomerCreditCard" EntityType="Self.CustomerCreditCard" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Customers" EntityType="Self.Customers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Organizers" EntityType="Self.Organizers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Performers" EntityType="Self.Performers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="States" EntityType="Self.States" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TicketLevels" EntityType="Self.TicketLevels" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Tickets" EntityType="Self.Tickets" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Venues" EntityType="Self.Venues" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="WebSiteActionLog" EntityType="Self.WebSiteActionLog" Schema="dbo" store:Type="Tables" />
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="WingTipTicketsTenantPriModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="ApplicationDefault">
+          <Key>
+            <PropertyRef Name="ApplicationDefaultId" />
+          </Key>
+          <Property Name="ApplicationDefaultId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Value" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="City">
+          <Key>
+            <PropertyRef Name="CityId" />
+          </Key>
+          <Property Name="CityId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CityName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Description" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="StateId" Type="Int32" />
+        </EntityType>
+        <EntityType Name="Concert">
+          <Key>
+            <PropertyRef Name="ConcertId" />
+          </Key>
+          <Property Name="ConcertId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ConcertName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Description" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="ConcertDate" Type="DateTime" Precision="3" />
+          <Property Name="Duration" Type="Int32" />
+          <Property Name="VenueId" Type="Int32" />
+          <Property Name="PerformerId" Type="Int32" />
+          <Property Name="SaveToDbServerType" Type="Int32" />
+          <Property Name="RowVersion" Type="Binary" MaxLength="8" FixedLength="true" Nullable="false" annotation:StoreGeneratedPattern="Computed" />
+        </EntityType>
+        <EntityType Name="CustomerCreditCard">
+          <Key>
+            <PropertyRef Name="CustomerCreditCardI" />
+          </Key>
+          <Property Name="CustomerCreditCardI" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerId" Type="Int32" />
+          <Property Name="NameOnCard" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="CardType" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Name="CardNumber" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="ExpiryMonth" Type="Int32" />
+          <Property Name="ExpiryYear" Type="Int32" />
+          <Property Name="SecurityCode" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Customer">
+          <Key>
+            <PropertyRef Name="CustomerId" />
+          </Key>
+          <Property Name="CustomerId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FirstName" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Name="LastName" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ContactNbr" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Password" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CreditCardNbr" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="LastKnownLocation" Type="Geography" />
+          <Property Name="Address" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CityId" Type="Int32" />
+          <Property Name="Fax" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Organizer">
+          <Key>
+            <PropertyRef Name="OrganizerId" />
+          </Key>
+          <Property Name="OrganizerId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FirstName" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Name="LastName" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ContactNbr" Type="Decimal" Precision="15" Scale="0" />
+          <Property Name="Password" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Address" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="CityId" Type="Int32" />
+          <Property Name="Fax" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Performer">
+          <Key>
+            <PropertyRef Name="PerformerId" />
+          </Key>
+          <Property Name="PerformerId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FirstName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="LastName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Skills" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="ContactNbr" Type="Decimal" Precision="15" Scale="0" />
+          <Property Name="ShortName" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="RowVersion" Type="Binary" MaxLength="8" FixedLength="true" Nullable="false" annotation:StoreGeneratedPattern="Computed" />
+        </EntityType>
+        <EntityType Name="State">
+          <Key>
+            <PropertyRef Name="StateId" />
+          </Key>
+          <Property Name="StateId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="StateName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Description" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="CountryId" Type="Int32" />
+        </EntityType>
+        <EntityType Name="sysdiagram">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="TicketLevel">
+          <Key>
+            <PropertyRef Name="TicketLevelId" />
+          </Key>
+          <Property Name="TicketLevelId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TicketLevel1" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Name="Description" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="SeatSectionId" Type="Int32" />
+          <Property Name="ConcertId" Type="Int32" />
+          <Property Name="TicketPrice" Type="Decimal" Precision="10" Scale="2" />
+        </EntityType>
+        <EntityType Name="Ticket">
+          <Key>
+            <PropertyRef Name="TicketId" />
+          </Key>
+          <Property Name="TicketId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerId" Type="Int32" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="TicketLevelId" Type="Int32" />
+          <Property Name="ConcertId" Type="Int32" />
+          <Property Name="PurchaseDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="Venue">
+          <Key>
+            <PropertyRef Name="VenueId" />
+          </Key>
+          <Property Name="VenueId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="VenueName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Capacity" Type="Int32" />
+          <Property Name="Description" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="CityId" Type="Int32" />
+          <Property Name="RowVersion" Type="Binary" MaxLength="8" FixedLength="true" Nullable="false" annotation:StoreGeneratedPattern="Computed" />
+        </EntityType>
+        <EntityType Name="WebSiteActionLog">
+          <Key>
+            <PropertyRef Name="WebSiteActionLogId" />
+          </Key>
+          <Property Name="WebSiteActionLogId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="VenueId" Type="Int32" />
+          <Property Name="Action" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="UpdatedBy" Type="Int32" />
+          <Property Name="UpdatedDate" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityContainer Name="WingTipTicketsEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="ApplicationDefaults" EntityType="Self.ApplicationDefault" />
+          <EntitySet Name="Cities" EntityType="Self.City" />
+          <EntitySet Name="Concerts" EntityType="Self.Concert" />
+          <EntitySet Name="CustomerCreditCards" EntityType="Self.CustomerCreditCard" />
+          <EntitySet Name="Customers" EntityType="Self.Customer" />
+          <EntitySet Name="Organizers" EntityType="Self.Organizer" />
+          <EntitySet Name="Performers" EntityType="Self.Performer" />
+          <EntitySet Name="States" EntityType="Self.State" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
+          <EntitySet Name="TicketLevels" EntityType="Self.TicketLevel" />
+          <EntitySet Name="Tickets" EntityType="Self.Ticket" />
+          <EntitySet Name="Venues" EntityType="Self.Venue" />
+          <EntitySet Name="WebSiteActionLogs" EntityType="Self.WebSiteActionLog" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="WingTipTicketsTenantPriModelStoreContainer" CdmEntityContainer="WingTipTicketsEntities">
+          <EntitySetMapping Name="ApplicationDefaults">
+            <EntityTypeMapping TypeName="WingTipTicketsTenantPriModel.ApplicationDefault">
+              <MappingFragment StoreEntitySet="ApplicationDefault">
+                <ScalarProperty Name="ApplicationDefaultId" ColumnName="ApplicationDefaultId" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Value" ColumnName="Value" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Cities">
+            <EntityTypeMapping TypeName="WingTipTicketsTenantPriModel.City">
+              <MappingFragment StoreEntitySet="City">
+                <ScalarProperty Name="CityId" ColumnName="CityId" />
+                <ScalarProperty Name="CityName" ColumnName="CityName" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="StateId" ColumnName="StateId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Concerts">
+            <EntityTypeMapping TypeName="WingTipTicketsTenantPriModel.Concert">
+              <MappingFragment StoreEntitySet="Concerts">
+                <ScalarProperty Name="ConcertId" ColumnName="ConcertId" />
+                <ScalarProperty Name="ConcertName" ColumnName="ConcertName" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="ConcertDate" ColumnName="ConcertDate" />
+                <ScalarProperty Name="Duration" ColumnName="Duration" />
+                <ScalarProperty Name="VenueId" ColumnName="VenueId" />
+                <ScalarProperty Name="PerformerId" ColumnName="PerformerId" />
+                <ScalarProperty Name="SaveToDbServerType" ColumnName="SaveToDbServerType" />
+                <ScalarProperty Name="RowVersion" ColumnName="RowVersion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CustomerCreditCards">
+            <EntityTypeMapping TypeName="WingTipTicketsTenantPriModel.CustomerCreditCard">
+              <MappingFragment StoreEntitySet="CustomerCreditCard">
+                <ScalarProperty Name="CustomerCreditCardI" ColumnName="CustomerCreditCardI" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="NameOnCard" ColumnName="NameOnCard" />
+                <ScalarProperty Name="CardType" ColumnName="CardType" />
+                <ScalarProperty Name="CardNumber" ColumnName="CardNumber" />
+                <ScalarProperty Name="ExpiryMonth" ColumnName="ExpiryMonth" />
+                <ScalarProperty Name="ExpiryYear" ColumnName="ExpiryYear" />
+                <ScalarProperty Name="SecurityCode" ColumnName="SecurityCode" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Customers">
+            <EntityTypeMapping TypeName="WingTipTicketsTenantPriModel.Customer">
+              <MappingFragment StoreEntitySet="Customers">
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="ContactNbr" ColumnName="ContactNbr" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="CreditCardNbr" ColumnName="CreditCardNbr" />
+                <ScalarProperty Name="LastKnownLocation" ColumnName="LastKnownLocation" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="CityId" ColumnName="CityId" />
+                <ScalarProperty Name="Fax" ColumnName="Fax" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Organizers">
+            <EntityTypeMapping TypeName="WingTipTicketsTenantPriModel.Organizer">
+              <MappingFragment StoreEntitySet="Organizers">
+                <ScalarProperty Name="OrganizerId" ColumnName="OrganizerId" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="ContactNbr" ColumnName="ContactNbr" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="CityId" ColumnName="CityId" />
+                <ScalarProperty Name="Fax" ColumnName="Fax" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Performers">
+            <EntityTypeMapping TypeName="WingTipTicketsTenantPriModel.Performer">
+              <MappingFragment StoreEntitySet="Performers">
+                <ScalarProperty Name="PerformerId" ColumnName="PerformerId" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="Skills" ColumnName="Skills" />
+                <ScalarProperty Name="ContactNbr" ColumnName="ContactNbr" />
+                <ScalarProperty Name="ShortName" ColumnName="ShortName" />
+                <ScalarProperty Name="RowVersion" ColumnName="RowVersion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="States">
+            <EntityTypeMapping TypeName="WingTipTicketsTenantPriModel.State">
+              <MappingFragment StoreEntitySet="States">
+                <ScalarProperty Name="StateId" ColumnName="StateId" />
+                <ScalarProperty Name="StateName" ColumnName="StateName" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="CountryId" ColumnName="CountryId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="WingTipTicketsTenantPriModel.sysdiagram">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="definition" ColumnName="definition" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TicketLevels">
+            <EntityTypeMapping TypeName="WingTipTicketsTenantPriModel.TicketLevel">
+              <MappingFragment StoreEntitySet="TicketLevels">
+                <ScalarProperty Name="TicketLevelId" ColumnName="TicketLevelId" />
+                <ScalarProperty Name="TicketLevel1" ColumnName="TicketLevel" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="SeatSectionId" ColumnName="SeatSectionId" />
+                <ScalarProperty Name="ConcertId" ColumnName="ConcertId" />
+                <ScalarProperty Name="TicketPrice" ColumnName="TicketPrice" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Tickets">
+            <EntityTypeMapping TypeName="WingTipTicketsTenantPriModel.Ticket">
+              <MappingFragment StoreEntitySet="Tickets">
+                <ScalarProperty Name="TicketId" ColumnName="TicketId" />
+                <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="TicketLevelId" ColumnName="TicketLevelId" />
+                <ScalarProperty Name="ConcertId" ColumnName="ConcertId" />
+                <ScalarProperty Name="PurchaseDate" ColumnName="PurchaseDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Venues">
+            <EntityTypeMapping TypeName="WingTipTicketsTenantPriModel.Venue">
+              <MappingFragment StoreEntitySet="Venues">
+                <ScalarProperty Name="VenueId" ColumnName="VenueId" />
+                <ScalarProperty Name="VenueName" ColumnName="VenueName" />
+                <ScalarProperty Name="Capacity" ColumnName="Capacity" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="CityId" ColumnName="CityId" />
+                <ScalarProperty Name="RowVersion" ColumnName="RowVersion" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="WebSiteActionLogs">
+            <EntityTypeMapping TypeName="WingTipTicketsTenantPriModel.WebSiteActionLog">
+              <MappingFragment StoreEntitySet="WebSiteActionLog">
+                <ScalarProperty Name="WebSiteActionLogId" ColumnName="WebSiteActionLogId" />
+                <ScalarProperty Name="VenueId" ColumnName="VenueId" />
+                <ScalarProperty Name="Action" ColumnName="Action" />
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

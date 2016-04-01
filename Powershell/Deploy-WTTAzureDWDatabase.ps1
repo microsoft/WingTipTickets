@@ -74,7 +74,7 @@ function Deploy-WTTAzureDWDatabase
 		$DWDatabaseName
 	)
 
-	Process
+	Process 
 	{
 		# Set Defaults
 		$dbServerExists=$true
@@ -118,12 +118,12 @@ function Deploy-WTTAzureDWDatabase
 				}
 				else
 				{
-					WriteValue("Not Found")
-
-					$dbExists = $false
-
-					# Create database using 2000 units
+                    WriteValue("Not Found")
+                    $dbExists = $false
+                    
+                    # Create database using 2000 units
 					WriteLabel("Creating database '$DWDatabaseName'")
+<<<<<<< HEAD
 					$azureDWExist = New-AzureRMSqlDatabase -RequestedServiceObjectiveName "DW2000" -ServerName $ServerName -DatabaseName $DWDatabaseName -Edition $DatabaseEdition -ResourceGroupName $WTTEnvironmentApplicationName -Verbose:$false
                     if(!$azureDWExist)
                     {
@@ -157,6 +157,58 @@ function Deploy-WTTAzureDWDatabase
 					$null = Suspend-AzureRMSqlDatabase –ResourceGroupName $WTTEnvironmentApplicationName –ServerName $ServerName –DatabaseName $DWDatabaseName
 					WriteValue("Successful")
 					Start-Sleep -s 180
+=======
+					
+                    $dwExist = $false
+                    Do
+                    {
+                        $azureDWExist = New-AzureRMSqlDatabase -RequestedServiceObjectiveName "DW2000" -ServerName $ServerName -DatabaseName $DWDatabaseName -Edition $DatabaseEdition -ResourceGroupName $WTTEnvironmentApplicationName -Verbose:$false
+                        if(!$azureDWExist)
+                        {
+					        WriteValue("Unsuccessful, Retrying")
+                            $dwExist = $false
+                            Start-Sleep -Seconds 60
+                        }
+                        else
+                        {
+                            WriteValue("Successful")
+                            $dwExist = $true
+                        }
+                    }While($dwExist -eq $false)
+
+                    $testSQLConnection = Test-WTTAzureSQLConnection -ServerName $ServerName -UserName $UserName -Password $Password -DatabaseName $DWDatabaseName -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName
+                    if ($testSQLConnection -notlike "success")
+                    {
+                        WriteError("Unable to connect to SQL Server")
+                    }
+                    Else
+                    {
+					    $DWServer = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains "primary" -ExpandProperties).properties.FullyQualifiedDomainName
+					    # Set working location
+					    Push-Location -StackName wtt
+					    # Create Database tables
+					    ForEach($file in Get-ChildItem ".\Scripts\Datawarehouse" -Filter *.sql)
+					    {
+						    WriteLabel("Executing Script '$file'")
+						    $result = Invoke-Sqlcmd -Username "$UserName@$ServerName" -Password $Password -ServerInstance $DWServer -Database $DWDatabaseName -InputFile ".\Scripts\Datawarehouse\$file" -QueryTimeout 0 -SuppressProviderContextWarning
+						    WriteValue("Successful")
+                            Start-Sleep -Seconds 60
+					    }
+
+					    # Set working location
+					    Pop-Location -StackName wtt
+
+					    # Downgrade to 400 units
+					    WriteLabel("Downgrading DataWarehouse database to 400 Units")
+					    $null = Set-AzureRmSqlDatabase -RequestedServiceObjectiveName "DW400" -ServerName $ServerName -DatabaseName $DWDatabaseName -ResourceGroupName $WTTEnvironmentApplicationName
+					    WriteValue("Successful")
+
+    					WriteLabel("Pausing DataWarehouse database")
+	    				$null = Suspend-AzureRMSqlDatabase –ResourceGroupName $WTTEnvironmentApplicationName –ServerName $ServerName –DatabaseName $DWDatabaseName
+		    			WriteValue("Successful")
+			    		Start-Sleep -s 180
+                    }
+>>>>>>> develop
 				}
 			}
 			Catch

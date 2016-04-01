@@ -112,7 +112,8 @@ function New-WTTAzureSearchService
 			}
             
             WriteLabel("Deploying Azure Search Service $WTTEnvironmentApplicationName")
-            if($listSearchService.sku.name -ne "free")
+            $searchServiceSku = Find-AzureRmResource -ResourceType Microsoft.Search/searchServices -ExpandProperties
+            if($searchServiceSku.sku.name -ne "free")
             {
                 foreach($searchLocation in $listSearchServicesLocation)
                 {  
@@ -218,7 +219,6 @@ function New-WTTAzureSearchService
 			# Create indexer
 			$createSearchServiceIndexer = Invoke-RestMethod -Uri $azureSearchServiceIndexerURL -Method "POST" -Body $newSearchServiceIndexerJsonBody -Headers $headers -ContentType "application/json"
             
-            $primaryKey | Export-Clixml .\searchkey.xml -force
             WriteValue("Success")
 			
 		}
