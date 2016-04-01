@@ -121,34 +121,21 @@ function GetStorageAccountKey()
 
 function CreateStorageContainer($storageAccountKey)
 {
-<<<<<<< HEAD
-=======
         WriteLabel("Creating Storage Container")
->>>>>>> develop
         try{
             # Get Context
             $context = New-AzureStorageContext -storageAccountName $ApplicationName -StorageAccountKey $storageAccountKey
                         
             # Create the container to store blob
-<<<<<<< HEAD
-            $container = New-AzureStorageContainer -Name 'productrec' -Context $context -ErrorAction Stop        
-=======
             $container = New-AzureStorageContainer -Name 'productrec' -Context $context -ErrorAction Stop
             WriteValue("Successful")      
->>>>>>> develop
         }catch{
             if($error[0].CategoryInfo.Category -eq 'ResourceExists'){
                 Write-Host 'resource exists.'
             }else{
                 Write-Host 'error.'
             }
-<<<<<<< HEAD
-        }
-        Write-Host 'created.'
-        
-=======
         }       
->>>>>>> develop
 }
 
 function SetupMappingDictionary($StorageAccountKey)
