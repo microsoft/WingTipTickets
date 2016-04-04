@@ -12,6 +12,7 @@ using Microsoft.Rest;
 using Tenant.Mvc.Core.Helpers;
 using Tenant.Mvc.Core.Interfaces.Tenant;
 using Tenant.Mvc.Models;
+using WingTipTickets;
 
 namespace Tenant.Mvc.Controllers
 {
@@ -101,6 +102,7 @@ namespace Tenant.Mvc.Controllers
                 }
 
                 UploadReport(postedFile);
+                UpdateConnection();
 
                 results.Add(new UploadFileViewModel()
                 {
@@ -163,6 +165,36 @@ namespace Tenant.Mvc.Controllers
                 {
                     import = client.Imports.GetImportById(ConfigHelper.PowerbiWorkspaceCollection, ConfigHelper.PowerbiWorkspaceId.ToString(), import.Id);
                     Thread.Sleep(1000);
+                }
+            }
+        }
+
+        private void UpdateConnection()
+        {
+            // Create a dev token for update
+            var devToken = PowerBIToken.CreateDevToken(ConfigHelper.PowerbiWorkspaceCollection, ConfigHelper.PowerbiWorkspaceId);
+            using (var client = CreatePowerBIClient(devToken))
+            {
+                // Get DataSets
+                var dataset = client.Datasets.GetDatasets(ConfigHelper.PowerbiWorkspaceCollection, ConfigHelper.PowerbiWorkspaceId.ToString()).Value.Last();
+                var datasources = client.Datasets.GetGatewayDatasources(ConfigHelper.PowerbiWorkspaceCollection, ConfigHelper.PowerbiWorkspaceId.ToString(), dataset.Id).Value;
+
+                // Build Credentials
+                var delta = new GatewayDatasource
+                {
+                    CredentialType = "Basic",
+                    BasicCredentials = new BasicCredentials
+                    {
+                        Username = WingtipTicketApp.Config.DatabaseUser,
+                        Password = WingtipTicketApp.Config.DatabasePassword
+                    }
+                };
+
+                // Update each DataSource
+                foreach (var datasource in datasources)
+                {
+                    // Update the datasource with the specified credentials
+                    client.Gateways.PatchDatasource(ConfigHelper.PowerbiWorkspaceCollection, ConfigHelper.PowerbiWorkspaceId.ToString(), datasource.GatewayId, datasource.Id, delta);
                 }
             }
         }
