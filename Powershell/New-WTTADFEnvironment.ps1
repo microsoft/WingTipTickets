@@ -216,7 +216,7 @@ function CreateDataFactory()
 	{
 		# Create DataFactory
 		WriteLabel("Creating Data Factory '$ApplicationName'")
-		$dataFactory = New-AzureRMDataFactory -Name $ApplicationName -location 'West US' -ResourceGroupName $ResourceGroupName -Force -ErrorAction Stop  | out-null
+		$dataFactory = New-AzureRMDataFactory -Name $ApplicationName -location 'West US' -ResourceGroupName $ResourceGroupName -Force -ErrorAction Stop
         if($dataFactory -eq $null)
         {
             WriteValue("Failed")
