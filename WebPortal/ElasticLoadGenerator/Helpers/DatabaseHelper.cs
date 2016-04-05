@@ -17,6 +17,29 @@ namespace ElasticPoolLoadGenerator.Helpers
             return String.Format("Server=tcp:{0};Database={1};User ID={2};Password={3};Trusted_Connection=False;", server, database, user, password);
         }
 
+        public static DataTable BuildBatchData(int batchSize)
+        {
+            // Build up the Customer
+            var customerName = string.Format("Ticket ({0} of {1}) for user {2} to concert-{3}", 1, 1, ConfigHelper.CustomerName, ConfigHelper.ConcertId);
+
+            // Create the Table
+            var table = new DataTable();
+
+            table.Columns.Add("CustomerId", typeof(int));
+            table.Columns.Add("Name", typeof(string));
+            table.Columns.Add("TicketLevelId", typeof(int));
+            table.Columns.Add("ConcertId", typeof(int));
+            table.Columns.Add("PurchaseDate", typeof(DateTime));
+
+            // Add the batch rows
+            for (var i = 0; i < batchSize; i++)
+            {
+                table.Rows.Add(ConfigHelper.CustomerId, customerName, ConfigHelper.TicketLevelId, ConfigHelper.ConcertId, DateTime.Now);
+            }
+
+            return table;
+        }
+
         public static string BuildInsertQuery()
         {
             // Build up the Customer

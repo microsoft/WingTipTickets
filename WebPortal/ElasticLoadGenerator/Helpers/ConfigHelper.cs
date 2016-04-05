@@ -39,6 +39,14 @@ namespace ElasticPoolLoadGenerator.Helpers
             }
         }
 
+        public static int Loaders
+        {
+            get
+            {
+                return Convert.ToInt32(ConfigurationManager.AppSettings["Loaders"]);
+            }
+        }
+
         public static int BatchSize
         {
             get

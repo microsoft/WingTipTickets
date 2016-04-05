@@ -44,7 +44,7 @@ namespace ElasticPoolLoadGenerator.Models
 
         #region - Miscelaneous Properties -
 
-        public IDatabaseLoader DatabaseLoader { get; set; }
+        public List<IDatabaseLoader> DatabaseLoaders { get; set; }
 
         public ICommand PurchaseTicketsCommand { get; set; }
 

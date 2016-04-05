@@ -93,6 +93,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Commands\PurchaseTicketsCommand.cs" />
+    <Compile Include="Components\BaseDatabaseLoader.cs" />
     <Compile Include="Interfaces\IDatabaseLoader.cs" />
     <Compile Include="Components\SingleDatabaseLoader.cs" />
     <Compile Include="Components\DualDatabaseLoader.cs" />
