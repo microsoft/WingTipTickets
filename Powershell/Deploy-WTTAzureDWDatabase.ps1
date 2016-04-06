@@ -148,7 +148,7 @@ function Deploy-WTTAzureDWDatabase
                     }
                     Else
                     {
-					    $DWServer = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains "primary" -ExpandProperties).properties.FullyQualifiedDomainName
+					    $DWServer = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains "primary" -ExpandProperties -ResourceGroupNameContains $WTTEnvironmentApplicationName).properties.FullyQualifiedDomainName
 					    # Set working location
 					    Push-Location -StackName wtt
 					    # Create Database tables
@@ -163,9 +163,9 @@ function Deploy-WTTAzureDWDatabase
 					    # Set working location
 					    Pop-Location -StackName wtt
 
-					    # Downgrade to 400 units
-					    WriteLabel("Downgrading DataWarehouse database to 400 Units")
-					    $null = Set-AzureRmSqlDatabase -RequestedServiceObjectiveName "DW400" -ServerName $ServerName -DatabaseName $DWDatabaseName -ResourceGroupName $WTTEnvironmentApplicationName
+					    # Downgrade to 100 units
+					    WriteLabel("Downgrading DataWarehouse database to 100 Units")
+					    $null = Set-AzureRmSqlDatabase -RequestedServiceObjectiveName "DW100" -ServerName $ServerName -DatabaseName $DWDatabaseName -ResourceGroupName $WTTEnvironmentApplicationName
 					    WriteValue("Successful")
 
     					WriteLabel("Pausing DataWarehouse database")

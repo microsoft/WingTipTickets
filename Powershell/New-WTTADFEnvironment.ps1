@@ -179,7 +179,7 @@ function CreateSchema
 		# Create Database Schema
 		WriteLabel("Creating Database Schema")
 		Push-Location -StackName wtt
-		$DatabaseServer = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains "primary" -ExpandProperties).properties.FullyQualifiedDomainName
+		$DatabaseServer = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains "primary" -ExpandProperties -ResourceGroupNameContains $ResourceGroupName).properties.FullyQualifiedDomainName
 		$result = Invoke-Sqlcmd -Username "$DatabaseUserName@$DatabaseServerName" -Password $DatabasePassword -ServerInstance $DatabaseServer -Database $DatabaseName -InputFile ".\Resources\DataFactory\Database\Schema.sql" -QueryTimeout 0
 		Pop-Location -StackName wtt
 		WriteValue("Successful")
