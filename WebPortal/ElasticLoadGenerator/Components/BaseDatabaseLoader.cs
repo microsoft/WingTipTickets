@@ -172,7 +172,8 @@ namespace ElasticPoolLoadGenerator.Components
 
                         // Run the batch insert script
                         cmd.Transaction = (SqlTransaction)sqlConnection.BeginTransaction();
-                        cmd.ExecuteNonQueryWithRetry(retryPolicy);
+                        cmd.ExecuteNonQuery();
+                        //cmd.ExecuteNonQueryWithRetry(retryPolicy); 
                         cmd.Transaction.Commit();
 
                         // Update Values
@@ -217,6 +218,7 @@ namespace ElasticPoolLoadGenerator.Components
             while (loadElapsedSeconds < ConfigHelper.Sleeptime);
 
             IsSleeping = false;
+            OnNotifyDoneSleeping();
         }
 
         protected void UpdateTotalValues()
