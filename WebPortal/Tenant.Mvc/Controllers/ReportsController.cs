@@ -119,13 +119,24 @@ namespace Tenant.Mvc.Controllers
 
         #region - Private Methods -
 
+        private static string WorkspaceCollection
+        {
+            get { return ConfigHelper.PowerbiWorkspaceCollection; }
+        }
+
+        private static string WorkspaceId
+        {
+            get { return ConfigHelper.PowerbiWorkspaceId.ToString(); }
+        }
+
         private SelectList FetchReports(string reportId)
         {
-            var devToken = PowerBIToken.CreateDevToken(ConfigHelper.PowerbiWorkspaceCollection, ConfigHelper.PowerbiWorkspaceId);
+            // Create a dev token for fetch
+            var devToken = PowerBIToken.CreateDevToken(WorkspaceCollection, WorkspaceId);
 
             using (var client = CreatePowerBIClient(devToken))
             {
-                var reportsResponse = client.Reports.GetReports(ConfigHelper.PowerbiWorkspaceCollection, ConfigHelper.PowerbiWorkspaceId.ToString());
+                var reportsResponse = client.Reports.GetReports(WorkspaceCollection, WorkspaceId);
 
                 return new SelectList(reportsResponse.Value.ToList(), "Id", "Name", reportId);
             }
@@ -133,13 +144,15 @@ namespace Tenant.Mvc.Controllers
 
         public FetchReportResult FetchReport(string reportId)
         {
-            var devToken = PowerBIToken.CreateDevToken(ConfigHelper.PowerbiWorkspaceCollection, ConfigHelper.PowerbiWorkspaceId);
+            // Create a dev token for fetch
+            var devToken = PowerBIToken.CreateDevToken(WorkspaceCollection, WorkspaceId);
+
             using (var client = CreatePowerBIClient(devToken))
             {
-                var reports = client.Reports.GetReports(ConfigHelper.PowerbiWorkspaceCollection, ConfigHelper.PowerbiWorkspaceId.ToString());
+                var reports = client.Reports.GetReports(WorkspaceCollection, WorkspaceId);
                 var report = reports.Value.FirstOrDefault(r => r.Id == reportId);
 
-                var embedToken = PowerBIToken.CreateReportEmbedToken(ConfigHelper.PowerbiWorkspaceCollection, ConfigHelper.PowerbiWorkspaceId, Guid.Parse(report.Id));
+                var embedToken = PowerBIToken.CreateReportEmbedToken(WorkspaceCollection, WorkspaceId, report.Id);
 
                 var result = new FetchReportResult
                 {
@@ -154,16 +167,17 @@ namespace Tenant.Mvc.Controllers
         private void UploadReport(HttpPostedFileBase postedFile)
         {
             // Create a dev token for import
-            var devToken = PowerBIToken.CreateDevToken(ConfigHelper.PowerbiWorkspaceCollection, ConfigHelper.PowerbiWorkspaceId);
+            var devToken = PowerBIToken.CreateDevToken(WorkspaceCollection, WorkspaceId);
+
             using (var client = CreatePowerBIClient(devToken))
             {
                 // Import PBIX file from the file stream
-                var import = client.Imports.PostImportWithFile(ConfigHelper.PowerbiWorkspaceCollection, ConfigHelper.PowerbiWorkspaceId.ToString(), postedFile.InputStream, Path.GetFileNameWithoutExtension(postedFile.FileName));
+                var import = client.Imports.PostImportWithFile(WorkspaceCollection, WorkspaceId, postedFile.InputStream, Path.GetFileNameWithoutExtension(postedFile.FileName));
 
-                // Example of polling the import to check when the import has succeeded.
+                // Poll the import to check when succeeded
                 while (import.ImportState != "Succeeded" && import.ImportState != "Failed")
                 {
-                    import = client.Imports.GetImportById(ConfigHelper.PowerbiWorkspaceCollection, ConfigHelper.PowerbiWorkspaceId.ToString(), import.Id);
+                    import = client.Imports.GetImportById(WorkspaceCollection, WorkspaceId, import.Id);
                     Thread.Sleep(1000);
                 }
             }
@@ -172,12 +186,13 @@ namespace Tenant.Mvc.Controllers
         private void UpdateConnection()
         {
             // Create a dev token for update
-            var devToken = PowerBIToken.CreateDevToken(ConfigHelper.PowerbiWorkspaceCollection, ConfigHelper.PowerbiWorkspaceId);
+            var devToken = PowerBIToken.CreateDevToken(WorkspaceCollection, WorkspaceId);
+
             using (var client = CreatePowerBIClient(devToken))
             {
                 // Get DataSets
-                var dataset = client.Datasets.GetDatasets(ConfigHelper.PowerbiWorkspaceCollection, ConfigHelper.PowerbiWorkspaceId.ToString()).Value.Last();
-                var datasources = client.Datasets.GetGatewayDatasources(ConfigHelper.PowerbiWorkspaceCollection, ConfigHelper.PowerbiWorkspaceId.ToString(), dataset.Id).Value;
+                var dataset = client.Datasets.GetDatasets(WorkspaceCollection, WorkspaceId).Value.Last();
+                var datasources = client.Datasets.GetGatewayDatasources(WorkspaceCollection, WorkspaceId, dataset.Id).Value;
 
                 // Build Credentials
                 var delta = new GatewayDatasource
@@ -194,7 +209,7 @@ namespace Tenant.Mvc.Controllers
                 foreach (var datasource in datasources)
                 {
                     // Update the datasource with the specified credentials
-                    client.Gateways.PatchDatasource(ConfigHelper.PowerbiWorkspaceCollection, ConfigHelper.PowerbiWorkspaceId.ToString(), datasource.GatewayId, datasource.Id, delta);
+                    client.Gateways.PatchDatasource(WorkspaceCollection, WorkspaceId, datasource.GatewayId, datasource.Id, delta);
                 }
             }
         }

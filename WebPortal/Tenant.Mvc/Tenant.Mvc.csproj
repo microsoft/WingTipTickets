@@ -89,6 +89,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.Data.Services.Client.5.6.2\lib\net40\Microsoft.Data.Services.Client.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory">
+      <HintPath>..\packages\Microsoft.IdentityModel.Clients.ActiveDirectory.2.21.301221612\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms">
+      <HintPath>..\packages\Microsoft.IdentityModel.Clients.ActiveDirectory.2.21.301221612\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.IdentityModel.Protocol.Extensions">
+      <HintPath>..\packages\Microsoft.IdentityModel.Protocol.Extensions.1.0.0\lib\net45\Microsoft.IdentityModel.Protocol.Extensions.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Owin">
       <HintPath>..\packages\Microsoft.Owin.3.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
     </Reference>
@@ -98,17 +107,26 @@
     <Reference Include="Microsoft.Owin.Security.Cookies">
       <HintPath>..\packages\Microsoft.Owin.Security.Cookies.3.0.1\lib\net45\Microsoft.Owin.Security.Cookies.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.PowerBI.Api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.PowerBI.Api.1.0.7-preview\lib\portable-net45+win+wpa81\Microsoft.PowerBI.Api.dll</HintPath>
+    <Reference Include="Microsoft.Owin.Security.OpenIdConnect">
+      <HintPath>..\packages\Microsoft.Owin.Security.OpenIdConnect.3.0.1\lib\net45\Microsoft.Owin.Security.OpenIdConnect.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.PowerBI.AspNet.Mvc, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.PowerBI.Api, Version=1.0.12.16089, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.PowerBI.Mvc.1.0.7-preview\lib\net45\Microsoft.PowerBI.AspNet.Mvc.dll</HintPath>
+      <HintPath>..\packages\Microsoft.PowerBI.Api.1.0.12-preview\lib\portable-net45+win+wpa81+MonoAndroid10+xamarinios10+MonoTouch10\Microsoft.PowerBI.Api.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.PowerBI.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.PowerBI.AspNet.Mvc, Version=1.0.12.16089, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.PowerBI.Core.1.0.7-preview\lib\net45\Microsoft.PowerBI.Core.dll</HintPath>
+      <HintPath>..\packages\Microsoft.PowerBI.AspNet.Mvc.1.0.12-preview\lib\net45\Microsoft.PowerBI.AspNet.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.PowerBI.AspNet.WebForms">
+      <HintPath>..\packages\Microsoft.PowerBI.AspNet.WebForms.1.0.12-preview\lib\net45\Microsoft.PowerBI.AspNet.WebForms.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.PowerBI.Core, Version=1.0.12.16089, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.PowerBI.Core.1.0.12-preview\lib\net45\Microsoft.PowerBI.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.PowerBI.Owin.Security">
+      <HintPath>..\packages\Microsoft.PowerBI.Owin.Security.1.0.12-preview\lib\net45\Microsoft.PowerBI.Owin.Security.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -458,7 +476,6 @@
     <Content Include="Content\Img\Rock\icon3.png" />
     <Content Include="Content\Img\Rock\logo.png" />
     <Content Include="Content\Img\Rock\search.png" />
-    <Content Include="Content\powerbi.css" />
     <Content Include="Content\Stylesheets\powerbi.css" />
     <Content Include="Content\Scripts\bootstrap-select.js" />
     <Content Include="Content\Scripts\buy.js" />
@@ -635,7 +652,8 @@
     <None Include="Properties\PublishProfiles\Deployment-Primary.pubxml" />
     <None Include="Properties\PublishProfiles\Deployment-Secondary.pubxml" />
     <Content Include="Content\Scripts\powerbi.js" />
-    <Content Include="Scripts\powerbi.js" />
+    <Content Include="scripts\powerbi.js" />
+    <Content Include="scripts\powerbi.min.js" />
     <Content Include="SqlScripts\TrimConcerts.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
