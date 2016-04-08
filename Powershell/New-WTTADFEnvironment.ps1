@@ -125,10 +125,18 @@ function CreateStorageContainer($storageAccountKey)
         try{
             # Get Context
             $context = New-AzureStorageContext -storageAccountName $ApplicationName -StorageAccountKey $storageAccountKey
-                        
-            # Create the container to store blob
-            $container = New-AzureStorageContainer -Name 'productrec' -Context $context -ErrorAction Stop
-            WriteValue("Successful")      
+             
+            $containerExist = Get-AzureStorageContainer -Name 'productrec' -Context $context
+            if(!$containerExist)
+            {
+                # Create the container to store blob
+                $container = New-AzureStorageContainer -Name 'productrec' -Context $context -ErrorAction SilentlyContinue
+                WriteValue("Successful")
+            }
+            else
+            {
+                $containerExist | Remove-AzureStorageBlob
+            }
         }catch{
             if($error[0].CategoryInfo.Category -eq 'ResourceExists'){
                 Write-Host 'resource exists.'
@@ -160,10 +168,31 @@ function CreateDatabase()
 {
 	Try
 	{
-		# Create Database
-		WriteLabel("Creating database '$DatabaseName'")
-		$null = New-AzureRMSqlDatabase -ResourceGroupName $ApplicationName -ServerName $DatabaseServerName -DatabaseName $DatabaseName -Edition $DatabaseEdition
-		WriteValue("Successful")
+        $recommendationExist = $false
+        Do
+        {
+            $recommendationDB = Get-AzureRmSqlDatabase -DatabaseName $DatabaseName -ServerName $DatabaseServerName -ResourceGroupName $ApplicationName
+            if(!$recommendationDB)
+            {
+		        # Create Database
+		        WriteLabel("Creating database '$DatabaseName'")
+		        $null = New-AzureRMSqlDatabase -ResourceGroupName $ApplicationName -ServerName $DatabaseServerName -DatabaseName $DatabaseName -Edition $DatabaseEdition
+		        WriteValue("Successful")
+                $recommendationExist = $true
+            }
+            else
+            {
+                Push-Location -StackName wtt
+                $result = Invoke-Sqlcmd -Username "$DatabaseUserName@$DatabaseServerName" -Password $DatabasePassword -ServerInstance "$DatabaseServer.database.windows.net" -Database $DatabaseName -Query "Select top 1 * from Customers;" -QueryTimeout 0 -SuppressProviderContextWarning
+                Pop-Location -StackName wtt
+                if([string]$result -eq $null)
+                {
+                    WriteError("Recommendation Database is not deployed")
+                    Remove-AzureRmSqlDatabase -ServerName $DatabaseServerName -DatabaseName $DatabaseName -Force -ErrorAction SilentlyContinue
+                    $recommendationExist = $false          
+                }
+            }
+        }Until($recommendationExist -eq $true)
 	} 
 	Catch 
 	{
@@ -198,7 +227,7 @@ function PopulateDatabase
 		# Populate Database
 		WriteLabel("Populating Database")
 		Push-Location -StackName wtt
-		$DatabaseServer = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains "primary" -ExpandProperties).properties.FullyQualifiedDomainName
+		$DatabaseServer = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains "primary" -ExpandProperties -ResourceGroupNameContains $ResourceGroupName).properties.FullyQualifiedDomainName
 		$result = Invoke-Sqlcmd -Username "$DatabaseUserName@$DatabaseServerName" -Password $DatabasePassword -ServerInstance $DatabaseServer -Database $DatabaseName -InputFile ".\Resources\DataFactory\Database\Populate.sql" -QueryTimeout 0
 		Pop-Location -StackName wtt
 		WriteValue("Successful")
@@ -214,9 +243,21 @@ function CreateDataFactory()
 {
 	Try
 	{
+        WriteLabel("Checking data factory '$ApplicationName' status")
+        $dataFactory = Get-AzureRmDataFactory -Name $ApplicationName -ResourceGroupName $ResourceGroupName
+        if($dataFactory.ProvisioningState -eq "Succeeded")
+        {
+            WriteValue("Successful")
+            return $dataFactory
+        }
+        else
+        {
+            WriteValue("Unsuccessful")
+        }
+
 		# Create DataFactory
 		WriteLabel("Creating Data Factory '$ApplicationName'")
-		$dataFactory = New-AzureRMDataFactory -Name $ApplicationName -location 'West US' -ResourceGroupName $ResourceGroupName -Force -ErrorAction Stop
+		$dataFactory = New-AzureRMDataFactory -Name $ApplicationName -location 'West US' -ResourceGroupName $ResourceGroupName -Force -ErrorAction SilentlyContinue
         if($dataFactory -eq $null)
         {
             WriteValue("Failed")
