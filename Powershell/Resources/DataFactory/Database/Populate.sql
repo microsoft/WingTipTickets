@@ -320,7 +320,7 @@ INSERT [dbo].[Products] ([Id], [Name], [Price], [TitlesCount]) VALUES (N'1240220
 , (N'1000889', N'Alexander Evseyev Rock', N'745', N'5')
 , (N'1016065', N'The Lorraine Patrick Orchestra', N'745', N'5')
 , (N'1006555', N'Nedelcho Karaivanov Rock', N'345', N'5')
-, (N'1003853', N'The Alma O'Neal Orchestra', N'735', N'5')
+, (N'1003853', N'The Alma 'O'Neal Orchestra', N'735', N'5')
 , (N'1013389', N'Felecia Woodward Group', N'734', N'5')
 , (N'1000854', N'Joanna Pace Rock', N'345', N'5')
 , (N'1000689', N'Bruno Boatright Band', N'734', N'5')

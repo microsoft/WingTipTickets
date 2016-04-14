@@ -446,7 +446,7 @@ function New-WTTEnvironment
                         if($result -eq $null)
                         {
                             WriteError("Customer1 Database is not deployed")
-                            Remove-AzureRmSqlDatabase -ServerName $azureSqlDatabaseServerPrimaryName -DatabaseName $AzureSqlDatabaseName -Force -ErrorAction SilentlyContinue
+                            Remove-AzureRmSqlDatabase -ServerName $azureSqlDatabaseServerPrimaryName -DatabaseName $AzureSqlDatabaseName -ResourceGroupName $azureResourceGroupName -Force -ErrorAction SilentlyContinue
                             $dbExists = $false
                         }
                         else
