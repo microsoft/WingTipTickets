@@ -108,10 +108,10 @@ namespace Tenant.Mvc.Core.Contexts
                 return (GetVenueByVenueIdInternal(venueId));
             }
 
-            public List<SeatSection> GetSeatMapForVenue(int venueId)
-            {
-                return GetSeatMapForVenueInternal(venueId);
-            }
+            //public List<SeatSection> GetSeatMapForVenue(int venueId)
+            //{
+            //    return GetSeatMapForVenueInternal(venueId);
+            //}
 
             public VenueModel AddNewVenue(string venueName, int cityId)
             {
@@ -156,22 +156,22 @@ namespace Tenant.Mvc.Core.Contexts
                 return venue;
             }
 
-            private List<SeatSection> GetSeatMapForVenueInternal(int venueId)
-            {
-                // Build script
-                var seatMapQuery = String.Format(
-                                                 @"SELECT    section.SeatSectionId as seatSectionId,
-                            section.Description as seatDescription,
-                            section.VenueId as venueId,
-                            section.SeatCount as seatCount
-                  FROM      SeatSection as section
-                  WHERE     section.VenueId={0}", venueId);
+//            private List<SeatSection> GetSeatMapForVenueInternal(int venueId)
+//            {
+//                // Build script
+//                var seatMapQuery = String.Format(
+//                                                 @"SELECT    section.SeatSectionId as seatSectionId,
+//                            section.Description as seatDescription,
+//                            section.VenueId as venueId,
+//                            section.SeatCount as seatCount
+//                  FROM      SeatSection as section
+//                  WHERE     section.VenueId={0}", venueId);
 
-                // Get the Seat Maps for Venue
-                var seatMapList = DataHelper.ExecuteReader(seatMapQuery, MapRowToSeatSection);
+//                // Get the Seat Maps for Venue
+//                var seatMapList = DataHelper.ExecuteReader(seatMapQuery, MapRowToSeatSection);
 
-                return seatMapList;
-            }
+//                return seatMapList;
+//            }
 
             #endregion
 
@@ -231,18 +231,18 @@ namespace Tenant.Mvc.Core.Contexts
                 };
             }
 
-            private static SeatSection MapRowToSeatSection(SqlDataReader reader)
-            {
-                return new SeatSection
-                {
-                    SeatSectionId = reader.GetInt32(reader.GetOrdinal(@"seatSectionId")),
-                    Description = reader.GetString(@"seatDescription"),
-                    VenueId = reader.GetInt32(reader.GetOrdinal(@"venueId")),
-                    SeatCount = reader.GetInt32(reader.GetOrdinal(@"seatCount")),
-                    TicketLevelId = 1,
-                    TicketPrice = 55
-                };
-            }
+            //private static SeatSection MapRowToSeatSection(SqlDataReader reader)
+            //{
+            //    return new SeatSection
+            //    {
+            //        SeatSectionId = reader.GetInt32(reader.GetOrdinal(@"seatSectionId")),
+            //        Description = reader.GetString(@"seatDescription"),
+            //        VenueId = reader.GetInt32(reader.GetOrdinal(@"venueId")),
+            //        SeatCount = reader.GetInt32(reader.GetOrdinal(@"seatCount")),
+            //        TicketLevelId = 1,
+            //        TicketPrice = 55
+            //    };
+            //}
 
             #endregion
         }

@@ -18,6 +18,8 @@
         <EntityTypeShape EntityType="WingTipTicketsTenantPriModel.Ticket" Width="1.5" PointX="4.75" PointY="8.75" IsExpanded="true" />
         <EntityTypeShape EntityType="WingTipTicketsTenantPriModel.Venue" Width="1.5" PointX="8.75" PointY="6.75" IsExpanded="true" />
         <EntityTypeShape EntityType="WingTipTicketsTenantPriModel.WebSiteActionLog" Width="1.5" PointX="6.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="WingTipTicketsTenantPriModel.SeatSection" Width="1.5" PointX="8.875" PointY="9.75" />
+        <EntityTypeShape EntityType="WingTipTicketsTenantPriModel.SeatSectionLayout" Width="1.5" PointX="10.875" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

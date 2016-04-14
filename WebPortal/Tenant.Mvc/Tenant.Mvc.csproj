@@ -352,6 +352,12 @@
     <Compile Include="Core\Contexts\Performer.cs">
       <DependentUpon>WingTipTicketModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Core\Contexts\SeatSection.cs">
+      <DependentUpon>WingTipTicketModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Contexts\SeatSectionLayout.cs">
+      <DependentUpon>WingTipTicketModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Core\Contexts\State.cs">
       <DependentUpon>WingTipTicketModel.tt</DependentUpon>
     </Compile>
@@ -390,7 +396,9 @@
     <Compile Include="Core\Interfaces\Tenant\IApplicationDefaultsRepository.cs" />
     <Compile Include="Core\Interfaces\Tenant\IBaseRepository.cs" />
     <Compile Include="Core\Models\ApplicationDbContext.cs" />
+    <Compile Include="Core\Repositories\Tenant\FindSeatsRepository.cs" />
     <Compile Include="Core\Repositories\Tenant\ApplicationDefaultsRepository.cs" />
+    <Compile Include="Core\Interfaces\Tenant\IFindSeatsRepository.cs" />
     <Compile Include="Models\EventAdministrationViewModel.cs" />
     <Compile Include="Models\ReportsViewModel.cs" />
     <Compile Include="Models\UploadFileViewModel.cs" />

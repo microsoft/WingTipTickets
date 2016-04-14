@@ -471,6 +471,7 @@ legend {
 	overflow:hidden;
 	display:block;
 	font-family: 'Conv_segoeuil';
+    width: 100%
 }
 
 .event-date {

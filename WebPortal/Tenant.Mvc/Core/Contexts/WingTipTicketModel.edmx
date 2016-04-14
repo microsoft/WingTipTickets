@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="WingTipTicketsTenantPriModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="WingTipTicketsTenantPriModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="ApplicationDefault">
           <Key>
             <PropertyRef Name="ApplicationDefaultId" />
@@ -91,6 +91,26 @@
           <Property Name="ShortName" Type="varchar" MaxLength="30" />
           <Property Name="RowVersion" Type="timestamp" StoreGeneratedPattern="Computed" Nullable="false" />
         </EntityType>
+        <EntityType Name="SeatSection">
+          <Key>
+            <PropertyRef Name="SeatSectionId" />
+          </Key>
+          <Property Name="SeatSectionId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SeatCount" Type="int" />
+          <Property Name="VenueId" Type="int" />
+          <Property Name="Description" Type="varchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="SeatSectionLayout">
+          <Key>
+            <PropertyRef Name="SeatSectionLayoutId" />
+          </Key>
+          <Property Name="SeatSectionLayoutId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SeatSectionId" Type="int" />
+          <Property Name="RowNumber" Type="int" />
+          <Property Name="SkipCount" Type="int" />
+          <Property Name="StartNumber" Type="int" />
+          <Property Name="EndNumber" Type="int" />
+        </EntityType>
         <EntityType Name="States">
           <Key>
             <PropertyRef Name="StateId" />
@@ -131,6 +151,7 @@
           <Property Name="TicketLevelId" Type="int" />
           <Property Name="ConcertId" Type="int" />
           <Property Name="PurchaseDate" Type="datetime" />
+          <Property Name="SeatNumber" Type="int" />
         </EntityType>
         <EntityType Name="Venues">
           <Key>
@@ -161,6 +182,8 @@
           <EntitySet Name="Customers" EntityType="Self.Customers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Organizers" EntityType="Self.Organizers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Performers" EntityType="Self.Performers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SeatSection" EntityType="Self.SeatSection" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SeatSectionLayout" EntityType="Self.SeatSectionLayout" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="States" EntityType="Self.States" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TicketLevels" EntityType="Self.TicketLevels" Schema="dbo" store:Type="Tables" />
@@ -168,8 +191,7 @@
           <EntitySet Name="Venues" EntityType="Self.Venues" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="WebSiteActionLog" EntityType="Self.WebSiteActionLog" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="WingTipTicketsTenantPriModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -299,6 +321,7 @@
           <Property Name="TicketLevelId" Type="Int32" />
           <Property Name="ConcertId" Type="Int32" />
           <Property Name="PurchaseDate" Type="DateTime" Precision="3" />
+          <Property Name="SeatNumber" Type="Int32" />
         </EntityType>
         <EntityType Name="Venue">
           <Key>
@@ -335,7 +358,29 @@
           <EntitySet Name="Tickets" EntityType="Self.Ticket" />
           <EntitySet Name="Venues" EntityType="Self.Venue" />
           <EntitySet Name="WebSiteActionLogs" EntityType="Self.WebSiteActionLog" />
+          <EntitySet Name="SeatSections" EntityType="WingTipTicketsTenantPriModel.SeatSection" />
+          <EntitySet Name="SeatSectionLayouts" EntityType="WingTipTicketsTenantPriModel.SeatSectionLayout" />
         </EntityContainer>
+        <EntityType Name="SeatSection">
+          <Key>
+            <PropertyRef Name="SeatSectionId" />
+          </Key>
+          <Property Name="SeatSectionId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SeatCount" Type="Int32" />
+          <Property Name="VenueId" Type="Int32" />
+          <Property Name="Description" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="SeatSectionLayout">
+          <Key>
+            <PropertyRef Name="SeatSectionLayoutId" />
+          </Key>
+          <Property Name="SeatSectionLayoutId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SeatSectionId" Type="Int32" />
+          <Property Name="RowNumber" Type="Int32" />
+          <Property Name="SkipCount" Type="Int32" />
+          <Property Name="StartNumber" Type="Int32" />
+          <Property Name="EndNumber" Type="Int32" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -471,6 +516,7 @@
           <EntitySetMapping Name="Tickets">
             <EntityTypeMapping TypeName="WingTipTicketsTenantPriModel.Ticket">
               <MappingFragment StoreEntitySet="Tickets">
+                <ScalarProperty Name="SeatNumber" ColumnName="SeatNumber" />
                 <ScalarProperty Name="TicketId" ColumnName="TicketId" />
                 <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
@@ -500,6 +546,28 @@
                 <ScalarProperty Name="Action" ColumnName="Action" />
                 <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
                 <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SeatSections">
+            <EntityTypeMapping TypeName="WingTipTicketsTenantPriModel.SeatSection">
+              <MappingFragment StoreEntitySet="SeatSection">
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="VenueId" ColumnName="VenueId" />
+                <ScalarProperty Name="SeatCount" ColumnName="SeatCount" />
+                <ScalarProperty Name="SeatSectionId" ColumnName="SeatSectionId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SeatSectionLayouts">
+            <EntityTypeMapping TypeName="WingTipTicketsTenantPriModel.SeatSectionLayout">
+              <MappingFragment StoreEntitySet="SeatSectionLayout">
+                <ScalarProperty Name="EndNumber" ColumnName="EndNumber" />
+                <ScalarProperty Name="StartNumber" ColumnName="StartNumber" />
+                <ScalarProperty Name="SkipCount" ColumnName="SkipCount" />
+                <ScalarProperty Name="RowNumber" ColumnName="RowNumber" />
+                <ScalarProperty Name="SeatSectionId" ColumnName="SeatSectionId" />
+                <ScalarProperty Name="SeatSectionLayoutId" ColumnName="SeatSectionLayoutId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -55,6 +55,9 @@ namespace Tenant.Mvc.Models
             [Required]
             public int SeatSectionId { get; set; }
 
+            [Required]
+            public string Seats { get; set; }
+
             public string CardHolder { get; set; }
             public string CardNumber { get; set; }
             public int? CardExpirationMonth { get; set; }

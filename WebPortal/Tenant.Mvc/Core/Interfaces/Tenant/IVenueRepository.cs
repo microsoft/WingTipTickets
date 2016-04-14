@@ -7,7 +7,7 @@ namespace Tenant.Mvc.Core.Interfaces.Tenant
     {
         List<VenueModel> GetVenues(int venueId = 0, int cityId = 0);
         VenueModel GetVenueByVenueId(int venueId);
-        List<SeatSection> GetSeatMapForVenue(int venueId);
+        //List<SeatSection> GetSeatMapForVenue(int venueId);
         VenueModel AddNewVenue(string venueName, int cityId);
     }
 }

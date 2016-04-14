@@ -12,14 +12,13 @@ namespace Tenant.Mvc.Core.Contexts
     using System;
     using System.Collections.Generic;
     
-    public partial class Ticket
+    public partial class SeatSectionLayout
     {
-        public int TicketId { get; set; }
-        public Nullable<int> CustomerId { get; set; }
-        public string Name { get; set; }
-        public Nullable<int> TicketLevelId { get; set; }
-        public Nullable<int> ConcertId { get; set; }
-        public Nullable<System.DateTime> PurchaseDate { get; set; }
-        public Nullable<int> SeatNumber { get; set; }
+        public int SeatSectionLayoutId { get; set; }
+        public Nullable<int> SeatSectionId { get; set; }
+        public Nullable<int> RowNumber { get; set; }
+        public Nullable<int> SkipCount { get; set; }
+        public Nullable<int> StartNumber { get; set; }
+        public Nullable<int> EndNumber { get; set; }
     }
 }

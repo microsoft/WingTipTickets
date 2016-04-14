@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Tenant.Mvc.Core.Models
 {
     public class PurchaseTicketsModel
@@ -11,6 +13,7 @@ namespace Tenant.Mvc.Core.Models
         public string CustomerName { get; set; }
 
         public int Quantity { get; set; }
+        public List<string> Seats { get; set; }
 
         #endregion
     }

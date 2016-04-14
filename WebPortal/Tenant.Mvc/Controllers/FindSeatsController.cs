@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using Tenant.Mvc.Core.Interfaces.Tenant;
 using Tenant.Mvc.Core.Models;
+using Tenant.Mvc.Core.Repositories.Tenant;
 using Tenant.Mvc.Models;
 using WingTipTickets;
 
@@ -18,18 +19,20 @@ namespace Tenant.Mvc.Controllers
         private readonly IConcertRepository _concertRepository;
         private readonly ITicketRepository _ticketRepository;
         private readonly IVenueRepository _venueRepository;
+        private readonly IFindSeatsRepository _findSeatsRepository;
 
         #endregion
 
         #region - Constructors -
 
-        public FindSeatsController(IVenueMetaDataRepository venueMetaDataRepository, IConcertRepository concertRepository, ITicketRepository ticketRepository, IVenueRepository venueRepository)
+        public FindSeatsController(IVenueMetaDataRepository venueMetaDataRepository, IConcertRepository concertRepository, ITicketRepository ticketRepository, IVenueRepository venueRepository, IFindSeatsRepository findSeatsRepository)
         {
             // Setup Fields
             _venueMetaDataRepository = venueMetaDataRepository;
             _concertRepository = concertRepository;
             _ticketRepository = ticketRepository;
             _venueRepository = venueRepository;
+            _findSeatsRepository = findSeatsRepository;
 
             // Setup Callbacks
             _venueMetaDataRepository.StatusCallback = DisplayMessage;
@@ -49,72 +52,27 @@ namespace Tenant.Mvc.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            // Check Concert Found
-            var selectedConcert = _concertRepository.GetConcertById(concertId);
-            if (selectedConcert == null)
-            {
-                return RedirectToAction("Index", "Home");
-            }
+            // Map to ViewModel
+            var viewModel = _findSeatsRepository.GetFindSeatsData(concertId);
 
-            // Check Venue
-            selectedConcert.VenueModel = _venueRepository.GetVenueByVenueId(selectedConcert.VenueId);
-            if (selectedConcert.VenueModel == null)
-            {
-                return RedirectToAction("Index", "Home");
-            }
-
-            // Build Venue Seat Sections
-            selectedConcert.VenueModel.VenueSeatSections = GetSeatSections(selectedConcert.VenueModel.VenueId);
-
-            // Get Ticket Levels
-            var ticketLevelsForSection = _ticketRepository.GetTicketLevelById(selectedConcert.ConcertId);
-            foreach (var seatSection in selectedConcert.VenueModel.VenueSeatSections)
-            {
-                var ticketLevel = ticketLevelsForSection.FirstOrDefault(tl => tl.SeatSectionId == seatSection.SeatSectionId);
-
-                if (ticketLevel != null)
-                {
-                    seatSection.Description = string.Format("${0}: Section {1}", ticketLevel.TicketPrice, ticketLevel.Description);
-                }
-            }
+            // Collections
+            viewModel.ExpirationMonths = GetCardExpirationMonths();
+            viewModel.ExpirationYears = GetCardExpirationYears();
 
             // Switch off DocumentDb when running in the Development environment
             VenueMetaData metaData = null;
             if (!WingtipTicketApp.Config.RunningInDev)
             {
-                metaData = await _venueMetaDataRepository.GetVenueMetaData(selectedConcert.VenueId);
+                metaData = await _venueMetaDataRepository.GetVenueMetaData(viewModel.Concert.VenueId);
             }
 
-            // Map to ViewModel
-            var viewModel = new FindSeatsViewModel()
-            {
-                // Main Models
-                Concert = new FindSeatsViewModel.ConcertViewModel()
+            viewModel.VenueMetaData = 
+                metaData != null ? 
+                new FindSeatsViewModel.VenueMetaDataViewModel()
                 {
-                    ConcertId = selectedConcert.ConcertId,
-                    ConcertName = selectedConcert.ConcertName,
-                    ConcertDate = selectedConcert.ConcertDate,
-                    
-                    VenueId = selectedConcert.VenueModel.VenueId,
-                    VenueName = selectedConcert.VenueModel.VenueName,
-                    
-                    PerformerName = selectedConcert.PerformerModel.ShortName
-                },
-
-                // Collections
-                ExpirationMonths = GetCardExpirationMonths(),
-                ExpirationYears = GetCardExpirationYears(),
-                SeatSections = new SelectList(selectedConcert.VenueModel.VenueSeatSections, "SeatSectionId", "Description", null),
-                TicketQuantities = GetTicketQuantities(),
-                
-                // MetaData
-                VenueMetaData = metaData != null ? 
-                    new FindSeatsViewModel.VenueMetaDataViewModel()
-                    {
-                        VenueId = metaData.VenueId,
-                        Data = metaData.Data,
-                    } : null
-            };
+                    VenueId = metaData.VenueId,
+                    Data = metaData.Data,
+                } : null;
 
             return View(viewModel);
         }
@@ -138,6 +96,7 @@ namespace Tenant.Mvc.Controllers
                 ConcertId = viewModel.Purchase.ConcertId,
                 SeatSectionId = viewModel.Purchase.SeatSectionId,
                 Quantity = viewModel.Purchase.Quantity,
+                Seats = viewModel.Purchase.Seats.Replace(" ", "").Split(',').ToList(),
 
                 CustomerId = ((CustomerModel)Session["SessionUser"]).CustomerId,
                 CustomerName = ((CustomerModel)Session["SessionUser"]).FirstName
@@ -151,6 +110,14 @@ namespace Tenant.Mvc.Controllers
                 : "Failed to purchase tickets.");
 
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public JsonResult GetSeatLayout(int ticketLevelId)
+        {
+            var viewModel = _findSeatsRepository.GetSeatSectionLayout(ticketLevelId);
+            
+            return Json(new { model = viewModel }, JsonRequestBehavior.AllowGet);
         }
 
         #endregion
@@ -180,25 +147,6 @@ namespace Tenant.Mvc.Controllers
             };
 
             for (var i = DateTime.Now.Year; i <= DateTime.Now.Year + 20; i++)
-            {
-                items.Add(new LookupViewModel(i, i.ToString()));
-            }
-
-            return new SelectList(items, "Value", "Description", null);
-        }
-
-        private List<SeatSection> GetSeatSections(int venueId)
-        {
-            var items = _venueRepository.GetSeatMapForVenue(venueId);
-
-            return items;
-        }
-
-        private SelectList GetTicketQuantities()
-        {
-            var items = new List<LookupViewModel>();
-
-            for (var i = 1; i <= 5; i++)
             {
                 items.Add(new LookupViewModel(i, i.ToString()));
             }

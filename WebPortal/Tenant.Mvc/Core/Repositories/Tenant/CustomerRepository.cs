@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Tenant.Mvc.Core.Interfaces.Tenant;
@@ -43,8 +44,8 @@ namespace Tenant.Mvc.Core.Repositories.Tenant
                     concert.ConcertId,
                     venuesList.Find(v => v.VenueId.Equals(concert.VenueId)).VenueName,
                     1,
-                    ticketLevel.Description,
-                    "N/A",
+                    ticketLevel.Description.Split('-').First().Trim(),
+                    ticket.SeatNumber,
                     concert.ConcertDate,
                     ticket.ConcertId,
                     concert.VenueId
@@ -54,6 +55,7 @@ namespace Tenant.Mvc.Core.Repositories.Tenant
                 {
                     var index = myEventsView.PurchasedTickets.FindIndex(x => x.ConcertId == ticket.ConcertId && x.SectionName == tempTicket.SectionName);
                     myEventsView.PurchasedTickets[index].TicketQuantity++;
+                    myEventsView.PurchasedTickets[index].SeatName += ", " + tempTicket.SeatName;
                 }
                 else if (venueId == null || tempTicket.VenueId == venueId)
                 {
