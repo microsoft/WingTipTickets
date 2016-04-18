@@ -47,11 +47,12 @@ namespace ElasticPoolLoadGenerator.Helpers
             var customerName = string.Format("Ticket ({0} of {1}) for user {2} to concert-{3}", 1, 1, ConfigHelper.CustomerName, ConfigHelper.ConcertId);
 
             //  Build the Insert Query
-            return string.Format("INSERT INTO TICKETS (CustomerId, Name, TicketLevelId, ConcertId, PurchaseDate) VALUES ({0}, '{1}', {2}, {3}, GETDATE())",
+            return string.Format("INSERT INTO TICKETS (CustomerId, Name, TicketLevelId, ConcertId, PurchaseDate, SeatNumber) VALUES ({0}, '{1}', {2}, {3}, GETDATE(), {4})",
                                  ConfigHelper.CustomerId, 
                                  customerName, 
                                  ConfigHelper.TicketLevelId, 
-                                 ConfigHelper.ConcertId);
+                                 ConfigHelper.ConcertId,
+                                 -1);
         }
 
         public static string BuildBatchQuery(int batchSize, string rootQuery)
@@ -77,7 +78,7 @@ namespace ElasticPoolLoadGenerator.Helpers
         public static List<LookupViewModel> GetTicketLevels(string connectionString, int concertId)
         {
             // Build up the TicketLevel Query
-            string query = "SELECT Id = TicketLevelId, Description = 'Sections ' + Description + ' ($' + CAST(TicketPrice AS varchar) + ')' FROM TicketLevels WHERE ConcertId = " + concertId;
+            string query = "SELECT Id = TicketLevelId, Description = Description FROM TicketLevels WHERE ConcertId = " + concertId;
 
             return GetLookupData(query, connectionString);
         }
