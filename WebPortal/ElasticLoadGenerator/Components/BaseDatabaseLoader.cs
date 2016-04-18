@@ -151,7 +151,7 @@ namespace ElasticPoolLoadGenerator.Components
                 TicketsPurchased = 0d;
                 sqlConnection.Open(retryPolicy);
 
-                const string query = "INSERT INTO TICKETS (CustomerId, Name, TicketLevelId, ConcertId, PurchaseDate) SELECT CustomerId, Name, TicketLevelId, ConcertId, PurchaseDate FROM @Data";
+                const string query = "INSERT INTO TICKETS (CustomerId, Name, TicketLevelId, ConcertId, PurchaseDate, SeatNumber) SELECT CustomerId, Name, TicketLevelId, ConcertId, PurchaseDate, SeatNumber FROM @Data";
 
                 using (var cmd = new SqlCommand(query, sqlConnection.Current))
                 {

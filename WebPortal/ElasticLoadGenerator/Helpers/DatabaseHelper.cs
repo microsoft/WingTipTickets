@@ -30,11 +30,12 @@ namespace ElasticPoolLoadGenerator.Helpers
             table.Columns.Add("TicketLevelId", typeof(int));
             table.Columns.Add("ConcertId", typeof(int));
             table.Columns.Add("PurchaseDate", typeof(DateTime));
+            table.Columns.Add("SeatNumber", typeof(int));
 
             // Add the batch rows
             for (var i = 0; i < batchSize; i++)
             {
-                table.Rows.Add(ConfigHelper.CustomerId, customerName, ConfigHelper.TicketLevelId, ConfigHelper.ConcertId, DateTime.Now);
+                table.Rows.Add(ConfigHelper.CustomerId, customerName, ConfigHelper.TicketLevelId, ConfigHelper.ConcertId, DateTime.Now, -1);
             }
 
             return table;
