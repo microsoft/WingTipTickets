@@ -472,12 +472,16 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Img\Classical\arrows2.png" />
+    <Content Include="Content\Img\Classical\floor-plan-new.png" />
     <Content Include="Content\Img\Classical\icon1.png" />
     <Content Include="Content\Img\Classical\icon2.png" />
     <Content Include="Content\Img\Classical\icon3.png" />
     <Content Include="Content\Img\Classical\logo.png" />
     <Content Include="Content\Img\Classical\search.png" />
     <Content Include="Content\Img\Classical\venue.png" />
+    <Content Include="Content\Img\Pop\floor-plan-new.png" />
+    <Content Include="Content\Img\Rock\floor-plan-new.png" />
+    <Content Include="Content\Img\WingTipTickets\floor-plan-new.png" />
     <Content Include="Content\Img\Pop\search.png" />
     <Content Include="Content\Img\Rock\icon1.png" />
     <Content Include="Content\Img\Rock\icon2.png" />

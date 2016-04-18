@@ -37,7 +37,7 @@
             @using (Html.BeginForm("Index", "FindSeats", FormMethod.Post))
             {
                 @Html.HiddenFor(m => m.Concert.ConcertId)
-                
+
                 <div class="form-group">
                     <div class="col-xs-3">
                         <label>Price & Section</label>
@@ -65,21 +65,15 @@
 
                 <div class="clearfix">
                 </div>
-
-                <div class="form-group">
-                    <div class="col-xs-12">
-                       
-                    </div>
-                </div>
             }
         </div>
-        
+
         <!-- -------------------------------------------------------------------------------------------------------------------------- -->
         <!-- Venue Data Section -->
         <!-- -------------------------------------------------------------------------------------------------------------------------- -->
 
-        <div id="documentdb-meta-parent" class=" col-xs-5">
-            
+        <div id="documentdb-meta-parent" class="col-xs-5">
+
             <div class="spacer-15">
             </div>
 
@@ -141,30 +135,33 @@
                 </div>
             </div>
         }
-        
-        <!-- -------------------------------------------------------------------------------------------------------------------------- -->
-        <!-- Venue Map -->
-        <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+    </div>
+    
+    <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+    <!-- Venue Map -->
+    <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+    
+    <div class="row">
         
         <div class="clearfix">
         </div>
-        
-        <div class="spacer-15">
-        </div>
-        
+
+        @*<div class="spacer-15">
+        </div>*@
+
         <div class="row row-underline-dark">
             <div class="col-xs-12">
                 <h3>Venue Seat Map</h3>
             </div>
         </div>
-        
-        <div class="spacer-10">
+
+        @*<div class="spacer-10">
+            </div>*@
+
+        <div class="col-xs-12 thumbnail">
+            <img class="img-responsive" style="margin-left: auto; margin-right: auto;" src="~/Content/img/@WingtipTicketApp.Config.TenantEventType/floor-plan-new.png" width="85%" />
         </div>
 
-        <div class="col-xs-12">
-            <img class="img-responsive" style="margin-left: auto; margin-right: auto;" src="~/Content/img/@WingtipTicketApp.Config.TenantEventType/floor-plan.jpg" width="70%" />
-        </div>
-        
     </div>
 </div>
 

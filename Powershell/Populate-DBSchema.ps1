@@ -249,33 +249,25 @@ function Populate-DBSchema
 			    # Populate SeatSection Table
 			    WriteLabel("Populating SeatSection table")
 			    $Command.CommandText =
-				    "
-					    Declare @index numeric = 1
+					"
+						Declare @index numeric = 1
 
 						While @index <= 12
 						Begin
-							Insert [dbo].[SeatSection] ([SeatCount], [VenueId], [Description]) Values (8, @index, N'A1')
-							Insert [dbo].[SeatSection] ([SeatCount], [VenueId], [Description]) Values (60, @index, N'A2')
-							Insert [dbo].[SeatSection] ([SeatCount], [VenueId], [Description]) Values (8, @index, N'A3')
-							Insert [dbo].[SeatSection] ([SeatCount], [VenueId], [Description]) Values (8, @index, N'B1')
-							Insert [dbo].[SeatSection] ([SeatCount], [VenueId], [Description]) Values (40, @index, N'B2')
-							Insert [dbo].[SeatSection] ([SeatCount], [VenueId], [Description]) Values (40, @index, N'B3')
-							Insert [dbo].[SeatSection] ([SeatCount], [VenueId], [Description]) Values (8, @index, N'B4')
-							Insert [dbo].[SeatSection] ([SeatCount], [VenueId], [Description]) Values (8, @index, N'C1')
-							Insert [dbo].[SeatSection] ([SeatCount], [VenueId], [Description]) Values (40, @index, N'C2')
-							Insert [dbo].[SeatSection] ([SeatCount], [VenueId], [Description]) Values (40, @index, N'C3')
-							Insert [dbo].[SeatSection] ([SeatCount], [VenueId], [Description]) Values (8, @index, N'C4')
-							Insert [dbo].[SeatSection] ([SeatCount], [VenueId], [Description]) Values (50, @index, N'D1')
-							Insert [dbo].[SeatSection] ([SeatCount], [VenueId], [Description]) Values (50, @index, N'D2')
-							Insert [dbo].[SeatSection] ([SeatCount], [VenueId], [Description]) Values (47, @index, N'E1')
-							Insert [dbo].[SeatSection] ([SeatCount], [VenueId], [Description]) Values (47, @index, N'E2')
-							Insert [dbo].[SeatSection] ([SeatCount], [VenueId], [Description]) Values (32, @index, N'F1')
-							Insert [dbo].[SeatSection] ([SeatCount], [VenueId], [Description]) Values (32, @index, N'F2')
-							Insert [dbo].[SeatSection] ([SeatCount], [VenueId], [Description]) Values (202, @index, N'G1')
+							Insert [dbo].[SeatSection] ([SeatCount], [VenueId], [Description]) Values (60,  @index,  N'101')
+							Insert [dbo].[SeatSection] ([SeatCount], [VenueId], [Description]) Values (100, @index,  N'102')
+							Insert [dbo].[SeatSection] ([SeatCount], [VenueId], [Description]) Values (194, @index,  N'103')
+							Insert [dbo].[SeatSection] ([SeatCount], [VenueId], [Description]) Values (8,   @index,  N'201')
+							Insert [dbo].[SeatSection] ([SeatCount], [VenueId], [Description]) Values (8,   @index,  N'202')
+							Insert [dbo].[SeatSection] ([SeatCount], [VenueId], [Description]) Values (8,   @index,  N'203')
+							Insert [dbo].[SeatSection] ([SeatCount], [VenueId], [Description]) Values (8,   @index,  N'204')
+							Insert [dbo].[SeatSection] ([SeatCount], [VenueId], [Description]) Values (32,  @index,  N'205')
+							Insert [dbo].[SeatSection] ([SeatCount], [VenueId], [Description]) Values (32,  @index,  N'207')
+							Insert [dbo].[SeatSection] ([SeatCount], [VenueId], [Description]) Values (198, @index,  N'208')
 
 							Set @index = @index + 1
 						End
-				    "
+					"
 
 			    $Result = $Command.ExecuteNonQuery()
 			    WriteValue("Successful")
@@ -283,124 +275,91 @@ function Populate-DBSchema
 				# Populate SeatSectionLayout Table
 			    WriteLabel("Populating SeatSectionLayout table")
 			    $Command.CommandText =
-				    "
-					    Declare @indexSection numeric = 1
+					"
+						Declare @indexSection numeric = 1
 						Declare @indexConcert numeric = 1
 
 						While @indexConcert <= 12
 						Begin
 
-							-- A1
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 0, 1, 0, 1, 4)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 0, 2, 0, 5, 8)
+							-- 101
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 0, 1, 0, 1,  20)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 0, 2, 0, 21, 40)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 0, 3, 0, 41, 60)
 
-							-- A2
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 1, 1, 0, 1, 20)
+							-- 102
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 1, 1, 0, 1,  20)
 							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 1, 2, 0, 21, 40)
 							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 1, 3, 0, 41, 60)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 1, 4, 0, 61, 80)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 1, 5, 0, 81, 100)
+							
+							-- 103
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 2, 1,  0,  1,   20)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 2, 2,  0,  21,  40)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 2, 3,  0,  41,  60)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 2, 4,  0,  61,  80)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 2, 5,  0,  81,  100)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 2, 6,  0,  101, 120)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 2, 7,  0,  121, 140)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 2, 8,  0,  141, 160)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 2, 9,  1,  161, 178)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 2, 10, 2,  179, 194)
 
-							-- A3
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 2, 1, 0, 1, 4)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 2, 2, 0, 5, 8)
+							-- 201
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 3, 1, 0, 1, 2)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 3, 2, 0, 3, 4)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 3, 3, 0, 5, 6)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 3, 4, 0, 7, 8)
 
-							-- B1
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 3, 1, 0, 1, 4)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 3, 2, 0, 5, 8)
+							-- 202
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 4, 1, 0, 1, 2)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 4, 2, 0, 3, 4)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 4, 3, 0, 5, 6)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 4, 4, 0, 7, 8)
 
-							-- B2
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 4, 1, 0, 1, 10)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 4, 2, 0, 11, 20)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 4, 3, 0, 21, 30)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 4, 4, 0, 31, 40)
+							-- 203
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 5, 1, 0, 1, 2)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 5, 2, 0, 3, 4)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 5, 3, 0, 5, 6)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 5, 4, 0, 7, 8)
 
-							-- B3
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 5, 1, 0, 1, 10)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 5, 2, 0, 11, 20)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 5, 3, 0, 21, 30)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 5, 4, 0, 31, 40)
+							-- 204
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 6, 1, 0, 1, 2)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 6, 2, 0, 3, 4)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 6, 3, 0, 5, 6)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 6, 4, 0, 7, 8)
 
-							-- B4
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 6, 1, 0, 1, 4)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 6, 2, 0, 5, 8)
+							-- 205
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 7, 1, 0,  1,  7)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 7, 2, 0,  8,  14)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 7, 3, 0,  15, 21)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 7, 4, 1,  22, 27)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 7, 5, 2,  28, 32)
 
-							-- C1
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 7, 1, 0, 1, 4)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 7, 2, 0, 5, 8)
+							-- 207
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 8, 1, 0,  1,  7)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 8, 2, 0,  8,  14)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 8, 3, 0,  15, 21)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 8, 4, 0,  22, 27)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 8, 5, 0,  28, 32)
 
-							-- C2
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 8, 1, 0, 1, 10)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 8, 2, 0, 11, 20)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 8, 3, 0, 21, 30)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 8, 4, 0, 31, 40)
-
-							-- C3
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 9, 1, 0, 1, 10)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 9, 2, 0, 11, 20)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 9, 3, 0, 21, 30)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 9, 4, 0, 31, 40)
-
-							-- C4
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 10, 1, 0, 1, 4)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 10, 2, 0, 5, 8)
-
-							-- D1
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 11, 1, 0, 1, 10)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 11, 2, 0, 11, 20)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 11, 3, 0, 21, 30)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 11, 4, 0, 31, 40)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 11, 5, 0, 41, 50)
-
-							-- D2
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 12, 1, 0, 1, 10)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 12, 2, 0, 11, 20)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 12, 3, 0, 21, 30)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 12, 4, 0, 31, 40)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 12, 5, 0, 41, 50)
-
-							-- E1
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 13, 1, 0, 1, 10)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 13, 2, 0, 11, 20)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 13, 3, 0, 21, 30)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 13, 4, 1, 31, 39)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 13, 5, 2, 40, 47)
-
-							-- E2
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 14, 1, 0, 1, 10)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 14, 2, 0, 11, 20)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 14, 3, 0, 21, 30)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 14, 4, 0, 31, 39)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 14, 5, 0, 40, 47)
-
-							-- F1
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 15, 1, 0, 1, 7)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 15, 2, 0, 8, 14)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 15, 3, 0, 15, 21)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 15, 4, 1, 22, 27)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 15, 5, 2, 28, 32)
-
-							-- F2
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 16, 1, 0, 1,  7)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 16, 2, 0, 8,  14)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 16, 3, 0, 15, 21)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 16, 4, 0, 22, 27)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 16, 5, 0, 28, 32)
-
-							-- G1
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 17, 1,  4, 1,   15)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 17, 2,  4, 16,  30)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 17, 3,  4, 31,  45)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 17, 4,  2, 46,  64)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 17, 5,  0, 65,  87)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 17, 6,  0, 88,  110)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 17, 7,  0, 111, 133)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 17, 8,  0, 134, 156)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 17, 9,  0, 157, 179)
-							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 17, 10, 0, 180, 202)
+							-- 208
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 9, 1,  4,  1,   15)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 9, 2,  4,  16,  30)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 9, 3,  4,  31,  45)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 9, 4,  4,  46,  60)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 9, 5,  0,  61,  83)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 9, 6,  0,  84,  106)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 9, 7,  0,  107, 129)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 9, 8,  0,  130, 152)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 9, 9,  0,  176, 175)
+							INSERT [dbo].[SeatSectionLayout] ([SeatSectionId], [RowNumber], [SkipCount], [StartNumber], [EndNumber]) Values (@indexSection + 9, 10, 0,  176, 198)
 
 							Set @indexConcert = @indexConcert + 1
-							Set @indexSection = @indexSection + 18
+							Set @indexSection = @indexSection + 10
 						End
-				    "
+					"
 
 			    $Result = $Command.ExecuteNonQuery()
 			    WriteValue("Successful")
@@ -450,33 +409,22 @@ function Populate-DBSchema
 						While @indexConcert <= 12
 						Begin
 
-							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 1', 'Section A1 - $95.00', @indexSection + 0, @indexConcert, 95)
-							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 1', 'Section A2 - $100.00', @indexSection + 1, @indexConcert, 100)
-							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 1', 'Section A3 - $95.00', @indexSection + 2, @indexConcert, 95)
-																																						 
-							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 2', 'Section B1 - $75.00', @indexSection + 3, @indexConcert, 75)
-							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 2', 'Section B2 - $80.00', @indexSection + 4, @indexConcert, 80)
-							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 2', 'Section B3 - $80.00', @indexSection + 5, @indexConcert, 80)
-							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 2', 'Section B4 - $75.00', @indexSection + 6, @indexConcert, 75)
-																																						 
-							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 3', 'Section C1 - $65.00', @indexSection + 7, @indexConcert, 65)
-							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 3', 'Section C2 - $70.00', @indexSection + 8, @indexConcert, 70)
-							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 3', 'Section C3 - $70.00', @indexSection + 9, @indexConcert, 70)
-							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 3', 'Section C4 - $65.00', @indexSection + 10, @indexConcert, 65)
-																																						 
-							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 4', 'Section D1 - $55.00', @indexSection + 11, @indexConcert, 55)
-							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 4', 'Section D2 - $55.00', @indexSection + 12, @indexConcert, 55)
-																																						 
-							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 5', 'Section E1 - $50.00', @indexSection + 13, @indexConcert, 50)
-							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 5', 'Section E2 - $50.00', @indexSection + 14, @indexConcert, 50)
-																																						 
-							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 6', 'Section F1 - $45.00', @indexSection + 15, @indexConcert, 45)
-							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 6', 'Section F2 - $45.00', @indexSection + 16, @indexConcert, 45)
-																																						 
-							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 7', 'Section G1 - $30.00', @indexSection + 17, @indexConcert, 30)	
+							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 1', 'Section 101 - $100.00', @indexSection + 0,  @indexConcert, 100)
+							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 1', 'Section 102 - $80.00',  @indexSection + 1,  @indexConcert, 80)
+							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 1', 'Section 103 - $60.00',  @indexSection + 2,  @indexConcert, 60)
+
+							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 2', 'Section 201 - $90.00',  @indexSection + 3,  @indexConcert, 90)
+							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 2', 'Section 202 - $90.00',  @indexSection + 4,  @indexConcert, 90)
+							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 2', 'Section 203 - $70.00',  @indexSection + 5,  @indexConcert, 70)
+							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 2', 'Section 204 - $70.00',  @indexSection + 6,  @indexConcert, 70)
+
+							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 3', 'Section 205 - $50.00',  @indexSection + 7,  @indexConcert, 50)
+							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 3', 'Section 207 - $50.00',  @indexSection + 8,  @indexConcert, 50)
+
+							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 4', 'Section 208 - $35.00',  @indexSection + 9,  @indexConcert, 35)
 
 							Set @indexConcert = @indexConcert + 1
-							Set @indexSection = @indexSection + 18
+							Set @indexSection = @indexSection + 10
 						End
 				    "
 
