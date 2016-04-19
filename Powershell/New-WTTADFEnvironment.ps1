@@ -54,48 +54,43 @@ function New-WTTADFEnvironment
 		LineBreak
 		WriteLabel("Checking for DataFactory '$ApplicationName")
 		$azureDataFactory = Find-AzureRmResource -ResourceType "Microsoft.DataFactory/dataFactories" -ResourceNameContains $ApplicationName -ResourceGroupNameContains $ResourceGroupName
-        
-        $dfExists = $false
-        do
-        {
-	        If($azureDataFactory -ne $null)
-	        {
-		        WriteValue("Found")
-                $dfExists = $false
-                $azureDataFactorRemove = Remove-AzureRmDataFactory -Name $ApplicationName -ResourceGroupName $ResourceGroupName -Force -ErrorAction SilentlyContinue
-	        }
-	        else
-	        {
-		        WriteValue("Not Found")
 
-		        try 
-		        {
-			        # Register DataFactory Provider
-			        RegisterProvider
+	    If($azureDataFactory -ne $null)
+	    {
+		    WriteValue("Found")
+            RemoveDataFactory
+	    }
+        $azureDataFactory = Find-AzureRmResource -ResourceType "Microsoft.DataFactory/dataFactories" -ResourceNameContains $ApplicationName -ResourceGroupNameContains $ResourceGroupName
+	    if($azureDataFactory -eq $null)
+	    {
+		    WriteValue("Not Found")
 
-			        # Get StorageAccount Key
-			        $storageAccountKey = GetStorageAccountKey
-                    CreateStorageContainer($storageAccountKey)
+		    try 
+		    {
+			    # Register DataFactory Provider
+			    RegisterProvider
 
-			        # Set up Mapping Dictionary
-			        SetupMappingDictionary($storageAccountKey)
+			    # Get StorageAccount Key
+			    $storageAccountKey = GetStorageAccountKey
+                CreateStorageContainer($storageAccountKey)
+
+			    # Set up Mapping Dictionary
+			    SetupMappingDictionary($storageAccountKey)
                 
-                    # Create and Deploy Database
-			        CreateDatabase
-			        CreateSchema
-			        PopulateDatabase
+                # Create and Deploy Database
+			    CreateDatabase
+			    CreateSchema
+			    PopulateDatabase
 
-			        # Create DataFactory
-			        CreateDataFactory
-			        PopulateProductRecommendation($storageAccountKey)
-                    $dfExists = $true
-		        }
-		        Catch
-		        {
-			        WriteError($Error)
-		        }
-            }
-		}Until($dfExists -eq $true)
+			    # Create DataFactory
+			    CreateDataFactory
+			    PopulateProductRecommendation($storageAccountKey)
+		    }
+		    Catch
+		    {
+			    WriteError($Error)
+		    }
+        }
 	}
 }
 
@@ -251,18 +246,6 @@ function CreateDataFactory()
 {
 	Try
 	{
-        WriteLabel("Checking data factory '$ApplicationName' status")
-        $dataFactory = Get-AzureRmDataFactory -Name $ApplicationName -ResourceGroupName $ResourceGroupName -ErrorAction SilentlyContinue
-        if($dataFactory.ProvisioningState -eq "Succeeded")
-        {
-            WriteValue("Successful")
-            return $dataFactory
-        }
-        else
-        {
-            WriteValue("Unsuccessful")
-        }
-
 		# Create DataFactory
 		WriteLabel("Creating Data Factory '$ApplicationName'")
 		$dataFactory = New-AzureRMDataFactory -Name $ApplicationName -location 'West US' -ResourceGroupName $ResourceGroupName -Force -ErrorAction SilentlyContinue
@@ -282,6 +265,29 @@ function CreateDataFactory()
 		WriteValue("Failed")
 		throw $Error
 	}
+}
+
+function RemoveDataFactory()
+{
+    Try
+    {
+        WriteLabel("Checking data factory '$ApplicationName' status")
+        $dataFactory = Get-AzureRmDataFactory -Name $ApplicationName -ResourceGroupName $ResourceGroupName -ErrorAction SilentlyContinue
+        if($dataFactory.ProvisioningState -eq "Succeeded")
+        {
+            WriteValue("Found")
+            $azureDataFactoryRemove = Remove-AzureRmDataFactory -Name $ApplicationName -ResourceGroupName $ResourceGroupName -Force -ErrorAction SilentlyContinue
+        }
+        else
+        {
+            WriteValue("Not Deployed")
+        }
+    }
+    Catch
+    {
+        WriteValue("Failed")
+		throw $Error
+    }
 }
 
 function PopulateProductRecommendation($StorageAccountKey)

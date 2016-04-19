@@ -167,11 +167,7 @@ function Deploy-WTTAzureDWDatabase
 					    WriteLabel("Downgrading DataWarehouse database to 100 Units")
 					    $null = Set-AzureRmSqlDatabase -RequestedServiceObjectiveName "DW100" -ServerName $ServerName -DatabaseName $DWDatabaseName -ResourceGroupName $WTTEnvironmentApplicationName
 					    WriteValue("Successful")
-
-    					WriteLabel("Pausing DataWarehouse database")
-	    				$null = Suspend-AzureRMSqlDatabase –ResourceGroupName $WTTEnvironmentApplicationName –ServerName $ServerName –DatabaseName $DWDatabaseName
-		    			WriteValue("Successful")
-			    		Start-Sleep -s 180
+                        Start-Sleep -s 180
                     }
 				}
 			}

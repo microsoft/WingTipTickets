@@ -195,6 +195,7 @@ function New-WTTEnvironment
 
 		$azureStorageAccountName = $wTTEnvironmentApplicationName
 		$azureDocumentDbName = $wTTEnvironmentApplicationName
+        $azurePowerBIWorkspaceCollection = $WTTEnvironmentApplicationName
 		$azureSqlDatabaseServerPrimaryName = $wTTEnvironmentApplicationName + "primary"
 		$azureSqlDatabaseServerSecondaryName = $wTTEnvironmentApplicationName + "secondary"        
 		$azureResourceGroupName = $wTTEnvironmentApplicationName
@@ -446,7 +447,7 @@ function New-WTTEnvironment
                         if($result -eq $null)
                         {
                             WriteError("Customer1 Database is not deployed")
-                            Remove-AzureRmSqlDatabase -ServerName $azureSqlDatabaseServerPrimaryName -DatabaseName $AzureSqlDatabaseName -ResourceGroupName $azureResourceGroupName -Force -ErrorAction SilentlyContinue
+                            $null = Remove-AzureRmSqlDatabase -ServerName $azureSqlDatabaseServerPrimaryName -DatabaseName $AzureSqlDatabaseName -ResourceGroupName $azureResourceGroupName -Force -ErrorAction SilentlyContinue
                             $dbExists = $false
                         }
                         else
@@ -482,7 +483,7 @@ function New-WTTEnvironment
                         if([string]$result -eq $null)
                         {
                             WriteError("Customer2 Database is not deployed")
-                            Remove-AzureRmSqlDatabase -ServerName $azureSqlDatabaseServerPrimaryName -DatabaseName "Customer2" -Force -ErrorAction SilentlyContinue
+                            $null = Remove-AzureRmSqlDatabase -ServerName $azureSqlDatabaseServerPrimaryName -DatabaseName "Customer2" -ResourceGroupName $azureResourceGroupName -Force -ErrorAction SilentlyContinue
                             $dbExists = $false
                         }
                         else
@@ -607,14 +608,27 @@ function New-WTTEnvironment
 				New-WTTADFEnvironment -ApplicationName $WTTEnvironmentApplicationName -ResourceGroupName $azureResourceGroupName -DatabaseServerName $azureSqlDatabaseServerPrimaryName -DatabaseName "Recommendations" -DatabaseEdition "Basic" -DatabaseUserName $AzureSqlDatabaseServerAdministratorUserName -DatabasePassword $AzureSqlDatabaseServerAdministratorPassword
 			}
 			Start-Sleep -Seconds 30
+            
+            # New Azure Power BI Service
+            New-WTTPowerBI -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -AzurePowerBIName $azurePowerBIWorkspaceCollection -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseName $AzureSqlDatabaseName -AzureSqlDWDatabaseName $AzureSqlDWDatabaseName
+            Start-Sleep -Seconds 30
+
+            WriteLabel("Pausing DataWarehouse database")
+	    	$null = Suspend-AzureRMSqlDatabase –ResourceGroupName $azureResourceGroupName –ServerName $azurePrimarySqlDatabaseServer –DatabaseName $DWDatabaseName
+		    writeValue("Successful")
+            Start-Sleep -s 180
 
 			# Set the Application Settings
 			$searchName = (Find-AzureRmResource -ResourceType Microsoft.Search/searchServices -ResourceGroupName $wTTEnvironmentApplicationName).name
 			$searchServicePrimaryManagementKey = (Invoke-AzureRmResourceAction -ResourceGroupName $azureResourceGroupName -ResourceName $searchName -ResourceType Microsoft.Search/searchServices -Action listAdminkeys -Force).PrimaryKey
             $documentDBPrimaryKey = (Invoke-AzureRmResourceAction -ResourceGroupName $azureResourceGroupName -ResourceName $azureDocumentDbName -ResourceType Microsoft.DocumentDb/databaseAccounts -Action listkeys -ApiVersion 2015-04-08 -Force).primarymasterkey
-
-			Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -Websitename $azureSqlDatabaseServerPrimaryName -SearchName $searchName -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerSecondaryName $azureSqlDatabaseServerSecondaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey $documentDbPrimaryKey 
-			Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -Websitename $azureSqlDatabaseServerSecondaryName -SearchName $searchName -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerSecondaryName -AzureSqlDatabaseServerSecondaryName $azureSqlDatabaseServerPrimaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey $documentDbPrimaryKey
+            $pbiSettings = Get-Content ".\powerbi.txt"
+            $powerbiSigningKey = $pbiSettings[0]
+            $powerbiWorkspaceCollection = $azurePowerBIWorkspaceCollection
+            $powerbiWorkspaceId = $pbiSettings[1]
+            
+			Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -Websitename $azureSqlDatabaseServerPrimaryName -SearchName $searchName -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerSecondaryName $azureSqlDatabaseServerSecondaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey $documentDbPrimaryKey -powerbiSigningKey $powerbiSigningKey -powerbiWorkspaceCollection $powerbiWorkspaceCollection -powerbiWorkspaceId $powerbiWorkspaceId
+			Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -Websitename $azureSqlDatabaseServerSecondaryName -SearchName $searchName -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerSecondaryName -AzureSqlDatabaseServerSecondaryName $azureSqlDatabaseServerPrimaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey $documentDbPrimaryKey -powerbiSigningKey $powerbiSigningKey -powerbiWorkspaceCollection $powerbiWorkspaceCollection -powerbiWorkspaceId $powerbiWorkspaceId 
 
 			# Enable Auditing on Azure SQL Database Server
 			# Appears to be a name resolution issue if Auditing is enabled, as Azure Search will not redirect to the database server

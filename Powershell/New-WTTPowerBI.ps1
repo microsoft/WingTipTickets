@@ -23,27 +23,27 @@ function New-WTTPowerBI
 		$AzurePowerBIName,
 
 		# Azure SQL Database Server Primary Name
-		[Parameter(Mandatory=$false)]
+		[Parameter(Mandatory=$true)]
 		[String]
 		$AzureSqlDatabaseServerPrimaryName,
 
 		# Azure SQL Database Server Administrator User Name
-		[Parameter(Mandatory=$false)]
+		[Parameter(Mandatory=$true)]
 		[String]
 		$AzureSqlDatabaseServerAdministratorUserName,
 
 		# Azure SQL Database Server Adminstrator Password
-		[Parameter(Mandatory=$false)]
+		[Parameter(Mandatory=$true)]
 		[String]
 		$AzureSqlDatabaseServerAdministratorPassword,
 
 		# Azure Tenant SQL Database Name
-		[Parameter(Mandatory=$false)]
+		[Parameter(Mandatory=$true)]
 		[String]
 		$AzureSqlDatabaseName,
 
 		# Azure DataWarehouse SQL Database Name
-		[Parameter(Mandatory=$false)]
+		[Parameter(Mandatory=$true)]
 		[String]
 		$AzureSqlDWDatabaseName
 	)
@@ -64,21 +64,13 @@ function New-WTTPowerBI
         $powerBIExist = $true
         Do
         {
-            $powerBIService = Find-AzureRmResource -ResourceGroupNameContains $azureResourceGroupName -ResourceType Microsoft.PowerBI -ResourceNameContains $AzurePowerBIName -ExpandProperties
-            if($powerBIExist.Name -eq $AzurePowerBIName)
+            $powerBIService = Find-AzureRmResource -ResourceGroupNameContains $azureResourceGroupName -ResourceType "Microsoft.PowerBI/workspacecollections" -ResourceNameContains $AzurePowerBIName -ExpandProperties -ErrorAction SilentlyContinue
+            if($powerBIService.Name -eq $AzurePowerBIName)
             {
                 WriteValue("Failed")
                 WriteError("$AzurePowerBIName Power BI service already exists.")
-                $powerBIServiceExists = (Find-AzureRmResource -ResourceType "Microsoft.PowerBI/workspaceCollections" -ResourceNameContains $AzurePowerBIName -ResourceGroupNameContains $azureResourceGroupName -ExpandProperties).properties.Status
-                if($powerBIServiceExists -eq "Active")
-                {
-                    $powerBIExist = $false
-                }
-                else
-                {
-                    Remove-AzureRmResource -ResourceName $AzurePowerBIName -ResourceType "Microsoft.PowerBI/workspaceCollections" -ResourceGroupName $azureResourceGroupName
-                    $powerBIExist = $false
-                }
+                Remove-AzureRmResource -ResourceName $AzurePowerBIName -ResourceType "Microsoft.PowerBI/workspaceCollections" -ResourceGroupName $azureResourceGroupName -ErrorAction SilentlyContinue -force
+                Start-Sleep -Seconds 300
             }
             else
             {
@@ -92,8 +84,9 @@ function New-WTTPowerBI
         $adalforms = "${env:ProgramFiles(x86)}\Microsoft SDKs\Azure\PowerShell\ServiceManagement\Azure\Services\Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms.dll"
         $null = [System.Reflection.Assembly]::LoadFrom($adal)
         $null = [System.Reflection.Assembly]::LoadFrom($adalforms)
-        add-type -path "C:\Users\meyer\Desktop\PBIAssembly\Microsoft.PowerBI.Core.dll"
-        add-type -path "C:\Users\meyer\Desktop\PBIAssembly\System.IdentityModel.Tokens.Jwt.dll"
+        #Download these from the Power BI SDK
+        add-type -path ".\PBIAssembly\Microsoft.PowerBI.Core.dll"
+        add-type -path ".\PBIAssembly\System.IdentityModel.Tokens.Jwt.dll"
         $powerBIAssemblies = New-Object Microsoft.PowerBI.Security.PowerBIToken
 
         #Get Azure Tenant ID
@@ -115,34 +108,29 @@ function New-WTTPowerBI
             # Acquire token
             $authResult = $authContext.AcquireToken($resourceAppIdURI, $clientId, $redirectUri, "Auto")
             $authHeader = $authResult.CreateAuthorizationHeader()
-            $headers = @{"Authorization" = $authHeader}
+            $headers = @{"Authorization" = $authHeader}     
             
-            $workspaceCollectionExist = $false
             WriteLabel("Deploying Power BI Workspace Collection")
-            Do
+            #create Power BI Workspace Collection
+            $powerBIWorkspaceCollectionURL =  "https://management.azure.com/subscriptions/$azureSubscriptionID/resourceGroups/$azureResourceGroupName/providers/Microsoft.PowerBI/workspaceCollections/$azurePowerBIWorkspaceCollection"+"?api-version=2016-01-29"
+            $powerBIWorkspaceCollection = "{
+                                                        ""location"": ""southcentralus"",
+                                                        ""tags"": {},
+                                                        ""sku"": {
+                                                            ""name"": ""S1"",
+                                                            ""tier"": ""Standard""
+                                                        }
+                                            }"
+            $powerBIWorkspaceCollectionCreate =  Invoke-RestMethod -Uri $powerBIWorkspaceCollectionURL -Method Put -Body $powerBIWorkspaceCollection -ContentType "application/json; charset=utf-8" -Headers $headers -Verbose
+            If($powerBIWorkspaceCollectionCreate.properties.provisioningState -eq "Succeeded")
             {
-                #create Power BI Workspace Collection
-                $powerBIWorkspaceCollectionURL =  "https://management.azure.com/subscriptions/$azureSubscriptionID/resourceGroups/$azureResourceGroupName/providers/Microsoft.PowerBI/workspaceCollections/$azurePowerBIWorkspaceCollection"+"?api-version=2016-01-29"
-                $powerBIWorkspaceCollection = "{
-                                                            ""location"": ""southcentralus"",
-                                                            ""tags"": {},
-                                                            ""sku"": {
-                                                                ""name"": ""S1"",
-                                                                ""tier"": ""Standard""
-                                                            }
-                                                }"
-                $powerBIWorkspaceCollectionCreate =  Invoke-RestMethod -Uri $powerBIWorkspaceCollectionURL -Method Put -Body $powerBIWorkspaceCollection -ContentType "application/json; charset=utf-8" -Headers $headers -Verbose
-                If($powerBIWorkspaceCollectionCreate.properties.provisioningState -eq "Succeeded")
-                {
-                    WriteValue("Successful")
-                    $workspaceCollectionExist = $true
-                }
-                Else
-                {
-                    WriteError("Unable to find Power BI Workspace Collection")
-                    $workspaceCollectionExist = $false
-                }
-            }Until($workspaceCollectionExist -eq $true)
+                WriteValue("Successful")
+            }
+            Else
+            {
+                WriteError("Unable to find Power BI Workspace Collection")
+            }
+
             $powerBIWorkspaceCollectionCreate.name | Out-File powerbi.txt -Append
             
             #Get Power BI Workspace Collection Key
@@ -169,8 +157,9 @@ function New-WTTPowerBI
                 $powerBIWorkspaceURL = "https://api.powerbi.com/beta/collections/$azurePowerBIWorkspaceCollection/workspaces"
                 $header = @{authorization = "AppToken $token"}
                 $powerBIWorkspaceCreate =  Invoke-RestMethod -Uri $powerBIWorkspaceURL -Method POST -ContentType "application/json" -Headers $header -Verbose
-                
-                If(!$powerBIWorkspaceCreate.WorkspaceId)
+                $powerBIWorkspaceGet =  Invoke-RestMethod -Uri $powerBIWorkspaceURL -Method GET -ContentType "application/json" -Headers $header -Verbose
+
+                If(!$powerBIWorkspaceGet.WorkspaceId)
                 {
                     WriteValue("Successful")
                     $workspaceExist = $true
@@ -194,7 +183,7 @@ function New-WTTPowerBI
                 $powerBIWorkspace =
                 Switch($report.Name)
                 {
-                    'WTTReports1.pbix' {"TicketSalesDashboard"}                  
+                    'WTTReports1.pbix' {'TicketSalesDashboard'}                  
                     'WTTReports2.pbix' {'TicketSalesQuantity'}
                     'seatingchart.pbix' {'SeatingChart'}
                 }
@@ -202,66 +191,88 @@ function New-WTTPowerBI
                 #Create Power BI Dev Token
                 $appToken = [Microsoft.PowerBI.Security.PowerBIToken]::CreateDevToken($azurePowerBIWorkspaceCollection, $powerBIWorkspaceID)
                 $token = $appToken.Generate($pbikey)
-                $header = @{authorization = "AppToken $token"}
-                               
-                $reportExist = $false
+                $header = @{authorization = "AppToken $token"}      
+
                 WriteLabel("Uploading Power BI Report $report")
-                Do
-                {
-                    
-                    $fileBin = [IO.File]::ReadAllBytes($report)                                                                                                               
-                    $enc = [System.Text.Encoding]::GetEncoding("iso-8859-1")                                                        
-                    $fileEnc = $enc.GetString($fileBin)                                                                          
-                    $boundary = [System.Guid]::NewGuid().ToString()
-                    $LF = "`r`n" 
-                    $bodyLines = (
-                        "--$boundary",
-                        "Content-Disposition: form-data $LF",
-                        $fileEnc,
-	                    "--$boundary--$LF"
-                        ) -join $LF
+                   
+                $fileBin = [IO.File]::ReadAllBytes($report)                                                                                                  
+                $enc = [System.Text.Encoding]::GetEncoding("iso-8859-1")                                               
+                $fileEnc = $enc.GetString($fileBin)                                                                 
+                $boundary = [System.Guid]::NewGuid().ToString()
+                $LF = "`r`n"
+                $bodyLines = (
+                    "--$boundary",
+                    "Content-Disposition: form-data $LF",
+                    $fileEnc,
+	                "--$boundary--$LF"
+                    ) -join $LF
 
-                    $powerBIUploadReportsURL = "https://api.powerbi.com/beta/collections/$azurePowerBIWorkspaceCollection/workspaces/$powerBIWorkspaceID/imports?datasetDisplayName=$powerBIWorkspace"
-                    $powerBIUploadReportsCreate = Invoke-RestMethod -Uri $powerBIUploadReportsURL -Method POST -ContentType "multipart/form-data; boundary=`"$boundary`"" -Headers $header -Body $bodyLines -Verbose
+                $powerBIUploadReportsURL = "https://api.powerbi.com/beta/collections/$azurePowerBIWorkspaceCollection/workspaces/$powerBIWorkspaceID/imports?datasetDisplayName=$powerBIWorkspace"
+                $powerBIUploadReportsCreate = Invoke-RestMethod -Uri $powerBIUploadReportsURL -Method POST -ContentType "multipart/form-data; boundary=`"$boundary`"" -Headers $header -Body $bodyLines -Verbose
+                Start-Sleep -Seconds 30
+                $powerBIReportsURL = "https://api.powerbi.com/beta/collections/$azurePowerBIWorkspaceCollection/workspaces/$powerBIWorkspaceID/reports"
+                $powerBIReportsGet = Invoke-RestMethod -Uri $powerBIReportsURL -Method GET -ContentType "application/json" -Headers $header -Verbose
                   
-                    If(!$powerBIUploadReportsCreate.id)
-                    {
-                        WriteValue("Successful")
-                        $reportExist = $true
-                    }
-                    Else
-                    {
-                        WriteError("Unable to find Power BI Report")
-                        $reportExist = $false
-                    }
-
-                }until($reportExist -eq $true)
+                If($powerBIReportsGet.value.name -match $powerBIWorkspace)
+                {
+                    WriteValue("Successful")
+                }
+                Else
+                {
+                    WriteError("Unable to find Power BI Report")                        
+                }
                 
+                $powerBIImportsURL = "https://api.powerbi.com/beta/collections/$azurePowerBIWorkspaceCollection/workspaces/$powerBIWorkspaceID/imports"
+                $powerBIImports = Invoke-RestMethod -Uri $powerBIImportsURL -Method GET -ContentType "application/json" -Headers $header -Verbose
+                if ($powerBIImports.value | Where-Object {$_.name -eq $powerBIWorkspace})
+                {
+                    $bi = $powerBIImports.value | Where-Object {$_.name -eq $powerBIWorkspace}
+                    $powerBIDataSetID = $bi.datasets.id    
+                    Write-Host $powerBIDataSetID      
+                }
+                                
                 $datasetExists = $false
                 Do
-                {
-                    #Get Datasets
-                    $powerBIDataSetGetURL = "https://api.powerbi.com/beta/collections/$azurePowerBIWorkspaceCollection/workspaces/$powerBIWorkspaceID/datasets"
-                    $powerBIDataSetGet = Invoke-RestMethod -Uri $powerBIDataSetGetURL -Method GET -ContentType "application/json" -Headers $header -Verbose
-                    $powerBIDataSetID = $powerBIDataSetGet.value.id
-        
-                    #Get Data Sources Gateway
-                    $powerBIGatewayDataSourcesGetURL = "https://api.powerbi.com/beta/collections/$azurePowerBIWorkspaceCollection/workspaces/$powerBIWorkspaceID/datasets/$powerBIDataSetID/Default.GetBoundGatewayDatasources"
-                    $powerBIGatewayDataSourcesGet = Invoke-RestMethod -Uri $powerBIGatewayDataSourcesGetURL -Method GET -ContentType "application/json" -Headers $header -Verbose
-                    $powerBIDataSourcesGatewateID = $powerBIGatewayDataSourcesGet.value.gatewayid
-        
-                    #Post All connections
-                    $powerBISetAllConnectionsURL = "https://api.powerbi.com/beta/collections/$azurePowerBIWorkspaceCollection/workspaces/$powerBIWorkspaceID/datasets/$powerBIDataSetID/Default.SetAllConnections "
-                    $powerBISetAllConnectionsConnString = "{
-                                                            ""connectionString"": ""Data source=tcp:$AzureSqlDatabaseServerPrimaryName.database.windows.net,1433;initial catalog=$AzureSqlDWDatabaseName;Persist Security info=True;Encrypt=True;TrustServerCertificate=False;""
-                                                           }"
-                    $powerBISetAllConnectionsPost = Invoke-RestMethod -Uri $powerBISetAllConnectionsURL -Method POST -ContentType "application/json" -Body $powerBISetAllConnectionsConnString -Headers $header -Verbose
+                {                   
+                    if($powerBIWorkspace -notmatch 'SeatingChart')
+                    {       
+                        #Get Data Sources Gateway
+                        $powerBIGatewayDataSourcesGetURL = "https://api.powerbi.com/beta/collections/$azurePowerBIWorkspaceCollection/workspaces/$powerBIWorkspaceID/datasets/$powerBIDataSetID/Default.GetBoundGatewayDatasources"
+                        $powerBIGatewayDataSourcesGet = Invoke-RestMethod -Uri $powerBIGatewayDataSourcesGetURL -Method GET -ContentType "application/json" -Headers $header -Verbose
+                        $powerBIDataSourcesGatewayID = $powerBIGatewayDataSourcesGet.value.gatewayid
+
+                        #Post All connections
+                        $powerBISetAllConnectionsURL = "https://api.powerbi.com/beta/collections/$azurePowerBIWorkspaceCollection/workspaces/$powerBIWorkspaceID/datasets/$powerBIDataSetID/Default.SetAllConnections"
+                        $powerBISetAllConnectionsConnString = "{
+                                                                ""connectionString"": ""Data source=tcp:$AzureSqlDatabaseServerPrimaryName.database.windows.net,1433;initial catalog=$AzureSqlDWDatabaseName;Persist Security info=True;Encrypt=True;TrustServerCertificate=False;""
+                                                               }"
+                        $powerBISetAllConnectionsPost = Invoke-RestMethod -Uri $powerBISetAllConnectionsURL -Method POST -ContentType "application/json" -Body $powerBISetAllConnectionsConnString -Headers $header -Verbose
                 
-                    #Check for Data source update
-                    $powerBIGatewayDataSourcesGetURL
-                    $powerBIGatewayDataSourcesGet
-                    $powerBIDataSetID = $powerBIGatewayDataSourcesGet.value.id
+                        #Check for Data source update
+                        $powerBIGatewayDataSourcesGetURL = "https://api.powerbi.com/beta/collections/$azurePowerBIWorkspaceCollection/workspaces/$powerBIWorkspaceID/datasets/$powerBIDataSetID/Default.GetBoundGatewayDatasources"
+                        $powerBIGatewayDataSourcesGet = Invoke-RestMethod -Uri $powerBIGatewayDataSourcesGetURL -Method GET -ContentType "application/json" -Headers $header -Verbose
+                    }
+
+                    # Set Seating Chart Database Connection
+                    else
+                    {
+                        #Get Data Sources Gateway
+                        $powerBIGatewayDataSourcesGetURL = "https://api.powerbi.com/beta/collections/$azurePowerBIWorkspaceCollection/workspaces/$powerBIWorkspaceID/datasets/$powerBIDataSetID/Default.GetBoundGatewayDatasources"
+                        $powerBIGatewayDataSourcesGet = Invoke-RestMethod -Uri $powerBIGatewayDataSourcesGetURL -Method GET -ContentType "application/json" -Headers $header -Verbose
+                        $powerBIDataSourcesGatewayID = $powerBIGatewayDataSourcesGet.value.gatewayid
+                        #Post All connections
+                        $powerBISetAllConnectionsURL = "https://api.powerbi.com/beta/collections/$azurePowerBIWorkspaceCollection/workspaces/$powerBIWorkspaceID/datasets/$powerBIDataSetID/Default.SetAllConnections"
+                        $powerBISetAllConnectionsConnString = "{
+                                                                ""connectionString"": ""Data source=tcp:$AzureSqlDatabaseServerPrimaryName.database.windows.net,1433;initial catalog=$AzureSqlDatabaseName;Persist Security info=True;Encrypt=True;TrustServerCertificate=False;""
+                                                               }"
+                        $powerBISetAllConnectionsPost = Invoke-RestMethod -Uri $powerBISetAllConnectionsURL -Method POST -ContentType "application/json" -Body $powerBISetAllConnectionsConnString -Headers $header -Verbose
                 
+                        #Check for Data source update
+                        $powerBIGatewayDataSourcesGetURL = "https://api.powerbi.com/beta/collections/$azurePowerBIWorkspaceCollection/workspaces/$powerBIWorkspaceID/datasets/$powerBIDataSetID/Default.GetBoundGatewayDatasources"
+                        $powerBIGatewayDataSourcesGet = Invoke-RestMethod -Uri $powerBIGatewayDataSourcesGetURL -Method GET -ContentType "application/json" -Headers $header -Verbose
+                    }
+
+
                     if($powerBIGatewayDataSourcesGet.value.connectionDetails -match $AzureSqlDatabaseServerPrimaryName)
                     {
                             #WriteValue("Successful")
@@ -276,9 +287,8 @@ function New-WTTPowerBI
                     }
                 }until($datasetExists -eq $true)
 
-
                 #Patch Data Sources
-                $powerBIDataSourcesPatchURL = "https://api.powerbi.com/beta/collections/$azurePowerBIWorkspaceCollection/workspaces/$powerBIWorkspaceID/gateways/$powerBIDataSourcesGatewateID/datasources/$powerBIDataSetID"
+                $powerBIDataSourcesPatchURL = "https://api.powerbi.com/beta/collections/$azurePowerBIWorkspaceCollection/workspaces/$powerBIWorkspaceID/gateways/$powerBIDataSourcesGatewayID/datasources/$powerBIDataSetID"
                 $powerBIDataSourcesPatchBody=@{credentialType="Basic";basicCredentials=@{username=$AzureSqlDatabaseServerAdministratorUserName;password=$AzureSqlDatabaseServerAdministratorPassword}} | ConvertTo-Json
                 $powerBIDataSourcesPatch = Invoke-RestMethod -Uri $powerBIDataSourcesPatchURL -Method PATCH -ContentType "application/json" -Body $powerBIDataSourcesPatchBody -Headers $header -Verbose
             }
@@ -287,7 +297,7 @@ function New-WTTPowerBI
         {
             Write-Error "Error: $Error"
         }
-    }
+    }  
     Catch
     {
         Write-Error "Error: $Error"

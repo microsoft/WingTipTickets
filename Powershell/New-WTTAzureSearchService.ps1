@@ -105,7 +105,7 @@ function New-WTTAzureSearchService
                     }
                     else
                     {
-                        Remove-AzureRmResource -ResourceName $WTTEnvironmentApplicationName -ResourceType "Microsoft.Search/searchServices" -ResourceGroupName $WTTEnvironmentResourceGroupName
+                        Remove-AzureRmResource -ResourceName $WTTEnvironmentApplicationName -ResourceType "Microsoft.Search/searchServices" -ResourceGroupName $WTTEnvironmentResourceGroupName -Force
                         $searchExist = $false
                     }
                 }

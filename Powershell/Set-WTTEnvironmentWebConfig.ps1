@@ -45,11 +45,7 @@ function Set-WTTEnvironmentWebConfig
 		[Parameter(Mandatory=$false)]
 		[String]
 		$AzureSqlDatabaseName,
-
-		# Path to Azure Web Site WebDeploy Package
-		[Parameter(Mandatory = $false)] 
-		[String]$AzureWebSiteWebDeployPackagePath, 
-		
+	
 		# Azure Search Service Name
 		[Parameter(Mandatory = $true)] 
 		[String]$SearchName,
@@ -64,7 +60,19 @@ function Set-WTTEnvironmentWebConfig
 
 		# Azure DocumentDb Key
 		[Parameter(Mandatory = $false)] 
-		[String]$documentDbPrimaryKey
+		[String]$documentDbPrimaryKey,
+        
+        # Azure Power BI Signing Key
+        [Parameter(Mandatory = $false)] 
+        $powerbiSigningKey,
+
+        # Azure Power BI Workspace Collection Name
+        [Parameter(Mandatory = $false)] 
+        $powerbiWorkspaceCollection,
+
+        # Azure Power BI Workspace ID
+        [Parameter(Mandatory = $false)] 
+        $powerbiWorkspaceId
 	)
 
 	Process
@@ -117,6 +125,11 @@ function Set-WTTEnvironmentWebConfig
 					"SearchServiceName" = "$SearchName"; 
 					"DocumentDbUri" = "$docDBName"; 
 					"DocumentDbKey" = "$documentDbPrimaryKey";
+
+                    # Power BI Settings
+                    "powerbiSigningKey" = "$powerbiSigningKey";
+                    "powerbiWorkspaceCollection" = "$powerbiWorkspaceCollection";
+                    "powerbiWorkspaceId" = "$powerbiWorkspaceId"
 			}
 
 			# Add the settings to the website
