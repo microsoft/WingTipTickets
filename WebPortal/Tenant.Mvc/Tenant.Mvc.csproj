@@ -322,6 +322,7 @@
     <Compile Include="Controllers\EventAdministrationController.cs" />
     <Compile Include="Controllers\FindSeatsController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Core\Helpers\PowerBiHelper.cs" />
     <Compile Include="Controllers\RecommendationController.cs" />
     <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\VenueAdministrationController.cs" />

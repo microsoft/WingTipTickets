@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using Tenant.Mvc.Core.Helpers;
 using Tenant.Mvc.Core.Interfaces.Tenant;
 using Tenant.Mvc.Core.Models;
 using Tenant.Mvc.Core.Repositories.Tenant;
@@ -55,11 +56,11 @@ namespace Tenant.Mvc.Controllers
             // Map to ViewModel
             var viewModel = _findSeatsRepository.GetFindSeatsData(concertId);
 
-            // Collections
+            // Add Collections
             viewModel.ExpirationMonths = GetCardExpirationMonths();
             viewModel.ExpirationYears = GetCardExpirationYears();
 
-            // Switch off DocumentDb when running in the Development environment
+            // Get DocumentDB MetaData
             VenueMetaData metaData = null;
             if (!WingtipTicketApp.Config.RunningInDev)
             {
@@ -73,6 +74,11 @@ namespace Tenant.Mvc.Controllers
                     VenueId = metaData.VenueId,
                     Data = metaData.Data,
                 } : null;
+
+            // Get SeatMap
+            var seatMap = PowerBiHelper.FetchReport(ConfigHelper.SeatMapReportId);
+            viewModel.SeatMap = seatMap.Report;
+            viewModel.AccessToken = seatMap.AccessToken;
 
             return View(viewModel);
         }

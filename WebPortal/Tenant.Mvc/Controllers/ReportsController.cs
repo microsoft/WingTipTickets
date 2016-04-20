@@ -49,13 +49,13 @@ namespace Tenant.Mvc.Controllers
         public ActionResult Index()
         {
             // Get the default report
-            var defaultReport = FetchReport(_defaultsRepository.GetApplicationDefault(DefaultReportCode));
+            var defaultReport = PowerBiHelper.FetchReport(_defaultsRepository.GetApplicationDefault(DefaultReportCode));
 
             // Build up the view model
             var viewModel = new ReportsViewModel()
             {
                 SelectedReportId = new Guid(defaultReport.Report.Id),
-                Reports = FetchReports(defaultReport.Report.Id),
+                Reports = PowerBiHelper.FetchReports(defaultReport.Report.Id),
                 Report = defaultReport.Report,
                 AccessToken = defaultReport.AccessToken
             };
@@ -67,10 +67,10 @@ namespace Tenant.Mvc.Controllers
         public ActionResult Index(ReportsViewModel viewModel)
         {
             // Get the selected report
-            var reportResult = FetchReport(viewModel.SelectedReportId.ToString());
+            var reportResult = PowerBiHelper.FetchReport(viewModel.SelectedReportId.ToString());
 
             // Build up the view model
-            viewModel.Reports = FetchReports(viewModel.SelectedReportId.ToString());
+            viewModel.Reports = PowerBiHelper.FetchReports(viewModel.SelectedReportId.ToString());
             viewModel.Report = reportResult.Report;
             viewModel.AccessToken = reportResult.AccessToken;
 
@@ -101,8 +101,8 @@ namespace Tenant.Mvc.Controllers
                     continue;
                 }
 
-                UploadReport(postedFile);
-                UpdateConnection();
+                PowerBiHelper.UploadReport(postedFile);
+                PowerBiHelper.UpdateConnection();
 
                 results.Add(new UploadFileViewModel()
                 {
@@ -118,114 +118,6 @@ namespace Tenant.Mvc.Controllers
         #endregion
 
         #region - Private Methods -
-
-        private static string WorkspaceCollection
-        {
-            get { return ConfigHelper.PowerbiWorkspaceCollection; }
-        }
-
-        private static string WorkspaceId
-        {
-            get { return ConfigHelper.PowerbiWorkspaceId.ToString(); }
-        }
-
-        private SelectList FetchReports(string reportId)
-        {
-            // Create a dev token for fetch
-            var devToken = PowerBIToken.CreateDevToken(WorkspaceCollection, WorkspaceId);
-
-            using (var client = CreatePowerBIClient(devToken))
-            {
-                var reportsResponse = client.Reports.GetReports(WorkspaceCollection, WorkspaceId);
-
-                return new SelectList(reportsResponse.Value.ToList(), "Id", "Name", reportId);
-            }
-        }
-
-        public FetchReportResult FetchReport(string reportId)
-        {
-            // Create a dev token for fetch
-            var devToken = PowerBIToken.CreateDevToken(WorkspaceCollection, WorkspaceId);
-
-            using (var client = CreatePowerBIClient(devToken))
-            {
-                var reports = client.Reports.GetReports(WorkspaceCollection, WorkspaceId);
-                var report = reports.Value.FirstOrDefault(r => r.Id == reportId);
-
-                var embedToken = PowerBIToken.CreateReportEmbedToken(WorkspaceCollection, WorkspaceId, report.Id);
-
-                var result = new FetchReportResult
-                {
-                    Report = report,
-                    AccessToken = embedToken.Generate(ConfigHelper.PowerbiSigningKey)
-                };
-
-                return result;
-            }
-        }
-
-        private void UploadReport(HttpPostedFileBase postedFile)
-        {
-            // Create a dev token for import
-            var devToken = PowerBIToken.CreateDevToken(WorkspaceCollection, WorkspaceId);
-
-            using (var client = CreatePowerBIClient(devToken))
-            {
-                // Import PBIX file from the file stream
-                var import = client.Imports.PostImportWithFile(WorkspaceCollection, WorkspaceId, postedFile.InputStream, Path.GetFileNameWithoutExtension(postedFile.FileName));
-
-                // Poll the import to check when succeeded
-                while (import.ImportState != "Succeeded" && import.ImportState != "Failed")
-                {
-                    import = client.Imports.GetImportById(WorkspaceCollection, WorkspaceId, import.Id);
-                    Thread.Sleep(1000);
-                }
-            }
-        }
-
-        private void UpdateConnection()
-        {
-            // Create a dev token for update
-            var devToken = PowerBIToken.CreateDevToken(WorkspaceCollection, WorkspaceId);
-
-            using (var client = CreatePowerBIClient(devToken))
-            {
-                // Get DataSets
-                var dataset = client.Datasets.GetDatasets(WorkspaceCollection, WorkspaceId).Value.Last();
-                var datasources = client.Datasets.GetGatewayDatasources(WorkspaceCollection, WorkspaceId, dataset.Id).Value;
-
-                // Build Credentials
-                var delta = new GatewayDatasource
-                {
-                    CredentialType = "Basic",
-                    BasicCredentials = new BasicCredentials
-                    {
-                        Username = WingtipTicketApp.Config.DatabaseUser,
-                        Password = WingtipTicketApp.Config.DatabasePassword
-                    }
-                };
-
-                // Update each DataSource
-                foreach (var datasource in datasources)
-                {
-                    // Update the datasource with the specified credentials
-                    client.Gateways.PatchDatasource(WorkspaceCollection, WorkspaceId, datasource.GatewayId, datasource.Id, delta);
-                }
-            }
-        }
-
-        private IPowerBIClient CreatePowerBIClient(PowerBIToken token)
-        {
-            var jwt = token.Generate(ConfigHelper.PowerbiSigningKey);
-            var credentials = new TokenCredentials(jwt, "AppToken");
-
-            var client = new PowerBIClient(credentials)
-            {
-                BaseUri = new Uri(ConfigHelper.PowerbiApiUrl)
-            };
-
-            return client;
-        }
 
         #endregion
 

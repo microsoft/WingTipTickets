@@ -146,20 +146,15 @@
         <div class="clearfix">
         </div>
 
-        @*<div class="spacer-15">
-        </div>*@
-
         <div class="row row-underline-dark">
             <div class="col-xs-12">
                 <h3>Venue Seat Map</h3>
             </div>
         </div>
 
-        @*<div class="spacer-10">
-            </div>*@
-
-        <div class="col-xs-12 thumbnail">
-            <img class="img-responsive" style="margin-left: auto; margin-right: auto;" src="~/Content/img/@WingtipTicketApp.Config.TenantEventType/floor-plan-new.png" width="85%" />
+        <div class="col-xs-12">
+            @Html.PowerBIAccessTokenFor(m => m.AccessToken)
+            @Html.PowerBIReportFor(m => m.SeatMap, new { style = "height:85vh" })
         </div>
 
     </div>
