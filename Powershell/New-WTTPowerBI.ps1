@@ -85,8 +85,8 @@ function New-WTTPowerBI
         $null = [System.Reflection.Assembly]::LoadFrom($adal)
         $null = [System.Reflection.Assembly]::LoadFrom($adalforms)
         #Download these from the Power BI SDK
-        add-type -path ".\PBIAssembly\Microsoft.PowerBI.Core.dll"
-        add-type -path ".\PBIAssembly\System.IdentityModel.Tokens.Jwt.dll"
+        add-type -path ".\Resources\PowerBI\Assembly\Microsoft.PowerBI.Core.dll"
+        add-type -path ".\Resources\PowerBI\Assembly\System.IdentityModel.Tokens.Jwt.dll"
         $powerBIAssemblies = New-Object Microsoft.PowerBI.Security.PowerBIToken
 
         #Get Azure Tenant ID
@@ -228,7 +228,7 @@ function New-WTTPowerBI
                 {
                     $bi = $powerBIImports.value | Where-Object {$_.name -eq $powerBIWorkspace}
                     $powerBIDataSetID = $bi.datasets.id    
-                    Write-Host $powerBIDataSetID      
+                    Write-Host $powerBIDataSetID   
                 }
                                 
                 $datasetExists = $false
