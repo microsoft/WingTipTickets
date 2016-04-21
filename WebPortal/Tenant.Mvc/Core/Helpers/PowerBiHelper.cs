@@ -52,7 +52,7 @@ namespace Tenant.Mvc.Core.Helpers
             using (var client = CreatePowerBiClient(devToken))
             {
                 var reports = ReportsExtensions.GetReports(client.Reports, WorkspaceCollection, WorkspaceId);
-                var report = reports.Value.FirstOrDefault(r => r.Id == reportId);
+                var report = reports.Value.FirstOrDefault(r => r.Name == "SeatingMap");
 
                 var embedToken = PowerBIToken.CreateReportEmbedToken(WorkspaceCollection, WorkspaceId, report.Id);
 
