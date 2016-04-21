@@ -72,7 +72,11 @@ function Set-WTTEnvironmentWebConfig
 
         # Azure Power BI Workspace ID
         [Parameter(Mandatory = $false)] 
-        $powerbiWorkspaceId
+        $powerbiWorkspaceId,
+
+        # Azure Power BI Seat Map ID
+        [Parameter(Mandatory = $false)] 
+        $seatMapReportID
 	)
 
 	Process
@@ -129,7 +133,8 @@ function Set-WTTEnvironmentWebConfig
                     # Power BI Settings
                     "powerbiSigningKey" = "$powerbiSigningKey";
                     "powerbiWorkspaceCollection" = "$powerbiWorkspaceCollection";
-                    "powerbiWorkspaceId" = "$powerbiWorkspaceId"
+                    "powerbiWorkspaceId" = "$powerbiWorkspaceId";
+                    "SeatMapReportId" = "$seatMapReportID"
 			}
 
 			# Add the settings to the website
