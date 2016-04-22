@@ -614,7 +614,7 @@ function New-WTTEnvironment
             Start-Sleep -Seconds 30
 
             WriteLabel("Pausing DataWarehouse database")
-	    	$null = Suspend-AzureRMSqlDatabase –ResourceGroupName $azureResourceGroupName –ServerName $azurePrimarySqlDatabaseServer –DatabaseName $DWDatabaseName
+	    	$null = Suspend-AzureRMSqlDatabase –ResourceGroupName $azureResourceGroupName –ServerName $azureSqlDatabaseServerPrimaryName –DatabaseName $AzureSqlDWDatabaseName
 		    writeValue("Successful")
             Start-Sleep -s 180
 
