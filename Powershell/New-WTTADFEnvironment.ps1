@@ -97,7 +97,7 @@ function New-WTTADFEnvironment
 function RegisterProvider()
 {
 	WriteLabel("Checking for DataFactory Provider")
-	$provider = Find-AzureRmResource -ResourceType "Microsoft.Resources/providers" -ResourceNameContains "DataFactory" -ResourceGroupNameContains $ApplicationName
+	$provider = Find-AzureRmResource -ResourceType "Microsoft.Resources/providers" -ResourceNameContains "DataFactory" -ResourceGroupNameContains $ResourceGroupName
 
 	if ($provider -eq $null)
 	{
@@ -174,12 +174,12 @@ function CreateDatabase()
         $recommendationExist = $false
         Do
         {
-            $recommendationDB = Get-AzureRmSqlDatabase -DatabaseName $DatabaseName -ServerName $DatabaseServerName -ResourceGroupName $ApplicationName -ErrorAction SilentlyContinue
+            $recommendationDB = Get-AzureRmSqlDatabase -DatabaseName $DatabaseName -ServerName $DatabaseServerName -ResourceGroupName $ResourceGroupName -ErrorAction SilentlyContinue
             if(!$recommendationDB)
             {
 		        # Create Database
 		        WriteLabel("Creating database '$DatabaseName'")
-		        $null = New-AzureRMSqlDatabase -ResourceGroupName $ApplicationName -ServerName $DatabaseServerName -DatabaseName $DatabaseName -Edition $DatabaseEdition
+		        $null = New-AzureRMSqlDatabase -ResourceGroupName $ResourceGroupName -ServerName $DatabaseServerName -DatabaseName $DatabaseName -Edition $DatabaseEdition
 		        WriteValue("Successful")
                 $recommendationExist = $true
             }
@@ -191,7 +191,7 @@ function CreateDatabase()
                 if([string]$result -eq $null)
                 {
                     WriteError("Recommendation Database is not deployed")
-                    Remove-AzureRmSqlDatabase -ResourceGroupName $ApplicationName -ServerName $DatabaseServerName -DatabaseName $DatabaseName -Force -ErrorAction SilentlyContinue
+                    Remove-AzureRmSqlDatabase -ResourceGroupName $ResourceGroupName -ServerName $DatabaseServerName -DatabaseName $DatabaseName -Force -ErrorAction SilentlyContinue
                     $recommendationExist = $false          
                 }
             }

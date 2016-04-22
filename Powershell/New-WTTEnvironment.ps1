@@ -61,41 +61,15 @@ function New-WTTEnvironment
 		[Parameter(Mandatory = $false)] 
 		[String]$AzureWebSiteSecondaryWebDeployPackageName,
 
-		# Azure Active Directory Tenant Name
-		[Parameter(Mandatory=$false)]
-		[String]
-		$AzureActiveDirectoryTenantName,
-
-		# Mode of deployment for ADF
-		[Parameter()]
-		[Alias("mode")]
-		[string]
-		$global:mode,
-
 		# Azure ADF SQL Database Server Name
 		[Parameter()]
 		[Alias("adfsqlservername")]
 		[String]$global:sqlserverName,
 
-		# Azure ADF SQL Server Login
-		[Parameter()]
-		[Alias("sqllogin")]
-		[string]$global:sqlServerLogin = 'mylogin',
-
-		# Azure ADF SQL Server User Password
-		[Parameter()]
-		[Alias("sqlpassword")]
-		[string]$global:sqlServerPassword = 'pass@word1',
-
 		# Azure ADF SQL Database Name
 		[Parameter(Mandatory=$false)]
 		[Alias("sqldbname")]
 		[String]$global:sqlDBName,
-
-		# Path to Azure ADF Web Site WebDeploy Package
-		[Parameter(Mandatory = $false)]
-		[Alias("ADFWebSiteDeployPackagePath")] 
-		[String]$azureADFWebSiteWebDeployPackagePath,
 
         #This parameter is used by deploy-wttenvironment.ps1
 		[Parameter(Mandatory = $false)]
@@ -106,6 +80,11 @@ function New-WTTEnvironment
 		[Parameter(Mandatory = $false)]
         [string]
 		$deployDW,
+
+        #This parameter is used by deploy-wttenvironment.ps1
+		[Parameter(Mandatory = $false)]
+        [string]
+        $deployPowerBI,
 
         #This parameter is used by deploy-wttenvironment.ps1
 		[Parameter(Mandatory = $false)]
@@ -430,7 +409,7 @@ function New-WTTEnvironment
                 if ($azurePrimarySqlDatabaseServer -ne $null)
 			    {   
 				    Deploy-DBSchema -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName -DatabaseEdition "Basic" -UserName $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -ServerLocation $WTTEnvironmentPrimaryServerLocation -DatabaseName $AzureSqlDatabaseName            
-				    Populate-DBSchema -ServerName $azureSqlDatabaseServerPrimaryName -Username $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -DatabaseName $AzureSqlDatabaseName
+				    Populate-DBSchema -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName -Username $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -DatabaseName $AzureSqlDatabaseName
                     Start-Sleep -Seconds 30
                     $azureSqlDatabase = Find-AzureRmResource -ResourceType "Microsoft.Sql/servers/databases" -ResourceNameContains $AzureSqlDatabaseName -ResourceGroupNameContains $WTTEnvironmentApplicationName
 
@@ -466,7 +445,7 @@ function New-WTTEnvironment
 			    if ($azurePrimarySqlDatabaseServer -ne $null)
 			    {   
 				    Deploy-DBSchema -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName -DatabaseEdition "Standard" -UserName $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -ServerLocation $WTTEnvironmentPrimaryServerLocation -DatabaseName "Customer2"           
-				    Populate-DBSchema -ServerName $azureSqlDatabaseServerPrimaryName -Username $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -DatabaseName "Customer2"                   
+				    Populate-DBSchema -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName -Username $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -DatabaseName "Customer2"                   
                     Start-Sleep -Seconds 30
                     $azureSqlDatabase = Find-AzureRmResource -ResourceType "Microsoft.Sql/servers/databases" -ResourceNameContains "Customer2" -ResourceGroupNameContains $WTTEnvironmentApplicationName
 
@@ -489,6 +468,42 @@ function New-WTTEnvironment
                         else
                         {
                             $ScaleRequest = Set-AzureRmSqlDatabase -DatabaseName "Customer2" -ServerName $azureSqlDatabaseServerPrimaryName -ResourceGroupName $azureResourceGroupName -RequestedServiceObjectiveName "S2"
+                            $dbExists  = $true
+                        }
+                    }
+			    }
+            }While($dbExists -eq $false)
+
+            # Deploy Customer3 database
+            $dbExists = $false
+            Do
+            {
+			    if ($azurePrimarySqlDatabaseServer -ne $null)
+			    {   
+				    Deploy-DBSchema -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName -DatabaseEdition "Standard" -UserName $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -ServerLocation $WTTEnvironmentPrimaryServerLocation -DatabaseName "Customer3"           
+				    Populate-DBSchema -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName -Username $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -DatabaseName "Customer3"                   
+                    Start-Sleep -Seconds 30
+                    $azureSqlDatabase = Find-AzureRmResource -ResourceType "Microsoft.Sql/servers/databases" -ResourceNameContains "Customer3" -ResourceGroupNameContains $WTTEnvironmentApplicationName
+
+                    if ($azureSqlDatabase -eq $null)
+                    {
+                        $dbExists = $false
+	                    WriteValue("Database Not Found")
+                    }
+                    else
+                    {
+                        Push-Location -StackName wtt
+                        $result = Invoke-Sqlcmd -Username "$AzureSqlDatabaseServerAdministratorUserName@$azureSqlDatabaseServerPrimaryName" -Password $AzureSqlDatabaseServerAdministratorPassword -ServerInstance "$azureSqlDatabaseServerPrimaryName.database.windows.net" -Database "Customer3" -Query "Select * from Customers;" -QueryTimeout 0 -SuppressProviderContextWarning
+                        Pop-Location -StackName wtt
+                        if([string]$result -eq $null)
+                        {
+                            WriteError("Customer2 Database is not deployed")
+                            $null = Remove-AzureRmSqlDatabase -ServerName $azureSqlDatabaseServerPrimaryName -DatabaseName "Customer3" -ResourceGroupName $azureResourceGroupName -Force -ErrorAction SilentlyContinue
+                            $dbExists = $false
+                        }
+                        else
+                        {
+                            $ScaleRequest = Set-AzureRmSqlDatabase -DatabaseName "Customer3" -ServerName $azureSqlDatabaseServerPrimaryName -ResourceGroupName $azureResourceGroupName -RequestedServiceObjectiveName "S2"
                             $dbExists  = $true
                         }
                     }
@@ -609,9 +624,18 @@ function New-WTTEnvironment
 			}
 			Start-Sleep -Seconds 30
             
-            # New Azure Power BI Service
-            New-WTTPowerBI -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -AzurePowerBIName $azurePowerBIWorkspaceCollection -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseName $AzureSqlDatabaseName -AzureSqlDWDatabaseName $AzureSqlDWDatabaseName
-            Start-Sleep -Seconds 30
+            if($deployPowerBI -eq 1)
+            {
+                # New Azure Power BI Service
+                New-WTTPowerBI -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -AzurePowerBIName $azurePowerBIWorkspaceCollection -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseName $AzureSqlDatabaseName -AzureSqlDWDatabaseName $AzureSqlDWDatabaseName
+                Start-Sleep -Seconds 30
+            }
+            elseif(!$deployPowerBI)
+            {
+                # New Azure Power BI Service
+                New-WTTPowerBI -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -AzurePowerBIName $azurePowerBIWorkspaceCollection -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseName $AzureSqlDatabaseName -AzureSqlDWDatabaseName $AzureSqlDWDatabaseName
+                Start-Sleep -Seconds 30
+            }
 
             WriteLabel("Pausing DataWarehouse database")
 	    	$null = Suspend-AzureRMSqlDatabase –ResourceGroupName $azureResourceGroupName –ServerName $azureSqlDatabaseServerPrimaryName –DatabaseName $AzureSqlDWDatabaseName

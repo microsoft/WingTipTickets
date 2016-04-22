@@ -25,6 +25,11 @@ function Populate-DBSchema
 	[CmdletBinding()]
 	Param
 	(
+		# WTT Environment Application Name
+		[Parameter(Mandatory=$true)]
+		[String]
+		$WTTEnvironmentApplicationName,
+
 		# Azure SQL server name for connection.
 		[Parameter(Mandatory=$true)]
 		[String]
@@ -409,19 +414,19 @@ function Populate-DBSchema
 						While @indexConcert <= 12
 						Begin
 
-							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 1', 'Section 101 - $100.00', @indexSection + 0,  @indexConcert, 100)
-							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 1', 'Section 102 - $80.00',  @indexSection + 1,  @indexConcert, 80)
-							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 1', 'Section 103 - $60.00',  @indexSection + 2,  @indexConcert, 60)
+							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 1', 'Section 101 - `$100.00', @indexSection + 0,  @indexConcert, 100)
+							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 1', 'Section 102 - `$80.00',  @indexSection + 1,  @indexConcert, 80)
+							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 1', 'Section 103 - `$60.00',  @indexSection + 2,  @indexConcert, 60)
 
-							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 2', 'Section 201 - $90.00',  @indexSection + 3,  @indexConcert, 90)
-							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 2', 'Section 202 - $90.00',  @indexSection + 4,  @indexConcert, 90)
-							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 2', 'Section 203 - $70.00',  @indexSection + 5,  @indexConcert, 70)
-							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 2', 'Section 204 - $70.00',  @indexSection + 6,  @indexConcert, 70)
+							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 2', 'Section 201 - `$90.00',  @indexSection + 3,  @indexConcert, 90)
+							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 2', 'Section 202 - `$90.00',  @indexSection + 4,  @indexConcert, 90)
+							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 2', 'Section 203 - `$70.00',  @indexSection + 5,  @indexConcert, 70)
+							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 2', 'Section 204 - `$70.00',  @indexSection + 6,  @indexConcert, 70)
 
-							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 3', 'Section 205 - $50.00',  @indexSection + 7,  @indexConcert, 50)
-							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 3', 'Section 207 - $50.00',  @indexSection + 8,  @indexConcert, 50)
+							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 3', 'Section 205 - `$50.00',  @indexSection + 7,  @indexConcert, 50)
+							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 3', 'Section 207 - `$50.00',  @indexSection + 8,  @indexConcert, 50)
 
-							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 4', 'Section 208 - $35.00',  @indexSection + 9,  @indexConcert, 35)
+							Insert [dbo].[TicketLevels] ([TicketLevel], [Description], [SeatSectionId], [ConcertId], [TicketPrice]) Values ('Level 4', 'Section 208 - `$35.00',  @indexSection + 9,  @indexConcert, 35)
 
 							Set @indexConcert = @indexConcert + 1
 							Set @indexSection = @indexSection + 10

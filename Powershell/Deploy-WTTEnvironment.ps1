@@ -22,7 +22,12 @@
         #This parameter is used by deploy-wttenvironment.ps1
 		[Parameter(Mandatory = $false)]
         [string]
-		$deployDW
+		$deployDW,
+
+        #This parameter is used by deploy-wttenvironment.ps1
+		[Parameter(Mandatory = $false)]
+        [string]
+        $deployPowerBI
 	)
 
     Clear
@@ -52,6 +57,7 @@
     #set up parameters to deploy ADF or DW
     $deployADF = ""
     $deployDW = ""
+    $deployPowerBI = ""
 
     # Select a subscription to use for deployment. Calls the initsubscription function at the end of this script.
     WriteLabel("Initializing Azure Subscription")
@@ -116,17 +122,17 @@
     {
         WriteLabelSwitch("1. Base WingTip Tickets")
         WriteLabelSwitch("2. WingTip Tickets with Azure Data Factory")
-        WriteLabelSwitch("3. WingTip Tickets with Azure Data Warehouse")
+        WriteLabelSwitch("3. WingTip Tickets with Azure Data Warehouse and Power BI")
         WriteLabelSwitch("4. All of the WingTip Tickets Services")
         WriteReadLabel("Enter an option 1 to 4..." )
         [Int]$xMenuChoiceA = read-host
     }
     Switch( $xMenuChoiceA )
     {
-        1{new-wttenvironment -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -WTTEnvironmentPrimaryServerLocation $WTTEnvironmentPrimaryServerLocation -deployADF 0 -deployDW 0}
-        2{new-wttenvironment -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -WTTEnvironmentPrimaryServerLocation $WTTEnvironmentPrimaryServerLocation -deployADF 1 -deployDW 0}
-        3{new-wttenvironment -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -WTTEnvironmentPrimaryServerLocation $WTTEnvironmentPrimaryServerLocation -deployADF 0 -deployDW 1}
-        4{new-wttenvironment -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -WTTEnvironmentPrimaryServerLocation $WTTEnvironmentPrimaryServerLocation -deployADF 1 -deployDW 1}
+        1{new-wttenvironment -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -WTTEnvironmentPrimaryServerLocation $WTTEnvironmentPrimaryServerLocation -deployADF 0 -deployDW 0 -deployPowerBI 0}
+        2{new-wttenvironment -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -WTTEnvironmentPrimaryServerLocation $WTTEnvironmentPrimaryServerLocation -deployADF 1 -deployDW 0 -deployPowerBI 0}
+        3{new-wttenvironment -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -WTTEnvironmentPrimaryServerLocation $WTTEnvironmentPrimaryServerLocation -deployADF 0 -deployDW 1 -deployPowerBI 1}
+        4{new-wttenvironment -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -WTTEnvironmentPrimaryServerLocation $WTTEnvironmentPrimaryServerLocation -deployADF 1 -deployDW 1 -deployPowerBI 1}
     }
 }
 
