@@ -444,7 +444,7 @@ function New-WTTEnvironment
             {
 			    if ($azurePrimarySqlDatabaseServer -ne $null)
 			    {   
-				    Deploy-DBSchema -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName -DatabaseEdition "Standard" -UserName $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -ServerLocation $WTTEnvironmentPrimaryServerLocation -DatabaseName "Customer2"           
+				    Deploy-DBSchema -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName -DatabaseEdition "Basic" -UserName $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -ServerLocation $WTTEnvironmentPrimaryServerLocation -DatabaseName "Customer2"           
 				    Populate-DBSchema -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName -Username $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -DatabaseName "Customer2"                   
                     Start-Sleep -Seconds 30
                     $azureSqlDatabase = Find-AzureRmResource -ResourceType "Microsoft.Sql/servers/databases" -ResourceNameContains "Customer2" -ResourceGroupNameContains $WTTEnvironmentApplicationName
@@ -467,7 +467,6 @@ function New-WTTEnvironment
                         }
                         else
                         {
-                            $ScaleRequest = Set-AzureRmSqlDatabase -DatabaseName "Customer2" -ServerName $azureSqlDatabaseServerPrimaryName -ResourceGroupName $azureResourceGroupName -RequestedServiceObjectiveName "S2"
                             $dbExists  = $true
                         }
                     }
