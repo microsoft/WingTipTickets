@@ -125,7 +125,7 @@ function New-WTTAzureSearchService
 			}
             
             WriteLabel("Deploying Azure Search Service $WTTEnvironmentApplicationName")
-            $searchServiceSku = Find-AzureRmResource -ResourceType Microsoft.Search/searchServices -ResourceNameContains $WTTEnvironmentResourceGroupName -ExpandProperties 
+            $searchServiceSku = Find-AzureRmResource -ResourceType Microsoft.Search/searchServices -ExpandProperties
             if($searchServiceSku.sku.name -ne "free")
             {
                 foreach($searchLocation in $listSearchServicesLocation)

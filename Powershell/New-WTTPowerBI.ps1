@@ -269,7 +269,7 @@ function New-WTTPowerBI
                     $powerBIGetReportURL = "https://api.powerbi.com/beta/collections/$azurePowerBIWorkspaceCollection/workspaces/$powerBIWorkspaceID/reports"
                     $powerBIGetReport = Invoke-RestMethod -Uri $powerBIGetReportURL -Method GET -ContentType "application/json" -Headers $header
                     $report = $powerBIGetReport.value | Where-Object {$_.name -eq $powerBIWorkspace}
-                    if(!$report)
+                    if($report) 
                     {
                         WriteValue("Successful")
                     }
@@ -318,7 +318,7 @@ function New-WTTPowerBI
                     $report = $powerBIGetReport.value | Where-Object {$_.name -eq "seatingmap"}
                     $reportid = $report.id
                     $reportid | Out-File .\powerbi.txt -Append
-                    if(!$report)
+                    if($report)
                     {
                         WriteValue("Successful")
                     }

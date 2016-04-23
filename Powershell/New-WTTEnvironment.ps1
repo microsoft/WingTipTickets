@@ -364,27 +364,12 @@ function New-WTTEnvironment
 			WriteValue("Successful")
 
 			# Create DocumentDB
-			if($AzureActiveDirectoryTenantName -eq "")
+			$azureDocumentDBService = New-WTTAzureDocumentDb -WTTResourceGroupName $azureResourceGroupName -WTTDocumentDbName $azureDocumentDbName -WTTDocumentDbLocation $WTTDocumentDbLocation
+			if($azureDocumentDBService.Count -eq 0)
 			{
-				$azureDocumentDBService = New-WTTAzureDocumentDb -WTTResourceGroupName $azureResourceGroupName -WTTDocumentDbName $azureDocumentDbName -WTTDocumentDbLocation $WTTDocumentDbLocation
-
-				if($azureDocumentDBService.Count -eq 0)
-				{
-					Start-Sleep -s 30
-					$azureDocuemtnDBService = New-WTTAzureDocumentDb -WTTResourceGroupName $azureResourceGroupName -WTTDocumentDbName $azureDocumentDbName -WTTDocumentDbLocation $WTTDocumentDbLocation
-					$azureDocumentDBService
-				}
-			}
-			else
-			{
-				$azureDocumentDBService = New-WTTAzureDocumentDb -WTTResourceGroupName $azureResourceGroupName -WTTDocumentDbName $azureDocumentDbName -WTTDocumentDbLocation $WTTDocumentDbLocation -AzureActiveDirectoryTenantName $AzureActiveDirectoryTenantName
-
-				if($azureSearchService.Count -eq 0)
-				{
-					Start-Sleep -s 30
-					$azureDocumentDBService = New-WTTAzureDocumentDb -WTTResourceGroupName $azureResourceGroupName -WTTDocumentDbName $azureDocumentDbName -WTTDocumentDbLocation $WTTDocumentDbLocation -AzureActiveDirectoryTenantName $AzureActiveDirectoryTenantName
-					$azureDocumentDBService
-				}
+				Start-Sleep -s 30
+				$azureDocuemtnDBService = New-WTTAzureDocumentDb -WTTResourceGroupName $azureResourceGroupName -WTTDocumentDbName $azureDocumentDbName -WTTDocumentDbLocation $WTTDocumentDbLocation
+				$azureDocumentDBService
 			}
 
 			# Create Primary SQL Server
