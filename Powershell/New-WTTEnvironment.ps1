@@ -234,10 +234,7 @@ function New-WTTEnvironment
 				LineBreak
 				WriteLine("Finding SQL Database Server capable region")
 
-				if($AzureActiveDirectoryTenantName -eq "")
-				{
-					$azureSqlDatabaseServerV12RegionAvailability = Get-WTTSqlDatabaseServerV12RegionAvailability -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName
-				}
+			    $azureSqlDatabaseServerV12RegionAvailability = Get-WTTSqlDatabaseServerV12RegionAvailability -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName
 
 				# Location Found
 				if ($azureSqlDatabaseServerV12RegionAvailability.Count -eq 2)
