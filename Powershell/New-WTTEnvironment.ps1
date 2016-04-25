@@ -296,7 +296,7 @@ function New-WTTEnvironment
 				{
 					$azurePrimarySqlDatabaseServer
 					$azureSecondarySqlDatabaseServer
-			}
+			    }
 
 				# Restart if Secondary SQL Server missing
 				elseif($azurePrimarySqlDatabaseServer -ne $null -and $azureSecondarySqlDatabaseServer -eq $null) 
@@ -308,6 +308,7 @@ function New-WTTEnvironment
 					$azureResourceGroupNameExists = $null
 					$azurePrimarySqlDatabaseServer = $null
 					$azureSecondarySqlDatabaseServer = $null
+                    New-WTTAzureResourceGroup -AzureResourceGroupName $azureResourceGroupName -AzureResourceGroupLocation $WTTEnvironmentPrimaryServerLocation
 				}
 
 				# Restart if Primary SQL Server missing
@@ -320,6 +321,7 @@ function New-WTTEnvironment
 					$azureResourceGroupNameExists = $null
 					$azurePrimarySqlDatabaseServer = $null
 					$azureSecondarySqlDatabaseServer = $null
+                    New-WTTAzureResourceGroup -AzureResourceGroupName $azureResourceGroupName -AzureResourceGroupLocation $WTTEnvironmentPrimaryServerLocation
 				}
 			}
 
@@ -628,8 +630,8 @@ function New-WTTEnvironment
 			$searchServicePrimaryManagementKey = (Invoke-AzureRmResourceAction -ResourceGroupName $azureResourceGroupName -ResourceName $searchName -ResourceType Microsoft.Search/searchServices -Action listAdminkeys -Force).PrimaryKey
             $documentDBPrimaryKey = (Invoke-AzureRmResourceAction -ResourceGroupName $azureResourceGroupName -ResourceName $azureDocumentDbName -ResourceType Microsoft.DocumentDb/databaseAccounts -Action listkeys -ApiVersion 2015-04-08 -Force).primarymasterkey
             $pbiSettings = Get-Content ".\powerbi.txt"
-            $powerbiSigningKey = $pbiSettings[0]
             $powerbiWorkspaceCollection = $azurePowerBIWorkspaceCollection
+            $powerbiSigningKey = $pbiSettings[0]
             $powerbiWorkspaceId = $pbiSettings[1]
             $seatMapReportID = $pbiSettings[2]
             

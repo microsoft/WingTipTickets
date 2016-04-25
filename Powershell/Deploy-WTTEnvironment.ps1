@@ -97,9 +97,47 @@
                 }
                 else
                 {
+                    
                     WriteError("Resource Group Name Exists")
-                    $WTTEnvironmentApplicationName = " "
-                    $exists = $false
+                    LineBreak
+                    $Title = "$WTTEnvironmentApplicationName has been found"
+                    $message = "Do you wish to redeploy $WTTEnvironmentApplicationName ?"
+                    $yes = New-Object System.Management.Automation.Host.ChoiceDescription "&Yes"
+                    $no = New-Object System.Management.Automation.Host.ChoiceDescription "&No"
+                    $options = [System.Management.Automation.Host.ChoiceDescription[]]($yes, $no)
+                    $result = $host.ui.PromptForChoice($title, $message, $options, 0)
+                    $answer = switch ($result)
+                    {
+                        0 {"You selected Yes."}
+                        1 {"You selected No."}
+                    }
+                    if($answer -like "y*")
+                    {
+                        $exists = $true
+                        $WTTEnvironmentPriServerLocation = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains $WTTEnvironmentApplicationName"primary" -ResourceGroupNameContains $WTTEnvironmentApplicationName -ErrorAction SilentlyContinue).location
+                        $wTTEnvironmentPrimaryServerLocation = 
+					    Switch ($wTTEnvironmentPriServerLocation)
+					    {
+						    'WestUS' {'West US'}
+						    'NorthEurope' {'North Europe'}
+						    'WestEurope' {'West Europe'}
+						    'EastUS' {'East US'}
+						    'NorthCentralUS' {'East US'}
+						    'SouthCentralUS' {'South Central US'}
+						    'EastUS2' {'East US 2'}
+						    'CentralUS' {'Central US'}
+						    'BrazilSouth' {'Brazil South'}
+						    'SoutheastAsia' {'Southeast Asia'}
+						    'EastAsia' {'EastAsia'}
+						    'JapanEast' {'Japan East'}
+						    'JapanWest' {'Japan West'}
+					    }
+                    }
+                    else
+                    {
+                        $WTTEnvironmentApplicationName = " "
+                        $exists = $false
+                    }                    
                 }
             }until($exists -eq $true)
     }
@@ -166,7 +204,7 @@ function InitSubscription()
                 }
 
         LineBreak
-        WriteLabel("Your Azure Subscriptions: ")
+        WriteLabel("Your Azure Subscriptions")
         $subList | Format-Table RowNumber,SubscriptionId,SubscriptionName -AutoSize
         WriteReadLabel("Enter the row number (1 - $subCount) of a subscription")
         $rowNum = Read-Host 
