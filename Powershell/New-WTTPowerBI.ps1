@@ -278,13 +278,13 @@ function New-WTTPowerBI
                         WriteError("Failed")
                     }
 
-                    # Get Seating Chart Report ID
+                    # Get Dashboard Report ID
                     $powerBIGetReportURL = "https://api.powerbi.com/beta/collections/$azurePowerBIWorkspaceCollection/workspaces/$powerBIWorkspaceID/reports"
                     $powerBIGetReport = Invoke-RestMethod -Uri $powerBIGetReportURL -Method GET -ContentType "application/json" -Headers $header
                     $report = $powerBIGetReport.value | Where-Object {$_.name -eq "ticketsalesdashboard"}
                     $reportid = $report.id
 
-                    $updateDB = Invoke-Sqlcmd -Username "developer@$AzureSqlDatabaseServerPrimaryName" -Password "P@ssword1" -ServerInstance "$AzureSqlDatabaseServerPrimaryName.database.windows.net" -Database $AzureSqlDatabaseName -Query "UPDATE ApplicationDefault; SET VALUE=$reportid WHERE Code='DefaultReportID'" -QueryTimeout 0 -SuppressProviderContextWarning -ErrorAction SilentlyContinue                   
+                    $updateDB = Invoke-Sqlcmd -Username "developer@$AzureSqlDatabaseServerPrimaryName" -Password "P@ssword1" -ServerInstance "$AzureSqlDatabaseServerPrimaryName.database.windows.net" -Database $AzureSqlDatabaseName -Query "UPDATE ApplicationDefault SET VALUE='$reportid' WHERE Code='DefaultReportID'" -QueryTimeout 0 -SuppressProviderContextWarning -ErrorAction SilentlyContinue                   
                 }
 
                 # Set Seating Chart Database Connection
