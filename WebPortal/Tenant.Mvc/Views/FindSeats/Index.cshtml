@@ -157,7 +157,7 @@
             @{
                 if (Model.SeatMap != null)
                 {
-                    Model.SeatMap.EmbedUrl += "&$filter=BookedSeats/ConcertId eq '" + Model.Concert.ConcertId + "'";
+                    Model.SeatMap.EmbedUrl += "&$filter=BookedSeats/ConcertFilterId eq '" + Model.Concert.ConcertId + "'";
 
                     @Html.PowerBIAccessTokenFor(m => m.AccessToken)
                     @Html.PowerBIReportFor(m => m.SeatMap, new
