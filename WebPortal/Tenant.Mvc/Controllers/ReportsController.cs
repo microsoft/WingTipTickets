@@ -59,7 +59,7 @@ namespace Tenant.Mvc.Controllers
                 viewModel = new ReportsViewModel()
                 {
                     SelectedReportId = new Guid(defaultReport.Report.Id),
-                    Reports = PowerBiHelper.FetchReports(defaultReport.Report.Id),
+                    Reports = PowerBiHelper.FetchReports(defaultReport.Report.Id, "Seatingmap"),
                     Report = defaultReport.Report,
                     AccessToken = defaultReport.AccessToken
                 };
@@ -69,7 +69,7 @@ namespace Tenant.Mvc.Controllers
                 viewModel = new ReportsViewModel()
                 {
                     SelectedReportId = Guid.Empty,
-                    Reports = PowerBiHelper.FetchReports(null),
+                    Reports = PowerBiHelper.FetchReports(null, "Seatingmap"),
                     Report = null,
                     AccessToken = string.Empty
                 };

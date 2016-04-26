@@ -31,7 +31,7 @@ namespace Tenant.Mvc.Core.Helpers
 
         #region - Public Methods -
 
-        public static SelectList FetchReports(string reportId)
+        public static SelectList FetchReports(string reportId, string exclude = null)
         {
             // Create a dev token for fetch
             var devToken = PowerBIToken.CreateDevToken(WorkspaceCollection, WorkspaceId);
@@ -39,6 +39,11 @@ namespace Tenant.Mvc.Core.Helpers
             using (var client = CreatePowerBiClient(devToken))
             {
                 var reportsResponse = ReportsExtensions.GetReports(client.Reports, WorkspaceCollection, WorkspaceId);
+
+                if (!string.IsNullOrEmpty(exclude))
+                {
+                    reportsResponse.Value = reportsResponse.Value.Where(r => !r.Name.Equals(exclude)).ToList();
+                }
 
                 return new SelectList(reportsResponse.Value.ToList(), "Id", "Name", reportId);
             }

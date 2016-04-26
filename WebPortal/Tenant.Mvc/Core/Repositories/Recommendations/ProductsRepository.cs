@@ -20,7 +20,7 @@ namespace Tenant.Mvc.Core.Repositories.Recommendations
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = "SELECT top 20 * FROM Products order by Name";
+                    cmd.CommandText = "SELECT top 20 * FROM Products";
                     using (var reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
@@ -82,7 +82,7 @@ namespace Tenant.Mvc.Core.Repositories.Recommendations
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = "SELECT * FROM Products WHERE Id = @Id order by Name";
+                    cmd.CommandText = "SELECT * FROM Products WHERE Id = @Id";
                     cmd.Parameters.Add(new SqlParameter("Id", SqlDbType.BigInt) { Value = id });
                     using (var reader = cmd.ExecuteReader())
                     {

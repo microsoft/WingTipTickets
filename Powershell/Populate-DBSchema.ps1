@@ -101,6 +101,11 @@ function Populate-DBSchema
 			    $Result = $Command.ExecuteNonQuery()
 			    WriteValue("Successful")
 
+				WriteLabel("Cleaning SeatSectionLayout table")
+			    $Command.CommandText = "Delete From SeatSectionLayout"
+			    $Result = $Command.ExecuteNonQuery()
+			    WriteValue("Successful")
+
 			    WriteLabel("Cleaning Venues table")
 			    $Command.CommandText = "Delete From Venues"
 			    $Result = $Command.ExecuteNonQuery()

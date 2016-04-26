@@ -479,21 +479,20 @@ function New-WTTEnvironment
             }While($dbExists -eq $false)
 
             Start-Sleep -Seconds 30
-			# if ($WTTEnvironmentPrimaryServerLocation -notcontains "" -and $wTTEnvironmentSecondaryServerLocation -notcontains "")                 
-			# {
-				# if ($wTTEnvironmentApplicationName.Length -gt 60)
-				# {
-					# $azureSearchServiceName = $wTTEnvironmentApplicationName.Substring(0,60)
-				# }
-				# else
-				# {
-					# $azureSearchServiceName = $wTTEnvironmentApplicationName
-				# }
+			if ($wttenvironmentprimaryserverlocation -notcontains "" -and $wttenvironmentsecondaryserverlocation -notcontains "")                 
+			{
+				if ($wttenvironmentapplicationname.length -gt 60)
+				{
+					$azuresearchservicename = $wttenvironmentapplicationname.substring(0,60)
+				}
+				else
+				{
+					$azuresearchservicename = $wttenvironmentapplicationname
+				}
                 
-                # $azureSearchService = New-WTTAzureSearchService -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -WTTEnvironmentResourceGroupName $azureResourceGroupName -AzureSearchServiceLocation $WTTEnvironmentPrimaryServerLocation -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseName $AzureSqlDatabaseName
-				# Start-Sleep -s 30
-
-			# }
+                $azuresearchservice = new-wttazuresearchservice -wttenvironmentapplicationname $wttenvironmentapplicationname -wttenvironmentresourcegroupname $azureresourcegroupname -azuresearchservicelocation $wttenvironmentprimaryserverlocation -azuresqldatabaseserverprimaryname $azuresqldatabaseserverprimaryname -azuresqldatabaseserveradministratorusername $azuresqldatabaseserveradministratorusername -azuresqldatabaseserveradministratorpassword $azuresqldatabaseserveradministratorpassword -azuresqldatabasename $azuresqldatabasename
+				start-sleep -s 30
+			}
 
 			# Create service plans
 			LineBreak
@@ -562,7 +561,7 @@ function New-WTTEnvironment
 			New-WTTAzureTrafficManagerProfile -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -AzureTrafficManagerResourceGroupName $azureResourceGroupName
 			# Add Azure WebSite Endpoints to Traffic Manager Profile
 			Add-WTTAzureTrafficManagerEndpoint -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -AzurePrimaryWebSiteName $azureSqlDatabaseServerPrimaryName -AzureSecondaryWebSiteName $azureSqlDatabaseServerSecondaryName -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -AzureTrafficManagerEndpointStatus "Enabled" -AzureTrafficManagerResourceGroupName $azureResourceGroupName
-			
+
 			# Deploy Azure Data Warehouse on the primary database server. This may run for about 15 minutes.
 			if ($azurePrimarySqlDatabaseServer -ne $null)
 			{
