@@ -12,22 +12,7 @@
 		[Parameter(Mandatory=$false, HelpMessage="Please specify the primary location for your WTT Environment ('East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast')?")]
 		[ValidateSet('East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast', 'EastUS', 'WestUS', 'SouthCentralUS', 'NorthCentralUS', 'CentralUS', 'EastAsia', 'WestEurope', 'EastUS2', 'JapanEast', 'JapanWest', 'BrazilSouth', 'NorthEurope', 'SoutheastAsia', 'AustraliaEast', 'AustraliaSoutheast')]
 		[String]
-		$WTTEnvironmentPrimaryServerLocation,
-    
-        #This parameter is used by deploy-wttenvironment.ps1
-		[Parameter(Mandatory = $false)]
-        [string]
-		$deployADF,
-
-        #This parameter is used by deploy-wttenvironment.ps1
-		[Parameter(Mandatory = $false)]
-        [string]
-		$deployDW,
-
-        #This parameter is used by deploy-wttenvironment.ps1
-		[Parameter(Mandatory = $false)]
-        [string]
-        $deployPowerBI
+		$WTTEnvironmentPrimaryServerLocation
 	)
 
     Clear
@@ -53,11 +38,6 @@
 	WriteLabel("Loading Scripts")
 	Get-ChildItem -Path $localPath -Filter *.ps1 | ForEach { . $_.FullName }
 	WriteValue("Done")
-
-    #set up parameters to deploy ADF or DW
-    $deployADF = ""
-    $deployDW = ""
-    $deployPowerBI = ""
 
     # Select a subscription to use for deployment. Calls the initsubscription function at the end of this script.
     WriteLabel("Initializing Azure Subscription")
@@ -157,20 +137,14 @@
         
     [int]$xMenuChoiceA = 0
     while ( $xMenuChoiceA -lt 1 -or $xMenuChoiceA -gt 4 )
-    {
-        WriteLabelSwitch("1. Base WingTip Tickets")
-        WriteLabelSwitch("2. WingTip Tickets with Azure Data Factory")
-        WriteLabelSwitch("3. WingTip Tickets with Azure Data Warehouse and Power BI")
-        WriteLabelSwitch("4. All of the WingTip Tickets Services")
-        WriteReadLabel("Enter an option 1 to 4..." )
+    {      
+        WriteLabelSwitch("1. All of the WingTip Tickets Services")
+        WriteReadLabel("Enter option 1 to deploy..." )
         [Int]$xMenuChoiceA = read-host
     }
     Switch( $xMenuChoiceA )
     {
-        1{new-wttenvironment -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -WTTEnvironmentPrimaryServerLocation $WTTEnvironmentPrimaryServerLocation -deployADF 0 -deployDW 0 -deployPowerBI 0}
-        2{new-wttenvironment -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -WTTEnvironmentPrimaryServerLocation $WTTEnvironmentPrimaryServerLocation -deployADF 1 -deployDW 0 -deployPowerBI 0}
-        3{new-wttenvironment -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -WTTEnvironmentPrimaryServerLocation $WTTEnvironmentPrimaryServerLocation -deployADF 0 -deployDW 1 -deployPowerBI 1}
-        4{new-wttenvironment -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -WTTEnvironmentPrimaryServerLocation $WTTEnvironmentPrimaryServerLocation -deployADF 1 -deployDW 1 -deployPowerBI 1}
+        1{new-wttenvironment -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -WTTEnvironmentPrimaryServerLocation $WTTEnvironmentPrimaryServerLocation}
     }
 }
 

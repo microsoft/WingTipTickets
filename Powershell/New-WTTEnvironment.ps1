@@ -73,21 +73,6 @@ function New-WTTEnvironment
 
         #This parameter is used by deploy-wttenvironment.ps1
 		[Parameter(Mandatory = $false)]
-        [string]
-		$deployADF,
-
-        #This parameter is used by deploy-wttenvironment.ps1
-		[Parameter(Mandatory = $false)]
-        [string]
-		$deployDW,
-
-        #This parameter is used by deploy-wttenvironment.ps1
-		[Parameter(Mandatory = $false)]
-        [string]
-        $deployPowerBI,
-
-        #This parameter is used by deploy-wttenvironment.ps1
-		[Parameter(Mandatory = $false)]
 		[string]
 		$installedAzurePowerShellVersion
 	)
@@ -578,47 +563,22 @@ function New-WTTEnvironment
 			# Add Azure WebSite Endpoints to Traffic Manager Profile
 			Add-WTTAzureTrafficManagerEndpoint -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -AzurePrimaryWebSiteName $azureSqlDatabaseServerPrimaryName -AzureSecondaryWebSiteName $azureSqlDatabaseServerSecondaryName -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -AzureTrafficManagerEndpointStatus "Enabled" -AzureTrafficManagerResourceGroupName $azureResourceGroupName
 			
-			if($deployDW -eq 1)
+			# Deploy Azure Data Warehouse on the primary database server. This may run for about 15 minutes.
+			if ($azurePrimarySqlDatabaseServer -ne $null)
 			{
-				# Deploy Azure Data Warehouse on the primary database server. This may run for about 15 minutes.
-				if ($azurePrimarySqlDatabaseServer -ne $null)
-				{
-					Deploy-WTTAzureDWDatabase -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName -ServerLocation $WTTEnvironmentPrimaryServerLocation -DatabaseEdition "DataWarehouse" -UserName $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -DWDatabaseName $AzureSqlDWDatabaseName
-				}
+				Deploy-WTTAzureDWDatabase -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName -ServerLocation $WTTEnvironmentPrimaryServerLocation -DatabaseEdition "DataWarehouse" -UserName $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -DWDatabaseName $AzureSqlDWDatabaseName
 			}
-			elseif(!$deployDW)
-			{
-				# Deploy Azure Data Warehouse on the primary database server. This may run for about 15 minutes.
-				if ($azurePrimarySqlDatabaseServer -ne $null)
-				{
-					Deploy-WTTAzureDWDatabase -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlDatabaseServerPrimaryName -ServerLocation $WTTEnvironmentPrimaryServerLocation -DatabaseEdition "DataWarehouse" -UserName $AzureSqlDatabaseServerAdministratorUserName -Password $AzureSqlDatabaseServerAdministratorPassword -DWDatabaseName $AzureSqlDWDatabaseName
-				}
-			}
-            Start-Sleep -Seconds 30
-			if($deployADF -eq 1)
-			{
-				# Deploy ADF environment
-				New-WTTADFEnvironment -ApplicationName $WTTEnvironmentApplicationName -ResourceGroupName $azureResourceGroupName -DatabaseServerName $azureSqlDatabaseServerPrimaryName -DatabaseName "Recommendations" -DatabaseEdition "Basic" -DatabaseUserName $AzureSqlDatabaseServerAdministratorUserName -DatabasePassword $AzureSqlDatabaseServerAdministratorPassword
-			}
-			elseif(!$deployADF)
-			{
-				# Deploy ADF environment
-				New-WTTADFEnvironment -ApplicationName $WTTEnvironmentApplicationName -ResourceGroupName $azureResourceGroupName -DatabaseServerName $azureSqlDatabaseServerPrimaryName -DatabaseName "Recommendations" -DatabaseEdition "Basic" -DatabaseUserName $AzureSqlDatabaseServerAdministratorUserName -DatabasePassword $AzureSqlDatabaseServerAdministratorPassword
-			}
+
+            Start-Sleep -Seconds 60
+
+			# Deploy ADF environment
+			New-WTTADFEnvironment -ApplicationName $WTTEnvironmentApplicationName -ResourceGroupName $azureResourceGroupName -DatabaseServerName $azureSqlDatabaseServerPrimaryName -DatabaseName "Recommendations" -DatabaseEdition "Basic" -DatabaseUserName $AzureSqlDatabaseServerAdministratorUserName -DatabasePassword $AzureSqlDatabaseServerAdministratorPassword
+
 			Start-Sleep -Seconds 30
             
-            if($deployPowerBI -eq 1)
-            {
-                # New Azure Power BI Service
-                New-WTTPowerBI -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -AzurePowerBIName $azurePowerBIWorkspaceCollection -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseName $AzureSqlDatabaseName -AzureSqlDWDatabaseName $AzureSqlDWDatabaseName
-                Start-Sleep -Seconds 30
-            }
-            elseif(!$deployPowerBI)
-            {
-                # New Azure Power BI Service
-                New-WTTPowerBI -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -AzurePowerBIName $azurePowerBIWorkspaceCollection -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseName $AzureSqlDatabaseName -AzureSqlDWDatabaseName $AzureSqlDWDatabaseName
-                Start-Sleep -Seconds 30
-            }
+            # New Azure Power BI Service
+            New-WTTPowerBI -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -AzurePowerBIName $azurePowerBIWorkspaceCollection -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseName $AzureSqlDatabaseName -AzureSqlDWDatabaseName $AzureSqlDWDatabaseName
+            Start-Sleep -Seconds 30
 
             WriteLabel("Pausing DataWarehouse database")
 	    	$null = Suspend-AzureRMSqlDatabase –ResourceGroupName $azureResourceGroupName –ServerName $azureSqlDatabaseServerPrimaryName –DatabaseName $AzureSqlDWDatabaseName
