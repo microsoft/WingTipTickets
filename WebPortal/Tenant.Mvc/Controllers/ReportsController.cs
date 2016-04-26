@@ -48,17 +48,32 @@ namespace Tenant.Mvc.Controllers
         [HttpGet]
         public ActionResult Index()
         {
+            ReportsViewModel viewModel;
+
             // Get the default report
             var defaultReport = PowerBiHelper.FetchReport(_defaultsRepository.GetApplicationDefault(DefaultReportCode));
-
+            
             // Build up the view model
-            var viewModel = new ReportsViewModel()
+            if (defaultReport.Report != null)
             {
-                SelectedReportId = new Guid(defaultReport.Report.Id),
-                Reports = PowerBiHelper.FetchReports(defaultReport.Report.Id),
-                Report = defaultReport.Report,
-                AccessToken = defaultReport.AccessToken
-            };
+                viewModel = new ReportsViewModel()
+                {
+                    SelectedReportId = new Guid(defaultReport.Report.Id),
+                    Reports = PowerBiHelper.FetchReports(defaultReport.Report.Id),
+                    Report = defaultReport.Report,
+                    AccessToken = defaultReport.AccessToken
+                };
+            }
+            else
+            {
+                viewModel = new ReportsViewModel()
+                {
+                    SelectedReportId = Guid.Empty,
+                    Reports = PowerBiHelper.FetchReports(null),
+                    Report = null,
+                    AccessToken = string.Empty
+                };
+            }
 
             return View(viewModel);
         }

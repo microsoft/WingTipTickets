@@ -153,8 +153,25 @@
         </div>
 
         <div class="col-xs-12">
-            @Html.PowerBIAccessTokenFor(m => m.AccessToken)
-            @Html.PowerBIReportFor(m => m.SeatMap, new { style = "height:85vh" })
+            
+            @{
+                if (Model.SeatMap != null)
+                {
+                    Model.SeatMap.EmbedUrl += "&$filter={BookedSeats/ConcertId} eq '{" + Model.Concert.ConcertId + "}'";
+
+                    @Html.PowerBIAccessTokenFor(m => m.AccessToken)
+                    @Html.PowerBIReportFor(m => m.SeatMap, new
+                    {
+                        style = "height:85vh"
+                    })
+                }
+                else
+                {
+                    <text>Report not Found!!!</text>
+                }
+            }
+
+            
         </div>
 
     </div>

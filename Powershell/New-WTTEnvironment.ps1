@@ -479,21 +479,21 @@ function New-WTTEnvironment
             }While($dbExists -eq $false)
 
             Start-Sleep -Seconds 30
-			if ($WTTEnvironmentPrimaryServerLocation -notcontains "" -and $wTTEnvironmentSecondaryServerLocation -notcontains "")                 
-			{
-				if ($wTTEnvironmentApplicationName.Length -gt 60)
-				{
-					$azureSearchServiceName = $wTTEnvironmentApplicationName.Substring(0,60)
-				}
-				else
-				{
-					$azureSearchServiceName = $wTTEnvironmentApplicationName
-				}
+			# if ($WTTEnvironmentPrimaryServerLocation -notcontains "" -and $wTTEnvironmentSecondaryServerLocation -notcontains "")                 
+			# {
+				# if ($wTTEnvironmentApplicationName.Length -gt 60)
+				# {
+					# $azureSearchServiceName = $wTTEnvironmentApplicationName.Substring(0,60)
+				# }
+				# else
+				# {
+					# $azureSearchServiceName = $wTTEnvironmentApplicationName
+				# }
                 
-                $azureSearchService = New-WTTAzureSearchService -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -WTTEnvironmentResourceGroupName $azureResourceGroupName -AzureSearchServiceLocation $WTTEnvironmentPrimaryServerLocation -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseName $AzureSqlDatabaseName
-				Start-Sleep -s 30
+                # $azureSearchService = New-WTTAzureSearchService -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -WTTEnvironmentResourceGroupName $azureResourceGroupName -AzureSearchServiceLocation $WTTEnvironmentPrimaryServerLocation -AzureSqlDatabaseServerPrimaryName $azureSqlDatabaseServerPrimaryName -AzureSqlDatabaseServerAdministratorUserName $AzureSqlDatabaseServerAdministratorUserName -AzureSqlDatabaseServerAdministratorPassword $AzureSqlDatabaseServerAdministratorPassword -AzureSqlDatabaseName $AzureSqlDatabaseName
+				# Start-Sleep -s 30
 
-			}
+			# }
 
 			# Create service plans
 			LineBreak

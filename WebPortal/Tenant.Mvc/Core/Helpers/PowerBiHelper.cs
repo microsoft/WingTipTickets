@@ -52,17 +52,27 @@ namespace Tenant.Mvc.Core.Helpers
             using (var client = CreatePowerBiClient(devToken))
             {
                 var reports = ReportsExtensions.GetReports(client.Reports, WorkspaceCollection, WorkspaceId);
-                var report = reports.Value.FirstOrDefault(r => r.Name == "SeatingMap");
+                var report = reports.Value.FirstOrDefault(r => r.Id == reportId);
 
-                var embedToken = PowerBIToken.CreateReportEmbedToken(WorkspaceCollection, WorkspaceId, report.Id);
-
-                var result = new ReportsController.FetchReportResult
+                if (report != null)
                 {
-                    Report = report,
-                    AccessToken = embedToken.Generate(ConfigHelper.PowerbiSigningKey)
+                    var embedToken = PowerBIToken.CreateReportEmbedToken(WorkspaceCollection, WorkspaceId, report.Id);
+
+                    var result = new ReportsController.FetchReportResult
+                    {
+                        Report = report,
+                        AccessToken = embedToken.Generate(ConfigHelper.PowerbiSigningKey)
+                    };
+
+                    return result;
+                }
+
+                return new ReportsController.FetchReportResult()
+                {
+                    AccessToken = string.Empty,
+                    Report = null
                 };
 
-                return result;
             }
         }
 
