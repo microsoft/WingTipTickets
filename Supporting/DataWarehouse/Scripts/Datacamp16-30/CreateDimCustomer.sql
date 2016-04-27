@@ -163,51 +163,6 @@ WITH (
 -- Creating DimCustomer External Table Completed
 -- ================================================================
 -- ================================================================
--- Creating Dim Stage Customer Table
--- ================================================================
-
-IF OBJECT_ID('stage.DimCustomer') IS NOT NULL
-    DROP TABLE stage.DimCustomer;
-GO
-
-CREATE TABLE stage.DimCustomer
-WITH (DISTRIBUTION = HASH(CustomerKey))
-AS
-SELECT
-    CustomerKey
-  , GeographyKey
-  , CustomerLabel
-  , Title
-  , FirstName
-  , MiddleName
-  , LastName
-  , NameStyle
-  , BirthDate
-  , MaritalStatus
-  , Suffix
-  , Gender
-  , EmailAddress
-  , YearlyIncome
-  , TotalChildren
-  , NumberChildrenAtHome
-  , Education
-  , Occupation
-  , HouseOwnerFlag
-  , NumberCarsOwned
-  , AddressLine1
-  , AddressLine2
-  , Phone
-  , DateFirstPurchase
-  , CustomerType
-  , CompanyName
-  , ETLLoadID
-  , LoadDate
-  , UpdateDate
-FROM asb.DimCustomer;
--- ================================================================
--- Creating Dim Stage Customer Table Completed
--- ================================================================
--- ================================================================
 -- Creating Dim Customer Table
 -- ================================================================
 
@@ -249,7 +204,7 @@ SELECT
   , ETLLoadID
   , LoadDate
   , UpdateDate
-FROM stage.DimCustomer;
+FROM asb.DimCustomer;
 GO
 
 ALTER TABLE dbo.DimCustomer REBUILD;
@@ -261,22 +216,4 @@ GO
 CREATE STATISTICS S_CustomerKey ON dbo.DimCustomer (CustomerKey) WITH FULLSCAN;
 CREATE STATISTICS S_GeographyKey ON dbo.DimCustomer (GeographyKey) WITH FULLSCAN;
 CREATE STATISTICS S_CustomerType ON dbo.DimCustomer (CustomerType) WITH FULLSCAN;
-GO
--- ================================================================
--- Creating Dim Customer Table Completed
--- ================================================================
--- ================================================================
--- Dropping Dim Stage Table
--- ================================================================
-
-IF OBJECT_ID('stage.DimCustomer') IS NOT NULL
-    DROP TABLE stage.DimCustomer;
-GO
-
--- ================================================================
--- Dropping Dim ASB Table
--- ================================================================
-
-IF OBJECT_ID('asb.DimCustomer') IS NOT NULL
-    DROP EXTERNAL TABLE asb.DimCustomer;
 GO
