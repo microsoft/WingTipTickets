@@ -53,7 +53,7 @@ namespace Tenant.Mvc.Core.Repositories.Tenant
             }
         }
 
-        public List<SeatSectionLayoutViewModel> GetSeatSectionLayout(int ticketLevelId)
+        public List<SeatSectionLayoutViewModel> GetSeatSectionLayout(int concertId, int ticketLevelId)
         {
             using (var context = new WingTipTicketsEntities(WingtipTicketApp.GetTenantConnectionString()))
             {
@@ -64,7 +64,15 @@ namespace Tenant.Mvc.Core.Repositories.Tenant
                     RowNumber = (int)l.RowNumber,
                     SkipCount = (int)l.SkipCount,
                     StartNumber = (int)l.StartNumber,
-                    EndNumber = (int)l.EndNumber
+                    EndNumber = (int)l.EndNumber,
+                    SelectedSeats = context.Tickets
+                        .Where(t => t.TicketLevelId == ticketLevelId && 
+                                    t.ConcertId == concertId && 
+                                    t.SeatNumber >= (int)l.StartNumber && 
+                                    t.SeatNumber <= (int)l.EndNumber)
+                        .Select(t => (int)t.SeatNumber)
+                        .Distinct()
+                        .ToList()
                 }).ToList();
 
                 return result;

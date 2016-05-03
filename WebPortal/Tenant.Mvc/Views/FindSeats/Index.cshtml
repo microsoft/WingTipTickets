@@ -333,9 +333,9 @@
                 concertId: $("#Concert_ConcertId").val(),
                 seatSectionId: $("#Concert_SeatSectionId").val(),
                 seatSection: $("#Concert_SeatSectionId option:selected").text().split(" - ")[0],
-                selectedSeats: $("#seatMap input:checkbox:checked"),
+                selectedSeats: $("#seatMap input:checkbox:checked:not(:disabled)"),
 
-                ticketQuantity: $("#seatMap input:checkbox:checked").length,
+                ticketQuantity: $("#seatMap input:checkbox:checked:not(:disabled)").length,
                 ticketPrice: $("#Concert_SeatSectionId option:selected").text().split(" - ")[1].replace("$","").replace(",00",""),
                 ticketTotal: 0
             };
@@ -382,12 +382,17 @@
 
         function updateSeatMap()
         {
+            var concertId = $("#Concert_ConcertId").val();
             var ticketLevelId = $("#Concert_SeatSectionId").val();
 
             $.ajax({
                 type: "GET",
                 url: '@Url.Action("GetSeatLayout", "FindSeats")',
-                data: { ticketLevelId: ticketLevelId },
+                data: 
+                { 
+                    concertId: concertId,
+                    ticketLevelId: ticketLevelId 
+                },
                 dataType: "json",
                 success: function(values)
                 {
@@ -418,8 +423,19 @@
 
                         for (var col = currentRow.StartNumber; col <= currentRow.EndNumber; col++)
                         {
+                            var seatSelected = arrayContains(currentRow.SelectedSeats, col);
+
                             html = html + "<td style='margin: 2px; padding: 2px;'>";
-                            html = html + "<input type=checkbox data-seatNumber='" + col + "'/>";
+
+                            if (seatSelected)
+                            {
+                                html = html + "<input type=checkbox disabled='disabled' checked='true' data-seatNumber='" + col + "'/>";
+                            }
+                            else
+                            {
+                                html = html + "<input type=checkbox data-seatNumber='" + col + "'/>";
+                            }
+
                             html = html + "</td>";
                         }
 
@@ -444,6 +460,16 @@
                     debugger;
                 }
             });
+        }
+
+        function arrayContains(array, value) {
+            for (var i = 0; i < array.length; i++) {
+                if (array[i] === value) {
+                    return true;
+                }
+            }
+
+            return false;
         }
     });
 </script>

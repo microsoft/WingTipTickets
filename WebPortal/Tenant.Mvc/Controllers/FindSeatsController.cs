@@ -6,7 +6,6 @@ using System.Web.Mvc;
 using Tenant.Mvc.Core.Helpers;
 using Tenant.Mvc.Core.Interfaces.Tenant;
 using Tenant.Mvc.Core.Models;
-using Tenant.Mvc.Core.Repositories.Tenant;
 using Tenant.Mvc.Models;
 using WingTipTickets;
 
@@ -76,9 +75,12 @@ namespace Tenant.Mvc.Controllers
                 } : null;
 
             // Get SeatMap
-            var seatMap = PowerBiHelper.FetchReport(ConfigHelper.SeatMapReportId);
-            viewModel.SeatMap = seatMap.Report;
-            viewModel.AccessToken = seatMap.AccessToken;
+            if (!WingtipTicketApp.Config.RunningInDev)
+            {
+                var seatMap = PowerBiHelper.FetchReport(ConfigHelper.SeatMapReportId);
+                viewModel.SeatMap = seatMap.Report;
+                viewModel.AccessToken = seatMap.AccessToken;
+            }
 
             return View(viewModel);
         }
@@ -119,9 +121,9 @@ namespace Tenant.Mvc.Controllers
         }
 
         [HttpGet]
-        public JsonResult GetSeatLayout(int ticketLevelId)
+        public JsonResult GetSeatLayout(int concertId, int ticketLevelId)
         {
-            var viewModel = _findSeatsRepository.GetSeatSectionLayout(ticketLevelId);
+            var viewModel = _findSeatsRepository.GetSeatSectionLayout(concertId, ticketLevelId);
             
             return Json(new { model = viewModel }, JsonRequestBehavior.AllowGet);
         }
