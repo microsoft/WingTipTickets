@@ -584,7 +584,7 @@ function New-WTTEnvironment
             WriteLabel("Pausing DataWarehouse database")
 	    	$null = Suspend-AzureRMSqlDatabase –ResourceGroupName $azureResourceGroupName –ServerName $azureSqlDatabaseServerPrimaryName –DatabaseName $AzureSqlDWDatabaseName
 		    writeValue("Successful")
-            Start-Sleep -s 180
+            Start-Sleep -s 240
 
 			# Set the Application Settings
 			$searchName = (Find-AzureRmResource -ResourceType Microsoft.Search/searchServices -ResourceGroupName $wTTEnvironmentApplicationName).name
