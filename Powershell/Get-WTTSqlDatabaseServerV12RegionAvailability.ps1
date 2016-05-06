@@ -96,7 +96,7 @@ function Get-WTTSqlDatabaseServerV12RegionAvailability()
 						'JapanWest' {'Japan West'}
 					}
 
-					return ,$wTTEnvironmentPriServerLocation, $wTTEnvironmentSecondServerLocation
+					return $wTTEnvironmentPriServerLocation, $wTTEnvironmentSecondServerLocation
 					break
 				}
 

@@ -90,13 +90,13 @@
       <HintPath>..\packages\Microsoft.Data.Services.Client.5.6.2\lib\net40\Microsoft.Data.Services.Client.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory">
-      <HintPath>..\packages\Microsoft.IdentityModel.Clients.ActiveDirectory.2.22.302111727\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.dll</HintPath>
+      <HintPath>..\packages\Microsoft.IdentityModel.Clients.ActiveDirectory.2.21.301221612\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms">
-      <HintPath>..\packages\Microsoft.IdentityModel.Clients.ActiveDirectory.2.22.302111727\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms.dll</HintPath>
+      <HintPath>..\packages\Microsoft.IdentityModel.Clients.ActiveDirectory.2.21.301221612\lib\net45\Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.IdentityModel.Protocol.Extensions">
-      <HintPath>..\packages\Microsoft.IdentityModel.Protocol.Extensions.1.0.1\lib\net45\Microsoft.IdentityModel.Protocol.Extensions.dll</HintPath>
+      <HintPath>..\packages\Microsoft.IdentityModel.Protocol.Extensions.1.0.0\lib\net45\Microsoft.IdentityModel.Protocol.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Owin">
       <HintPath>..\packages\Microsoft.Owin.3.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
@@ -110,20 +110,23 @@
     <Reference Include="Microsoft.Owin.Security.OpenIdConnect">
       <HintPath>..\packages\Microsoft.Owin.Security.OpenIdConnect.3.0.1\lib\net45\Microsoft.Owin.Security.OpenIdConnect.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.PowerBI.Api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.PowerBI.Api, Version=1.0.12.16089, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.PowerBI.Api.1.0.6-preview\lib\portable-net45+win+wpa81\Microsoft.PowerBI.Api.dll</HintPath>
+      <HintPath>..\packages\Microsoft.PowerBI.Api.1.0.12-preview\lib\portable-net45+win+wpa81+MonoAndroid10+xamarinios10+MonoTouch10\Microsoft.PowerBI.Api.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.PowerBI.AspNet.Mvc, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.PowerBI.AspNet.Mvc, Version=1.0.12.16089, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.PowerBI.Mvc.1.0.6-preview\lib\net45\Microsoft.PowerBI.AspNet.Mvc.dll</HintPath>
+      <HintPath>..\packages\Microsoft.PowerBI.AspNet.Mvc.1.0.12-preview\lib\net45\Microsoft.PowerBI.AspNet.Mvc.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.PowerBI.Core">
-      <HintPath>..\packages\Microsoft.PowerBI.Core.1.0.6-preview\lib\net45\Microsoft.PowerBI.Core.dll</HintPath>
+    <Reference Include="Microsoft.PowerBI.AspNet.WebForms">
+      <HintPath>..\packages\Microsoft.PowerBI.AspNet.WebForms.1.0.12-preview\lib\net45\Microsoft.PowerBI.AspNet.WebForms.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.PowerBI.Owin.Security, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.PowerBI.Core, Version=1.0.12.16089, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Microsoft.PowerBI.Owin.Security.1.0.6-preview\lib\net45\Microsoft.PowerBI.Owin.Security.dll</HintPath>
+      <HintPath>..\packages\Microsoft.PowerBI.Core.1.0.12-preview\lib\net45\Microsoft.PowerBI.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.PowerBI.Owin.Security">
+      <HintPath>..\packages\Microsoft.PowerBI.Owin.Security.1.0.12-preview\lib\net45\Microsoft.PowerBI.Owin.Security.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -319,6 +322,7 @@
     <Compile Include="Controllers\EventAdministrationController.cs" />
     <Compile Include="Controllers\FindSeatsController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Core\Helpers\PowerBiHelper.cs" />
     <Compile Include="Controllers\RecommendationController.cs" />
     <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\VenueAdministrationController.cs" />
@@ -347,6 +351,12 @@
       <DependentUpon>WingTipTicketModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Core\Contexts\Performer.cs">
+      <DependentUpon>WingTipTicketModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Contexts\SeatSection.cs">
+      <DependentUpon>WingTipTicketModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Contexts\SeatSectionLayout.cs">
       <DependentUpon>WingTipTicketModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Core\Contexts\State.cs">
@@ -387,7 +397,9 @@
     <Compile Include="Core\Interfaces\Tenant\IApplicationDefaultsRepository.cs" />
     <Compile Include="Core\Interfaces\Tenant\IBaseRepository.cs" />
     <Compile Include="Core\Models\ApplicationDbContext.cs" />
+    <Compile Include="Core\Repositories\Tenant\FindSeatsRepository.cs" />
     <Compile Include="Core\Repositories\Tenant\ApplicationDefaultsRepository.cs" />
+    <Compile Include="Core\Interfaces\Tenant\IFindSeatsRepository.cs" />
     <Compile Include="Models\EventAdministrationViewModel.cs" />
     <Compile Include="Models\ReportsViewModel.cs" />
     <Compile Include="Models\UploadFileViewModel.cs" />
@@ -461,12 +473,16 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Img\Classical\arrows2.png" />
+    <Content Include="Content\Img\Classical\floor-plan-new.png" />
     <Content Include="Content\Img\Classical\icon1.png" />
     <Content Include="Content\Img\Classical\icon2.png" />
     <Content Include="Content\Img\Classical\icon3.png" />
     <Content Include="Content\Img\Classical\logo.png" />
     <Content Include="Content\Img\Classical\search.png" />
     <Content Include="Content\Img\Classical\venue.png" />
+    <Content Include="Content\Img\Pop\floor-plan-new.png" />
+    <Content Include="Content\Img\Rock\floor-plan-new.png" />
+    <Content Include="Content\Img\WingTipTickets\floor-plan-new.png" />
     <Content Include="Content\Img\Pop\search.png" />
     <Content Include="Content\Img\Rock\icon1.png" />
     <Content Include="Content\Img\Rock\icon2.png" />
@@ -649,6 +665,8 @@
     <None Include="Properties\PublishProfiles\Deployment-Primary.pubxml" />
     <None Include="Properties\PublishProfiles\Deployment-Secondary.pubxml" />
     <Content Include="Content\Scripts\powerbi.js" />
+    <Content Include="scripts\powerbi.js" />
+    <Content Include="scripts\powerbi.min.js" />
     <Content Include="SqlScripts\TrimConcerts.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

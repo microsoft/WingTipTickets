@@ -20,5 +20,6 @@ namespace Tenant.Mvc.Core.Contexts
         public Nullable<int> TicketLevelId { get; set; }
         public Nullable<int> ConcertId { get; set; }
         public Nullable<System.DateTime> PurchaseDate { get; set; }
+        public Nullable<int> SeatNumber { get; set; }
     }
 }

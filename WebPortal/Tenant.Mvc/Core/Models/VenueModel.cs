@@ -12,7 +12,7 @@ namespace Tenant.Mvc.Core.Models
         public int Capacity { get; set; }
         public String Description { get; set; }
         public CityModel VenueCityModel { get; set; }
-        public List<SeatSection> VenueSeatSections { get; set; }
+        //public List<SeatSection> VenueSeatSections { get; set; }
         public int ConcertQty { get; set; }
 
         #endregion

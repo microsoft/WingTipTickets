@@ -38,5 +38,7 @@ namespace Tenant.Mvc.Core.Contexts
         public virtual DbSet<Ticket> Tickets { get; set; }
         public virtual DbSet<Venue> Venues { get; set; }
         public virtual DbSet<WebSiteActionLog> WebSiteActionLogs { get; set; }
+        public virtual DbSet<SeatSection> SeatSections { get; set; }
+        public virtual DbSet<SeatSectionLayout> SeatSectionLayouts { get; set; }
     }
 }

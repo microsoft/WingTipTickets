@@ -105,7 +105,7 @@
     		PointerLength="85" 
     		PointerCapRadius="35" 
     		MinValue="0" 
-    		MaxValue="12000" 
+    		MaxValue="6000" 
     		MajorDivisionsCount="10" 
     		MinorDivisionsCount="5" 
     		CurrentValue="{Binding PurchasesPerSecond}"    		

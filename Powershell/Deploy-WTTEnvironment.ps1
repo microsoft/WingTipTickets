@@ -12,17 +12,7 @@
 		[Parameter(Mandatory=$false, HelpMessage="Please specify the primary location for your WTT Environment ('East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast')?")]
 		[ValidateSet('East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast', 'EastUS', 'WestUS', 'SouthCentralUS', 'NorthCentralUS', 'CentralUS', 'EastAsia', 'WestEurope', 'EastUS2', 'JapanEast', 'JapanWest', 'BrazilSouth', 'NorthEurope', 'SoutheastAsia', 'AustraliaEast', 'AustraliaSoutheast')]
 		[String]
-		$WTTEnvironmentPrimaryServerLocation,
-    
-        #This parameter is used by deploy-wttenvironment.ps1
-		[Parameter(Mandatory = $false)]
-        [string]
-		$deployADF,
-
-        #This parameter is used by deploy-wttenvironment.ps1
-		[Parameter(Mandatory = $false)]
-        [string]
-		$deployDW
+		$WTTEnvironmentPrimaryServerLocation
 	)
 
     Clear
@@ -48,10 +38,6 @@
 	WriteLabel("Loading Scripts")
 	Get-ChildItem -Path $localPath -Filter *.ps1 | ForEach { . $_.FullName }
 	WriteValue("Done")
-
-    #set up parameters to deploy ADF or DW
-    $deployADF = ""
-    $deployDW = ""
 
     # Select a subscription to use for deployment. Calls the initsubscription function at the end of this script.
     WriteLabel("Initializing Azure Subscription")
@@ -91,9 +77,47 @@
                 }
                 else
                 {
+                    
                     WriteError("Resource Group Name Exists")
-                    $WTTEnvironmentApplicationName = " "
-                    $exists = $false
+                    LineBreak
+                    $Title = "$WTTEnvironmentApplicationName has been found"
+                    $message = "Do you wish to redeploy $WTTEnvironmentApplicationName ?"
+                    $yes = New-Object System.Management.Automation.Host.ChoiceDescription "&Yes"
+                    $no = New-Object System.Management.Automation.Host.ChoiceDescription "&No"
+                    $options = [System.Management.Automation.Host.ChoiceDescription[]]($yes, $no)
+                    $result = $host.ui.PromptForChoice($title, $message, $options, 0)
+                    $answer = switch ($result)
+                    {
+                        0 {"You selected Yes."}
+                        1 {"You selected No."}
+                    }
+                    if($answer -like "y*")
+                    {
+                        $exists = $true
+                        $WTTEnvironmentPriServerLocation = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains $WTTEnvironmentApplicationName"primary" -ResourceGroupNameContains $WTTEnvironmentApplicationName -ErrorAction SilentlyContinue).location
+                        $wTTEnvironmentPrimaryServerLocation = 
+					    Switch ($wTTEnvironmentPriServerLocation)
+					    {
+						    'WestUS' {'West US'}
+						    'NorthEurope' {'North Europe'}
+						    'WestEurope' {'West Europe'}
+						    'EastUS' {'East US'}
+						    'NorthCentralUS' {'East US'}
+						    'SouthCentralUS' {'South Central US'}
+						    'EastUS2' {'East US 2'}
+						    'CentralUS' {'Central US'}
+						    'BrazilSouth' {'Brazil South'}
+						    'SoutheastAsia' {'Southeast Asia'}
+						    'EastAsia' {'EastAsia'}
+						    'JapanEast' {'Japan East'}
+						    'JapanWest' {'Japan West'}
+					    }
+                    }
+                    else
+                    {
+                        $WTTEnvironmentApplicationName = " "
+                        $exists = $false
+                    }                    
                 }
             }until($exists -eq $true)
     }
@@ -113,20 +137,14 @@
         
     [int]$xMenuChoiceA = 0
     while ( $xMenuChoiceA -lt 1 -or $xMenuChoiceA -gt 4 )
-    {
-        WriteLabelSwitch("1. Base WingTip Tickets")
-        WriteLabelSwitch("2. WingTip Tickets with Azure Data Factory")
-        WriteLabelSwitch("3. WingTip Tickets with Azure Data Warehouse")
-        WriteLabelSwitch("4. All of the WingTip Tickets Services")
-        WriteReadLabel("Enter an option 1 to 4..." )
+    {      
+        WriteLabelSwitch("1. All of the WingTip Tickets Services")
+        WriteReadLabel("Enter option 1 to deploy..." )
         [Int]$xMenuChoiceA = read-host
     }
     Switch( $xMenuChoiceA )
     {
-        1{new-wttenvironment -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -WTTEnvironmentPrimaryServerLocation $WTTEnvironmentPrimaryServerLocation -deployADF 0 -deployDW 0}
-        2{new-wttenvironment -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -WTTEnvironmentPrimaryServerLocation $WTTEnvironmentPrimaryServerLocation -deployADF 1 -deployDW 0}
-        3{new-wttenvironment -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -WTTEnvironmentPrimaryServerLocation $WTTEnvironmentPrimaryServerLocation -deployADF 0 -deployDW 1}
-        4{new-wttenvironment -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -WTTEnvironmentPrimaryServerLocation $WTTEnvironmentPrimaryServerLocation -deployADF 1 -deployDW 1}
+        1{new-wttenvironment -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -WTTEnvironmentPrimaryServerLocation $WTTEnvironmentPrimaryServerLocation}
     }
 }
 
@@ -160,7 +178,7 @@ function InitSubscription()
                 }
 
         LineBreak
-        WriteLabel("Your Azure Subscriptions: ")
+        WriteLabel("Your Azure Subscriptions")
         $subList | Format-Table RowNumber,SubscriptionId,SubscriptionName -AutoSize
         WriteReadLabel("Enter the row number (1 - $subCount) of a subscription")
         $rowNum = Read-Host 

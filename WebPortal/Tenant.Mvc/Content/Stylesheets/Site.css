@@ -314,7 +314,7 @@ legend {
 /* ========================================================================================== */
 
 .btn-search {
-	background: url("../img/pop/search.png") no-repeat center center;
+	background: url(../Img/Pop/search.png) no-repeat center center;
 	height: 50px;
 	width: 50px;
 	padding: 2px;
@@ -471,6 +471,7 @@ legend {
 	overflow:hidden;
 	display:block;
 	font-family: 'Conv_segoeuil';
+    width: 100%
 }
 
 .event-date {

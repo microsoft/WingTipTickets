@@ -17,7 +17,7 @@ namespace Tenant.Mvc.Core.Contexts
             public List<ConcertTicket> ReturnPurchasedTicketsByConcertId(int customerId, long concertId = 0)
             {
                 var ticketList = new List<ConcertTicket>();
-                var ticketsPurchasedByConcertIdQuery = String.Format(@"SELECT TicketId, CustomerId, Name, TicketLevelId, ConcertId, PurchaseDate FROM Tickets WHERE (ConcertId=" + concertId + " AND CustomerId=" + customerId + ")", concertId);
+                var ticketsPurchasedByConcertIdQuery = String.Format(@"SELECT TicketId, CustomerId, Name, TicketLevelId, ConcertId, PurchaseDate, SeatNumber FROM Tickets WHERE (ConcertId=" + concertId + " AND CustomerId=" + customerId + ")", concertId);
 
                 using (var cmd = new SqlCommand(ticketsPurchasedByConcertIdQuery, WingtipTicketApp.CreateTenantSqlConnection()))
                 {
@@ -28,8 +28,8 @@ namespace Tenant.Mvc.Core.Contexts
                             sdAdapter.Fill(dsTickets);
 
                             ticketList.AddRange(
-                                from DataRow drTicket in dsTickets.Tables[0].Rows 
-                                select new ConcertTicket(Convert.ToInt32(drTicket[0].ToString()), Convert.ToInt32(drTicket[1].ToString()), drTicket[2].ToString(), Convert.ToInt32(drTicket[4].ToString()), Convert.ToInt32(drTicket[3].ToString()), 0, Convert.ToDateTime(drTicket[5].ToString())));
+                                from DataRow drTicket in dsTickets.Tables[0].Rows
+                                select new ConcertTicket(Convert.ToInt32(drTicket[0].ToString()), Convert.ToInt32(drTicket[1].ToString()), drTicket[2].ToString(), Convert.ToInt32(drTicket[4].ToString()), Convert.ToInt32(drTicket[3].ToString()), 0, Convert.ToDateTime(drTicket[5].ToString()), drTicket[6].ToString()));
                         }
                     }
                 }
@@ -40,7 +40,7 @@ namespace Tenant.Mvc.Core.Contexts
             public List<ConcertTicket> ReturnPurchasedTicketsByCustomerId(int customerId)
             {
                 var ticketList = new List<ConcertTicket>();
-                var ticketsPurchasedByCustomerIdQuery = String.Format(@"SELECT TicketId, CustomerId, Name, TicketLevelId, ConcertId, PurchaseDate FROM Tickets WHERE (CustomerId=" + customerId + ")");
+                var ticketsPurchasedByCustomerIdQuery = String.Format(@"SELECT TicketId, CustomerId, Name, TicketLevelId, ConcertId, PurchaseDate, SeatNumber FROM Tickets WHERE (CustomerId=" + customerId + ")");
 
                 using (var cmd = new SqlCommand(ticketsPurchasedByCustomerIdQuery, WingtipTicketApp.CreateTenantSqlConnection()))
                 {
@@ -50,10 +50,16 @@ namespace Tenant.Mvc.Core.Contexts
                         {
                             sdAdapter.Fill(dsTickets);
 
-                            foreach (DataRow drTicket in dsTickets.Tables[0].Rows)
-                            {
-                                ticketList.Add(new ConcertTicket(Convert.ToInt32(drTicket[0].ToString()), Convert.ToInt32(drTicket[1].ToString()), drTicket[2].ToString(), Convert.ToInt32(drTicket[4].ToString()), Convert.ToInt32(drTicket[3].ToString()), 0, Convert.ToDateTime(drTicket[5].ToString())));
-                            }
+                            ticketList.AddRange(from DataRow drTicket in dsTickets.Tables[0].Rows 
+                                                select new ConcertTicket(
+                                                    Convert.ToInt32(drTicket[0].ToString()), 
+                                                    Convert.ToInt32(drTicket[1].ToString()), 
+                                                    drTicket[2].ToString(), 
+                                                    Convert.ToInt32(drTicket[4].ToString()), 
+                                                    Convert.ToInt32(drTicket[3].ToString()), 
+                                                    0, 
+                                                    Convert.ToDateTime(drTicket[5].ToString()), 
+                                                    drTicket[6].ToString()));
                         }
                     }
                 }
@@ -128,7 +134,7 @@ namespace Tenant.Mvc.Core.Contexts
                     for (var i = 0; i < model.Quantity; i++)
                     {
                         var ticketName = String.Format("Ticket ({0} of {1}) for user {2} to concert-{3}", (i + 1), model.Quantity, model.CustomerName, model.ConcertId);
-                        var insertQuery = String.Format(@"INSERT INTO Tickets (CustomerId, Name, TicketLevelId, ConcertId, PurchaseDate) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}')", model.CustomerId, ticketName, model.SeatSectionId, model.ConcertId, DateTime.Now);
+                        var insertQuery = String.Format(@"INSERT INTO Tickets (CustomerId, Name, TicketLevelId, ConcertId, PurchaseDate, SeatNumber) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')", model.CustomerId, ticketName, model.SeatSectionId, model.ConcertId, DateTime.Now, model.Seats[i]);
 
                         using (var insertCommand = new SqlCommand(insertQuery, insertConnection))
                         {

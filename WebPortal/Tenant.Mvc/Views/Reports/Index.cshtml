@@ -46,43 +46,52 @@
 
 </div>
 
-@if (Model.Report != null)
-{
-    <div class="row">
-        <div class="col-xs-12">
-            @Html.PowerBIAccessToken(Model.AccessToken)
-            @Html.PowerBIReportFor(m => m.Report, new { style = "height:85vh" })
+@{
+    if (Model.Report != null)
+    {
+        <div class="row">
+            <div class="col-xs-12">
+                @Html.PowerBIAccessToken(Model.AccessToken)
+                @Html.PowerBIReportFor(m => m.Report, new { style = "height:85vh" })
+            </div>
         </div>
-    </div>
+    }
+    else
+    {
+        <div class="container">
+            <div class="row">
+                <div class=" col-xs-12">
+                    <text>Report not Found!!!</text>
+                </div>
+            </div>
+        </div>
+    }
 }
 
 <!-- -------------------------------------------------------------------------------------------------------------------------- -->
 <!-- Script Section -->
 <!-- -------------------------------------------------------------------------------------------------------------------------- -->
-
 @section Scripts
 {
-    <script type="text/javascript" language="javascript">
+<script type="text/javascript" language="javascript">
 
     function UpdateDefaultReport() {
         var selectedReportId = $("#SelectedReportId").val();
         var selectedReportText = $("#SelectedReportId option:selected").text();
 
         $.ajax({
-                type: "POST",
-                url: '@Url.Action("UpdateDefaultReport", "Reports")',
-                data: { reportId: selectedReportId },
-                dataType: "json",
-                success: function()
-                {
-                    showAlert("Confirmation", "The <strong>'" + selectedReportText + "'</strong> report has been set as the default");
-                },
-                error: function (jqXHR, textStatus, errorThrown)
-                {
-                    debugger;
-                }
-            });
+            type: "POST",
+            url: '@Url.Action("UpdateDefaultReport", "Reports")',
+            data: { reportId: selectedReportId },
+            dataType: "json",
+            success: function () {
+                showAlert("Confirmation", "The <strong>'" + selectedReportText + "'</strong> report has been set as the default");
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                debugger;
+            }
+        });
     }
 
-    </script>
+</script>
 }

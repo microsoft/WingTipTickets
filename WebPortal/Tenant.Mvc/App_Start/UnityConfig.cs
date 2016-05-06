@@ -66,6 +66,7 @@ namespace Tenant.Mvc
             container.RegisterType<TenantInterfaces.ITicketRepository, TenantRepositories.TicketRepository>();
             container.RegisterType<TenantInterfaces.IVenueRepository, TenantRepositories.VenueRepository>();
             container.RegisterType<TenantInterfaces.IVenueMetaDataRepository, TenantRepositories.VenueMetaDataRepository>();
+            container.RegisterType<TenantInterfaces.IFindSeatsRepository, TenantRepositories.FindSeatsRepository>();
         }
 
         private static void RegisterRecommendationComponents(UnityContainer container)

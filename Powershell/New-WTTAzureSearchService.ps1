@@ -90,18 +90,31 @@ function New-WTTAzureSearchService
 			}
 
             WriteLabel("Checking for Azure Search Service $WTTEnvironmentApplicationName")
-            $listSearchService = Find-AzureRmResource -ResourceGroupNameContains $WTTEnvironmentResourceGroupName -ResourceType Microsoft.Search/searchServices -ExpandProperties
-            if($listSearchService.Name -eq $wTTEnvironmentApplicationName)
+            $searchExist = $true
+            Do
             {
-                WriteValue("Failed")
-                WriteError("$wTTEnvironmentApplicationName Search Service already exists")
-                break
-            }
-            else
-            {
-                WriteValue("Success")
-            }
-
+                $listSearchService = Find-AzureRmResource -ResourceGroupNameContains $WTTEnvironmentResourceGroupName -ResourceType Microsoft.Search/searchServices -ExpandProperties
+                if($listSearchService.Name -eq $wTTEnvironmentApplicationName)
+                {
+                    WriteValue("Failed")
+                    WriteError("$wTTEnvironmentApplicationName Search Service already exists.")
+                    $searchServiceExists = (Find-AzureRmResource -ResourceType "Microsoft.Search" -ResourceNameContains $wTTEnvironmentApplicationName -ResourceGroupNameContains $WTTEnvironmentResourceGroupName -ExpandProperties).properties.state
+                    if($searchServiceExists -eq "Ready")
+                    {
+                        $searchExist = $false
+                    }
+                    else
+                    {
+                        Remove-AzureRmResource -ResourceName $WTTEnvironmentApplicationName -ResourceType "Microsoft.Search/searchServices" -ResourceGroupName $WTTEnvironmentResourceGroupName -Force
+                        $searchExist = $false
+                    }
+                }
+                else
+                {
+                    WriteValue("Success")
+                    $searchExist = $false
+                }
+            }until($searchExist-eq $false)
                        
             #Get list of Search Service locations and add to an array
             $listSearchServicesLocations = (Get-AzureRmResourceProvider -ListAvailable | Where-Object {$_.ProviderNamespace -eq 'Microsoft.Search'}).locations   
@@ -126,7 +139,6 @@ function New-WTTAzureSearchService
                         {
                             $newSearchServiceExistsnow = $true
                             WriteValue("Success")
-                            break
                         }       
                     }
                     catch
@@ -149,7 +161,6 @@ function New-WTTAzureSearchService
                         {
                             $newSearchServiceExistsnow = $true
                             WriteValue("Success")
-                            break
                         }                 
                     }
                     catch
@@ -167,6 +178,13 @@ function New-WTTAzureSearchService
             $searchServiceManagementKey = Invoke-AzureRmResourceAction -ResourceGroupName $WTTEnvironmentResourceGroupName -ResourceName $wTTEnvironmentApplicationName -ResourceType Microsoft.Search/searchServices -Action listAdminkeys -Force
             $primaryKey = $searchServiceManagementKey.PrimaryKey
 			$headers = @{"api-key"=$primaryKey}                
+            
+            $checkSearchServiceIndex = Invoke-RestMethod -Uri $azureSearchServiceIndexURL -Method "Get" -Headers $headers
+            if($checkSearchServiceIndex.value.name -eq "Concert")
+            {
+                $searchServiceIndexURL = "https://$WTTEnvironmentApplicationName.search.windows.net/indexes/concerts?api-version=2015-02-28"
+                $deleteSearchServiceIndex = Invoke-RestMethod -Uri $searchServiceIndexURL -Method "Delete" -Headers $headers 
+            }
 
 			$newSearchServiceIndexerDatasourceJsonBody = "{
 					""name"": ""concerts"",  

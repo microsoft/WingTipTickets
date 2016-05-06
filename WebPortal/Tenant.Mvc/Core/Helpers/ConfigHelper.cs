@@ -39,6 +39,14 @@ namespace Tenant.Mvc.Core.Helpers
             }
         }
 
+        public static string SeatMapReportId
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["SeatMapReportId"];
+            }
+        }
+
         #endregion
     }
 }

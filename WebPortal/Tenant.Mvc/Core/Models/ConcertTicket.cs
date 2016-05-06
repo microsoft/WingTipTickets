@@ -13,6 +13,7 @@ namespace Tenant.Mvc.Core.Models
         public int TicketLevelId { get; set; }
         public int Price { get; set; }
         public DateTime PurchasedDate { get; set; }
+        public string SeatNumber { get; set; }
 
         #endregion
 
@@ -22,7 +23,7 @@ namespace Tenant.Mvc.Core.Models
         {
         }
 
-        public ConcertTicket(int ticketId, int customerId, string name, int concertId, int ticketLevelId, int price, DateTime purchaseDate)
+        public ConcertTicket(int ticketId, int customerId, string name, int concertId, int ticketLevelId, int price, DateTime purchaseDate, string seatNumber)
         {
             TicketId = ticketId;
             CustomerId = customerId;
@@ -31,6 +32,7 @@ namespace Tenant.Mvc.Core.Models
             TicketLevelId = ticketLevelId;
             Price = price;
             PurchasedDate = purchaseDate;
+            SeatNumber = seatNumber;
         }
 
         #endregion

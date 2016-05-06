@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
+using Microsoft.PowerBI.Api.Beta.Models;
 using Newtonsoft.Json;
 
 namespace Tenant.Mvc.Models
@@ -12,6 +13,8 @@ namespace Tenant.Mvc.Models
         public ConcertViewModel Concert { get; set; }
         public PurchaseViewModel Purchase { get; set; }
         public VenueMetaDataViewModel VenueMetaData { get; set; }
+        public Report SeatMap { get; set; }
+        public string AccessToken { get; set; }
 
         public SelectList SeatSections { get; set; }
         public SelectList TicketQuantities { get; set; }
@@ -54,6 +57,9 @@ namespace Tenant.Mvc.Models
 
             [Required]
             public int SeatSectionId { get; set; }
+
+            [Required]
+            public string Seats { get; set; }
 
             public string CardHolder { get; set; }
             public string CardNumber { get; set; }

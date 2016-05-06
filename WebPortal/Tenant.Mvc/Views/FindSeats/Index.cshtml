@@ -33,17 +33,17 @@
     <!-- -------------------------------------------------------------------------------------------------------------------------- -->
 
     <div class="row">
-        <div class="col-xs-12">
+        <div class="col-xs-7">
             @using (Html.BeginForm("Index", "FindSeats", FormMethod.Post))
             {
                 @Html.HiddenFor(m => m.Concert.ConcertId)
-                
+
                 <div class="form-group">
-                    <div class="col-xs-2">
-                        <label>Quantity</label>
+                    <div class="col-xs-3">
+                        <label>Price & Section</label>
                     </div>
-                    <div class="col-xs-1">
-                        @Html.DropDownListFor(m => m.Concert.Quantity, @Model.TicketQuantities, new { @class = "form-control" })
+                    <div class="col-xs-9">
+                        @Html.DropDownListFor(m => m.Concert.SeatSectionId, @Model.SeatSections, new { @class = "form-control" })
                     </div>
                 </div>
 
@@ -51,96 +51,147 @@
                 </div>
 
                 <div class="form-group">
-                    <div class="col-xs-2">
-                        <label>Price & Section</label>
-                    </div>
                     <div class="col-xs-3">
-                        @Html.DropDownListFor(m => m.Concert.SeatSectionId, @Model.SeatSections, new { @class = "form-control" })
+                        <label>Select Seats</label>
+                    </div>
+                    <div class="col-xs-9">
+                        <div class="panel panel-default">
+                            <div id="seatMap" class="panel-body center-block">
+                                No Section Selected
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="pull-right">
-                    @if ((Session["SessionUser"] as CustomerModel) != null)
-                    {
-                        <button id="puchaseTicket" type="button" class="btn btn-themed-secondary pull-right">
-                            Purchase tickets &#62;
-                        </button>
-                    }
-                    else
-                    {
-                        <button id="loginUser" type="button" class="btn btn-themed-secondary pull-right" data-toggle="modal" data-target=".bs-example-modal-lg" data-backdrop="static" data-keyboard="false">
-                            Sign in to purchase tickets &#62;
-                        </button>
-                    }
+                <div class="clearfix">
                 </div>
             }
         </div>
-        
+
         <!-- -------------------------------------------------------------------------------------------------------------------------- -->
-        <!-- Venue Data -->
+        <!-- Venue Data Section -->
         <!-- -------------------------------------------------------------------------------------------------------------------------- -->
 
-        <div class="col-xs-12 img-div">
+        <div id="documentdb-meta-parent" class="col-xs-5">
 
-            <div class="col-xs-12 col-md-6">
-                <img class="img-responsive" src="~/Content/img/@WingtipTicketApp.Config.TenantEventType/floor-plan.jpg" />
+            <div class="spacer-15">
             </div>
 
-            <div id="documentdb-meta-parent" class=" col-xs-12 col-md-6">
-                <div class="row row-underline-light">
-                    <h2 class="pull-left">Venue</h2>
-                </div>
-
-                <div class="row">
-                    <div class="col-xs-5">
-                        <label class="pull-left">Name</label>
-                    </div>
-                    <div class="col-xs-7">
-                        <label class="pull-right"> @Model.Concert.VenueName</label>
-                    </div>
-                </div>
-
-                @if (Model.VenueMetaData != null)
-                {
-                    <div id="documentdb-meta-template" class="row">
-                        <div class="col-xs-5">
-                            <label class="pull-left documentdb-meta-label"></label>
+            <div class="panel panel-default">
+                <div class="panel-heading" style="padding: 8px;">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <h4 style="margin: 7px 0 0 0;">Venue Information</h4>
                         </div>
-                        <div class="col-xs-7">
-                            <label class="pull-right documentdb-meta-value"></label>
-                        </div>
-                    </div>
-
-                }
-            </div>
-
-            @if (Model.VenueMetaData != null)
-            {
-                <div class="row">
-                    <div class="col-xs-12">
-                        <input type="button" value="Display JSON &#62;" class="btn btn-themed-secondary pull-right" data-toggle="modal" data-target="#myModal" />
-                    </div>
-                </div>
-            }
-
-            <!-- -------------------------------------------------------------------------------------------------------------------------- -->
-            <!-- MetaData Dialog -->
-            <!-- -------------------------------------------------------------------------------------------------------------------------- -->
-
-            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-body">
-                            @if (Model.VenueMetaData != null)
+                        <div class="col-xs-6">
+                            @if ((Session["SessionUser"] as CustomerModel) != null)
                             {
-                                <pre style="text-align:left">@JsonConvert.SerializeObject(Model.VenueMetaData, Formatting.Indented)</pre>
+                                <button id="puchaseTicket" type="button" class="btn btn-themed-secondary pull-right" style="margin-bottom: 0px;">
+                                    Purchase tickets
+                                </button>
+                            }
+                            else
+                            {
+                                <button id="loginUser" type="button" class="btn btn-themed-secondary pull-right" data-toggle="modal" data-target=".bs-example-modal-lg" data-backdrop="static" data-keyboard="false" style="margin-bottom: 0px;">
+                                    Sign in to purchase tickets
+                                </button>
                             }
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        </div>
+
                     </div>
                 </div>
+
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-xs-5">
+                            <label class="pull-left">Name</label>
+                        </div>
+                        <div class="col-xs-7">
+                            <label class="pull-right"> @Model.Concert.VenueName</label>
+                        </div>
+                    </div>
+
+                    @if (Model.VenueMetaData != null)
+                    {
+                        <div id="documentdb-meta-template" class="row">
+                            <div class="col-xs-5">
+                                <label class="pull-left documentdb-meta-label"></label>
+                            </div>
+                            <div class="col-xs-7">
+                                <label class="pull-right documentdb-meta-value"></label>
+                            </div>
+                        </div>
+
+                    }
+                </div>
+            </div>
+        </div>
+
+        @if (Model.VenueMetaData != null)
+        {
+            <div class="row">
+                <div class="col-xs-12">
+                    <input type="button" value="Display JSON &#62;" class="btn btn-themed-secondary pull-right" data-toggle="modal" data-target="#myModal" />
+                </div>
+            </div>
+        }
+    </div>
+    
+    <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+    <!-- Venue Map -->
+    <!-- -------------------------------------------------------------------------------------------------------------------------- -->
+    
+    <div class="row">
+        
+        <div class="clearfix">
+        </div>
+
+        <div class="row row-underline-dark">
+            <div class="col-xs-12">
+                <h3>Venue Seat Map</h3>
+            </div>
+        </div>
+
+        <div class="col-xs-offset-2 col-xs-8">
+
+            @{
+                if (Model.SeatMap != null)
+                {
+                    Model.SeatMap.EmbedUrl += "&filterPaneEnabled=false&$filter=BookedSeats/ConcertFilterId eq '" + Model.Concert.ConcertId + "'";
+
+                    @Html.PowerBIAccessTokenFor(m => m.AccessToken)
+                    @Html.PowerBIReportFor(m => m.SeatMap, new
+                    {
+                        style = "height:85vh"
+                    })
+                }
+                else
+                {
+                    <text>Report not Found!!!</text>
+                }
+            }
+
+
+        </div>
+
+    </div>
+</div>
+
+<!-- -------------------------------------------------------------------------------------------------------------------------- -->
+<!-- MetaData Dialog -->
+<!-- -------------------------------------------------------------------------------------------------------------------------- -->
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                @if (Model.VenueMetaData != null)
+                {
+                    <pre style="text-align:left">@JsonConvert.SerializeObject(Model.VenueMetaData, Formatting.Indented)</pre>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -185,6 +236,7 @@
                         </ul>
                         <ul>
                             <li id="liTicketQuantity">Tickets: <span id="spanTicketQty"></span> General Admission</li>
+                            <li id="liTicketQuantity"><span id="spanTicketSeats"></span></li>
                             <li id="liPrice">Total Cost: $<span id="spanTotal"></span></li>
                         </ul>
                     </div>
@@ -195,6 +247,7 @@
                             @Html.HiddenFor(m => m.Purchase.ConcertId)
                             @Html.HiddenFor(m => m.Purchase.Quantity)
                             @Html.HiddenFor(m => m.Purchase.SeatSectionId)
+                            @Html.HiddenFor(m => m.Purchase.Seats)
 
                             <h3>Payment Information</h3>
 
@@ -246,40 +299,186 @@
 
 <script src="~/Content/Scripts/jquery-1.9.1.min.js"></script>
 <script>
-    $( document ).ready(function() {
+    $( document ).ready(function() 
+    {
         $("#puchaseTicket").click(function()
         {
-            // Get Values
-            var concertId = $("#Concert_ConcertId").val();
-            var seatSectionId = $("#Concert_SeatSectionId").val();
-            var quantity = $("#Concert_Quantity").val();
+            // Get the values and seat numbers
+            var values = getFormValues();
+            var seatNumbers = getSeatNumbers(values.selectedSeats, values.ticketQuantity);
             
-            var price = $("#Concert_SeatSectionId option:selected").text().split(":")[0].replace("$","").replace(",00","");
-            var total = price * quantity;
+            // Set purchase & dialog fields
+            setPurchaseFields(values, seatNumbers);
+            setDialogFields(values, seatNumbers);
 
-            // Set Purchase Fields
-            $("#Purchase_ConcertId").val(concertId);
-            $("#Purchase_SeatSectionId").val(seatSectionId);
-            $("#Purchase_Quantity").val(quantity);
-
-            // Set Dialog Fields
-            $("#spanTicketQty").html(quantity);
-            $("#spanTotal").html(total + ".00");
-
-            // Show the Modal
+            // Show the modal
             $('#purchaseTicketModel').modal({
                 keyboard: false,
                 backdrop: 'static',
             });
         });
+
+        // Update the seat map
+        updateSeatMap();
+
+        // Seat Section changed
+        $("#Concert_SeatSectionId").change(function()
+        {
+            updateSeatMap();
+        });
+
+        function getFormValues()
+        {
+            var values = {
+                concertId: $("#Concert_ConcertId").val(),
+                seatSectionId: $("#Concert_SeatSectionId").val(),
+                seatSection: $("#Concert_SeatSectionId option:selected").text().split(" - ")[0],
+                selectedSeats: $("#seatMap input:checkbox:checked:not(:disabled)"),
+
+                ticketQuantity: $("#seatMap input:checkbox:checked:not(:disabled)").length,
+                ticketPrice: $("#Concert_SeatSectionId option:selected").text().split(" - ")[1].replace("$","").replace(",00",""),
+                ticketTotal: 0
+            };
+            
+            values.ticketTotal = values.ticketPrice * values.ticketQuantity;
+
+            return values;
+        }
+
+        function getSeatNumbers(selectedSeats, ticketQuantity)
+        {
+            // Get the seat number
+            var seatNumbers = [];
+            
+            $(selectedSeats).each(function(index)
+            {
+                seatNumbers += $(this).attr("data-seatnumber");
+
+                if (index != (ticketQuantity - 1))
+                {
+                    seatNumbers += ", ";
+                }
+            });
+
+            return seatNumbers;
+        }
+
+        function setPurchaseFields(values, seatNumbers)
+        {
+            // Set Purchase Fields
+            $("#Purchase_ConcertId").val(values.concertId);
+            $("#Purchase_SeatSectionId").val(values.seatSectionId);
+            $("#Purchase_Quantity").val(values.ticketQuantity);
+            $("#Purchase_Seats").val(seatNumbers);
+        }
+
+        function setDialogFields(values, seatNumbers)
+        {
+            // Set Dialog Fields
+            $("#spanTicketQty").html(values.ticketQuantity);
+            $("#spanTicketSeats").html(values.seatSection + ': Seats ' + seatNumbers);
+            $("#spanTotal").html(values.ticketTotal + ".00");
+        }
+
+        function updateSeatMap()
+        {
+            var concertId = $("#Concert_ConcertId").val();
+            var ticketLevelId = $("#Concert_SeatSectionId").val();
+
+            $.ajax({
+                type: "GET",
+                url: '@Url.Action("GetSeatLayout", "FindSeats")',
+                data: 
+                { 
+                    concertId: concertId,
+                    ticketLevelId: ticketLevelId 
+                },
+                dataType: "json",
+                success: function(values)
+                {
+                    var html = "";
+                    var maxColumns = 0;
+                    var model = values.model;
+
+                    html = html + "<table style='margin-bottom: 0px; margin-left: auto; margin-right: auto'>";
+
+                    for (var row = model.length - 1; row >= 0; row--)
+                    {
+                        var currentRow = model[row];
+
+                        html = html + "<tr style='line-height: 10px;'>";
+
+                        var columns = currentRow.EndNumber + 1 - currentRow.StartNumber;
+
+                        if (maxColumns < columns)
+                        {
+                            maxColumns = columns;
+                        }
+
+                        for (var skip = 0; skip < currentRow.SkipCount; skip++)
+                        {
+                            html = html + "<td style='margin: 2px; padding: 2px;'>";
+                            html = html + "</td>";
+                        }
+
+                        for (var col = currentRow.StartNumber; col <= currentRow.EndNumber; col++)
+                        {
+                            var seatSelected = arrayContains(currentRow.SelectedSeats, col);
+
+                            html = html + "<td style='margin: 2px; padding: 2px;'>";
+
+                            if (seatSelected)
+                            {
+                                html = html + "<input type=checkbox disabled='disabled' checked='true' data-seatNumber='" + col + "'/>";
+                            }
+                            else
+                            {
+                                html = html + "<input type=checkbox data-seatNumber='" + col + "'/>";
+                            }
+
+                            html = html + "</td>";
+                        }
+
+                        html = html + "</tr>";
+                    }
+                    html = html + "<tr style='height: 10px;'>";
+                    html = html + "<td colspan='" + maxColumns + "' style='margin: 2px; padding: 0px;'>";
+                    html = html + "</td>";
+                    html = html + "</tr>";
+
+                    html = html + "<tr>";
+                    html = html + "<td colspan='" + maxColumns + "' class='text-center'>";
+                    html = html + "<h4><strong>STAGE</strong></h4>";
+                    html = html + "</td>";
+                    html = html + "</tr>";
+                    html = html + "</table>";
+
+                    $("#seatMap").html(html);
+                },
+                error: function (jqXHR, textStatus, errorThrown)
+                {
+                    debugger;
+                }
+            });
+        }
+
+        function arrayContains(array, value) {
+            for (var i = 0; i < array.length; i++) {
+                if (array[i] === value) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     });
 </script>
 
 @if (Model.VenueMetaData != null)
 {
     <script>
-        (function () {
-            var meta = @Html.Raw(JsonConvert.SerializeObject(@Model.VenueMetaData));
+    (function () {
+        var meta = @Html.Raw(JsonConvert.SerializeObject(@Model.VenueMetaData));
             meta = meta.Data;
 
             var template = $("#documentdb-meta-template");
@@ -316,6 +515,6 @@
                 addItem(key, value);
             });
         })();
-    
+
     </script>
 }

@@ -1,6 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 using System.Windows.Input;
 using ElasticPoolLoadGenerator.Components;
+using ElasticPoolLoadGenerator.Helpers;
+using ElasticPoolLoadGenerator.Interfaces;
 using ElasticPoolLoadGenerator.Models;
 
 namespace ElasticPoolLoadGenerator.Commands
@@ -52,7 +57,7 @@ namespace ElasticPoolLoadGenerator.Commands
                 _model.LoadingDatabase = "";
 
                 // Start the loader
-                _model.DatabaseLoader.Start();
+                _model.DatabaseLoaders.ForEach(l => l.Start());
             }
             else
             {
@@ -65,7 +70,7 @@ namespace ElasticPoolLoadGenerator.Commands
                 _model.IsDualDatabaseLoad = !_model.IsDualDatabaseLoad;
 
                 // Stop the loader
-                _model.DatabaseLoader.Stop();
+                _model.DatabaseLoaders.ForEach(l => l.Stop());
             }
         }
 
@@ -81,13 +86,40 @@ namespace ElasticPoolLoadGenerator.Commands
 
         public void CreateDatabaseLoader()
         {
+            _model.DatabaseLoaders = new List<IDatabaseLoader>();
+
+            Type loaderType = null;
+            DataTable data = null;
+
             if (_model.IsDualDatabaseLoad)
             {
-                _model.DatabaseLoader = new DualDatabaseLoader(_model);
+                var qty = _model.BulkPurchaseQty + (_model.BulkPurchaseQty / 3);
+
+                data = DatabaseHelper.BuildBatchData(qty);
+                loaderType = typeof(DualDatabaseLoader);
             }
             else
             {
-                _model.DatabaseLoader = new SingleDatabaseLoader(_model);
+                var qty = _model.BulkPurchaseQty;
+                
+                data = DatabaseHelper.BuildBatchData(qty);
+                loaderType = typeof(SingleDatabaseLoader);
+            }
+
+            for (var i = 0; i < ConfigHelper.Loaders; i++)
+            {
+                var loader = (IDatabaseLoader)Activator.CreateInstance(loaderType, _model, data);
+                loader.NotifyDoneSleeping += LoaderDoneSleeping;
+
+                _model.DatabaseLoaders.Add(loader);
+            }
+        }
+
+        void LoaderDoneSleeping(object sender, EventArgs e)
+        {
+            if (_model.DatabaseLoaders.All(l => !l.IsSleeping))
+            {
+                _model.DatabaseLoaders.ForEach(l => l.Continue());
             }
         }
 
