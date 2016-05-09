@@ -116,7 +116,7 @@ function RegisterProvider()
 function GetStorageAccountKey()
 {
 	# Get Storage Account Primary Key
-	$storageAccountkey = (Get-AzureRMStorageAccountKey -ResourceGroupName $ResourceGroupName -storageAccountName $ApplicationName).Key1
+	$storageAccountkey = (Get-AzureRMStorageAccountKey -ResourceGroupName $ResourceGroupName -storageAccountName $ApplicationName).Value[0]
 
 	return $storageAccountKey
 }
