@@ -32,7 +32,7 @@
 	{
 		$containerName = "deployment-files"
 
-		$storageAccountKey = (Get-AzureRmStorageAccountKey -StorageAccountName $WTTEnvironmentApplicationName -ResourceGroupName $resourceGroupName).Key1
+		$storageAccountKey = (Get-AzureRmStorageAccountKey -StorageAccountName $WTTEnvironmentApplicationName -ResourceGroupName $resourceGroupName).Value[0]
 
 		# Get the storage account context
 		$context = New-AzureStorageContext –StorageAccountName $WTTEnvironmentApplicationName -StorageAccountKey $storageAccountKey -ea silentlycontinue
