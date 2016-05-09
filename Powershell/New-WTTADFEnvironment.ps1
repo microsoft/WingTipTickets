@@ -116,7 +116,15 @@ function RegisterProvider()
 function GetStorageAccountKey()
 {
 	# Get Storage Account Primary Key
-	$storageAccountkey = (Get-AzureRMStorageAccountKey -ResourceGroupName $ResourceGroupName -storageAccountName $ApplicationName).Value[0]
+    $storageExists = Find-AzureRmResource -ResourceNameContains $ResourceGroupName -ResourceGroupNameContains $ResourceGroupName -ResourceType Microsoft.Storage/storageaccounts
+    if($storageExists)
+    {
+	    $storageAccountkey = (Get-AzureRMStorageAccountKey -ResourceGroupName $ResourceGroupName -storageAccountName $ApplicationName).Value[0]
+    }
+    Else
+    {
+        WriteError("Storage Account does not exist")
+    }
 
 	return $storageAccountKey
 }
