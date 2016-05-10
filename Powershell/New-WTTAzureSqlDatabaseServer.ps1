@@ -92,6 +92,7 @@ function New-WTTAzureSqlDatabaseServer
                     {
 					    If($newAzureSqlDatabaseServer.ServerName -eq $AzureSqlDatabaseServerName) 
 					    {
+                            $azureSQLServerFirewallSet = Get-AzureRmSqlServerFirewallRule -ResourceGroupName $AzureSqlDatabaseServerResourceGroupName -ServerName $AzureSqlDatabaseServerName -ErrorAction SilentlyContinue -ErrorVariable getAzureRMSqlServerFirewallRule
                                 if(!$azureSQLServerFirewallSet)
                                 {
 						            WriteValue("Successful")
