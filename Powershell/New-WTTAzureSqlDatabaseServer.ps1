@@ -87,22 +87,30 @@ function New-WTTAzureSqlDatabaseServer
 
                     }While($serverExists = $false)
                     
-					If($newAzureSqlDatabaseServer.ServerName -eq $AzureSqlDatabaseServerName) 
-					{
-						WriteValue("Successful")
-						WriteLabel("Adding firewall rule to allow access from all IP Addresses")
-						$newAzureSqlFirewallRule1 = New-AzureRMSqlServerFirewallRule -FirewallRuleName AllOpen -StartIPAddress 0.0.0.0 -EndIPAddress 255.255.255.255 -ServerName $AzureSqlDatabaseServerName -ResourceGroup $AzureSqlDatabaseServerResourceGroupName -WarningVariable newAzureSqlFirewallRule1Errors -WarningAction SilentlyContinue
-						WriteValue("Successful")
+                    $firewallExists = $false
+                    Do
+                    {
+					    If($newAzureSqlDatabaseServer.ServerName -eq $AzureSqlDatabaseServerName) 
+					    {
+                                if(!$azureSQLServerFirewallSet)
+                                {
+						            WriteValue("Successful")
+						            WriteLabel("Adding firewall rule to allow access from all IP Addresses")
+						            $newAzureSqlFirewallRule1 = New-AzureRMSqlServerFirewallRule -FirewallRuleName AllOpen -StartIPAddress 0.0.0.0 -EndIPAddress 255.255.255.255 -ServerName $AzureSqlDatabaseServerName -ResourceGroup $AzureSqlDatabaseServerResourceGroupName -WarningVariable newAzureSqlFirewallRule1Errors -WarningAction SilentlyContinue
+						            WriteValue("Successful")
 
-						WriteLabel("Adding firewall rule to allow access from all Azure Services")
-						$newAzureSqlFirewallRule2 = New-AzureRMSqlServerFirewallRule -AllowAllAzureIPs -ServerName $AzureSqlDatabaseServerName -ResourceGroup $AzureSqlDatabaseServerResourceGroupName -WarningVariable newAzureSqlFirewallRule2Errors -WarningAction SilentlyContinue
-						WriteValue("Successful")
-
-					}
-					else
-					{
-						WriteValue("Unsuccessful")
-					}
+						            WriteLabel("Adding firewall rule to allow access from all Azure Services")
+						            $newAzureSqlFirewallRule2 = New-AzureRMSqlServerFirewallRule -AllowAllAzureIPs -ServerName $AzureSqlDatabaseServerName -ResourceGroup $AzureSqlDatabaseServerResourceGroupName -WarningVariable newAzureSqlFirewallRule2Errors -WarningAction SilentlyContinue
+						            WriteValue("Successful")
+                                    $firewallExists = $true
+                                }
+					    }
+					    else
+					    {
+						    WriteValue("Unsuccessful")
+                            $firewallExists = $false
+					    }
+                    }until($firewallExists -eq $true)
 
 				}
 			}
