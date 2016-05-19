@@ -21,16 +21,9 @@ function Remove-WTTEnvironment
     	#Add-AzureAccount
         $localPath = (Get-Item -Path ".\" -Verbose).FullName
 
-        $wTTEnvironmentApplicationName = $WTTEnvironmentApplicationName.ToLower()
-
-        $azureStorageAccountName = $wTTEnvironmentApplicationName
-        $azureSqlDatabaseServerPrimaryName = $wTTEnvironmentApplicationName + "primary"
-        $azureSqlDatabaseServerSecondaryName = $wTTEnvironmentApplicationName + "secondary"        
-        $azureResourceGroupName = $wTTEnvironmentApplicationName
-        $azureCloudServicePrimaryName = $wTTEnvironmentApplicationName + "primary"
-        $azureCloudServiceSecondaryName = $wTTEnvironmentApplicationName + "secondary"      
-
-        
+        $wTTEnvironmentApplicationName = $WTTEnvironmentApplicationName.ToLower()       
+        $azureResourceGroupName = $wTTEnvironmentApplicationName 
+                
         Try 
         {
             

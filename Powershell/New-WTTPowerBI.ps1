@@ -12,10 +12,10 @@ function New-WTTPowerBI
 	[CmdletBinding()]
 	Param
 	(
-		# WTT Environment Application Name
+		# Resource Group Name
 		[Parameter(Mandatory=$true)]
 		[String]
-		$WTTEnvironmentApplicationName,
+		$azureResourceGroupName,
 
 		# WTT Environment Application Name
 		[Parameter(Mandatory=$true)]
@@ -23,33 +23,32 @@ function New-WTTPowerBI
 		$AzurePowerBIName,
 
 		# Azure SQL Database Server Primary Name
-		[Parameter(Mandatory=$true)]
+		[Parameter(Mandatory=$false)]
 		[String]
-		$AzureSqlDatabaseServerPrimaryName,
+		$AzureSqlServerName,
 
 		# Azure SQL Database Server Administrator User Name
 		[Parameter(Mandatory=$true)]
 		[String]
-		$AzureSqlDatabaseServerAdministratorUserName,
+		$adminUserName,
 
 		# Azure SQL Database Server Adminstrator Password
 		[Parameter(Mandatory=$true)]
 		[String]
-		$AzureSqlDatabaseServerAdministratorPassword,
+		$adminPassword,
 
 		# Azure Tenant SQL Database Name
 		[Parameter(Mandatory=$true)]
 		[String]
-		$AzureSqlDatabaseName,
+		$azureSqlDatabaseName,
 
 		# Azure DataWarehouse SQL Database Name
 		[Parameter(Mandatory=$true)]
 		[String]
-		$AzureSqlDWDatabaseName
+		$azureDWDatabaseName
 	)
 
     # Set environment variables
-    $azureResourceGroupName = $wTTEnvironmentApplicationName
     $azurePowerBIWorkspaceCollection = $AzurePowerBIName
     $powerBIReportFiles = ".\Resources\PowerBI"
     $log = Get-ChildItem .\powerbi.txt -ErrorAction SilentlyContinue | Remove-Item -Force -ErrorAction SilentlyContinue
@@ -246,7 +245,7 @@ function New-WTTPowerBI
                     #Post All connections
                     $powerBISetAllConnectionsURL = "https://api.powerbi.com/beta/collections/$azurePowerBIWorkspaceCollection/workspaces/$powerBIWorkspaceID/datasets/$powerBIDataSetID/Default.SetAllConnections"
                     $powerBISetAllConnectionsConnString = "{
-                                                            ""connectionString"": ""Data source=tcp:$AzureSqlDatabaseServerPrimaryName.database.windows.net,1433;initial catalog=$AzureSqlDWDatabaseName;Persist Security info=True;Encrypt=True;TrustServerCertificate=False;User=Developer;Password=P@ssword1""
+                                                            ""connectionString"": ""Data source=tcp:$AzureSqlServerName.database.windows.net,1433;initial catalog=$AzureSqlDWDatabaseName;Persist Security info=True;Encrypt=True;TrustServerCertificate=False""
                                                             }"
                     $powerBISetAllConnectionsPost = Invoke-RestMethod -Uri $powerBISetAllConnectionsURL -Method POST -ContentType "application/json" -Body $powerBISetAllConnectionsConnString -Headers $header
                 
@@ -260,8 +259,8 @@ function New-WTTPowerBI
                     $powerBIDataSourcesPatchBody = "{
                                                 ""credentialType"": ""Basic"",
                                                 ""basicCredentials"": {
-                                                    ""username"": ""Developer"",
-                                                    ""password"": ""P@ssword1""
+                                                    ""username"": ""$adminUserName"",
+                                                    ""password"": ""$adminPassword""
                                                 }
                                             }"
 
@@ -283,7 +282,7 @@ function New-WTTPowerBI
                     $powerBIGetReport = Invoke-RestMethod -Uri $powerBIGetReportURL -Method GET -ContentType "application/json" -Headers $header
                     $report = $powerBIGetReport.value | Where-Object {$_.name -eq "ticketsalesdashboard"}
                     $reportid = $report.id
-                    $updateDB = Invoke-Sqlcmd -Username "developer@$AzureSqlDatabaseServerPrimaryName" -Password "P@ssword1" -ServerInstance "$AzureSqlDatabaseServerPrimaryName.database.windows.net" -Database $AzureSqlDatabaseName -Query "UPDATE ApplicationDefault SET VALUE='$reportid' WHERE Code='DefaultReportID'" -QueryTimeout 0 -SuppressProviderContextWarning -ErrorAction SilentlyContinue                   
+                    $updateDB = Invoke-Sqlcmd -Username "developer@$AzureSqlServerName" -Password "P@ssword1" -ServerInstance "$AzureSqlServerName.database.windows.net" -Database $AzureSqlDatabaseName -Query "UPDATE ApplicationDefault SET VALUE='$reportid' WHERE Code='DefaultReportID'" -QueryTimeout 0 -SuppressProviderContextWarning -ErrorAction SilentlyContinue                   
                 }
 
                 # Set Seating Chart Database Connection
@@ -297,7 +296,7 @@ function New-WTTPowerBI
                     #Post All connections
                     $powerBISetAllConnectionsURL = "https://api.powerbi.com/beta/collections/$azurePowerBIWorkspaceCollection/workspaces/$powerBIWorkspaceID/datasets/$powerBIDataSetID/Default.SetAllConnections"
                     $powerBISetAllConnectionsConnString = "{
-                                                            ""connectionString"": ""Data source=tcp:$AzureSqlDatabaseServerPrimaryName.database.windows.net,1433;initial catalog=$AzureSqlDatabaseName;Persist Security info=True;Encrypt=True;TrustServerCertificate=False;User=Developer;Password=P@ssword1""
+                                                            ""connectionString"": ""Data source=tcp:$AzureSqlServerName.database.windows.net,1433;initial catalog=$AzureSqlDatabaseName;Persist Security info=True;Encrypt=True;TrustServerCertificate=False""
                                                             }"
                     $powerBISetAllConnectionsPost = Invoke-RestMethod -Uri $powerBISetAllConnectionsURL -Method POST -ContentType "application/json" -Body $powerBISetAllConnectionsConnString -Headers $header
                 
@@ -311,8 +310,8 @@ function New-WTTPowerBI
                     $powerBIDataSourcesPatchBody = "{
                                                 ""credentialType"": ""Basic"",
                                                 ""basicCredentials"": {
-                                                    ""username"": ""Developer"",
-                                                    ""password"": ""P@ssword1""
+                                                    ""username"": ""$adminUserName"",
+                                                    ""password"": ""$adminPassword""
                                                 }
                                             }"
 

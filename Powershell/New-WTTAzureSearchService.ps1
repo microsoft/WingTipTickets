@@ -14,12 +14,12 @@ function New-WTTAzureSearchService
 		# WTT Environment Application Name
 		[Parameter(Mandatory=$true)]
 		[String]
-		$WTTEnvironmentApplicationName,
+		$wttEnvironmentApplicationName,
 
 		# Azure Resource Group Name
 		[Parameter(Mandatory=$true)]
 		[String]
-		$WTTEnvironmentResourceGroupName,
+		$resourceGroupName,
 
 		# Azure Search Service Location
 		[Parameter(Mandatory=$true, HelpMessage="Please specify the datacenter location for your Azure Search Service ('East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast')?")]
@@ -30,17 +30,17 @@ function New-WTTAzureSearchService
 		# Azure SQL Database Server Primary Name
 		[Parameter(Mandatory=$false)]
 		[String]
-		$AzureSqlDatabaseServerPrimaryName,
+		$AzureSqlServerName,
 
 		# Azure SQL Database Server Administrator User Name
 		[Parameter(Mandatory=$false)]
 		[String]
-		$AzureSqlDatabaseServerAdministratorUserName,
+		$adminUserName,
 
 		# Azure SQL Database Server Adminstrator Password
 		[Parameter(Mandatory=$false)]
 		[String]
-		$AzureSqlDatabaseServerAdministratorPassword,
+		$adminPassword,
 
 		# Azure SQL Database Name
 		[Parameter(Mandatory=$false)]
@@ -51,28 +51,28 @@ function New-WTTAzureSearchService
 	Process
 	{
 		# Check Defaults
-		if ($WTTEnvironmentApplicationName.Length -gt 60)
+		if ($wttEnvironmentApplicationName.Length -gt 60)
 		{
-			$wTTEnvironmentApplicationName = $WTTEnvironmentApplicationName.Substring(0,60)
+			$wttEnvironmentApplicationName = $wttEnvironmentApplicationName.Substring(0,60)
 		}
 		else
 		{
-			$wTTEnvironmentApplicationName = $WTTEnvironmentApplicationName.ToLower()
+			$wttEnvironmentApplicationName = $wttEnvironmentApplicationName.ToLower()
 		}
 
-		if($AzureSqlDatabaseServerPrimaryName -eq "")
+		if($AzureSqlServerName -eq "")
 		{
-			$AzureSqlDatabaseServerPrimaryName = $WTTEnvironmentApplicationName + "primary"
+			$AzureSqlServerName = $wttEnvironmentApplicationName + "primary"
 		}
 
-		if($AzureSqlDatabaseServerAdministratorUserName -eq "")
+		if($adminUserName -eq "")
 		{
-			$AzureSqlDatabaseServerAdministratorUserName = "developer"
+			$adminUserName = "developer"
 		}
 
-		if($AzureSqlDatabaseServerAdministratorPassword -eq "")
+		if($adminPassword -eq "")
 		{
-			$AzureSqlDatabaseServerAdministratorPassword = "P@ssword1"
+			$adminPassword = "P@ssword1"
 		}
 
 		if($AzureSqlDatabaseName -eq "")
@@ -89,23 +89,23 @@ function New-WTTAzureSearchService
 			    $null = Register-AzureRmResourceProvider -ProviderNamespace Microsoft.Search -Force
 			}
 
-            WriteLabel("Checking for Azure Search Service $WTTEnvironmentApplicationName")
+            WriteLabel("Checking for Azure Search Service $wttEnvironmentApplicationName")
             $searchExist = $true
             Do
             {
-                $listSearchService = Find-AzureRmResource -ResourceGroupNameContains $WTTEnvironmentResourceGroupName -ResourceType Microsoft.Search/searchServices -ExpandProperties
-                if($listSearchService.Name -eq $wTTEnvironmentApplicationName)
+                $listSearchService = Find-AzureRmResource -ResourceGroupNameContains $resourceGroupName -ResourceType Microsoft.Search/searchServices -ExpandProperties
+                if($listSearchService.Name -eq $wttEnvironmentApplicationName)
                 {
                     WriteValue("Failed")
-                    WriteError("$wTTEnvironmentApplicationName Search Service already exists.")
-                    $searchServiceExists = (Find-AzureRmResource -ResourceType "Microsoft.Search" -ResourceNameContains $wTTEnvironmentApplicationName -ResourceGroupNameContains $WTTEnvironmentResourceGroupName -ExpandProperties).properties.state
+                    WriteError("$wttEnvironmentApplicationName Search Service already exists.")
+                    $searchServiceExists = (Find-AzureRmResource -ResourceType "Microsoft.Search" -ResourceNameContains $wttEnvironmentApplicationName -ResourceGroupNameContains $resourceGroupName -ExpandProperties).properties.state
                     if($searchServiceExists -eq "Ready")
                     {
                         $searchExist = $false
                     }
                     else
                     {
-                        Remove-AzureRmResource -ResourceName $WTTEnvironmentApplicationName -ResourceType "Microsoft.Search/searchServices" -ResourceGroupName $WTTEnvironmentResourceGroupName -Force
+                        Remove-AzureRmResource -ResourceName $wttEnvironmentApplicationName -ResourceType "Microsoft.Search/searchServices" -ResourceGroupName $resourceGroupName -Force
                         $searchExist = $false
                     }
                 }
@@ -124,7 +124,7 @@ function New-WTTAzureSearchService
 				$null = $listSearchServicesLocation.Add($location)
 			}
             
-            WriteLabel("Deploying Azure Search Service $WTTEnvironmentApplicationName")
+            WriteLabel("Deploying Azure Search Service $wttEnvironmentApplicationName")
             $searchServiceSku = Find-AzureRmResource -ResourceType Microsoft.Search/searchServices -ExpandProperties
             if($searchServiceSku.sku.name -ne "free")
             {
@@ -132,8 +132,8 @@ function New-WTTAzureSearchService
                 {  
                     try
                     {
-                        $newSearchService = New-AzureRmResourceGroupDeployment -ResourceGroupName $WTTEnvironmentResourceGroupName -TemplateUri "https://gallery.azure.com/artifact/20151001/Microsoft.Search.1.0.9/DeploymentTemplates/searchServiceDefaultTemplate.json" -nameFromTemplate $wTTEnvironmentApplicationName -sku free -location $AzureSearchServiceLocation -partitionCount 1 -replicaCount 1
-                        $newSearchServiceExists = (Find-AzureRmResource -ResourceType "Microsoft.Search" -ResourceNameContains $wTTEnvironmentApplicationName -ExpandProperties).properties.state
+                        $newSearchService = New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateUri "https://gallery.azure.com/artifact/20151001/Microsoft.Search.1.0.9/DeploymentTemplates/searchServiceDefaultTemplate.json" -nameFromTemplate $wttEnvironmentApplicationName -sku free -location $AzureSearchServiceLocation -partitionCount 1 -replicaCount 1
+                        $newSearchServiceExists = (Find-AzureRmResource -ResourceType "Microsoft.Search" -ResourceNameContains $wttEnvironmentApplicationName -ExpandProperties).properties.state
                         $newSearchServiceExistsnow = $false
                         if($newSearchServiceExists -eq "Ready")
                         {
@@ -154,8 +154,8 @@ function New-WTTAzureSearchService
                 {  
                     try
                     {
-                        $newSearchService = New-AzureRmResourceGroupDeployment -ResourceGroupName $WTTEnvironmentResourceGroupName -TemplateUri "https://gallery.azure.com/artifact/20151001/Microsoft.Search.1.0.9/DeploymentTemplates/searchServiceDefaultTemplate.json" -nameFromTemplate $wTTEnvironmentApplicationName -sku standard -location $AzureSearchServiceLocation -partitionCount 1 -replicaCount 1
-                        $newSearchServiceExists = (Find-AzureRmResource -ResourceType "Microsoft.Search" -ResourceNameContains $wTTEnvironmentApplicationName -ExpandProperties).properties.state
+                        $newSearchService = New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -TemplateUri "https://gallery.azure.com/artifact/20151001/Microsoft.Search.1.0.9/DeploymentTemplates/searchServiceDefaultTemplate.json" -nameFromTemplate $wttEnvironmentApplicationName -sku standard -location $AzureSearchServiceLocation -partitionCount 1 -replicaCount 1
+                        $newSearchServiceExists = (Find-AzureRmResource -ResourceType "Microsoft.Search" -ResourceNameContains $wttEnvironmentApplicationName -ExpandProperties).properties.state
                         $newSearchServiceExistsnow = $false
                         if($newSearchServiceExists -eq "Ready")
                         {
@@ -171,18 +171,18 @@ function New-WTTAzureSearchService
             }
             #Deploy Azure Search Service index
             $azureSubscriptionID = (Get-AzureRmContext).Subscription.SubscriptionId
-			$createSearchServiceURL = "https://management.azure.com/subscriptions/$azureSubscriptionID/resourceGroups/$WTTEnvironmentResourceGroupName/providers/Microsoft.Search/searchServices/$wTTEnvironmentApplicationName" + "?api-version=2015-02-28"    
-            $azureSearchServiceIndexURL = "https://$wTTEnvironmentApplicationName.search.windows.net/indexes?api-version=2015-02-28"
-            $azureSearchServiceIndexerURL = "https://$wTTEnvironmentApplicationName.search.windows.net/indexers?api-version=2015-02-28"
-            $azureSearchServiceIndexerDatasourceURL = "https://$wTTEnvironmentApplicationName.search.windows.net/datasources?api-version=2015-02-28"
-            $searchServiceManagementKey = Invoke-AzureRmResourceAction -ResourceGroupName $WTTEnvironmentResourceGroupName -ResourceName $wTTEnvironmentApplicationName -ResourceType Microsoft.Search/searchServices -Action listAdminkeys -Force
+			$createSearchServiceURL = "https://management.azure.com/subscriptions/$azureSubscriptionID/resourceGroups/$resourceGroupName/providers/Microsoft.Search/searchServices/$wttEnvironmentApplicationName" + "?api-version=2015-02-28"    
+            $azureSearchServiceIndexURL = "https://$wttEnvironmentApplicationName.search.windows.net/indexes?api-version=2015-02-28"
+            $azureSearchServiceIndexerURL = "https://$wttEnvironmentApplicationName.search.windows.net/indexers?api-version=2015-02-28"
+            $azureSearchServiceIndexerDatasourceURL = "https://$wttEnvironmentApplicationName.search.windows.net/datasources?api-version=2015-02-28"
+            $searchServiceManagementKey = Invoke-AzureRmResourceAction -ResourceGroupName $resourceGroupName -ResourceName $wttEnvironmentApplicationName -ResourceType Microsoft.Search/searchServices -Action listAdminkeys -Force
             $primaryKey = $searchServiceManagementKey.PrimaryKey
 			$headers = @{"api-key"=$primaryKey}                
             
             $checkSearchServiceIndex = Invoke-RestMethod -Uri $azureSearchServiceIndexURL -Method "Get" -Headers $headers
             if($checkSearchServiceIndex.value.name -eq "Concert")
             {
-                $searchServiceIndexURL = "https://$WTTEnvironmentApplicationName.search.windows.net/indexes/concerts?api-version=2015-02-28"
+                $searchServiceIndexURL = "https://$wttEnvironmentApplicationName.search.windows.net/indexes/concerts?api-version=2015-02-28"
                 $deleteSearchServiceIndex = Invoke-RestMethod -Uri $searchServiceIndexURL -Method "Delete" -Headers $headers 
             }
 
@@ -216,7 +216,7 @@ function New-WTTAzureSearchService
 			$newSearchServiceIndexerDatasourceJsonBody = "{ 
 				""name"": ""concertssql"", 
 				""type"": ""azuresql"",
-				""credentials"": { ""connectionString"": ""Server=tcp:$AzureSqlDatabaseServerPrimaryName.database.windows.net,1433;Database=$AzureSqlDatabaseName;User ID=$AzureSqlDatabaseServerAdministratorUserName;Password=$AzureSqlDatabaseServerAdministratorPassword;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"" },
+				""credentials"": { ""connectionString"": ""Server=tcp:$AzureSqlServerName.database.windows.net,1433;Database=$AzureSqlDatabaseName;User ID=$adminUserName;Password=$adminPassword;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"" },
 				""container"": { ""name"": ""ConcertSearch"" },
 				""dataChangeDetectionPolicy"": {
 					""@odata.type"": ""#Microsoft.Azure.Search.HighWaterMarkChangeDetectionPolicy"",

@@ -36,42 +36,42 @@ function Deploy-WTTAzureDWDatabase
 	[CmdletBinding()]
 	Param
 	(
-		# WTT Environment Application Name
+		# Resource Group Name
 		[Parameter(Mandatory=$true)]
 		[String]
-		$WTTEnvironmentApplicationName,
+		$azureResourceGroupName,
 
 		# Azure SQL server name for connection.
 		[Parameter(Mandatory=$true)]
 		[String]
-		$ServerName,
+		$azureSqlServerName,
 
 		# Azure SQL database server location
 		[Parameter(Mandatory=$true, HelpMessage="Please specify location for AzureSQL server ('East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast')?")]
 		[ValidateSet('East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast')]
 		[String]
-		$ServerLocation,
+		$azureSQLServerLocation,
 
 		# Azure SQL database server location
 		[Parameter(Mandatory=$true, HelpMessage="Please specify edition for AzureSQL database ('DataWarehouse')?")]
 		[ValidateSet('DataWarehouse')]
 		[String]
-		$DatabaseEdition,
+		$databaseEdition,
 
 		# Azure SQL db user name for connection.
 		[Parameter(Mandatory=$true)]
 		[String]
-		$UserName,
+		$adminUserName,
 
 		# Azure SQL db password for connection.
 		[Parameter(Mandatory=$true)]
 		[String]
-		$Password,
+		$adminPassword,
 
 		# Azure SQL Database name.
 		[Parameter(Mandatory=$true)]
 		[String]        
-		$DWDatabaseName
+		$azureDWDatabaseName
 	)
 
 	Process 
@@ -83,7 +83,7 @@ function Deploy-WTTAzureDWDatabase
 		Try 
 		{
 			# Check if Server Exists
-			$existingDbServer = Get-AzureRmSqlServer -resourcegroupname $WTTEnvironmentApplicationName -ServerName $ServerName -ErrorVariable existingDbServerErrors -ErrorAction SilentlyContinue
+			$existingDbServer = Get-AzureRmSqlServer -resourcegroupname $azureResourceGroupName -ServerName $azureSqlServerName -ErrorVariable existingDbServerErrors -ErrorAction SilentlyContinue
 
 			if ($existingDbServer -ne $null)
 			{
@@ -109,7 +109,7 @@ function Deploy-WTTAzureDWDatabase
 			{
 				LineBreak
 				WriteLabel("Checking for DataWarehouse Database")
-				$azureSqlDatabase = Find-AzureRmResource -ResourceType "Microsoft.Sql/servers/databases" -ResourceNameContains $DWDatabaseName -ResourceGroupNameContains $WTTEnvironmentApplicationName
+				$azureSqlDatabase = Find-AzureRmResource -ResourceType "Microsoft.Sql/servers/databases" -ResourceNameContains $azureDWDatabaseName -ResourceGroupNameContains $azureResourceGroupName
 
 				if ($azureSqlDatabase -ne $null)
 				{
@@ -127,7 +127,7 @@ function Deploy-WTTAzureDWDatabase
                     $dwExist = $false
                     Do
                     {
-                        $azureDWExist = New-AzureRMSqlDatabase -RequestedServiceObjectiveName "DW2000" -ServerName $ServerName -DatabaseName $DWDatabaseName -Edition $DatabaseEdition -ResourceGroupName $WTTEnvironmentApplicationName -Verbose:$false
+                        $azureDWExist = New-AzureRMSqlDatabase -RequestedServiceObjectiveName "DW2000" -ServerName $azureSqlServerName -DatabaseName $azureDWDatabaseName -Edition $DatabaseEdition -ResourceGroupName $azureResourceGroupName -Verbose:$false
                         if(!$azureDWExist)
                         {
 					        WriteValue("Unsuccessful, Retrying")
@@ -141,21 +141,21 @@ function Deploy-WTTAzureDWDatabase
                         }
                     }While($dwExist -eq $false)
 
-                    $testSQLConnection = Test-WTTAzureSQLConnection -ServerName $ServerName -UserName $UserName -Password $Password -DatabaseName $DWDatabaseName -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName
+                    $testSQLConnection = Test-WTTAzureSQLConnection -ServerName $azureSqlServerName -UserName $adminUserName -Password $adminPassword -DatabaseName $azureDWDatabaseName -azureResourceGroupName $azureResourceGroupName
                     if ($testSQLConnection -notlike "success")
                     {
                         WriteError("Unable to connect to SQL Server")
                     }
                     Else
                     {
-					    $DWServer = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains "primary" -ExpandProperties -ResourceGroupNameContains $WTTEnvironmentApplicationName).properties.FullyQualifiedDomainName
+					    $DWServer = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains "primary" -ExpandProperties -ResourceGroupNameContains $azureResourceGroupName).properties.FullyQualifiedDomainName
 					    # Set working location
 					    Push-Location -StackName wtt
 					    # Create Database tables
 					    ForEach($file in Get-ChildItem ".\Scripts\Datawarehouse" -Filter *.sql)
 					    {
 						    WriteLabel("Executing Script '$file'")
-						    $result = Invoke-Sqlcmd -Username "$UserName@$ServerName" -Password $Password -ServerInstance $DWServer -Database $DWDatabaseName -InputFile ".\Scripts\Datawarehouse\$file" -QueryTimeout 0 -SuppressProviderContextWarning
+						    $result = Invoke-Sqlcmd -Username "$adminUserName@$azureSqlServerName" -Password $adminPassword -ServerInstance $DWServer -Database $azureDWDatabaseName -InputFile ".\Scripts\Datawarehouse\$file" -QueryTimeout 0 -SuppressProviderContextWarning -IgnoreProviderContext -ErrorAction SilentlyContinue
 						    WriteValue("Successful")
                             Start-Sleep -Seconds 60
 					    }
@@ -165,7 +165,7 @@ function Deploy-WTTAzureDWDatabase
 
 					    # Downgrade to 100 units
 					    WriteLabel("Downgrading DataWarehouse database to 100 Units")
-					    $null = Set-AzureRmSqlDatabase -RequestedServiceObjectiveName "DW100" -ServerName $ServerName -DatabaseName $DWDatabaseName -ResourceGroupName $WTTEnvironmentApplicationName
+					    $null = Set-AzureRmSqlDatabase -RequestedServiceObjectiveName "DW100" -ServerName $azureSqlServerName -DatabaseName $azureDWDatabaseName -ResourceGroupName $azureResourceGroupName -ErrorAction SilentlyContinue
 					    WriteValue("Successful")
                         Start-Sleep -s 180
                     }
