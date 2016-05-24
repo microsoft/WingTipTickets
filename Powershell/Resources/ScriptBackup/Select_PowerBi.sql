@@ -4,7 +4,7 @@ SELECT		DISTINCT TOP 1000
 			SeatSection = S.Description,
 			Description =
 			S.Description +
-			', Seat ' + 
+			' Seat ' + 
 			CAST(SeatNumber as VARCHAR(100))
 FROM		Tickets T
 JOIN		TicketLevels L ON T.TicketLevelId = L.TicketLevelId
