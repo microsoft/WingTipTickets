@@ -319,27 +319,27 @@ function New-WTTEnvironment
 					'West Europe' {'West Europe'}
 					'East US' {'East US'}
 					'North Central US' {'East US'}
-					'East US 2' {'East US'}
-					'South Central US' {'East US'}
-					'Central US' {'East US'}
-					'North Central US' {'East US'}
+					'East US 2' {'East US 2'}
+					'South Central US' {'South Central US'}
+					'Central US' {'Central US'}
+					'North Central US' {'North Central US'}
 					'Brazil South' {'East US'}
 					'Southeast Asia' {'Southeast Asia'}
 					'Australia Southeast' {'Southeast Asia'}
 					'Australia East' {'Southeast Asia'}
 					'East Asia' {'East Asia'}
-					'Japan East' {'East Asia'}
-					'Japan West' {'East Asia'}
+					'Japan East' {'Japan East'}
+					'Japan West' {'Japan West'}
 					default {'West US'}
 				}
 			WriteValue("Successful")
 
 			# Create DocumentDB
-			$azureDocumentDBService = New-WTTAzureDocumentDb -WTTResourceGroupName $azureResourceGroupName -WTTDocumentDbName $azureDocumentDbName -WTTDocumentDbLocation $WTTDocumentDbLocation
+			$azureDocumentDBService = New-WTTAzureDocumentDb -azureResourceGroupName $azureResourceGroupName -WTTDocumentDbName $azureDocumentDbName -WTTDocumentDbLocation $WTTDocumentDbLocation
 			if($azureDocumentDBService.Count -eq 0)
 			{
 				Start-Sleep -s 30
-				$azureDocuemtnDBService = New-WTTAzureDocumentDb -WTTResourceGroupName $azureResourceGroupName -WTTDocumentDbName $azureDocumentDbName -WTTDocumentDbLocation $WTTDocumentDbLocation
+				$azureDocuemtnDBService = New-WTTAzureDocumentDb -azureResourceGroupName $azureResourceGroupName -WTTDocumentDbName $azureDocumentDbName -WTTDocumentDbLocation $WTTDocumentDbLocation
 				$azureDocumentDBService
 			}
 
@@ -364,7 +364,7 @@ function New-WTTEnvironment
             {
                 if ($azurePrimarySqlDatabaseServer -ne $null)
 			    {   
-				    Deploy-DBSchema -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlServerPrimaryName -DatabaseEdition "Basic" -UserName $adminUserName -Password $adminPassword -ServerLocation $primaryServerLocation -DatabaseName $AzureSqlDatabaseName            
+				    Deploy-DBSchema -azureResourceGroupName $azureResourceGroupName -azureSqlServerName $azureSqlServerPrimaryName -DatabaseEdition "Basic" -adminUserName $adminUserName -adminPassword $adminPassword -azureSqlDatabaseName $AzureSqlDatabaseName
 				    Populate-DBSchema -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlServerPrimaryName -Username $adminUserName -Password $adminPassword -DatabaseName $AzureSqlDatabaseName
                     Start-Sleep -Seconds 30
                     $azureSqlDatabase = Find-AzureRmResource -ResourceType "Microsoft.Sql/servers/databases" -ResourceNameContains $AzureSqlDatabaseName -ResourceGroupNameContains $WTTEnvironmentApplicationName
@@ -402,7 +402,7 @@ function New-WTTEnvironment
             {
 			    if ($azurePrimarySqlDatabaseServer -ne $null)
 			    {   
-				    Deploy-DBSchema -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlServerPrimaryName -DatabaseEdition "Basic" -UserName $adminUserName -Password $adminPassword -ServerLocation $primaryServerLocation -DatabaseName "Customer2"           
+				    Deploy-DBSchema -azureResourceGroupName $azureResourceGroupName -ServerName $azureSqlServerPrimaryName -DatabaseEdition "Basic" -UserName $adminUserName -Password $adminPassword -ServerLocation $primaryServerLocation -DatabaseName "Customer2"           
 				    Populate-DBSchema -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlServerPrimaryName -Username $adminUserName -Password $adminPassword -DatabaseName "Customer2"                   
                     Start-Sleep -Seconds 30
                     $azureSqlDatabase = Find-AzureRmResource -ResourceType "Microsoft.Sql/servers/databases" -ResourceNameContains "Customer2" -ResourceGroupNameContains $WTTEnvironmentApplicationName
@@ -437,7 +437,7 @@ function New-WTTEnvironment
             {
 			    if ($azurePrimarySqlDatabaseServer -ne $null)
 			    {   
-				    Deploy-DBSchema -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlServerPrimaryName -DatabaseEdition "Standard" -UserName $adminUserName -Password $adminPassword -ServerLocation $primaryServerLocation -DatabaseName "Customer3"           
+				    Deploy-DBSchema -azureResourceGroupName $azureResourceGroupName -ServerName $azureSqlServerPrimaryName -DatabaseEdition "Standard" -UserName $adminUserName -Password $adminPassword -ServerLocation $primaryServerLocation -DatabaseName "Customer3"           
 				    Populate-DBSchema -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -ServerName $azureSqlServerPrimaryName -Username $adminUserName -Password $adminPassword -DatabaseName "Customer3"                   
                     Start-Sleep -Seconds 30
                     $azureSqlDatabase = Find-AzureRmResource -ResourceType "Microsoft.Sql/servers/databases" -ResourceNameContains "Customer3" -ResourceGroupNameContains $WTTEnvironmentApplicationName
@@ -560,12 +560,12 @@ function New-WTTEnvironment
             Start-Sleep -Seconds 60
 
 			# Deploy ADF environment
-			New-WTTADFEnvironment -ApplicationName $WTTEnvironmentApplicationName -ResourceGroupName $azureResourceGroupName -DatabaseServerName $azureSqlServerPrimaryName -DatabaseName "Recommendations" -DatabaseEdition "Basic" -DatabaseUserName $adminUserName -DatabasePassword $adminPassword
+			New-WTTADFEnvironment -ApplicationName $WTTEnvironmentApplicationName -azureResourceGroupName $azureResourceGroupName -azureSqlServerName $azureSqlServerPrimaryName -azureSQLDatabaseName "Recommendations" -DatabaseEdition "Basic" -adminUserName $adminUserName -adminPassword $adminPassword
 
 			Start-Sleep -Seconds 30
             
             # New Azure Power BI Service
-            New-WTTPowerBI -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -AzurePowerBIName $azurePowerBIWorkspaceCollection -AzureSqlDatabaseServerPrimaryName $azureSqlServerPrimaryName -AzureSqlDatabaseServerAdministratorUserName $adminUserName -AzureSqlDatabaseServerAdministratorPassword $adminPassword -AzureSqlDatabaseName $AzureSqlDatabaseName -AzureSqlDWDatabaseName $AzureSqlDWDatabaseName
+            New-WTTPowerBI -azureResourceGroupName $azureResourceGroupName -AzurePowerBIName $azurePowerBIWorkspaceCollection -AzureSqlServerName $azureSqlServerPrimaryName -adminUserName $adminUserName -adminPassword $adminPassword -AzureSqlDatabaseName $AzureSqlDatabaseName -azureDWDatabaseName $AzureSqlDWDatabaseName
             Start-Sleep -Seconds 30
 
             WriteLabel("Pausing DataWarehouse database")

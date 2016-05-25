@@ -25,37 +25,37 @@ function Populate-DBSchema
 	[CmdletBinding()]
 	Param
 	(
-		# Resource Group Name
+		# WTT Environment Application Name
 		[Parameter(Mandatory=$true)]
 		[String]
-		$azureResourceGroupName,
+		$WTTEnvironmentApplicationName,
 
 		# Azure SQL server name for connection.
 		[Parameter(Mandatory=$true)]
 		[String]
-		$AzureSqlServerName,
+		$ServerName,
 
 		# Azure SQL db user name for connection.
 		[Parameter(Mandatory=$true)]
 		[String]
-		$AdminUserName,
+		$UserName,
 
 		# Azure SQL db password for connection.
 		[Parameter(Mandatory=$true)]
 		[String]
-		$AdminPassword,
+		$Password,
 
 		# Azure SQL database name.
 		[Parameter(Mandatory=$true)]
 		[String]
-		$AzureSqlDatabaseName
+		$DatabaseName
 	)
 
 	Process
 	{
 		Try
 		{
-			$testSQLConnection = Test-WTTAzureSQLConnection -ServerName $AzureSqlServerName -UserName $AdminUserName -Password $AdminPassword -DatabaseName $AzureSqlDatabaseName -azureResourceGroupName $azureResourceGroupName
+			$testSQLConnection = Test-WTTAzureSQLConnection -ServerName $ServerName -UserName $UserName -Password $Password -DatabaseName $DatabaseName -azureResourceGroupName $azureResourceGroupName
             if ($testSQLConnection -notlike "success")
             {
                 WriteError("Unable to connect to SQL Server")
@@ -63,7 +63,7 @@ function Populate-DBSchema
             Else
             {
 			    # Build the required connection details
-			    $ConnectionString = "Server=tcp:$AzureSqlServerName.database.windows.net; Database=$AzureSqlDatabaseName; User ID=$AdminUserName; Password=$AdminPassword; Trusted_Connection=False; Encrypt=True;"
+			    $ConnectionString = "Server=tcp:$ServerName.database.windows.net; Database=$DatabaseName; User ID=$UserName; Password=$Password; Trusted_Connection=False; Encrypt=True;"
 
 			    $Connection = New-object system.data.SqlClient.SqlConnection($ConnectionString)
 			    $Command = New-Object System.Data.SqlClient.SqlCommand('',$Connection)
