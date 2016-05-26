@@ -43,7 +43,7 @@ function Populate-Tickets
     $customerID = 1
 
     #Test SQL Server Connection
-	$testSQLConnection = Test-WTTAzureSQLConnection -ServerName $AzureSqlServerName -UserName $AdminUserName -Password $AdminPassword -DatabaseName $AzureSqlDatabaseName -azureResourceGroupName $azureResourceGroupName
+	$testSQLConnection = Test-WTTAzureSQLConnection -AzureSqlServerName $AzureSqlServerName -adminUserName $AdminUserName -adminPassword $AdminPassword -AzureSqlDatabaseName $AzureSqlDatabaseName -azureResourceGroupName $azureResourceGroupName
 	if ($testSQLConnection -notlike "success")
 	{
 		WriteError("Unable to connect to SQL Server")

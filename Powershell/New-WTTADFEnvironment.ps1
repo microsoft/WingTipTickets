@@ -116,7 +116,7 @@ function RegisterProvider()
 function GetStorageAccountKey()
 {
 	# Get Storage Account Primary Key
-    $storageExists = Find-AzureRmResource -ResourceNameContains $azureResourceGroupName -ResourceGroupNameContains $azureResourceGroupName -ResourceType Microsoft.Storage/storageaccounts
+    $storageExists = Find-AzureRmResource -ResourceNameContains $ApplicationName -ResourceGroupNameContains $azureResourceGroupName -ResourceType Microsoft.Storage/storageaccounts
     if($storageExists)
     {
 	    $storageAccountkey = (Get-AzureRMStorageAccountKey -ResourceGroupName $azureResourceGroupName -storageAccountName $ApplicationName).Value[0]
@@ -163,7 +163,7 @@ function SetupMappingDictionary($StorageAccountKey)
 	$global:dict = @{}
 	$global:dict.Add('<account name>', $ApplicationName)
 	$global:dict.Add('<account key>', $StorageAccountKey)
-	$global:dict.Add('<azuredbname>', $azureSQLServerNameName)
+	$global:dict.Add('<azuredbname>', $azureSQLServerName)
 	$global:dict.Add('<userid>', $DatabaseUserName)
 	$global:dict.Add('<password>', $DatabasePassword)
 	$global:dict.Add('<dbname>', $azureSQLDatabaseName)
@@ -182,24 +182,24 @@ function CreateDatabase()
         $recommendationExist = $false
         Do
         {
-            $recommendationDB = Get-AzureRmSqlDatabase -DatabaseName $azureSQLDatabaseName -ServerName $azureSQLServerNameName -ResourceGroupName $azureResourceGroupName -ErrorAction SilentlyContinue
+            $recommendationDB = Get-AzureRmSqlDatabase -DatabaseName $azureSQLDatabaseName -ServerName $azureSQLServerName -ResourceGroupName $azureResourceGroupName -ErrorAction SilentlyContinue
             if(!$recommendationDB)
             {
 		        # Create Database
 		        WriteLabel("Creating database '$azureSQLDatabaseName'")
-		        $null = New-AzureRMSqlDatabase -ResourceGroupName $azureResourceGroupName -ServerName $azureSQLServerNameName -DatabaseName $azureSQLDatabaseName -Edition $DatabaseEdition
+		        $null = New-AzureRMSqlDatabase -ResourceGroupName $azureResourceGroupName -ServerName $azureSQLServerName -DatabaseName $azureSQLDatabaseName -Edition $DatabaseEdition
 		        WriteValue("Successful")
                 $recommendationExist = $true
             }
             else
             {
                 Push-Location -StackName wtt
-                $result = Invoke-Sqlcmd -Username "$DatabaseUserName@$azureSQLServerNameName" -Password $DatabasePassword -ServerInstance "$azureSQLServerNameName.database.windows.net" -Database $azureSQLDatabaseName -Query "Select top 1 * from Customers;" -QueryTimeout 0 -SuppressProviderContextWarning -ErrorAction SilentlyContinue
+                $result = Invoke-Sqlcmd -Username "$adminUserName@$azureSQLServerName" -Password $adminPassword -ServerInstance "$azureSQLServerName.database.windows.net" -Database $azureSQLDatabaseName -Query "Select top 1 * from Customers;" -QueryTimeout 0 -SuppressProviderContextWarning -ErrorAction SilentlyContinue
                 Pop-Location -StackName wtt
                 if([string]$result -eq $null)
                 {
                     WriteError("Recommendation Database is not deployed")
-                    Remove-AzureRmSqlDatabase -ResourceGroupName $azureResourceGroupName -ServerName $azureSQLServerNameName -DatabaseName $azureSQLDatabaseName -Force -ErrorAction SilentlyContinue
+                    Remove-AzureRmSqlDatabase -ResourceGroupName $azureResourceGroupName -ServerName $azureSQLServerName -DatabaseName $azureSQLDatabaseName -Force -ErrorAction SilentlyContinue
                     $recommendationExist = $false          
                 }
             }
@@ -218,9 +218,9 @@ function CreateSchema
 	{
 		# Create Database Schema	
 		WriteLabel("Creating Database Schema")
-		Push-Location -StackName wtt
+		Push-Location -StackName wtt        
 		$azureSQLServerName = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains "primary" -ExpandProperties -ResourceGroupNameContains $azureResourceGroupName).properties.FullyQualifiedDomainName
-		$result = Invoke-Sqlcmd -Username "$DatabaseUserName@$azureSQLServerNameName" -Password $DatabasePassword -ServerInstance $azureSQLServerName -Database $azureSQLDatabaseName -InputFile ".\Resources\DataFactory\Database\Schema.sql" -QueryTimeout 0 -ErrorAction SilentlyContinue
+		$result = Invoke-Sqlcmd -Username "$adminUserName@$azureSQLServerName" -Password $adminPassword -ServerInstance $azureSQLServerName -Database $azureSQLDatabaseName -InputFile ".\Resources\DataFactory\Database\Schema.sql" -QueryTimeout 0 -ErrorAction SilentlyContinue
 		Pop-Location -StackName wtt
 		WriteValue("Successful")
 	}
@@ -235,7 +235,7 @@ function PopulateDatabase
 {
 	Try
 	{
-        $testSQLConnection = Test-WTTAzureSQLConnection -ServerName $azureSQLServerNameName -UserName $DatabaseUserName -Password $DatabasePassword -DatabaseName $azureSQLDatabaseName -azureResourceGroupName $azureResourceGroupName
+        $testSQLConnection = Test-WTTAzureSQLConnection -azureSQLServerName $azureSQLServerName -adminUserName $adminUserName -adminPassword $adminPassword -azureSQLDatabaseName $azureSQLDatabaseName -azureResourceGroupName $azureResourceGroupName
         if ($testSQLConnection -notlike "success")
         {
             WriteError("Unable to connect to SQL Server")
@@ -246,7 +246,7 @@ function PopulateDatabase
 		    WriteLabel("Populating Database")
 		    Push-Location -StackName wtt
 		    $azureSQLServerName = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains "primary" -ExpandProperties -ResourceGroupNameContains $azureResourceGroupName).properties.FullyQualifiedDomainName
-		    $result = Invoke-Sqlcmd -Username "$DatabaseUserName@$azureSQLServerNameName" -Password $DatabasePassword -ServerInstance $azureSQLServerName -Database $azureSQLDatabaseName -InputFile ".\Resources\DataFactory\Database\Populate.sql" -QueryTimeout 0 -ErrorAction SilentlyContinue
+		    $result = Invoke-Sqlcmd -Username "$adminUserName@$azureSQLServerName" -Password $adminPassword -ServerInstance $azureSQLServerName -Database $azureSQLDatabaseName -InputFile ".\Resources\DataFactory\Database\Populate.sql" -QueryTimeout 0 -ErrorAction SilentlyContinue
 		    Pop-Location -StackName wtt
 		    WriteValue("Successful")
         }
@@ -262,7 +262,7 @@ function CreateDataFactory()
 {
 	Try
 	{
-        $adf = ((Get-AzureRmResourceProvider -ProviderNamespace Microsoft.DataFactory).ResourceTypes)
+        $adf = (Get-AzureRmResourceProvider -ProviderNamespace Microsoft.DataFactory).ResourceTypes
         $adfLocation = ($adf | Where-Object {$_.ResourceTypeName -eq "dataFactories"}).locations
 		# Create DataFactory
 		WriteLabel("Creating Data Factory '$ApplicationName'")

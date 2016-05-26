@@ -95,6 +95,7 @@ Function Test-WTTAzureSQLConnection
                     Return "Error"
 		        }
 	        }
+            Start-Sleep -Seconds 20
         }
         While ($Stoploop -eq $false)
     }

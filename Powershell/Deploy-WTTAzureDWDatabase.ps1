@@ -47,12 +47,6 @@ function Deploy-WTTAzureDWDatabase
 		$azureSqlServerName,
 
 		# Azure SQL database server location
-		[Parameter(Mandatory=$true, HelpMessage="Please specify location for AzureSQL server ('East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast')?")]
-		[ValidateSet('East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast')]
-		[String]
-		$azureSQLServerLocation,
-
-		# Azure SQL database server location
 		[Parameter(Mandatory=$true, HelpMessage="Please specify edition for AzureSQL database ('DataWarehouse')?")]
 		[ValidateSet('DataWarehouse')]
 		[String]
@@ -141,7 +135,7 @@ function Deploy-WTTAzureDWDatabase
                         }
                     }While($dwExist -eq $false)
 
-                    $testSQLConnection = Test-WTTAzureSQLConnection -ServerName $azureSqlServerName -UserName $adminUserName -Password $adminPassword -DatabaseName $azureDWDatabaseName -azureResourceGroupName $azureResourceGroupName
+                    $testSQLConnection = Test-WTTAzureSQLConnection -azureSqlServerName $azureSqlServerName -adminUserName $adminUserName -adminPassword $adminPassword -AzureSqlDatabaseName $azureDWDatabaseName -azureResourceGroupName $azureResourceGroupName
                     if ($testSQLConnection -notlike "success")
                     {
                         WriteError("Unable to connect to SQL Server")

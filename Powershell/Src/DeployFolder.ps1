@@ -6,9 +6,8 @@
 param(
     [Parameter(Mandatory=$true)][string]$JsonFilesFolder,
     [Parameter(Mandatory=$false)][string]$SubscriptionName="Current",
-    [Parameter(Mandatory=$false)][string]$ResourceGroupName="ADF",
+    [Parameter(Mandatory=$false)][string]$ResourceGroupName,
     [Parameter(Mandatory=$true)][string]$DataFactoryName,
-    [Parameter(Mandatory=$false)][string]$Location="WestUS",
     [Parameter(Mandatory=$false)][string]$StartTime,
     [Parameter(Mandatory=$false)][string]$EndTime
 )
@@ -50,9 +49,6 @@ if($files.Count -eq 0)
     Throw "No files are found in the location specified. Please double-check the folder."
 }
 WriteValue("Successful")
-
-#Write-Host "Creating Data Factory (update if exists)..."  -ForegroundColor Green
-#New-AzureDataFactory -ResourceGroupName $ResourceGroupName -Name $DataFactoryName -Location $Location -Force -ErrorAction Stop
 
 WriteLabel("Creating ADF LinkedServices...")
 $files2 = @()
