@@ -164,8 +164,8 @@ function SetupMappingDictionary($StorageAccountKey)
 	$global:dict.Add('<account name>', $ApplicationName)
 	$global:dict.Add('<account key>', $StorageAccountKey)
 	$global:dict.Add('<azuredbname>', $azureSQLServerName)
-	$global:dict.Add('<userid>', $DatabaseUserName)
-	$global:dict.Add('<password>', $DatabasePassword)
+	$global:dict.Add('<userid>', $adminUserName)
+	$global:dict.Add('<password>', $adminPassword)
 	$global:dict.Add('<dbname>', $azureSQLDatabaseName)
 
 	$pipelineEndTime = [DateTimeoffset]::UtcNow

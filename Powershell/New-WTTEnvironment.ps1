@@ -565,8 +565,34 @@ function New-WTTEnvironment
 
 			Start-Sleep -Seconds 30
             
+            $azurePowerBILocation =
+                Switch ($primaryServerLocation)
+                {
+                    'West US' {'West US'}
+                    'North Europe' {'North Europe'}
+                    'West Europe' {'West Europe'}
+                    'East US' {'East US 2'}
+                    'North Central US' {'North Central US'}
+                    'East US 2' {'East US 2'}
+                    'South Central US' {'South Central US'}
+                    'Central US' {'South Central US'}
+                    'Brazil South' {'Brazil South'}
+                    'Southeast Asia' {'Southeast Asia'}
+                    'Australia Southeast' {'Australia Southeast'}
+                    'Australia East' {'Australia Southeast'}
+                    'East Asia' {'Southeast Asia'}
+                    'Japan East' {'Southeast Asia'}
+                    'Japan West' {'Southeast Asia'}
+                    'Canada Central' {'North Central US'}
+                    'Canada East' {'North Central US'}
+                    'West India' {'Southeast Asia'}
+                    'South India' {'Southeast Asia'}
+                    'Central India' {'Southeast Asia'}
+                    default {'West US'}
+                }
+
             # New Azure Power BI Service
-            New-WTTPowerBI -azureResourceGroupName $azureResourceGroupName -AzurePowerBIName $azurePowerBIWorkspaceCollection -AzureSqlServerName $azureSqlServerPrimaryName -adminUserName $adminUserName -adminPassword $adminPassword -AzureSqlDatabaseName $AzureSqlDatabaseName -azureDWDatabaseName $AzureSqlDWDatabaseName
+            New-WTTPowerBI -azureResourceGroupName $azureResourceGroupName -AzurePowerBIName $azurePowerBIWorkspaceCollection -azurePowerBILocation $azurePowerBILocation -AzureSqlServerName $azureSqlServerPrimaryName -adminUserName $adminUserName -adminPassword $adminPassword -AzureSqlDatabaseName $AzureSqlDatabaseName -azureDWDatabaseName $AzureSqlDWDatabaseName
             Start-Sleep -Seconds 30
 
             WriteLabel("Pausing DataWarehouse database")

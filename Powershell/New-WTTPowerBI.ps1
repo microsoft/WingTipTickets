@@ -45,7 +45,12 @@ function New-WTTPowerBI
 		# Azure DataWarehouse SQL Database Name
 		[Parameter(Mandatory=$true)]
 		[String]
-		$azureDWDatabaseName
+		$azureDWDatabaseName,
+
+		# Azure Power BI Location
+		[Parameter(Mandatory=$true)]
+		[String]
+        $azurePowerBILocation
 	)
 
     # Set environment variables
@@ -115,7 +120,7 @@ function New-WTTPowerBI
             #create Power BI Workspace Collection
             $powerBIWorkspaceCollectionURL =  "https://management.azure.com/subscriptions/$azureSubscriptionID/resourceGroups/$azureResourceGroupName/providers/Microsoft.PowerBI/workspaceCollections/$azurePowerBIWorkspaceCollection"+"?api-version=2016-01-29"
             $powerBIWorkspaceCollection = "{
-                                                        ""location"": ""southcentralus"",
+                                                        ""location"": ""$azurePowerBILocation"",
                                                         ""tags"": {},
                                                         ""sku"": {
                                                             ""name"": ""S1"",

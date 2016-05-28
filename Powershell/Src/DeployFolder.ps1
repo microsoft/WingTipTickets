@@ -65,7 +65,7 @@ foreach($file in $files)
             Throw "Json file not valid, please double check using a validator on file: $file"
     }
 
-    New-AzureRmDataFactoryLinkedService -DataFactory $df -File $file.FullName  -Force 2>&1 3>&1 4>&1 1>>adfdeploy-log.txt
+    New-AzureRmDataFactoryLinkedService -DataFactory $df -File $file.FullName -Force 2>&1 3>&1 4>&1 1>>adfdeploy-log.txt
     
     Start-Sleep -Seconds 60
 }
