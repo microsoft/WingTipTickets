@@ -81,7 +81,12 @@ function Set-WTTEnvironmentWebConfig
 
         # Azure Power BI Seat Map ID
         [Parameter(Mandatory = $false)] 
-        $seatMapReportID
+        $seatMapReportID,
+
+        # Tenant Event Type Pop, Rock, Classical
+        [Parameter(Mandatory = $false)]
+        [string]
+        $TenantEventType
 	)
 
 	Process
@@ -105,6 +110,10 @@ function Set-WTTEnvironmentWebConfig
 			{
 				$AzureSqlDatabaseName = "Customer1"
 			}
+            if(!$TenantEventType)
+            {
+                $TenantEventType = "pop"
+            }
 
 			$docDBName = "https://$azureDocumentDbName.documents.azure.com:443/"
 
@@ -114,7 +123,7 @@ function Set-WTTEnvironmentWebConfig
 			@{
 					# Tenant Settings
 					"TenantName" = "$WTTEnvironmentApplicationName"; 
-					"TenantEventType" = "pop"; # This is not set from main script, used the default
+					"TenantEventType" = $TenantEventType;
 					"TenantPrimaryDatabaseServer" = "$AzureSqlServerPrimaryName"; 
 					"TenantSecondaryDatabaseServer" = "$AzureSqlServerSecondaryName";
 					"TenantDatabase" = "$AzureSqlDatabaseName"; 
