@@ -82,75 +82,82 @@ function New-WTTPowerBI
             WriteValue("Success")
         }
 
-        # Load ADAL Assemblies
-        $adal = "${env:ProgramFiles(x86)}\Microsoft SDKs\Azure\PowerShell\ServiceManagement\Azure\Services\Microsoft.IdentityModel.Clients.ActiveDirectory.dll"
-        $adalforms = "${env:ProgramFiles(x86)}\Microsoft SDKs\Azure\PowerShell\ServiceManagement\Azure\Services\Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms.dll"
-        $null = [System.Reflection.Assembly]::LoadFrom($adal)
-        $null = [System.Reflection.Assembly]::LoadFrom($adalforms)
-        # Load Power BI assemblies
-        $nugetImport = .\NuGet.\NuGet.exe restore ".\NuGet\packages.config" -PackagesDirectory ".\Nuget\Packages"
-        $powerBIDLL = Get-ChildItem -Recurse ".\Nuget\packages\*PowerBI.Core*" -Include *.dll
-        $jwtDLL = Get-ChildItem -Recurse ".\Nuget\packages\*System.IdentityModel.Tokens.Jwt*" -Include *.dll
-        add-type -path $powerBIDLL
-        add-type -path $jwtDLL
-        $powerBIAssemblies = New-Object Microsoft.PowerBI.Security.PowerBIToken
-
-        # Setup authentication to Azure
-        #Get Azure Tenant ID
-        $tenantId = (Get-AzureRmContext).Tenant.TenantId
-        $clientId = "1950a258-227b-4e31-a9cf-717495945fc2"
-        # Set redirect URI for Azure PowerShell
-        $redirectUri = "urn:ietf:wg:oauth:2.0:oob"
-        # Set Resource URI to Azure Service Management API
-        $resourceAppIdURI = "https://management.core.windows.net/"
-        # Set Authority to Azure AD Tenant
-        $authority = "https://login.windows.net/$tenantId"
-        # Create Authentication Context tied to Azure AD Tenant
-        $authContext = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext" -ArgumentList $authority
-        $azureSubscriptionID = (Get-AzureRmContext).Subscription.SubscriptionId
-
-        Try
+        $testSQLConnection = Test-WTTAzureSQLConnection -AzureSqlServerName $AzureSqlServerName -AdminUserName $AdminUserName -AdminPassword $AdminPassword -AzureSqlDatabaseName $AzureSqlDatabaseName -azureResourceGroupName $azureResourceGroupName
+        if ($testSQLConnection -notlike "success")
         {
-            # Acquire token
-            $authResult = $authContext.AcquireToken($resourceAppIdURI, $clientId, $redirectUri, "Auto")
-            $authHeader = $authResult.CreateAuthorizationHeader()
-            $headers = @{"Authorization" = $authHeader}     
-            
-            WriteLabel("Deploying Power BI Workspace Collection")
-            #create Power BI Workspace Collection
-            $powerBIWorkspaceCollectionURL =  "https://management.azure.com/subscriptions/$azureSubscriptionID/resourceGroups/$azureResourceGroupName/providers/Microsoft.PowerBI/workspaceCollections/$azurePowerBIWorkspaceCollection"+"?api-version=2016-01-29"
-            $powerBIWorkspaceCollection = "{
-                                                        ""location"": ""$azurePowerBILocation"",
-                                                        ""tags"": {},
-                                                        ""sku"": {
-                                                            ""name"": ""S1"",
-                                                            ""tier"": ""Standard""
-                                                        }
-                                            }"
-            $powerBIWorkspaceCollectionCreate =  Invoke-RestMethod -Uri $powerBIWorkspaceCollectionURL -Method Put -Body $powerBIWorkspaceCollection -ContentType "application/json; charset=utf-8" -Headers $headers
-            If($powerBIWorkspaceCollectionCreate.properties.provisioningState -eq "Succeeded")
-            {
-                WriteValue("Successful")
-            }
-            Else
-            {
-                WriteError("Unable to find Power BI Workspace Collection")
-            }
-
-            #$powerBIWorkspaceCollectionCreate.name | Out-File powerbi.txt -Append
-            
-            #Get Power BI Workspace Collection Key
-            $powerBIWorkspaceCOllectionKeyURL =  "https://management.azure.com/subscriptions/$azureSubscriptionID/resourceGroups/$azureResourceGroupName/providers/Microsoft.PowerBI/workspaceCollections/$azurePowerBIWorkspaceCollection/listKeys?api-version=2016-01-29"
-            $powerBIWorkspaceCOllectionKey = Invoke-RestMethod -Uri $powerBIWorkspaceCOllectionKeyURL -Method POST -Headers $headers
-            $pbikey = $powerBIWorkspaceCOllectionKey.key1 
-            $pbikey | Out-File .\powerbi.txt -Append
+            WriteError("Unable to connect to SQL Server")
         }
-        Catch
+        else
         {
-            Write-Error "Error: $Error"
-        }
-        Try
-        {
+            # Load ADAL Assemblies
+            $adal = "${env:ProgramFiles(x86)}\Microsoft SDKs\Azure\PowerShell\ServiceManagement\Azure\Services\Microsoft.IdentityModel.Clients.ActiveDirectory.dll"
+            $adalforms = "${env:ProgramFiles(x86)}\Microsoft SDKs\Azure\PowerShell\ServiceManagement\Azure\Services\Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms.dll"
+            $null = [System.Reflection.Assembly]::LoadFrom($adal)
+            $null = [System.Reflection.Assembly]::LoadFrom($adalforms)
+            # Load Power BI assemblies
+            $nugetImport = .\NuGet.\NuGet.exe restore ".\NuGet\packages.config" -PackagesDirectory ".\Nuget\Packages"
+            $powerBIDLL = Get-ChildItem -Recurse ".\Nuget\packages\*PowerBI.Core*" -Include *.dll
+            $jwtDLL = Get-ChildItem -Recurse ".\Nuget\packages\*System.IdentityModel.Tokens.Jwt*" -Include *.dll
+            add-type -path $powerBIDLL
+            add-type -path $jwtDLL
+            $powerBIAssemblies = New-Object Microsoft.PowerBI.Security.PowerBIToken
+
+            # Setup authentication to Azure
+            #Get Azure Tenant ID
+            $tenantId = (Get-AzureRmContext).Tenant.TenantId
+            $clientId = "1950a258-227b-4e31-a9cf-717495945fc2"
+            # Set redirect URI for Azure PowerShell
+            $redirectUri = "urn:ietf:wg:oauth:2.0:oob"
+            # Set Resource URI to Azure Service Management API
+            $resourceAppIdURI = "https://management.core.windows.net/"
+            # Set Authority to Azure AD Tenant
+            $authority = "https://login.windows.net/$tenantId"
+            # Create Authentication Context tied to Azure AD Tenant
+            $authContext = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext" -ArgumentList $authority
+            $azureSubscriptionID = (Get-AzureRmContext).Subscription.SubscriptionId
+
+            Try
+            {
+                # Acquire token
+                $authResult = $authContext.AcquireToken($resourceAppIdURI, $clientId, $redirectUri, "Auto")
+                $authHeader = $authResult.CreateAuthorizationHeader()
+                $headers = @{"Authorization" = $authHeader}     
+            
+                WriteLabel("Deploying Power BI Workspace Collection")
+                #create Power BI Workspace Collection
+                $powerBIWorkspaceCollectionURL =  "https://management.azure.com/subscriptions/$azureSubscriptionID/resourceGroups/$azureResourceGroupName/providers/Microsoft.PowerBI/workspaceCollections/$azurePowerBIWorkspaceCollection"+"?api-version=2016-01-29"
+                $powerBIWorkspaceCollection = "{
+                                                            ""location"": ""$azurePowerBILocation"",
+                                                            ""tags"": {},
+                                                            ""sku"": {
+                                                                ""name"": ""S1"",
+                                                                ""tier"": ""Standard""
+                                                            }
+                                                }"
+                $powerBIWorkspaceCollectionCreate =  Invoke-RestMethod -Uri $powerBIWorkspaceCollectionURL -Method Put -Body $powerBIWorkspaceCollection -ContentType "application/json; charset=utf-8" -Headers $headers
+                If($powerBIWorkspaceCollectionCreate.properties.provisioningState -eq "Succeeded")
+                {
+                    WriteValue("Successful")
+                }
+                Else
+                {
+                    WriteError("Unable to find Power BI Workspace Collection")
+                }
+
+                #$powerBIWorkspaceCollectionCreate.name | Out-File powerbi.txt -Append
+            
+                #Get Power BI Workspace Collection Key
+                $powerBIWorkspaceCOllectionKeyURL =  "https://management.azure.com/subscriptions/$azureSubscriptionID/resourceGroups/$azureResourceGroupName/providers/Microsoft.PowerBI/workspaceCollections/$azurePowerBIWorkspaceCollection/listKeys?api-version=2016-01-29"
+                $powerBIWorkspaceCOllectionKey = Invoke-RestMethod -Uri $powerBIWorkspaceCOllectionKeyURL -Method POST -Headers $headers
+                $pbikey = $powerBIWorkspaceCOllectionKey.key1 
+                $pbikey | Out-File .\powerbi.txt -Append
+            }
+            Catch
+            {
+                Write-Error "Error: $Error"
+            }
+            Try
+            {
             #Create Power BI Provisioning Token
             $appToken = [Microsoft.PowerBI.Security.PowerBIToken]::CreateProvisionToken($azurePowerBIWorkspaceCollection)
             $token = $appToken.Generate($pbikey)
@@ -337,13 +344,15 @@ function New-WTTPowerBI
                     {
                         WriteError("Failed")
                     }
-                }              
+
+                }          
             }
         }
         Catch
         {
             Write-Error "Error: $Error"
         }
+      }
     }  
     Catch
     {
