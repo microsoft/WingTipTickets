@@ -461,7 +461,7 @@ function New-WTTEnvironment
                         Pop-Location -StackName wtt
                         if([string]$result -eq $null)
                         {
-                            WriteError("Customer2 Database is not deployed")
+                            WriteError("Customer3 Database is not deployed")
                             $null = Remove-AzureRmSqlDatabase -ServerName $azureSqlServerPrimaryName -DatabaseName "Customer3" -ResourceGroupName $azureResourceGroupName -Force -ErrorAction SilentlyContinue
                             $dbExists = $false
                         }
@@ -615,7 +615,6 @@ function New-WTTEnvironment
             $powerbiSigningKey = $pbiSettings[0]
             $powerbiWorkspaceId = $pbiSettings[1]
             $seatMapReportID = $pbiSettings[2]
-            $TenantEventType = $TenantEventType
 
 			Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -azureResourceGroupName $azureResourceGroupName -Websitename $azureSqlServerPrimaryName -SearchName $searchName -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlServerPrimaryName $azureSqlServerPrimaryName -AzureSqlServerSecondaryName $azureSqlServerSecondaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey $documentDbPrimaryKey -powerbiSigningKey $powerbiSigningKey- -powerbiWorkspaceCollection $powerbiWorkspaceCollection -powerbiWorkspaceId $powerbiWorkspaceId -seatMapReportID $seatMapReportID -TenantEventType $TenantEventType
 			Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -azureResourceGroupName $azureResourceGroupName -Websitename $azureSqlServerSecondaryName -SearchName $searchName -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlServerPrimaryName $azureSqlServerSecondaryName -AzureSqlServerSecondaryName $azureSqlServerPrimaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey $documentDbPrimaryKey -powerbiSigningKey $powerbiSigningKey -powerbiWorkspaceCollection $powerbiWorkspaceCollection -powerbiWorkspaceId $powerbiWorkspaceId -seatMapReportID $seatMapReportID -TenantEventType $TenantEventType

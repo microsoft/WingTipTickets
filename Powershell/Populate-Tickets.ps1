@@ -55,95 +55,103 @@ function Populate-Tickets
 
         foreach ($concert in $concertID)
         {
-            $seatArray = @(Section101)
-            foreach($seat in $seatArray)
+            $ticketLevelID = switch ($concert)
             {
-                $name = "Ticket for user admin to concert-$concert"
-                $ticketLevelID = 1
-                $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber]) Values ($customerID, '$name', $ticketLevelID, $concert, '$date', $seat)"
-                $updateDB = Invoke-Sqlcmd -Username "$AdminUserName@$AzureSqlServerName" -Password "$AdminPassword" -ServerInstance "$AzureSqlServerName.database.windows.net" -Database $AzureSqlDatabaseName -Query $command -QueryTimeout 0 -SuppressProviderContextWarning
+            '1' {@(1..10)}
+            '2' {@(11..20)}
+            '3' {@(21..30)}
+            '4' {@(31..40)}
             }
+                $seatArray = @(Section101)
+                foreach($seat in $seatArray)
+                {
+                    $name = "Ticket for user admin to concert-$concert"
+                    [int]$ticketLevel = $ticketLevelID[0]
+                    $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber]) Values ($customerID, '$name', $ticketLevel, $concert, '$date', $seat)"
+                    $updateDB = Invoke-Sqlcmd -Username "$AdminUserName@$AzureSqlServerName" -Password "$AdminPassword" -ServerInstance "$AzureSqlServerName.database.windows.net" -Database $AzureSqlDatabaseName -Query $command -QueryTimeout 0 -SuppressProviderContextWarning
+                }
 
-            $seatArray = @(Section102)
-            foreach($seat in $seatArray)
-            {
-                $name = "Ticket for user admin to concert-$concert"
-                $ticketLevelID = 2
-                $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber]) Values ($customerID, '$name', $ticketLevelID, $concert, '$date', $seat)"
-                $updateDB = Invoke-Sqlcmd -Username "$AdminUserName@$AzureSqlServerName" -Password "$AdminPassword" -ServerInstance "$AzureSqlServerName.database.windows.net" -Database $AzureSqlDatabaseName -Query $command -QueryTimeout 0 -SuppressProviderContextWarning
-            }
+                $seatArray = @(Section102)
+                foreach($seat in $seatArray)
+                {
+                    $name = "Ticket for user admin to concert-$concert"
+                    [int]$ticketLevel = $ticketLevelID[1]
+                    $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber]) Values ($customerID, '$name', $ticketLevel, $concert, '$date', $seat)"
+                    $updateDB = Invoke-Sqlcmd -Username "$AdminUserName@$AzureSqlServerName" -Password "$AdminPassword" -ServerInstance "$AzureSqlServerName.database.windows.net" -Database $AzureSqlDatabaseName -Query $command -QueryTimeout 0 -SuppressProviderContextWarning
+                }
 
-            $seatArray = @(Section103)
-            foreach($seat in $seatArray)
-            {     
-                $name = "Ticket for user admin to concert-$concert"
-                $ticketLevelID = 3
-                $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber]) Values ($customerID, '$name', $ticketLevelID, $concert, '$date', $seat)"
-                $updateDB = Invoke-Sqlcmd -Username "$AdminUserName@$AzureSqlServerName" -Password "$AdminPassword" -ServerInstance "$AzureSqlServerName.database.windows.net" -Database $AzureSqlDatabaseName -Query $command -QueryTimeout 0 -SuppressProviderContextWarning
-            }
+                $seatArray = @(Section103)
+                foreach($seat in $seatArray)
+                {     
+                    $name = "Ticket for user admin to concert-$concert"
+                    [int]$ticketLevel = $ticketLevelID[2]
+                    $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber]) Values ($customerID, '$name', $ticketLevel, $concert, '$date', $seat)"
+                    $updateDB = Invoke-Sqlcmd -Username "$AdminUserName@$AzureSqlServerName" -Password "$AdminPassword" -ServerInstance "$AzureSqlServerName.database.windows.net" -Database $AzureSqlDatabaseName -Query $command -QueryTimeout 0 -SuppressProviderContextWarning
+                }
 
-            $seatArray = @(section201to04)
-            foreach($seat in $seatArray)
-            {
-                $name = "Ticket for user admin to concert-$concert"
-                $ticketLevelID = 4
-                $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber]) Values ($customerID, '$name', $ticketLevelID, $concert, '$date', $seat)"
-                $updateDB = Invoke-Sqlcmd -Username "$AdminUserName@$AzureSqlServerName" -Password "$AdminPassword" -ServerInstance "$AzureSqlServerName.database.windows.net" -Database $AzureSqlDatabaseName -Query $command -QueryTimeout 0 -SuppressProviderContextWarning
-            }
+                $seatArray = @(section201to04)
+                foreach($seat in $seatArray)
+                {
+                    $name = "Ticket for user admin to concert-$concert"
+                    [int]$ticketLevel = $ticketLevelID[3]
+                    $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber]) Values ($customerID, '$name', $ticketLevel, $concert, '$date', $seat)"
+                    $updateDB = Invoke-Sqlcmd -Username "$AdminUserName@$AzureSqlServerName" -Password "$AdminPassword" -ServerInstance "$AzureSqlServerName.database.windows.net" -Database $AzureSqlDatabaseName -Query $command -QueryTimeout 0 -SuppressProviderContextWarning
+                }
 
-            $seatArray = @(section201to04)
-            foreach($seat in $seatArray)
-            { 
-                $name = "Ticket for user admin to concert-$concert"
-                $ticketLevelID = 5
-                $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber]) Values ($customerID, '$name', $ticketLevelID, $concert, '$date', $seat)"
-                $updateDB = Invoke-Sqlcmd -Username "$AdminUserName@$AzureSqlServerName" -Password "$AdminPassword" -ServerInstance "$AzureSqlServerName.database.windows.net" -Database $AzureSqlDatabaseName -Query $command -QueryTimeout 0 -SuppressProviderContextWarning
-            }
+                $seatArray = @(section201to04)
+                foreach($seat in $seatArray)
+                { 
+                    $name = "Ticket for user admin to concert-$concert"
+                    [int]$ticketLevel = $ticketLevelID[4]
+                    $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber]) Values ($customerID, '$name', $ticketLevel, $concert, '$date', $seat)"
+                    $updateDB = Invoke-Sqlcmd -Username "$AdminUserName@$AzureSqlServerName" -Password "$AdminPassword" -ServerInstance "$AzureSqlServerName.database.windows.net" -Database $AzureSqlDatabaseName -Query $command -QueryTimeout 0 -SuppressProviderContextWarning
+                }
 
-            $seatArray = @(section201to04)
-            foreach($seat in $seatArray)
-            {
-                $name = "Ticket for user admin to concert-$concert"
-                $ticketLevelID = 6
-                $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber]) Values ($customerID, '$name', $ticketLevelID, $concert, '$date', $seat)"
-                $updateDB = Invoke-Sqlcmd -Username "$AdminUserName@$AzureSqlServerName" -Password "$AdminPassword" -ServerInstance "$AzureSqlServerName.database.windows.net" -Database $AzureSqlDatabaseName -Query $command -QueryTimeout 0 -SuppressProviderContextWarning
-            }
+                $seatArray = @(section201to04)
+                foreach($seat in $seatArray)
+                {
+                    $name = "Ticket for user admin to concert-$concert"
+                    [int]$ticketLevel = $ticketLevelID[5]
+                    $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber]) Values ($customerID, '$name', $ticketLevel, $concert, '$date', $seat)"
+                    $updateDB = Invoke-Sqlcmd -Username "$AdminUserName@$AzureSqlServerName" -Password "$AdminPassword" -ServerInstance "$AzureSqlServerName.database.windows.net" -Database $AzureSqlDatabaseName -Query $command -QueryTimeout 0 -SuppressProviderContextWarning
+                }
 
-            $seatArray = @(section201to04)
-            foreach($seat in $seatArray)
-            {
-                $name = "Ticket for user admin to concert-$concert"
-                $ticketLevelID = 7
-                $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber]) Values ($customerID, '$name', $ticketLevelID, $concert, '$date', $seat)"
-                $updateDB = Invoke-Sqlcmd -Username "$AdminUserName@$AzureSqlServerName" -Password "$AdminPassword" -ServerInstance "$AzureSqlServerName.database.windows.net" -Database $AzureSqlDatabaseName -Query $command -QueryTimeout 0 -SuppressProviderContextWarning
-            }
+                $seatArray = @(section201to04)
+                foreach($seat in $seatArray)
+                {
+                    $name = "Ticket for user admin to concert-$concert"
+                    [int]$ticketLevel = $ticketLevelID[6]
+                    $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber]) Values ($customerID, '$name', $ticketLevel, $concert, '$date', $seat)"
+                    $updateDB = Invoke-Sqlcmd -Username "$AdminUserName@$AzureSqlServerName" -Password "$AdminPassword" -ServerInstance "$AzureSqlServerName.database.windows.net" -Database $AzureSqlDatabaseName -Query $command -QueryTimeout 0 -SuppressProviderContextWarning
+                }
 
-            $seatArray = @(Section205to07)
-            foreach($seat in $seatArray)
-            { 
-                $name = "Ticket for user admin to concert-$concert"
-                $ticketLevelID = 8
-                $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber]) Values ($customerID, '$name', $ticketLevelID, $concert, '$date', $seat)"
-                $updateDB = Invoke-Sqlcmd -Username "$AdminUserName@$AzureSqlServerName" -Password "$AdminPassword" -ServerInstance "$AzureSqlServerName.database.windows.net" -Database $AzureSqlDatabaseName -Query $command -QueryTimeout 0 -SuppressProviderContextWarning
-            }
+                $seatArray = @(Section205to07)
+                foreach($seat in $seatArray)
+                { 
+                    $name = "Ticket for user admin to concert-$concert"
+                    [int]$ticketLevel = $ticketLevelID[7]
+                    $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber]) Values ($customerID, '$name', $ticketLevel, $concert, '$date', $seat)"
+                    $updateDB = Invoke-Sqlcmd -Username "$AdminUserName@$AzureSqlServerName" -Password "$AdminPassword" -ServerInstance "$AzureSqlServerName.database.windows.net" -Database $AzureSqlDatabaseName -Query $command -QueryTimeout 0 -SuppressProviderContextWarning
+                }
 
-            $seatArray = @(Section205to07)
-            foreach($seat in $seatArray)
-            {  
-                $name = "Ticket for user admin to concert-$concert"
-                $ticketLevelID = 9
-                $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber]) Values ($customerID, '$name', $ticketLevelID, $concert, '$date', $seat)"
-                $updateDB = Invoke-Sqlcmd -Username "$AdminUserName@$AzureSqlServerName" -Password "$AdminPassword" -ServerInstance "$AzureSqlServerName.database.windows.net" -Database $AzureSqlDatabaseName -Query $command -QueryTimeout 0 -SuppressProviderContextWarning
-            }
+                $seatArray = @(Section205to07)
+                foreach($seat in $seatArray)
+                {  
+                    $name = "Ticket for user admin to concert-$concert"
+                    [int]$ticketLevel = $ticketLevelID[8]
+                    $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber]) Values ($customerID, '$name', $ticketLevel, $concert, '$date', $seat)"
+                    $updateDB = Invoke-Sqlcmd -Username "$AdminUserName@$AzureSqlServerName" -Password "$AdminPassword" -ServerInstance "$AzureSqlServerName.database.windows.net" -Database $AzureSqlDatabaseName -Query $command -QueryTimeout 0 -SuppressProviderContextWarning
+                }
 
-            $seatArray = @(Section208)
-            foreach($seat in $seatArray)
-            {
-                $name = "Ticket for user admin to concert-$concert"
-                $ticketLevelID = 10
-                $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber]) Values ($customerID, '$name', $ticketLevelID, $concert, '$date', $seat)"
-                $updateDB = Invoke-Sqlcmd -Username "$AdminUserName@$AzureSqlServerName" -Password "$AdminPassword" -ServerInstance "$AzureSqlServerName.database.windows.net" -Database $AzureSqlDatabaseName -Query $command -QueryTimeout 0 -SuppressProviderContextWarning
-            }
+                $seatArray = @(Section208)
+                foreach($seat in $seatArray)
+                {
+                    $name = "Ticket for user admin to concert-$concert"
+                    [int]$ticketLevel = $ticketLevelID[9]
+                    $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber]) Values ($customerID, '$name', $ticketLevel, $concert, '$date', $seat)"
+                    $updateDB = Invoke-Sqlcmd -Username "$AdminUserName@$AzureSqlServerName" -Password "$AdminPassword" -ServerInstance "$AzureSqlServerName.database.windows.net" -Database $AzureSqlDatabaseName -Query $command -QueryTimeout 0 -SuppressProviderContextWarning
+                }
+            
         }
     }
 }
