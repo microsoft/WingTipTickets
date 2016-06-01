@@ -4,8 +4,8 @@
 
 @font-face {
 	font-family: 'Conv_segoeuil';
-	src: url('../fonts/segoeuil.eot');
-	src: local('☺'), url('../fonts/segoeuil.woff') format('woff'), url('../fonts/segoeuil.ttf') format('truetype'), url('../fonts/segoeuil.svg') format('svg');
+	src: url('../../Content/fonts/segoeuil.eot');
+	src: local('☺'), url('../../Content/fonts/segoeuil.woff') format('woff'), url('../../Content/fonts/segoeuil.ttf') format('truetype'), url('../../Content/fonts/segoeuil.svg') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -23,16 +23,6 @@ body
     font-weight: normal;
     line-height: 30px;
     overflow-x: hidden;
-}
-
-iframe 
-{
-    margin: 0;
-    padding: 0;
-    border-style: none;
-    /*border-width: 1px;
-    border-color: grey;*/
-    /*border-radius: 5px;*/
 }
 
 header 
@@ -324,7 +314,7 @@ legend {
 /* ========================================================================================== */
 
 .btn-search {
-	background: url(../Img/Pop/search.png) no-repeat center center;
+	background: url(../../Content/Img/Pop/search.png) no-repeat center center;
 	height: 50px;
 	width: 50px;
 	padding: 2px;
