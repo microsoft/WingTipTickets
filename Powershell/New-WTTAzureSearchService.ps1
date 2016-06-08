@@ -125,8 +125,31 @@ function New-WTTAzureSearchService
 			}
             
             WriteLabel("Deploying Azure Search Service $wttEnvironmentApplicationName")
-            $searchServiceSku = Find-AzureRmResource -ResourceType Microsoft.Search/searchServices -ExpandProperties
-            if($searchServiceSku.sku.name -ne "free")
+            $searchServiceSku = @((Find-AzureRmResource -ResourceType Microsoft.Search/searchServices -ExpandProperties).sku.name)
+            if($searchServiceSku -like "free")
+            {
+                foreach($searchLocation in $listSearchServicesLocation)
+                {  
+                    try
+                    {
+                        $newSearchService = New-AzureRmResourceGroupDeployment -ResourceGroupName $azureResourceGroupName -TemplateUri "https://gallery.azure.com/artifact/20151001/Microsoft.Search.1.0.9/DeploymentTemplates/searchServiceDefaultTemplate.json" -nameFromTemplate $wttEnvironmentApplicationName -sku basic -location $AzureSearchServiceLocation -partitionCount 1 -replicaCount 1
+                        $newSearchServiceExists = (Find-AzureRmResource -ResourceType "Microsoft.Search" -ResourceNameContains $wttEnvironmentApplicationName -ExpandProperties).properties.state
+                        $newSearchServiceExistsnow = $false
+                        if($newSearchServiceExists -eq "Ready")
+                        {
+                            $newSearchServiceExistsnow = $true
+                            WriteValue("Success")
+                        }                 
+                    }
+                    catch
+                    {
+                        $ErrorActionPreference = "Continue"
+                    }
+                }  
+            }
+            
+
+            else
             {
                 foreach($searchLocation in $listSearchServicesLocation)
                 {  
@@ -146,28 +169,6 @@ function New-WTTAzureSearchService
                         $ErrorActionPreference = "Continue"
                     }
                 }
-            }
-
-            else
-            {
-                foreach($searchLocation in $listSearchServicesLocation)
-                {  
-                    try
-                    {
-                        $newSearchService = New-AzureRmResourceGroupDeployment -ResourceGroupName $azureResourceGroupName -TemplateUri "https://gallery.azure.com/artifact/20151001/Microsoft.Search.1.0.9/DeploymentTemplates/searchServiceDefaultTemplate.json" -nameFromTemplate $wttEnvironmentApplicationName -sku standard -location $AzureSearchServiceLocation -partitionCount 1 -replicaCount 1
-                        $newSearchServiceExists = (Find-AzureRmResource -ResourceType "Microsoft.Search" -ResourceNameContains $wttEnvironmentApplicationName -ExpandProperties).properties.state
-                        $newSearchServiceExistsnow = $false
-                        if($newSearchServiceExists -eq "Ready")
-                        {
-                            $newSearchServiceExistsnow = $true
-                            WriteValue("Success")
-                        }                 
-                    }
-                    catch
-                    {
-                        $ErrorActionPreference = "Continue"
-                    }
-                }  
             }
             #Deploy Azure Search Service index
             $azureSubscriptionID = (Get-AzureRmContext).Subscription.SubscriptionId
