@@ -78,6 +78,11 @@ legend {
     padding-top: 15px;
 }
 
+iframe {
+    margin: 0;
+    padding: 0;
+    border-style: none;
+}
 
 /* ========================================================================================== */
 /* BOOTSTRAP ELEMENTS */
