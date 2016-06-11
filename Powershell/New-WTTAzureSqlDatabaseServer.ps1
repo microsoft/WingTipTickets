@@ -14,49 +14,49 @@ function New-WTTAzureSqlDatabaseServer
 		# Azure SQL Database Server Name
 		[Parameter(Mandatory=$true)]
 		[String]
-		$AzureSqlDatabaseServerName,
+		$AzureSqlServerName,
 
 		# Azure SQL Database Server Location
 		[Parameter(Mandatory=$true, HelpMessage="Please specify location for Azure SQL Database Server ('East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast')?")]
 		[ValidateSet('East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast', 'EastUS', 'WestUS', 'SouthCentralUS', 'NorthCentralUS', 'CentralUS', 'EastAsia', 'WestEurope', 'EastUS2', 'JapanEast', 'JapanWest', 'BrazilSouth', 'NorthEurope', 'SoutheastAsia', 'AustraliaEast', 'AustraliaSoutheast')]
 		[String]
-		$AzureSqlDatabaseServerLocation,
+		$AzureSqlServerLocation,
 
 		# Azure SQL Database Server Administrator User Name
 		[Parameter(Mandatory=$true)]
 		[String]
-		$AzureSqlDatabaseServerAdministratorUserName,
+		$AdminUserName,
 
 		# Azure SQL Database Server Administrator Password
 		[Parameter(Mandatory=$true)]
 		[String]
-		$AzureSqlDatabaseServerAdministratorPassword,
+		$AdminPassword,
 
 		# Azure SQL Database Server Version
 		[Parameter(Mandatory=$true, HelpMessage="Please specify the Azure SQL Database Server Version ('2.0', '12.0')?")]
 		[ValidateSet('2.0', '12.0')]
 		[String]
-		$AzureSqlDatabaseServerVersion,
+		$AzureSqlServerVersion,
 
 		# Azure SQL Database Server Resource Group Name
 		[Parameter(Mandatory=$true)]
 		[String]
-		$AzureSqlDatabaseServerResourceGroupName
+		$azureResourceGroupName
 	)
 
 	Process
 	{ 
 		Try 
 		{
-			$azureSqlDatabaseServerResourceGroup = (Find-AzureRMResourceGroup).Name -contains $AzureSqlDatabaseServerResourceGroupName
+			$azureResourceGroup = (Find-AzureRMResourceGroup).Name -contains $azureResourceGroupName
 
-			If($azureSqlDatabaseServerResourceGroup -eq $true)
+			If($azureResourceGroup -eq $true)
 			{
 				# Check if Azure SQL Server Exists ###
 				LineBreak
-				WriteLabel("Checking for SQL Database Server '$AzureSqlDatabaseServerName'")
+				WriteLabel("Checking for SQL Database Server '$AzureSqlServerName'")
 
-				$azureSqlDatabaseServer = Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains $AzureSqlDatabaseServerName -ResourceGroupNameContains $AzureSqlDatabaseServerResourceGroupName
+				$azureSqlDatabaseServer = Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains $AzureSqlServerName -ResourceGroupNameContains $azureResourceGroupName
 
 				If($azureSqlDatabaseServer -ne $null)
 				{
@@ -67,16 +67,16 @@ function New-WTTAzureSqlDatabaseServer
 				{
 					# Create SQL Server
 					WriteValue("Not Found")
-					WriteLabel("Creating SQL Server '$AzureSqlDatabaseServerName'")
+					WriteLabel("Creating SQL Server '$AzureSqlServerName'")
 
-					$sqlAdministratorCredentials = new-object System.Management.Automation.PSCredential($AzureSqlDatabaseServerAdministratorUserName, ($AzureSqlDatabaseServerAdministratorPassword | ConvertTo-SecureString -asPlainText -Force))
+					$sqlAdministratorCredentials = new-object System.Management.Automation.PSCredential($AdminUserName, ($AdminPassword | ConvertTo-SecureString -asPlainText -Force))
 
                     $serverExists = $false
                     Do
                     {
             
-            		    $newAzureSqlDatabaseServer = New-AzureRMSqlServer -ResourceGroupName $AzureSqlDatabaseServerResourceGroupName -ServerName $AzureSqlDatabaseServerName -Location $AzureSqlDatabaseServerLocation -ServerVersion $AzureSqlDatabaseServerVersion –SqlAdministratorCredentials $sqlAdministratorCredentials -ErrorVariable newAzureSqlDatabaseServerErrors -ErrorAction Stop
-                        If($newAzureSqlDatabaseServer.ServerName -eq $AzureSqlDatabaseServerName) 
+            		    $newAzureSqlServer = New-AzureRMSqlServer -ResourceGroupName $azureResourceGroupName -ServerName $AzureSqlServerName -Location $AzureSqlServerLocation -ServerVersion $AzureSqlServerVersion –SqlAdministratorCredentials $sqlAdministratorCredentials -ErrorVariable newAzureSqlDatabaseServerErrors -ErrorAction Stop
+                        If($newAzureSqlServer.ServerName -eq $AzureSqlServerName) 
                         {
                             $serverExists = $true
                         }
@@ -87,28 +87,39 @@ function New-WTTAzureSqlDatabaseServer
 
                     }While($serverExists = $false)
                     
-					If($newAzureSqlDatabaseServer.ServerName -eq $AzureSqlDatabaseServerName) 
-					{
-						WriteValue("Successful")
-						WriteLabel("Adding firewall rule to allow access from all IP Addresses")
-						$newAzureSqlFirewallRule1 = New-AzureRMSqlServerFirewallRule -FirewallRuleName AllOpen -StartIPAddress 0.0.0.0 -EndIPAddress 255.255.255.255 -ServerName $AzureSqlDatabaseServerName -ResourceGroup $AzureSqlDatabaseServerResourceGroupName -WarningVariable newAzureSqlFirewallRule1Errors -WarningAction SilentlyContinue
-						WriteValue("Successful")
+                    Start-Sleep -Seconds 30
 
-						WriteLabel("Adding firewall rule to allow access from all Azure Services")
-						$newAzureSqlFirewallRule2 = New-AzureRMSqlServerFirewallRule -AllowAllAzureIPs -ServerName $AzureSqlDatabaseServerName -ResourceGroup $AzureSqlDatabaseServerResourceGroupName -WarningVariable newAzureSqlFirewallRule2Errors -WarningAction SilentlyContinue
-						WriteValue("Successful")
+                    $firewallExists = $false
+                    Do
+                    {
+					    If($newAzureSqlServer.ServerName -eq $AzureSqlServerName) 
+					    {
+                            $azureSQLServerFirewallSet = Get-AzureRmSqlServerFirewallRule -ResourceGroupName $azureResourceGroupName -ServerName $AzureSqlServerName -ErrorAction SilentlyContinue -ErrorVariable getAzureRMSqlServerFirewallRule
+                            if(!$azureSQLServerFirewallSet)
+                            {
+						        WriteValue("Successful")
+						        WriteLabel("Adding firewall rule to allow access from all IP Addresses")
+						        $newAzureSqlFirewallRule1 = New-AzureRMSqlServerFirewallRule -FirewallRuleName AllOpen -StartIPAddress 0.0.0.0 -EndIPAddress 255.255.255.255 -ServerName $AzureSqlServerName -ResourceGroup $azureResourceGroupName -WarningVariable newAzureSqlFirewallRule1Errors -WarningAction SilentlyContinue -ErrorAction SilentlyContinue
+						        WriteValue("Successful")
 
-					}
-					else
-					{
-						WriteValue("Unsuccessful")
-					}
-
+						        WriteLabel("Adding firewall rule to allow access from all Azure Services")
+						        $newAzureSqlFirewallRule2 = New-AzureRMSqlServerFirewallRule -AllowAllAzureIPs -ServerName $AzureSqlServerName -ResourceGroup $azureResourceGroupName -WarningVariable newAzureSqlFirewallRule2Errors -WarningAction SilentlyContinue -ErrorAction SilentlyContinue
+						        WriteValue("Successful")
+                                $firewallExists = $true
+                            }
+					    }
+					    else
+					    {
+						    WriteValue("Unsuccessful")
+                            $firewallExists = $false
+                            Start-Sleep -Seconds 20
+					    }
+                    }until($firewallExists -eq $true)
 				}
 			}
 			else
 			{
-				Write-Host "### Azure Resource Group '$AzureSqlDatabaseServerResourceGroupName' does not exist.  Please run New-WTTAzureResourceGroup.ps1 first. ###" -foregroundcolor "yellow"
+				WriteError("Azure Resource Group '$azureResourceGroupName' does not exist.  Please run New-WTTAzureResourceGroup.ps1 first.")
 			}
 		}
 		Catch

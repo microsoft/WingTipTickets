@@ -15,6 +15,11 @@ function Set-WTTEnvironmentWebConfig
 		[Parameter(Mandatory=$true)]
 		[String]
 		$WTTEnvironmentApplicationName,
+		
+        # Azure Resource Group Name
+        [Parameter(Mandatory=$true)]
+		[String]
+        $azureResourceGroupName,
 
 		# WTT Environment Application Name
 		[Parameter(Mandatory=$true)]
@@ -24,22 +29,22 @@ function Set-WTTEnvironmentWebConfig
 		# Primary Azure SQL Database Server Name
 		[Parameter(Mandatory=$false)]
 		[String]
-		$AzureSqlDatabaseServerPrimaryName,
+		$AzureSqlServerPrimaryName,
 
 		# Secondary Azure SQL Database Server Name
 		[Parameter(Mandatory=$false)]
 		[String]
-		$AzureSqlDatabaseServerSecondaryName,
+		$AzureSqlServerSecondaryName,
 
 		# Azure SQL Database Server Administrator User Name
 		[Parameter(Mandatory=$false)]
 		[String]
-		$AzureSqlDatabaseServerAdministratorUserName,
+		$AdminUserName,
 
 		# Azure SQL Database Server Adminstrator Password
 		[Parameter(Mandatory=$false)]
 		[String]
-		$AzureSqlDatabaseServerAdministratorPassword,
+		$AdminPassword,
 
 		# Azure SQL Database Name
 		[Parameter(Mandatory=$false)]
@@ -86,14 +91,14 @@ function Set-WTTEnvironmentWebConfig
 			WriteLabel("Setting Config Settings")
 
 			# Check Defaults
-			if($AzureSqlDatabaseServerAdministratorUserName -eq "")
+			if($AdminUserName -eq "")
 			{
-				$AzureSqlDatabaseServerAdministratorUserName = "developer"
+				$AdminUserName = "developer"
 			}
 
-			if($AzureSqlDatabaseServerAdministratorPassword -eq "")
+			if($AdminPassword -eq "")
 			{
-				$AzureSqlDatabaseServerAdministratorPassword = "P@ssword1"
+				$AdminPassword = "P@ssword1"
 			}
 
 			if($AzureSqlDatabaseName -eq "")
@@ -110,17 +115,17 @@ function Set-WTTEnvironmentWebConfig
 					# Tenant Settings
 					"TenantName" = "$WTTEnvironmentApplicationName"; 
 					"TenantEventType" = "pop"; # This is not set from main script, used the default
-					"TenantPrimaryDatabaseServer" = "$AzureSqlDatabaseServerPrimaryName"; 
-					"TenantSecondaryDatabaseServer" = "$AzureSqlDatabaseServerSecondaryName";
+					"TenantPrimaryDatabaseServer" = "$AzureSqlServerPrimaryName"; 
+					"TenantSecondaryDatabaseServer" = "$AzureSqlServerSecondaryName";
 					"TenantDatabase" = "$AzureSqlDatabaseName"; 
 
 					# Recommendation Setings
-					"RecommendationDatabaseServer" = "$AzureSqlDatabaseServerPrimaryName";
+					"RecommendationDatabaseServer" = "$AzureSqlServerPrimaryName";
 					"RecommendationDatabase" = "Recommendations";
 
 					# Shared Settings
-					"DatabaseUser" = "$AzureSqlDatabaseServerAdministratorUserName"; 
-					"DatabasePassword" = "$AzureSqlDatabaseServerAdministratorPassword"; 
+					"DatabaseUser" = "$AdminUserName"; 
+					"DatabasePassword" = "$AdminPassword"; 
 					"AuditingEnabled" = "false" # This is not set from main script, used the default
 					"RunningInDev" = "false";
 
@@ -138,9 +143,9 @@ function Set-WTTEnvironmentWebConfig
 			}
 
 			# Add the settings to the website
-			$null = Set-AzureRMWebApp -AppSettings $settings -Name $websiteName -ResourceGroupName $WTTEnvironmentApplicationName
+			$null = Set-AzureRMWebApp -AppSettings $settings -Name $websiteName -ResourceGroupName $azureResourceGroupName
 
-			$null = Restart-AzureRMWebApp -Name $websiteName -ResourceGroupName $WTTEnvironmentApplicationName
+			$null = Restart-AzureRMWebApp -Name $websiteName -ResourceGroupName $azureResourceGroupName
 			
 			WriteValue("Successful")
 		}

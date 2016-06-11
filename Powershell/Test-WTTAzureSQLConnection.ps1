@@ -34,35 +34,36 @@ Function Test-WTTAzureSQLConnection
     [CmdletBinding()]
 	Param
 	(   
-   		# WTT Environment Application Name
-		[Parameter(Mandatory=$false)]
+
+   		# Resource Group Name
+		[Parameter(Mandatory=$true)]
 		[String]
-		$WTTEnvironmentApplicationName,
+        $azureResourceGroupName,
 
 		# Azure SQL server name for connection.
 		[Parameter(Mandatory=$true)]
 		[String]
-		$ServerName,
+		$AzureSqlServerName,
 
 		# Azure SQL db user name for connection.
 		[Parameter(Mandatory=$true)]
 		[String]
-		$UserName,
+		$AdminUserName,
 
 		# Azure SQL db password for connection.
 		[Parameter(Mandatory=$true)]
 		[String]
-		$Password,
+		$AdminPassword,
 
 		# Azure SQL Database name.
 		[Parameter(Mandatory=$true)]
 		[String]        
-		$DatabaseName
+		$AzureSqlDatabaseName
 	)
 
-    $azureSqlDatabase = Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains $ServerName -ResourceGroupNameContains $WTTEnvironmentApplicationName
+    $azureSqlDatabase = Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains $AzureSqlServerName -ResourceGroupNameContains $azureResourceGroupName
 
-    if($azureSqlDatabase.Name -like $ServerName)
+    if($azureSqlDatabase.Name -like $AzureSqlServerName)
     {
         $Stoploop = $false
         [int]$Retrycount = "0"
@@ -71,7 +72,7 @@ Function Test-WTTAzureSQLConnection
 	        try 
             {
 		        $sql = $azureSqlDatabase.Name
-                $ConnectionString = "Server=tcp:$sql.database.windows.net; Database=$DatabaseName; User ID=$UserName; Password=$Password; Trusted_Connection=False; Encrypt=True;"
+                $ConnectionString = "Server=tcp:$sql.database.windows.net; Database=$AzureSqlDatabaseName; User ID=$AdminUserName; Password=$AdminPassword; Trusted_Connection=False; Encrypt=True;"
                 $sqlConn = new-object ("Data.SqlClient.SqlConnection") $connectionString
                 $sqlConn.Open()
                     if ($sqlConn.State -eq 'Open')
@@ -94,6 +95,7 @@ Function Test-WTTAzureSQLConnection
                     Return "Error"
 		        }
 	        }
+            Start-Sleep -Seconds 20
         }
         While ($Stoploop -eq $false)
     }
