@@ -32,7 +32,7 @@ function New-WTTAzureDocumentDb
 		WriteLabel("Creating DocumentDB")
 
 		#Register DocumentDB provider service
-		$status = Get-AzureRmResourceProvider -ProviderNamespace Microsoft.DocumentDb
+		$status = (Get-AzureRmResourceProvider -ProviderNamespace Microsoft.DocumentDb).RegistrationState
 		if ($status -ne "Registered")
 		{
 			Register-AzureRmResourceProvider -ProviderNamespace Microsoft.DocumentDb -Force
