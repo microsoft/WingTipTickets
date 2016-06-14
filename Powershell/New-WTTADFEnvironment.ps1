@@ -125,7 +125,6 @@ function GetStorageAccountKey()
     {
         WriteError("Storage Account does not exist")
     }
-
 	return $storageAccountKey
 }
 
