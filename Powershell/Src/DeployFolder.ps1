@@ -6,9 +6,8 @@
 param(
     [Parameter(Mandatory=$true)][string]$JsonFilesFolder,
     [Parameter(Mandatory=$false)][string]$SubscriptionName="Current",
-    [Parameter(Mandatory=$false)][string]$ResourceGroupName="ADF",
+    [Parameter(Mandatory=$false)][string]$ResourceGroupName,
     [Parameter(Mandatory=$true)][string]$DataFactoryName,
-    [Parameter(Mandatory=$false)][string]$Location="WestUS",
     [Parameter(Mandatory=$false)][string]$StartTime,
     [Parameter(Mandatory=$false)][string]$EndTime
 )
@@ -51,9 +50,6 @@ if($files.Count -eq 0)
 }
 WriteValue("Successful")
 
-#Write-Host "Creating Data Factory (update if exists)..."  -ForegroundColor Green
-#New-AzureDataFactory -ResourceGroupName $ResourceGroupName -Name $DataFactoryName -Location $Location -Force -ErrorAction Stop
-
 WriteLabel("Creating ADF LinkedServices...")
 $files2 = @()
 
@@ -69,7 +65,7 @@ foreach($file in $files)
             Throw "Json file not valid, please double check using a validator on file: $file"
     }
 
-    New-AzureRmDataFactoryLinkedService -DataFactory $df -File $file.FullName  -Force 2>&1 3>&1 4>&1 1>>adfdeploy-log.txt
+    New-AzureRmDataFactoryLinkedService -DataFactory $df -File $file.FullName -Force 2>&1 3>&1 4>&1 1>>adfdeploy-log.txt
     
     Start-Sleep -Seconds 60
 }

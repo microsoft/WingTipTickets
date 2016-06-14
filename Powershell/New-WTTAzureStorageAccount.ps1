@@ -13,7 +13,8 @@ function New-WTTAzureStorageAccount
 	(
 		# Azure Resource Group Name
 		[Parameter(Mandatory=$true)]
-		[String] $AzureStorageAccountResourceGroupName,
+		[String]
+		$AzureResourceGroupName,
 
 		# Azure Storage Account Name
 		[Parameter(Mandatory=$true)]
@@ -36,13 +37,13 @@ function New-WTTAzureStorageAccount
 			# Check if Azure Storage Account Exists
 			LineBreak
 			WriteLabel("Checking for Storage Account '$AzureStorageAccountName'")
-			$azureStorageAccount = Find-AzureRmResource -ResourceType "Microsoft.Storage/storageaccounts" -ResourceNameContains $AzureStorageAccountName -ResourceGroupNameContains $AzureStorageAccountResourceGroupName
+			$azureStorageAccount = Find-AzureRmResource -ResourceType "Microsoft.Storage/storageaccounts" -ResourceNameContains $AzureStorageAccountName -ResourceGroupNameContains $AzureResourceGroupName
 
 			if($azureStorageAccount -eq $null)
 			{                
 				WriteValue("Not Found")
 				WriteLabel("Creating Storage Account '$AzureStorageAccountName'")
-				$newAzureStorageAccount = New-AzureRMStorageAccount -ResourceGroupName $AzureStorageAccountResourceGroupName -Name $AzureStorageAccountName -Type $AzureStorageAccountType -Location $AzureStorageLocation
+				$newAzureStorageAccount = New-AzureRMStorageAccount -ResourceGroupName $AzureResourceGroupName -Name $AzureStorageAccountName -Type $AzureStorageAccountType -Location $AzureStorageLocation
 
 				if($newAzureStorageAccount.Count -gt 0)
 				{
