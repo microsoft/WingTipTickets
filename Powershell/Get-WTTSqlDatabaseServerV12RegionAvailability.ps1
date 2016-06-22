@@ -75,6 +75,8 @@ function Get-WTTSqlDatabaseServerV12RegionAvailability()
 						'EastAsia' {'EastAsia'}
 						'JapanEast' {'Japan East'}
 						'JapanWest' {'Japan West'}
+                        'CanadaCentral' {'Canada Central'}
+                        'CanadaEast' {'Canada East'}
 					}
 
 					$wTTEnvironmentSecondServerLocation = 
@@ -93,6 +95,8 @@ function Get-WTTSqlDatabaseServerV12RegionAvailability()
 						'EastAsia' {'EastAsia'}
 						'JapanEast' {'Japan East'}
 						'JapanWest' {'Japan West'}
+                        'CanadaCentral' {'Canada Central'}
+                        'CanadaEast' {'Canada East'}
 					}
 
 					return $wTTEnvironmentPriServerLocation, $wTTEnvironmentSecondServerLocation
