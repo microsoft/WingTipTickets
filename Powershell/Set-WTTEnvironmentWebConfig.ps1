@@ -41,11 +41,16 @@ function Set-WTTEnvironmentWebConfig
 		[String]
 		$AzureSqlDatabaseServerAdministratorPassword,
 
-		# Azure SQL Database Name
+		# Azure SQL Database 1 Name
 		[Parameter(Mandatory=$false)]
 		[String]
-		$AzureSqlDatabaseName,
-	
+		$AzureSqlDatabase1Name,
+
+		# Azure SQL Database 2 Name
+		[Parameter(Mandatory=$false)]
+		[String]
+		$AzureSqlDatabase2Name,
+
 		# Azure Search Service Name
 		[Parameter(Mandatory = $true)] 
 		[String]$SearchName,
@@ -96,9 +101,14 @@ function Set-WTTEnvironmentWebConfig
 				$AzureSqlDatabaseServerAdministratorPassword = "P@ssword1"
 			}
 
-			if($AzureSqlDatabaseName -eq "")
+			if($AzureSqlDatabase1Name -eq "")
 			{
-				$AzureSqlDatabaseName = "Customer1"
+				$AzureSqlDatabase1Name = "Customer1"
+			}
+
+			if($AzureSqlDatabase2Name -eq "")
+			{
+				$AzureSqlDatabase2Name = "Customer2"
 			}
 
 			$docDBName = "https://$azureDocumentDbName.documents.azure.com:443/"
@@ -112,7 +122,8 @@ function Set-WTTEnvironmentWebConfig
 					"TenantEventType" = "pop"; # This is not set from main script, used the default
 					"TenantPrimaryDatabaseServer" = "$AzureSqlDatabaseServerPrimaryName"; 
 					"TenantSecondaryDatabaseServer" = "$AzureSqlDatabaseServerSecondaryName";
-					"TenantDatabase" = "$AzureSqlDatabaseName"; 
+					"TenantDatabase1" = "$AzureSqlDatabase1Name"; 
+					"TenantDatabase2" = "$AzureSqlDatabase2Name"; 
 
 					# Recommendation Setings
 					"RecommendationDatabaseServer" = "$AzureSqlDatabaseServerPrimaryName";

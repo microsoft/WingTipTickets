@@ -21,7 +21,7 @@ namespace Tenant.Mvc.Core.Repositories.Tenant
 
         public FindSeatsViewModel GetFindSeatsData(int concertId)
         {
-            using (var context = new WingTipTicketsEntities(WingtipTicketApp.GetTenantConnectionString()))
+            using (var context = new WingTipTicketsEntities(WingtipTicketApp.GetTenantConnectionString(WingtipTicketApp.Config.TenantDatabase1)))
             {
                 var concert = context.Concerts.First(c => c.ConcertId == concertId);
                 var venue = context.Venues.First(v => v.VenueId == concert.VenueId);
@@ -55,7 +55,7 @@ namespace Tenant.Mvc.Core.Repositories.Tenant
 
         public List<SeatSectionLayoutViewModel> GetSeatSectionLayout(int concertId, int ticketLevelId)
         {
-            using (var context = new WingTipTicketsEntities(WingtipTicketApp.GetTenantConnectionString()))
+            using (var context = new WingTipTicketsEntities(WingtipTicketApp.GetTenantConnectionString(WingtipTicketApp.Config.TenantDatabase1)))
             {
                 var ticketLevel = context.TicketLevels.First(t => t.TicketLevelId == ticketLevelId);
 

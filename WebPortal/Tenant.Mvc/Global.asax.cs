@@ -18,7 +18,8 @@ namespace WingTipTickets
         public string TenantName { get; set; }
         public string TenantEventType { get; set; }
         public string TenantDatabaseServer { get; set; }
-        public string TenantDatabase { get; set; }
+        public string TenantDatabase1 { get; set; }
+        public string TenantDatabase2 { get; set; }
 
         // Recommendation Settings
         public string RecommendationDatabaseServer { get; set; }
@@ -63,7 +64,7 @@ namespace WingTipTickets
 
         #endregion
 
-        #region - Public Methods -
+        #region - Initialization Methods -
 
         public static bool InitializeConfig()
         {
@@ -78,23 +79,30 @@ namespace WingTipTickets
             SearchIndexClient = searchServiceClient.Indexes.GetClient("concerts");
         }
 
-        public static string GetTenantConnectionString()
+        #endregion
+
+        #region - Connection Methods -
+
+        public static string GetTenantConnectionString(string database)
         {
-            return Config.RunningInDev
-                ? ConfigurationManager.ConnectionStrings["tenantConnection"].ConnectionString
-                : BuildConnectionString(Config.TenantDatabaseServer, Config.TenantDatabase, Config.DatabaseUser, Config.DatabasePassword);
+            var connectionString = BuildConnectionString(Config.TenantDatabaseServer, database, Config.DatabaseUser, Config.DatabasePassword, Config.RunningInDev);
+
+            return connectionString;
         }
 
         public static string GetRecommendationConnectionString()
         {
-            return Config.RunningInDev
-                ? ConfigurationManager.ConnectionStrings["recommendationConnection"].ConnectionString
-                : BuildConnectionString(Config.RecommendationDatabaseServer, Config.RecommendationDatabase, Config.DatabaseUser, Config.DatabasePassword);
+            return BuildConnectionString(Config.RecommendationDatabaseServer, Config.RecommendationDatabase, Config.DatabaseUser, Config.DatabasePassword, Config.RunningInDev);
         }
 
-        public static SqlConnection CreateTenantSqlConnection()
+        public static SqlConnection CreateTenantConnectionDatabase1()
         {
-            return new SqlConnection(GetTenantConnectionString());
+            return new SqlConnection(GetTenantConnectionString(Config.TenantDatabase1));
+        }
+
+        public static SqlConnection CreateTenantConnectionDatabase2()
+        {
+            return new SqlConnection(GetTenantConnectionString(Config.TenantDatabase2));
         }
 
         public static SqlConnection CreateRecommendationSqlConnection()
@@ -106,12 +114,18 @@ namespace WingTipTickets
 
         #region - Private Methods -
 
-        private static string BuildConnectionString(string databaseServer, string database, string username, string password)
+        private static string BuildConnectionString(string databaseServer, string database, string username, string password, bool runningInDev)
         {
             var server = databaseServer.Split('.');
 
+            if (runningInDev)
+            {
+                return String.Format("Server={0};Database={1};User ID={2};Password={3};Connection Timeout=30;",
+                                     server[0], database, username, password);
+            }
+            
             return String.Format("Server=tcp:{0},1433;Database={1};User ID={2}@{3};Password={4};Trusted_Connection=False;Encrypt=True;Connection Timeout=30;",
-                databaseServer, database, username, server[0], password);
+                                     databaseServer, database, username, server[0], password);
         }
 
         private static AppConfig ReadAppConfig()
@@ -124,7 +138,8 @@ namespace WingTipTickets
                 TenantName = ConfigurationManager.AppSettings["TenantName"].Trim(),
                 TenantEventType = ConfigurationManager.AppSettings["TenantEventType"].Trim(), 
                 TenantDatabaseServer = ConfigurationManager.AppSettings["TenantPrimaryDatabaseServer"].Trim(),
-                TenantDatabase = ConfigurationManager.AppSettings["TenantDatabase"].Trim(),
+                TenantDatabase1 = ConfigurationManager.AppSettings["TenantDatabase1"].Trim(),
+                TenantDatabase2 = ConfigurationManager.AppSettings["TenantDatabase2"].Trim(),
 
                 RecommendationDatabaseServer = ConfigurationManager.AppSettings["RecommendationDatabaseServer"].Trim(),
                 RecommendationDatabase = ConfigurationManager.AppSettings["RecommendationDatabase"].Trim(),

@@ -18,7 +18,7 @@ namespace Tenant.Mvc.Core.Repositories.Tenant
 
         public string GetApplicationDefault(string code)
         {
-            using (var context = new WingTipTicketsEntities(WingtipTicketApp.GetTenantConnectionString()))
+            using (var context = new WingTipTicketsEntities(WingtipTicketApp.GetTenantConnectionString(WingtipTicketApp.Config.TenantDatabase1)))
             {
                 return context.ApplicationDefaults.First(a => a.Code.Equals(code)).Value;
             }
@@ -26,7 +26,7 @@ namespace Tenant.Mvc.Core.Repositories.Tenant
 
         public void SetApplicationDefault(string code, string value)
         {
-            using (var context = new WingTipTicketsEntities(WingtipTicketApp.GetTenantConnectionString()))
+            using (var context = new WingTipTicketsEntities(WingtipTicketApp.GetTenantConnectionString(WingtipTicketApp.Config.TenantDatabase1)))
             {
                 var setting = context.ApplicationDefaults.First(a => a.Code.Equals(code));
                 setting.Value = value;
