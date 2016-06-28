@@ -19,7 +19,7 @@ function New-WTTAzureTrafficManagerProfile
 		# Azure Resource Group Name
 		[Parameter(Mandatory=$true)]
 		[String]
-		$AzureTrafficManagerResourceGroupName
+		$AzureResourceGroupName
 	)
 
 	Process
@@ -40,7 +40,7 @@ function New-WTTAzureTrafficManagerProfile
 			# Check if Azure Traffic Manager Domain Name is Available
 			LineBreak
 			WriteLabel("Checking for Azure Traffic Manager '$AzureTrafficManagerDomainName'")
-			$azureTrafficManager = Find-AzureRmResource -ResourceType "Microsoft.Network/trafficmanagerprofiles" -ResourceNameContains $AzureTrafficManagerProfileName -ResourceGroupNameContains $AzureTrafficManagerResourceGroupName
+			$azureTrafficManager = Find-AzureRmResource -ResourceType "Microsoft.Network/trafficmanagerprofiles" -ResourceNameContains $AzureTrafficManagerProfileName -ResourceGroupNameContains $AzureResourceGroupName
 
 			if($azureTrafficManager -eq $null)
 			{
@@ -49,7 +49,7 @@ function New-WTTAzureTrafficManagerProfile
 				# Create Traffic Manage Profile
 				WriteLabel("Creating Traffic Manager Profile '$AzureTrafficManagerDomainName'")
 				#$newAzureTrafficManagerDomain = New-AzureTrafficManagerProfile -Name $azureTrafficManagerProfileName -DomainName $AzureTrafficManagerDomainName -LoadBalancingMethod Failover -MonitorPort 80 -MonitorProtocol Http -MonitorRelativePath "/" -Ttl 30
-				$newAzureTrafficManagerDomain = New-AzureRMTrafficManagerProfile -Name $AzureTrafficManagerProfileName -ResourceGroupName $AzureTrafficManagerResourceGroupName -RelativeDnsName $AzureTrafficManagerDomainName -TrafficRoutingMethod Weighted -MonitorPort 80 -MonitorProtocol HTTP -MonitorPath "/" -Ttl 30
+				$newAzureTrafficManagerDomain = New-AzureRMTrafficManagerProfile -Name $AzureTrafficManagerProfileName -ResourceGroupName $AzureResourceGroupName -RelativeDnsName $AzureTrafficManagerDomainName -TrafficRoutingMethod Weighted -MonitorPort 80 -MonitorProtocol HTTP -MonitorPath "/" -Ttl 30
 
 				if($newAzureTrafficManagerDomain.ProfileStatus -eq "Enabled")
 				{

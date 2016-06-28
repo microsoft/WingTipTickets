@@ -11,35 +11,30 @@ function Add-WTTAzureTrafficManagerEndpoint
 	[CmdletBinding()]
 	Param
 	(
-		# WTT Environment Application Name
+		# Azure Resource Group Name
 		[Parameter(Mandatory=$true)]
 		[String]
-		$WTTEnvironmentApplicationName,
+		$AzureResourceGroupName,
 
 		# Azure Traffic Manager Profile Name
 		[Parameter(Mandatory=$true)]
 		[String]
-		$AzureTrafficManagerProfileName,
+		$azureTrafficManagerProfileName,
 
 		# Primary WebSite Name
 		[Parameter(Mandatory=$true)]
 		[String]
-		$AzurePrimaryWebSiteName,
+		$azurePrimaryWebAppName,
 
 		# Secondary WebSite Name
 		[Parameter(Mandatory=$true)]
 		[String]
-		$AzureSecondaryWebSiteName,
+		$azureSecondaryWebAppName,
 
 		# Azure Traffic Manager Endpoint Status
 		[Parameter(Mandatory=$false)]
 		[String]
-		$AzureTrafficManagerEndpointStatus,
-
-		# Azure Resource Group
-		[Parameter(Mandatory=$false)]
-		[String]
-		$AzureTrafficManagerResourceGroupName
+		$azureTrafficManagerEndpointStatus
 	)
 
 	Process
@@ -48,10 +43,10 @@ function Add-WTTAzureTrafficManagerEndpoint
 		$AzureTrafficManagerDomainName = $AzureTrafficManagerProfileName + ".trafficmanager.net"
 
 		# Build the Primary Website Profile
-		$AzurePrimaryWebSiteDomainName = $AzurePrimaryWebSiteName + ".azurewebsites.net"
+		$AzurePrimaryWebSiteDomainName = $azurePrimaryWebAppName + ".azurewebsites.net"
 		
 		# Build the Secondary Website Profile
-		$AzureSecondaryWebSiteDomainName = $AzureSecondaryWebSiteName + ".azurewebsites.net"
+		$AzureSecondaryWebSiteDomainName = $azureSecondaryWebAppName + ".azurewebsites.net"
 
 		# Set Defaults
 		if($AzureTrafficManagerEndpointStatus -eq "")
@@ -62,31 +57,31 @@ function Add-WTTAzureTrafficManagerEndpoint
 		Try 
 		{
 			# Check if Traffic Manager Exists
-			$AzureTrafficManager = Find-AzureRmResource -ResourceType "Microsoft.Network/trafficmanagerprofiles" -ResourceNameContains $AzureTrafficManagerProfileName -ResourceGroupNameContains $AzureTrafficManagerResourceGroupName
+			$AzureTrafficManager = Find-AzureRmResource -ResourceType "Microsoft.Network/trafficmanagerprofiles" -ResourceNameContains $AzureTrafficManagerProfileName -ResourceGroupNameContains $AzureResourceGroupName
 
 			if(!$AzureTrafficManager -ne $null)
 			{
 				# Retrieve Traffic Manager Profile
-				$AzureTrafficManagerProfile = Get-AzureRmTrafficManagerProfile -ResourceGroupName $WTTEnvironmentApplicationName -Name $AzureTrafficManagerProfileName
+				$AzureTrafficManagerProfile = Get-AzureRmTrafficManagerProfile -ResourceGroupName $AzureResourceGroupName -Name $AzureTrafficManagerProfileName
 
 				# Check if Website Exists
-				$AzureWebSite = Find-AzureRmResource -ResourceType "Microsoft.Web/sites" -ResourceNameContains $AzurePrimaryWebSiteName -ResourceGroupNameContains $AzureTrafficManagerResourceGroupName -Verbose:$false
+				$AzureWebSite = Find-AzureRmResource -ResourceType "Microsoft.Web/sites" -ResourceNameContains $azurePrimaryWebAppName -ResourceGroupNameContains $AzureResourceGroupName -Verbose:$false
 
 				if($AzureWebSite -ne $null)
 				{
 					WriteLabel("Checking for '$AzurePrimaryWebSiteDomainName' endpoint")
-					$AzureTrafficManagerProfileEndpoints = (Get-AzureRmTrafficManagerProfile -ResourceGroupName $WTTEnvironmentApplicationName -Name $AzureTrafficManagerProfileName).Endpoints
+					$AzureTrafficManagerProfileEndpoints = (Get-AzureRmTrafficManagerProfile -ResourceGroupName $AzureResourceGroupName -Name $AzureTrafficManagerProfileName).Endpoints
 
 					if ($AzureTrafficManagerProfileEndpoints.Target -notcontains $AzurePrimaryWebSiteDomainName)
 					{
 						WriteValue("Not Found")
 						
 						# Retrieve Web Application
-						$TargetResourceID = (Get-AzureRMWebApp -Name $AzurePrimaryWebSiteName).id
+						$TargetResourceID = (Get-AzureRMWebApp -Name $azurePrimaryWebAppName).id
 
 						# Add Endpoint
 						WriteLabel("Adding '$AzurePrimaryWebSiteDomainName' to Traffic Manager Profile")
-						$newAzureTrafficManagerEndpoint = Add-AzureRmTrafficManagerEndpointConfig -TrafficManagerProfile $AzureTrafficManagerProfile -TargetResourceID $TargetResourceID -EndpointName $AzurePrimaryWebSiteName -EndpointStatus $azureTrafficManagerEndpointStatus -Type AzureEndpoints -priority 1
+						$newAzureTrafficManagerEndpoint = Add-AzureRmTrafficManagerEndpointConfig -TrafficManagerProfile $AzureTrafficManagerProfile -TargetResourceID $TargetResourceID -EndpointName $azurePrimaryWebAppName -EndpointStatus $azureTrafficManagerEndpointStatus -Type AzureEndpoints -priority 1
 						WriteValue("Successful")
 					}
 					else
@@ -100,23 +95,23 @@ function Add-WTTAzureTrafficManagerEndpoint
 				}
 				
 				# Check if Website Exists
-				$AzureWebSite = Find-AzureRmResource -ResourceType "Microsoft.Web/sites" -ResourceNameContains $AzureSecondaryWebSiteName -ResourceGroupNameContains $AzureTrafficManagerResourceGroupName -Verbose:$false
+				$AzureWebSite = Find-AzureRmResource -ResourceType "Microsoft.Web/sites" -ResourceNameContains $azureSecondaryWebAppName -ResourceGroupNameContains $AzureResourceGroupName -Verbose:$false
 
 				if($AzureWebSite -ne $null)
 				{
 					WriteLabel("Checking for '$AzurePrimaryWebSiteDomainName' endpoint")
-					$AzureTrafficManagerProfileEndpoints = (Get-AzureRmTrafficManagerProfile -ResourceGroupName $WTTEnvironmentApplicationName -Name $AzureTrafficManagerProfileName).Endpoints
+					$AzureTrafficManagerProfileEndpoints = (Get-AzureRmTrafficManagerProfile -ResourceGroupName $AzureResourceGroupName -Name $AzureTrafficManagerProfileName).Endpoints
 
 					if ($AzureTrafficManagerProfileEndpoints.Target -notcontains $AzureSecondaryWebSiteDomainName)
 					{
 						WriteValue("Not Found")
 						
 						# Retrieve Web Application
-						$TargetResourceID = (Get-AzureRMWebApp -Name $AzureSecondaryWebSiteName).id
+						$TargetResourceID = (Get-AzureRMWebApp -Name $azureSecondaryWebAppName).id
 
 						# Add Endpoint
 						WriteLabel("Adding '$AzureSecondaryWebSiteDomainName' to Traffic Manager Profile")
-						$newAzureTrafficManagerEndpoint = Add-AzureRmTrafficManagerEndpointConfig -TrafficManagerProfile $AzureTrafficManagerProfile -TargetResourceID $TargetResourceID -EndpointName $AzureSecondaryWebSiteName -EndpointStatus "Disabled" -Type AzureEndpoints -priority 2
+						$newAzureTrafficManagerEndpoint = Add-AzureRmTrafficManagerEndpointConfig -TrafficManagerProfile $AzureTrafficManagerProfile -TargetResourceID $TargetResourceID -EndpointName $azureSecondaryWebAppName -EndpointStatus "Disabled" -Type AzureEndpoints -priority 2
 						WriteValue("Successful")
 					}
 					else

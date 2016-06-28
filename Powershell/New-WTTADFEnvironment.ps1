@@ -19,17 +19,17 @@ function New-WTTADFEnvironment
 		# Resource Group Name
 		[Parameter(Mandatory=$true)]
 		[String]
-		$ResourceGroupName,
+		$azureResourceGroupName,
 
 		# SQL Database Server Name
 		[Parameter(Mandatory=$true)]
 		[String]
-		$DatabaseServerName,
+		$azureSqlServerName,
 
 		# SQL Database name
 		[Parameter(Mandatory=$true)]
 		[String]        
-		$DatabaseName,
+		$azureSQLDatabaseName,
 
 		# SQL database edition
 		[Parameter(Mandatory=$true, HelpMessage="Please specify edition for AzureSQL database ('Basic','Standard', 'Premium')?")]
@@ -40,12 +40,12 @@ function New-WTTADFEnvironment
 		# SQL Database UserName
 		[Parameter(Mandatory=$true)]
 		[String]
-		$DatabaseUserName,
+		$adminUserName,
 
 		# SQL Database Password
 		[Parameter(Mandatory=$true)]
 		[String]
-		$DatabasePassword
+		$adminPassword
 	)
 
 	Process
@@ -53,14 +53,14 @@ function New-WTTADFEnvironment
 		# Check if DataFactory exists
 		LineBreak
 		WriteLabel("Checking for DataFactory '$ApplicationName")
-		$azureDataFactory = Find-AzureRmResource -ResourceType "Microsoft.DataFactory/dataFactories" -ResourceNameContains $ApplicationName -ResourceGroupNameContains $ResourceGroupName
+		$azureDataFactory = Find-AzureRmResource -ResourceType "Microsoft.DataFactory/dataFactories" -ResourceNameContains $ApplicationName -ResourceGroupNameContains $azureResourceGroupName
 
 	    If($azureDataFactory -ne $null)
 	    {
 		    WriteValue("Found")
             RemoveDataFactory
 	    }
-        $azureDataFactory = Find-AzureRmResource -ResourceType "Microsoft.DataFactory/dataFactories" -ResourceNameContains $ApplicationName -ResourceGroupNameContains $ResourceGroupName
+        $azureDataFactory = Find-AzureRmResource -ResourceType "Microsoft.DataFactory/dataFactories" -ResourceNameContains $ApplicationName -ResourceGroupNameContains $azureResourceGroupName
 	    if($azureDataFactory -eq $null)
 	    {
 		    WriteValue("Not Found")
@@ -97,7 +97,7 @@ function New-WTTADFEnvironment
 function RegisterProvider()
 {
 	WriteLabel("Checking for DataFactory Provider")
-	$provider = Find-AzureRmResource -ResourceType "Microsoft.Resources/providers" -ResourceNameContains "DataFactory" -ResourceGroupNameContains $ResourceGroupName
+	$provider = Find-AzureRmResource -ResourceType "Microsoft.Resources/providers" -ResourceNameContains "DataFactory" -ResourceGroupNameContains $azureResourceGroupName
 
 	if ($provider -eq $null)
 	{
@@ -116,16 +116,15 @@ function RegisterProvider()
 function GetStorageAccountKey()
 {
 	# Get Storage Account Primary Key
-    $storageExists = Find-AzureRmResource -ResourceNameContains $ResourceGroupName -ResourceGroupNameContains $ResourceGroupName -ResourceType Microsoft.Storage/storageaccounts
+    $storageExists = Find-AzureRmResource -ResourceNameContains $ApplicationName -ResourceGroupNameContains $azureResourceGroupName -ResourceType Microsoft.Storage/storageaccounts
     if($storageExists)
     {
-	    $storageAccountkey = (Get-AzureRMStorageAccountKey -ResourceGroupName $ResourceGroupName -storageAccountName $ApplicationName).Value[0]
+	    $storageAccountkey = (Get-AzureRMStorageAccountKey -ResourceGroupName $azureResourceGroupName -storageAccountName $ApplicationName).Value[0]
     }
     Else
     {
         WriteError("Storage Account does not exist")
     }
-
 	return $storageAccountKey
 }
 
@@ -163,10 +162,10 @@ function SetupMappingDictionary($StorageAccountKey)
 	$global:dict = @{}
 	$global:dict.Add('<account name>', $ApplicationName)
 	$global:dict.Add('<account key>', $StorageAccountKey)
-	$global:dict.Add('<azuredbname>', $DatabaseServerName)
-	$global:dict.Add('<userid>', $DatabaseUserName)
-	$global:dict.Add('<password>', $DatabasePassword)
-	$global:dict.Add('<dbname>', $DatabaseName)
+	$global:dict.Add('<azuredbname>', $azureSQLServerName)
+	$global:dict.Add('<userid>', $adminUserName)
+	$global:dict.Add('<password>', $adminPassword)
+	$global:dict.Add('<dbname>', $azureSQLDatabaseName)
 
 	$pipelineEndTime = [DateTimeoffset]::UtcNow
 	$pipelineStartTime = $pipelineEndTime.AddDays(-365)
@@ -182,24 +181,24 @@ function CreateDatabase()
         $recommendationExist = $false
         Do
         {
-            $recommendationDB = Get-AzureRmSqlDatabase -DatabaseName $DatabaseName -ServerName $DatabaseServerName -ResourceGroupName $ResourceGroupName -ErrorAction SilentlyContinue
+            $recommendationDB = Get-AzureRmSqlDatabase -DatabaseName $azureSQLDatabaseName -ServerName $azureSQLServerName -ResourceGroupName $azureResourceGroupName -ErrorAction SilentlyContinue
             if(!$recommendationDB)
             {
 		        # Create Database
-		        WriteLabel("Creating database '$DatabaseName'")
-		        $null = New-AzureRMSqlDatabase -ResourceGroupName $ResourceGroupName -ServerName $DatabaseServerName -DatabaseName $DatabaseName -Edition $DatabaseEdition
+		        WriteLabel("Creating database '$azureSQLDatabaseName'")
+		        $null = New-AzureRMSqlDatabase -ResourceGroupName $azureResourceGroupName -ServerName $azureSQLServerName -DatabaseName $azureSQLDatabaseName -Edition $DatabaseEdition
 		        WriteValue("Successful")
                 $recommendationExist = $true
             }
             else
             {
                 Push-Location -StackName wtt
-                $result = Invoke-Sqlcmd -Username "$DatabaseUserName@$DatabaseServerName" -Password $DatabasePassword -ServerInstance "$DatabaseServerName.database.windows.net" -Database $DatabaseName -Query "Select top 1 * from Customers;" -QueryTimeout 0 -SuppressProviderContextWarning -ErrorAction SilentlyContinue
+                $result = Invoke-Sqlcmd -Username "$adminUserName@$azureSQLServerName" -Password $adminPassword -ServerInstance "$azureSQLServerName.database.windows.net" -Database $azureSQLDatabaseName -Query "Select top 1 * from Customers;" -QueryTimeout 0 -SuppressProviderContextWarning -ErrorAction SilentlyContinue
                 Pop-Location -StackName wtt
                 if([string]$result -eq $null)
                 {
                     WriteError("Recommendation Database is not deployed")
-                    Remove-AzureRmSqlDatabase -ResourceGroupName $ResourceGroupName -ServerName $DatabaseServerName -DatabaseName $DatabaseName -Force -ErrorAction SilentlyContinue
+                    Remove-AzureRmSqlDatabase -ResourceGroupName $azureResourceGroupName -ServerName $azureSQLServerName -DatabaseName $azureSQLDatabaseName -Force -ErrorAction SilentlyContinue
                     $recommendationExist = $false          
                 }
             }
@@ -216,11 +215,11 @@ function CreateSchema
 {
 	Try
 	{
-		# Create Database Schema
+		# Create Database Schema	
 		WriteLabel("Creating Database Schema")
-		Push-Location -StackName wtt
-		$DatabaseServer = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains "primary" -ExpandProperties -ResourceGroupNameContains $ResourceGroupName).properties.FullyQualifiedDomainName
-		$result = Invoke-Sqlcmd -Username "$DatabaseUserName@$DatabaseServerName" -Password $DatabasePassword -ServerInstance $DatabaseServer -Database $DatabaseName -InputFile ".\Resources\DataFactory\Database\Schema.sql" -QueryTimeout 0 -ErrorAction SilentlyContinue
+		Push-Location -StackName wtt        
+		$azureSQLServerName = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains "primary" -ExpandProperties -ResourceGroupNameContains $azureResourceGroupName).properties.FullyQualifiedDomainName
+		$result = Invoke-Sqlcmd -Username "$adminUserName@$azureSQLServerName" -Password $adminPassword -ServerInstance $azureSQLServerName -Database $azureSQLDatabaseName -InputFile ".\Resources\DataFactory\Database\Schema.sql" -QueryTimeout 0 -ErrorAction SilentlyContinue
 		Pop-Location -StackName wtt
 		WriteValue("Successful")
 	}
@@ -235,13 +234,21 @@ function PopulateDatabase
 {
 	Try
 	{
-		# Populate Database
-		WriteLabel("Populating Database")
-		Push-Location -StackName wtt
-		$DatabaseServer = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains "primary" -ExpandProperties -ResourceGroupNameContains $ResourceGroupName).properties.FullyQualifiedDomainName
-		$result = Invoke-Sqlcmd -Username "$DatabaseUserName@$DatabaseServerName" -Password $DatabasePassword -ServerInstance $DatabaseServer -Database $DatabaseName -InputFile ".\Resources\DataFactory\Database\Populate.sql" -QueryTimeout 0 -ErrorAction SilentlyContinue
-		Pop-Location -StackName wtt
-		WriteValue("Successful")
+        $testSQLConnection = Test-WTTAzureSQLConnection -azureSQLServerName $azureSQLServerName -adminUserName $adminUserName -adminPassword $adminPassword -azureSQLDatabaseName $azureSQLDatabaseName -azureResourceGroupName $azureResourceGroupName
+        if ($testSQLConnection -notlike "success")
+        {
+            WriteError("Unable to connect to SQL Server")
+        }
+        Else
+        {
+		    # Populate Database
+		    WriteLabel("Populating Database")
+		    Push-Location -StackName wtt
+		    $azureSQLServerName = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains "primary" -ExpandProperties -ResourceGroupNameContains $azureResourceGroupName).properties.FullyQualifiedDomainName
+		    $result = Invoke-Sqlcmd -Username "$adminUserName@$azureSQLServerName" -Password $adminPassword -ServerInstance $azureSQLServerName -Database $azureSQLDatabaseName -InputFile ".\Resources\DataFactory\Database\Populate.sql" -QueryTimeout 0 -ErrorAction SilentlyContinue
+		    Pop-Location -StackName wtt
+		    WriteValue("Successful")
+        }
 	}
 	Catch
 	{
@@ -254,18 +261,25 @@ function CreateDataFactory()
 {
 	Try
 	{
+        $adf = (Get-AzureRmResourceProvider -ProviderNamespace Microsoft.DataFactory).ResourceTypes
+        $adfLocation = ($adf | Where-Object {$_.ResourceTypeName -eq "dataFactories"}).locations
 		# Create DataFactory
 		WriteLabel("Creating Data Factory '$ApplicationName'")
-		$dataFactory = New-AzureRMDataFactory -Name $ApplicationName -location 'West US' -ResourceGroupName $ResourceGroupName -Force -ErrorAction SilentlyContinue
-        if($dataFactory -eq $null)
+        foreach($location in $adfLocation)
         {
-            WriteValue("Failed")
-
-        }
-        else
-        {
-		    WriteValue("Successful")
-            return $dataFactory
+		    $dataFactory = New-AzureRMDataFactory -Name $ApplicationName -location $location -ResourceGroupName $azureResourceGroupName -Force -ErrorAction SilentlyContinue
+            $adfExists = (Find-AzureRmResource -ResourceNameContains $ApplicationName -ResourceGroupNameContains $azureResourceGroupName -ResourceType Microsoft.DataFactory/dataFactories -ExpandProperties).Properties.provisioningstate
+            $adfExistsNow = $false
+            if($adfExists -eq "Succeeded")
+            {          
+                $adfExistsNow = $true
+                WriteValue("Successful")
+                return $dataFactory
+            }
+            else
+            {
+		        WriteValue("Failed")
+            }
         }
 	}
 	Catch 
@@ -280,11 +294,11 @@ function RemoveDataFactory()
     Try
     {
         WriteLabel("Checking data factory '$ApplicationName' status")
-        $dataFactory = Get-AzureRmDataFactory -Name $ApplicationName -ResourceGroupName $ResourceGroupName -ErrorAction SilentlyContinue
+        $dataFactory = Get-AzureRmDataFactory -Name $ApplicationName -ResourceGroupName $azureResourceGroupName -ErrorAction SilentlyContinue
         if($dataFactory.ProvisioningState -eq "Succeeded")
         {
             WriteValue("Found")
-            $azureDataFactoryRemove = Remove-AzureRmDataFactory -Name $ApplicationName -ResourceGroupName $ResourceGroupName -Force -ErrorAction SilentlyContinue
+            $azureDataFactoryRemove = Remove-AzureRmDataFactory -Name $ApplicationName -ResourceGroupName $azureResourceGroupName -Force -ErrorAction SilentlyContinue
         }
         else
         {
@@ -373,7 +387,7 @@ function PopulateProductRecommendation($StorageAccountKey)
 	$jsonPath = ".\temp\json"
 
 	$argumentList = @()
-	$argumentList += ("-ResourceGroupName", $ResourceGroupName )
+	$argumentList += ("-ResourceGroupName", $azureResourceGroupName )
 	$argumentList += ("-DataFactoryName", $ApplicationName)
 	$argumentList += ("-JsonFilesFolder",  $jsonPath )    
 

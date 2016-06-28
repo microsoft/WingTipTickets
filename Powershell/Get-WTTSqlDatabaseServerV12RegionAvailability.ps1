@@ -11,25 +11,24 @@ function Get-WTTSqlDatabaseServerV12RegionAvailability()
 	[CmdletBinding()]
 	Param 
 	(
+		# Resource Group Name
 		[Parameter(Mandatory=$true)]
-		[string]$WTTEnvironmentApplicationName
+		[String]
+		$azureResourceGroupName
 	)
 	$global:VerbosePreference = "SilentlyContinue"
 
-	$azureStorageAccountAdministratorUserName = "developer"
-	$azureStorageAccountAdministratorPassword = "P@ssword1"
-	$wTTEnvironmentPrimaryServerLocation = $null
-	$wTTEnvironmentSecondaryServerLocation = $null    
-	$wTTEnvironmentApplicationName = $WTTEnvironmentApplicationName
+	$wttEnvironmentPrimaryServerLocation = $null
+	$wttEnvironmentSecondaryServerLocation = $null    
 
 	$azureSqlDatabaseServerV12RegionAvailabilityArray = Get-WTTAzureSqlDatabaseServerRegionCapabilities 
 
 	foreach ($azureDatacenterLocation in $azureSqlDatabaseServerV12RegionAvailabilityArray)
 	{
 
-		$wTTEnvironmentApplicationNameWithIndex =  $wTTEnvironmentApplicationName + $azureSqlDatabaseServerV12RegionAvailabilityArray.IndexOf($azureDatacenterLocation)        
-		$azureStorageAccountPrimaryName = $wTTEnvironmentApplicationName + $azureSqlDatabaseServerV12RegionAvailabilityArray.IndexOf($azureDatacenterLocation) + "primary"
-		$azureStorageAccountResourceGroupName = $wTTEnvironmentApplicationName + $azureSqlDatabaseServerV12RegionAvailabilityArray.IndexOf($azureDatacenterLocation)        
+		$azureResourceGroupNameWithIndex =  $azureResourceGroupName + $azureSqlDatabaseServerV12RegionAvailabilityArray.IndexOf($azureDatacenterLocation)        
+		$azureStorageAccountPrimaryName = $azureResourceGroupName + $azureSqlDatabaseServerV12RegionAvailabilityArray.IndexOf($azureDatacenterLocation) + "primary"
+		$azureStorageAccountResourceGroupName = $azureResourceGroupName + $azureSqlDatabaseServerV12RegionAvailabilityArray.IndexOf($azureDatacenterLocation)        
 
 		$wTTEnvironmentPrimaryServerLocation = $azureDatacenterLocation                
 
@@ -41,19 +40,19 @@ function Get-WTTSqlDatabaseServerV12RegionAvailability()
 		# ******  Create Azure Storage Account ******
 		else
 		{
-			WriteLabel("Creating Test Azure Resource Group '$wTTEnvironmentApplicationNameWithIndex' in Primary region '$wTTEnvironmentPrimaryServerLocation'")
+			WriteLabel("Creating Test Azure Resource Group '$azureResourceGroupNameWithIndex' in Primary region '$wTTEnvironmentPrimaryServerLocation'")
 			$newAzureResourceGroup = New-AzureRMResourceGroup -Name $azureStorageAccountResourceGroupName -Location $wTTEnvironmentPrimaryServerLocation
 			WriteValue("Successful")
 
-			WriteLabel("Creating Test Azure Storage Account '$wTTEnvironmentApplicationNameWithIndex' in Primary region '$wTTEnvironmentPrimaryServerLocation' to obtain Matching Geo Secondary region.")
-			$newAzureStorageAccount = New-AzureRMStorageAccount -ResourceGroupName $azureStorageAccountResourceGroupName -Name $wTTEnvironmentApplicationNameWithIndex -Location $wTTEnvironmentPrimaryServerLocation -Type "Standard_GRS"
+			WriteLabel("Creating Test Azure Storage Account '$azureResourceGroupNameWithIndex' in Primary region '$wTTEnvironmentPrimaryServerLocation' to obtain Matching Geo Secondary region.")
+			$newAzureStorageAccount = New-AzureRMStorageAccount -ResourceGroupName $azureStorageAccountResourceGroupName -Name $azureResourceGroupNameWithIndex -Location $wTTEnvironmentPrimaryServerLocation -Type "Standard_GRS"
 			If($newAzureStorageAccount.Count -gt 0) 
 			{
 				WriteValue("Successful")
 				
-				WriteLabel("Retrieving Matching Geo Secondary region from Test Azure Storage Account '$wTTEnvironmentApplicationNameWithIndex'.")
+				WriteLabel("Retrieving Matching Geo Secondary region from Test Azure Storage Account '$azureResourceGroupNameWithIndex'.")
 				WriteValue("Successful")
-				$wTTEnvironmentSecondaryServerLocation = (Get-AzureRMStorageAccount -ResourceGroupName $wTTEnvironmentApplicationNameWithIndex -StorageAccountName $wTTEnvironmentApplicationNameWithIndex).SecondaryLocation                    
+				$wTTEnvironmentSecondaryServerLocation = (Get-AzureRMStorageAccount -ResourceGroupName $azureResourceGroupNameWithIndex -StorageAccountName $azureResourceGroupNameWithIndex).SecondaryLocation                    
 
 				If($azureSqlDatabaseServerV12RegionAvailabilityArray.Contains($wTTEnvironmentSecondaryServerLocation)) 
 				{
@@ -76,6 +75,8 @@ function Get-WTTSqlDatabaseServerV12RegionAvailability()
 						'EastAsia' {'EastAsia'}
 						'JapanEast' {'Japan East'}
 						'JapanWest' {'Japan West'}
+                        'CanadaCentral' {'Canada Central'}
+                        'CanadaEast' {'Canada East'}
 					}
 
 					$wTTEnvironmentSecondServerLocation = 
@@ -94,6 +95,8 @@ function Get-WTTSqlDatabaseServerV12RegionAvailability()
 						'EastAsia' {'EastAsia'}
 						'JapanEast' {'Japan East'}
 						'JapanWest' {'Japan West'}
+                        'CanadaCentral' {'Canada Central'}
+                        'CanadaEast' {'Canada East'}
 					}
 
 					return $wTTEnvironmentPriServerLocation, $wTTEnvironmentSecondServerLocation
