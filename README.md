@@ -4,4 +4,4 @@ These files comprise a hands-on-lab that demostrates an Azure SQL Database and A
 There are two Word documents, one that describes that HOL setup, and another that describes all of the scenarios that can be used
 Source-code for the application is also available in the sourcecode sub-directory
 
-This release works with Azure PowerShell version 1.4.0. https://github.com/Azure/azure-powershell/releases
+This release works with Azure PowerShell version 1.5.1. https://github.com/Azure/azure-powershell/releases
