@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using Microsoft.Azure.Search;
+using Microsoft.Azure.Search.Models;
 using Tenant.Mvc;
 
 namespace WingTipTickets
@@ -75,6 +78,10 @@ namespace WingTipTickets
         public static void InitializeSearchService()
         {
             var searchServiceClient = new SearchServiceClient(Config.SearchServiceName, new SearchCredentials(Config.SearchServiceKey));
+
+            CreateIndex(searchServiceClient);
+            CreateIndexer(searchServiceClient);
+            searchServiceClient.Indexers.Run("fromsql");
 
             SearchIndexClient = searchServiceClient.Indexes.GetClient("concerts");
         }
@@ -169,6 +176,71 @@ namespace WingTipTickets
             }
 
             return appConfig;
+        }
+
+        private static void CreateIndex(SearchServiceClient searchServiceClient)
+        {
+            if (!searchServiceClient.Indexes.Exists("concerts"))
+            {
+                searchServiceClient.Indexes.Create(new Index
+                {
+                    Name = "concerts",
+
+                    Fields = new List<Field>
+                    {
+                        new Field { Name = "ConcertId", Type = DataType.String, IsKey = true, IsFilterable = true, IsRetrievable = true },
+                        new Field { Name = "ConcertName", Type = DataType.String, IsRetrievable = true },
+                        new Field { Name = "ConcertDate", Type = DataType.DateTimeOffset, IsFilterable = true, IsFacetable = true, IsSortable = true, IsRetrievable = true },
+                        new Field { Name = "VenueId", Type = DataType.Int32, IsFilterable = true, IsRetrievable = true },
+                        new Field { Name = "VenueName", Type = DataType.String, IsFilterable = true, IsFacetable = true },
+                        new Field { Name = "VenueCity", Type = DataType.String, IsFilterable = true, IsFacetable = true },
+                        new Field { Name = "VenueState", Type = DataType.String, IsFilterable = true, IsFacetable = true },
+                        new Field { Name = "VenueCountry", Type = DataType.String, IsFilterable = true, IsFacetable = true },
+                        new Field { Name = "PerformerId", Type = DataType.Int32, IsFilterable = true, IsRetrievable = true },
+                        new Field { Name = "PeformerName", Type = DataType.String, IsFilterable = true, IsFacetable = true },
+                        new Field { Name = "FullTitle", Type = DataType.String, IsRetrievable = true, IsSearchable = true },
+                        new Field { Name = "Popularity", Type = DataType.Int32, IsRetrievable = true, IsFilterable = true, IsSortable = true }
+                    },
+
+                    Suggesters = new List<Suggester>
+                    {
+                        new Suggester
+                        {
+                            Name = "sg",
+                            SearchMode = SuggesterSearchMode.AnalyzingInfixMatching,
+                            SourceFields = { "FullTitle" }
+                        }
+                    }
+                });
+            }
+        }
+
+        private static void CreateIndexer(SearchServiceClient searchServiceClient)
+        {
+            if (searchServiceClient.DataSources.List().All(d => d.Name != "concertssql"))
+            {
+                var connectionString = GetTenantConnectionString(Config.SearchServiceName);
+
+                searchServiceClient.DataSources.Create(new DataSource
+                {
+                    Name = "concertssql",
+                    Type = "azuresql",
+                    Container = new DataContainer { Name = "ConcertSearch" },
+                    Credentials = new DataSourceCredentials { ConnectionString = connectionString },
+                    DataChangeDetectionPolicy = new HighWaterMarkChangeDetectionPolicy("RowVersion")
+                });
+            }
+
+            if (searchServiceClient.Indexers.List().All(i => i.Name != "fromsql"))
+            {
+                searchServiceClient.Indexers.Create(new Indexer
+                {
+                    Name = "fromsql",
+                    DataSourceName = "concertssql",
+                    TargetIndexName = "concerts",
+                    Schedule = new IndexingSchedule { Interval = TimeSpan.FromMinutes(5), StartTime = DateTimeOffset.Now }
+                });
+            }
         }
 
         #endregion
