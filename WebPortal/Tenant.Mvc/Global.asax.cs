@@ -79,9 +79,12 @@ namespace WingTipTickets
         {
             var searchServiceClient = new SearchServiceClient(Config.SearchServiceName, new SearchCredentials(Config.SearchServiceKey));
 
-            CreateIndex(searchServiceClient);
-            CreateIndexer(searchServiceClient);
-            searchServiceClient.Indexers.Run("fromsql");
+            if (!Config.RunningInDev)
+            {
+                CreateIndex(searchServiceClient);
+                CreateIndexer(searchServiceClient);
+                searchServiceClient.Indexers.Run("fromsql");
+            }
 
             SearchIndexClient = searchServiceClient.Indexes.GetClient("concerts");
         }
