@@ -61,11 +61,13 @@ function New-WTTPowerBI
     Try
     {
         #Check status of Power BI service
-        $status = Get-AzureRmResourceProvider -ProviderNamespace Microsoft.PowerBI
-        if ($status.RegistrationState -ne "Registered")
-        {
-            $null = Register-AzureRmResourceProvider -ProviderNamespace Microsoft.PowerBI -Force
-        }
+        Do{
+            $status = Get-AzureRmResourceProvider -ProviderNamespace Microsoft.PowerBI
+            if ($status.RegistrationState -ne "Registered")
+            {
+                $null = Register-AzureRmResourceProvider -ProviderNamespace Microsoft.PowerBI -Force
+            }
+        }until($status.RegistrationState -eq "Registered")
 
         WriteLabel("Checking for Azure Power BI Service $AzurePowerBIName")
         

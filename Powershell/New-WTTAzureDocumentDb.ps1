@@ -32,11 +32,13 @@ function New-WTTAzureDocumentDb
 		WriteLabel("Creating DocumentDB")
 
 		#Register DocumentDB provider service
-		$status = (Get-AzureRmResourceProvider -ProviderNamespace Microsoft.DocumentDb).RegistrationState
-		if ($status -ne "Registered")
-		{
-			Register-AzureRmResourceProvider -ProviderNamespace Microsoft.DocumentDb -Force
-		}
+		Do{
+            $status = (Get-AzureRmResourceProvider -ProviderNamespace Microsoft.DocumentDb).RegistrationState
+		    if ($status -ne "Registered")
+		    {
+			    Register-AzureRmResourceProvider -ProviderNamespace Microsoft.DocumentDb -Force
+		    }
+        }until($status -eq "Registered")
 
 		# Create DocumentDb Account
 		New-AzureRmResource -resourceName $WTTDocumentDbName -Location $WTTDocumentDbLocation -ResourceGroupName $azureResourceGroupName -ResourceType "Microsoft.DocumentDb/databaseAccounts" -ApiVersion 2015-04-08 -PropertyObject @{"name" = $WTTDocumentDbName; "databaseAccountOfferType" = "Standard"} -force
