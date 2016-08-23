@@ -611,8 +611,9 @@ function New-WTTEnvironment
 			# Set the Application Settings
 			$searchName = (Find-AzureRmResource -ResourceType Microsoft.Search/searchServices -ResourceGroupName $azureResourceGroupName -ResourceNameContains $azuresearchservicename).name
 			$searchServicePrimaryManagementKey = (Invoke-AzureRmResourceAction -ResourceGroupName $azureResourceGroupName -ResourceName $searchName -ResourceType Microsoft.Search/searchServices -Action listAdminkeys -Force).PrimaryKey
-            $documentDBPrimaryKey = (Invoke-AzureRmResourceAction -ResourceGroupName $azureResourceGroupName -ResourceName $azureDocumentDbName -ResourceType Microsoft.DocumentDb/databaseAccounts -Action listkeys -ApiVersion 2015-04-08 -Force).primarymasterkey
-            $pbiSettings = Get-Content ".\powerbi.txt"
+            $documentDBPrimaryKey = (Invoke-AzureRmResourceAction -ResourceGroupName $azureResourceGroupName -ResourceName $azureDocumentDbName -ResourceType Microsoft.DocumentDb/databaseAccounts -Action listkeys -Force).primarymasterkey
+            $pbiTextFile = (Get-ChildItem -Recurse -Include *.txt | where {$_.Name -like "powerbi*"}).Name
+            $pbiSettings = Get-Content $pbiTextFile
             $powerbiWorkspaceCollection = $azurePowerBIWorkspaceCollection
             $powerbiSigningKey = $pbiSettings[0]
             $powerbiWorkspaceId = $pbiSettings[1]

@@ -36,7 +36,7 @@ function New-WTTAzureDocumentDb
             $status = (Get-AzureRmResourceProvider -ProviderNamespace Microsoft.DocumentDb).RegistrationState
 		    if ($status -ne "Registered")
 		    {
-			    Register-AzureRmResourceProvider -ProviderNamespace Microsoft.DocumentDb -Force
+			    Register-AzureRmResourceProvider -ProviderNamespace Microsoft.DocumentDb
 		    }
         }until($status -eq "Registered")
 

@@ -65,7 +65,7 @@ function New-WTTPowerBI
             $status = Get-AzureRmResourceProvider -ProviderNamespace Microsoft.PowerBI
             if ($status.RegistrationState -ne "Registered")
             {
-                $null = Register-AzureRmResourceProvider -ProviderNamespace Microsoft.PowerBI -Force
+                $null = Register-AzureRmResourceProvider -ProviderNamespace Microsoft.PowerBI
             }
         }until($status.RegistrationState -eq "Registered")
 
