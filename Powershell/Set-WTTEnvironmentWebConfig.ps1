@@ -46,11 +46,16 @@ function Set-WTTEnvironmentWebConfig
 		[String]
 		$AdminPassword,
 
-		# Azure SQL Database Name
+		# Azure SQL Database 1 Name
 		[Parameter(Mandatory=$false)]
 		[String]
-		$AzureSqlDatabaseName,
-	
+		$AzureSqlDatabase1Name,
+
+		# Azure SQL Database 2 Name
+		[Parameter(Mandatory=$false)]
+		[String]
+		$AzureSqlDatabase2Name,
+
 		# Azure Search Service Name
 		[Parameter(Mandatory = $true)] 
 		[String]$SearchName,
@@ -106,9 +111,14 @@ function Set-WTTEnvironmentWebConfig
 				$AdminPassword = "P@ssword1"
 			}
 
-			if($AzureSqlDatabaseName -eq "")
+			if($AzureSqlDatabase1Name -eq "")
 			{
-				$AzureSqlDatabaseName = "Customer1"
+				$AzureSqlDatabase1Name = "Customer1"
+			}
+
+			if($AzureSqlDatabase2Name -eq "")
+			{
+				$AzureSqlDatabase2Name = "Customer2"
 			}
             if(!$TenantEventType)
             {
@@ -126,7 +136,8 @@ function Set-WTTEnvironmentWebConfig
 					"TenantEventType" = $TenantEventType;
 					"TenantPrimaryDatabaseServer" = "$AzureSqlServerPrimaryName"; 
 					"TenantSecondaryDatabaseServer" = "$AzureSqlServerSecondaryName";
-					"TenantDatabase" = "$AzureSqlDatabaseName"; 
+					"TenantDatabase1" = "$AzureSqlDatabase1Name"; 
+					"TenantDatabase2" = "$AzureSqlDatabase2Name"; 
 
 					# Recommendation Setings
 					"RecommendationDatabaseServer" = "$AzureSqlServerPrimaryName";

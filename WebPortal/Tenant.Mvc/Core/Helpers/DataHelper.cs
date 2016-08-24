@@ -40,7 +40,7 @@ namespace Tenant.Mvc.Core.Helpers
             }
 
             // Run the script
-            using (var conn = WingtipTicketApp.CreateTenantSqlConnection())
+            using (var conn = WingtipTicketApp.CreateTenantConnectionDatabase1())
             {
                 conn.Open();
 
@@ -62,7 +62,7 @@ namespace Tenant.Mvc.Core.Helpers
             }
 
             // Run the script
-            using (var connection = WingtipTicketApp.CreateTenantSqlConnection())
+            using (var connection = WingtipTicketApp.CreateTenantConnectionDatabase1())
             {
                 connection.Open();
 
@@ -85,7 +85,7 @@ namespace Tenant.Mvc.Core.Helpers
             var entityId = 0;
             var dataSet = new DataSet();
 
-            using (var connection = WingtipTicketApp.CreateTenantSqlConnection())
+            using (var connection = WingtipTicketApp.CreateTenantConnectionDatabase1())
             {
                 using (var command = new SqlCommand(sqlScript, connection))
                 {

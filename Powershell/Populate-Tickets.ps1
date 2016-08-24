@@ -51,7 +51,7 @@ function Populate-Tickets
 	Else
 	{
         $updateDB = Invoke-Sqlcmd -Username "$AdminUserName@$AzureSqlServerName" -Password "$AdminPassword" -ServerInstance "$AzureSqlServerName.database.windows.net" -Database $AzureSqlDatabaseName -Query "set Identity_insert dbo.tickets on" -QueryTimeout 0 -SuppressProviderContextWarning
-        $concertID = @(1..2)
+        $concertID = @(1..12)
 
         foreach ($concert in $concertID)
         {

@@ -46,7 +46,7 @@ namespace Tenant.Mvc.Core.Contexts
             {
                 var concertsList = new List<ConcertModel>();
 
-                using (var dbConnection = WingtipTicketApp.CreateTenantSqlConnection())
+                using (var dbConnection = WingtipTicketApp.CreateTenantConnectionDatabase1())
                 {
                     try
                     {
@@ -96,7 +96,7 @@ namespace Tenant.Mvc.Core.Contexts
             {
                 ConcertModel concertModelToReturn = null;
 
-                using (var dbConnection = WingtipTicketApp.CreateTenantSqlConnection())
+                using (var dbConnection = WingtipTicketApp.CreateTenantConnectionDatabase1())
                 {
                     try
                     {
@@ -133,7 +133,7 @@ namespace Tenant.Mvc.Core.Contexts
             {
                 ConcertModel concertModelToReturn = null;
 
-                using (var dbConnection = WingtipTicketApp.CreateTenantSqlConnection())
+                using (var dbConnection = WingtipTicketApp.CreateTenantConnectionDatabase1())
                 {
                     try
                     {
@@ -171,7 +171,7 @@ namespace Tenant.Mvc.Core.Contexts
                 var saveToDbMap = new List<Tuple<int, int>>();
                 const string queryCommandString = @"Select ConcertId as concertId, SaveToDbServerType as saveToDatabase From [Concerts] Order By concertId";
 
-                using (var sqlConnection = WingtipTicketApp.CreateTenantSqlConnection())
+                using (var sqlConnection = WingtipTicketApp.CreateTenantConnectionDatabase1())
                 {
                     sqlConnection.Open();
 
@@ -194,7 +194,7 @@ namespace Tenant.Mvc.Core.Contexts
             {
                 var artistList = new List<PerformerModel>();
 
-                using (var dbConnection = WingtipTicketApp.CreateTenantSqlConnection())
+                using (var dbConnection = WingtipTicketApp.CreateTenantConnectionDatabase1())
                 {
                     try
                     {
@@ -227,7 +227,7 @@ namespace Tenant.Mvc.Core.Contexts
             {
                 PerformerModel artistToReturn = null;
 
-                using (var dbConnection = WingtipTicketApp.CreateTenantSqlConnection())
+                using (var dbConnection = WingtipTicketApp.CreateTenantConnectionDatabase1())
                 {
                     try
                     {
@@ -255,7 +255,7 @@ namespace Tenant.Mvc.Core.Contexts
             {
                 PerformerModel artistToReturn = null;
 
-                using (var dbConnection = WingtipTicketApp.CreateTenantSqlConnection())
+                using (var dbConnection = WingtipTicketApp.CreateTenantConnectionDatabase1())
                 {
                     try
                     {
@@ -292,7 +292,7 @@ namespace Tenant.Mvc.Core.Contexts
 
                 var insertQuery = String.Format(ConstInsertNewConcert, concertName, concertDescription, concertDateTime, ConstConcertduration, concertVenueId, performerId, (int)saveToDatabase);
 
-                using (var insertConnection = WingtipTicketApp.CreateTenantSqlConnection())
+                using (var insertConnection = WingtipTicketApp.CreateTenantConnectionDatabase1())
                 {
                     insertConnection.Open();
 
@@ -311,7 +311,7 @@ namespace Tenant.Mvc.Core.Contexts
 
                 var getCommandQuery = string.Format("{0} WHERE (concerts.ConcertName='{1}' AND concerts.VenueId={2} AND concerts.PerformerId={3}) {4}", ConstGetAllConcertsQuery, concertName, concertVenueId, performerId, ConstOrderByConcertDate);
 
-                using (var getConnection = WingtipTicketApp.CreateTenantSqlConnection())
+                using (var getConnection = WingtipTicketApp.CreateTenantConnectionDatabase1())
                 {
                     getConnection.Open();
 
@@ -334,7 +334,7 @@ namespace Tenant.Mvc.Core.Contexts
                 var i = 1;
                 var seatSectionQuery = string.Format(@"SELECT * FROM [SeatSection] Where VenueId={0}", concertVenueId);
 
-                using (var seatCommand = new SqlCommand(seatSectionQuery, WingtipTicketApp.CreateTenantSqlConnection()))
+                using (var seatCommand = new SqlCommand(seatSectionQuery, WingtipTicketApp.CreateTenantConnectionDatabase1()))
                 {
                     using (var seatDataAdapter = new SqlDataAdapter(seatCommand))
                     {
@@ -346,7 +346,7 @@ namespace Tenant.Mvc.Core.Contexts
                             {
                                 var ticketLevelInsert = string.Format(@"INSERT INTO [TicketLevels] (Description, SeatSectionId, ConcertId, TicketPrice) Values('Level-{0}', {0}, {1}, '{2}')", drSeat["SeatSectionId"].ToString(), concertModelToReturn.ConcertId, (50 + (5 * i++)).ToString() + ".00");
 
-                                using (var ticketConnection = WingtipTicketApp.CreateTenantSqlConnection())
+                                using (var ticketConnection = WingtipTicketApp.CreateTenantConnectionDatabase1())
                                 {
                                     ticketConnection.Open();
 
@@ -375,7 +375,7 @@ namespace Tenant.Mvc.Core.Contexts
                 var dsInsert = new DataSet();
                 var insertQuery = String.Format("Insert Into Performers (FirstName, LastName, ShortName) Values ('{0}', '{1}', '{0} {1}') Select @@Identity", artistName.Split(' ')[0], artistName.Split(' ')[1]);
 
-                using (var insertCommand = new SqlCommand(insertQuery, WingtipTicketApp.CreateTenantSqlConnection()))
+                using (var insertCommand = new SqlCommand(insertQuery, WingtipTicketApp.CreateTenantConnectionDatabase1()))
                 {
                     using (var insertData = new SqlDataAdapter(insertCommand))
                     {
@@ -403,7 +403,7 @@ namespace Tenant.Mvc.Core.Contexts
 
             public Boolean DeleteConcert(int concertId)
             {
-                using (var dbConnection = WingtipTicketApp.CreateTenantSqlConnection())
+                using (var dbConnection = WingtipTicketApp.CreateTenantConnectionDatabase1())
                 {
                     try
                     {

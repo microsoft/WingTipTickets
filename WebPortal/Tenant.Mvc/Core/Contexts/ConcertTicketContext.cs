@@ -19,7 +19,7 @@ namespace Tenant.Mvc.Core.Contexts
                 var ticketList = new List<ConcertTicket>();
                 var ticketsPurchasedByConcertIdQuery = String.Format(@"SELECT TicketId, CustomerId, Name, TicketLevelId, ConcertId, PurchaseDate, SeatNumber FROM Tickets WHERE (ConcertId=" + concertId + " AND CustomerId=" + customerId + ")", concertId);
 
-                using (var cmd = new SqlCommand(ticketsPurchasedByConcertIdQuery, WingtipTicketApp.CreateTenantSqlConnection()))
+                using (var cmd = new SqlCommand(ticketsPurchasedByConcertIdQuery, WingtipTicketApp.CreateTenantConnectionDatabase1()))
                 {
                     using (var sdAdapter = new SqlDataAdapter(cmd))
                     {
@@ -42,7 +42,7 @@ namespace Tenant.Mvc.Core.Contexts
                 var ticketList = new List<ConcertTicket>();
                 var ticketsPurchasedByCustomerIdQuery = String.Format(@"SELECT TicketId, CustomerId, Name, TicketLevelId, ConcertId, PurchaseDate, SeatNumber FROM Tickets WHERE (CustomerId=" + customerId + ")");
 
-                using (var cmd = new SqlCommand(ticketsPurchasedByCustomerIdQuery, WingtipTicketApp.CreateTenantSqlConnection()))
+                using (var cmd = new SqlCommand(ticketsPurchasedByCustomerIdQuery, WingtipTicketApp.CreateTenantConnectionDatabase1()))
                 {
                     using (var sdAdapter = new SqlDataAdapter(cmd))
                     {
@@ -72,7 +72,7 @@ namespace Tenant.Mvc.Core.Contexts
                 var ticketLevelsForConcert = new List<ConcertTicketLevel>();
                 var ticketLevelQuery = "SELECT TicketLevelId, Description, SeatSectionId, TicketPrice FROM TicketLevels WHERE ConcertId=" + concertId;
 
-                using (var cmd = new SqlCommand(ticketLevelQuery, WingtipTicketApp.CreateTenantSqlConnection()))
+                using (var cmd = new SqlCommand(ticketLevelQuery, WingtipTicketApp.CreateTenantConnectionDatabase1()))
                 {
                     using (var sdAdapter = new SqlDataAdapter(cmd))
                     {
@@ -99,7 +99,7 @@ namespace Tenant.Mvc.Core.Contexts
                 var ticketLevels = new List<ConcertTicketLevel>();
                 const string ticketLevelQuery = "SELECT TicketLevelId, Description, SeatSectionId, ConcertId, TicketPrice FROM TicketLevels";
 
-                using (var cmd = new SqlCommand(ticketLevelQuery, WingtipTicketApp.CreateTenantSqlConnection()))
+                using (var cmd = new SqlCommand(ticketLevelQuery, WingtipTicketApp.CreateTenantConnectionDatabase1()))
                 {
                     using (var sdAdapter = new SqlDataAdapter(cmd))
                     {
@@ -127,7 +127,7 @@ namespace Tenant.Mvc.Core.Contexts
 
             public List<ConcertTicket> WriteNewTicketToDb(PurchaseTicketsModel model)
             {
-                using (var insertConnection = WingtipTicketApp.CreateTenantSqlConnection())
+                using (var insertConnection = WingtipTicketApp.CreateTenantConnectionDatabase1())
                 {
                     insertConnection.Open();
 
@@ -156,7 +156,7 @@ namespace Tenant.Mvc.Core.Contexts
             public void DeleteAllTicketsForConcert(int concertId)
             {
                 // Delete all tickets and ticket levels for this concert
-                using (var dbConnection = WingtipTicketApp.CreateTenantSqlConnection())
+                using (var dbConnection = WingtipTicketApp.CreateTenantConnectionDatabase1())
                 {
                     dbConnection.Open();
 

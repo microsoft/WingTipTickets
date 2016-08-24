@@ -61,11 +61,13 @@ function New-WTTPowerBI
     Try
     {
         #Check status of Power BI service
-        $status = Get-AzureRmResourceProvider -ProviderNamespace Microsoft.PowerBI
-        if ($status.RegistrationState -ne "Registered")
-        {
-            $null = Register-AzureRmResourceProvider -ProviderNamespace Microsoft.PowerBI -Force
-        }
+        Do{
+            $status = Get-AzureRmResourceProvider -ProviderNamespace Microsoft.PowerBI
+            if ($status.RegistrationState -ne "Registered")
+            {
+                $null = Register-AzureRmResourceProvider -ProviderNamespace Microsoft.PowerBI
+            }
+        }until($status.RegistrationState -eq "Registered")
 
         WriteLabel("Checking for Azure Power BI Service $AzurePowerBIName")
         
@@ -105,6 +107,7 @@ function New-WTTPowerBI
             # Setup authentication to Azure
             #Get Azure Tenant ID
             $tenantId = (Get-AzureRmContext).Tenant.TenantId
+            $azureSubscriptionID = (Get-AzureRmContext).Subscription.SubscriptionId
             $clientId = "1950a258-227b-4e31-a9cf-717495945fc2"
             # Set redirect URI for Azure PowerShell
             $redirectUri = "urn:ietf:wg:oauth:2.0:oob"
@@ -113,8 +116,7 @@ function New-WTTPowerBI
             # Set Authority to Azure AD Tenant
             $authority = "https://login.windows.net/$tenantId"
             # Create Authentication Context tied to Azure AD Tenant
-            $authContext = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext" -ArgumentList $authority
-            $azureSubscriptionID = (Get-AzureRmContext).Subscription.SubscriptionId
+            $authContext = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext" -ArgumentList $authority            
 
             Try
             {

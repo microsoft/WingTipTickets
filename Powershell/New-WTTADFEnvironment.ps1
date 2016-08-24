@@ -97,14 +97,13 @@ function New-WTTADFEnvironment
 function RegisterProvider()
 {
 	WriteLabel("Checking for DataFactory Provider")
-	$provider = Find-AzureRmResource -ResourceType "Microsoft.Resources/providers" -ResourceNameContains "DataFactory" -ResourceGroupNameContains $azureResourceGroupName
+	$provider =  (Get-AzureRmResourceProvider -ProviderNamespace Microsoft.DataFactory).RegistrationState
 
-	if ($provider -eq $null)
+	if ($provider -ne "Registered")
 	{
 		WriteValue("Not Found")
-
 		WriteLabel("Registering DataFactory Provider")
-		$null = Register-AzureRmResourceProvider -ProviderNamespace Microsoft.DataFactory -Force
+		$null = Register-AzureRmResourceProvider -ProviderNamespace Microsoft.DataFactory
 		WriteValue("Successful")
 	}
 	else

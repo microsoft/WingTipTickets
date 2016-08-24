@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using Microsoft.Azure.Search;
+using Microsoft.Azure.Search.Models;
 using Tenant.Mvc;
 
 namespace WingTipTickets
@@ -18,7 +21,8 @@ namespace WingTipTickets
         public string TenantName { get; set; }
         public string TenantEventType { get; set; }
         public string TenantDatabaseServer { get; set; }
-        public string TenantDatabase { get; set; }
+        public string TenantDatabase1 { get; set; }
+        public string TenantDatabase2 { get; set; }
 
         // Recommendation Settings
         public string RecommendationDatabaseServer { get; set; }
@@ -63,7 +67,7 @@ namespace WingTipTickets
 
         #endregion
 
-        #region - Public Methods -
+        #region - Initialization Methods -
 
         public static bool InitializeConfig()
         {
@@ -75,26 +79,40 @@ namespace WingTipTickets
         {
             var searchServiceClient = new SearchServiceClient(Config.SearchServiceName, new SearchCredentials(Config.SearchServiceKey));
 
+            if (!Config.RunningInDev)
+            {
+                CreateIndex(searchServiceClient);
+                CreateIndexer(searchServiceClient);
+                searchServiceClient.Indexers.Run("fromsql");
+            }
+
             SearchIndexClient = searchServiceClient.Indexes.GetClient("concerts");
         }
 
-        public static string GetTenantConnectionString()
+        #endregion
+
+        #region - Connection Methods -
+
+        public static string GetTenantConnectionString(string database)
         {
-            return Config.RunningInDev
-                ? ConfigurationManager.ConnectionStrings["tenantConnection"].ConnectionString
-                : BuildConnectionString(Config.TenantDatabaseServer, Config.TenantDatabase, Config.DatabaseUser, Config.DatabasePassword);
+            var connectionString = BuildConnectionString(Config.TenantDatabaseServer, database, Config.DatabaseUser, Config.DatabasePassword, Config.RunningInDev);
+
+            return connectionString;
         }
 
         public static string GetRecommendationConnectionString()
         {
-            return Config.RunningInDev
-                ? ConfigurationManager.ConnectionStrings["recommendationConnection"].ConnectionString
-                : BuildConnectionString(Config.RecommendationDatabaseServer, Config.RecommendationDatabase, Config.DatabaseUser, Config.DatabasePassword);
+            return BuildConnectionString(Config.RecommendationDatabaseServer, Config.RecommendationDatabase, Config.DatabaseUser, Config.DatabasePassword, Config.RunningInDev);
         }
 
-        public static SqlConnection CreateTenantSqlConnection()
+        public static SqlConnection CreateTenantConnectionDatabase1()
         {
-            return new SqlConnection(GetTenantConnectionString());
+            return new SqlConnection(GetTenantConnectionString(Config.TenantDatabase1));
+        }
+
+        public static SqlConnection CreateTenantConnectionDatabase2()
+        {
+            return new SqlConnection(GetTenantConnectionString(Config.TenantDatabase2));
         }
 
         public static SqlConnection CreateRecommendationSqlConnection()
@@ -106,12 +124,18 @@ namespace WingTipTickets
 
         #region - Private Methods -
 
-        private static string BuildConnectionString(string databaseServer, string database, string username, string password)
+        private static string BuildConnectionString(string databaseServer, string database, string username, string password, bool runningInDev)
         {
             var server = databaseServer.Split('.');
 
+            if (runningInDev)
+            {
+                return String.Format("Server={0};Database={1};User ID={2};Password={3};Connection Timeout=30;",
+                                     server[0], database, username, password);
+            }
+            
             return String.Format("Server=tcp:{0},1433;Database={1};User ID={2}@{3};Password={4};Trusted_Connection=False;Encrypt=True;Connection Timeout=30;",
-                databaseServer, database, username, server[0], password);
+                                     databaseServer, database, username, server[0], password);
         }
 
         private static AppConfig ReadAppConfig()
@@ -124,7 +148,8 @@ namespace WingTipTickets
                 TenantName = ConfigurationManager.AppSettings["TenantName"].Trim(),
                 TenantEventType = ConfigurationManager.AppSettings["TenantEventType"].Trim(), 
                 TenantDatabaseServer = ConfigurationManager.AppSettings["TenantPrimaryDatabaseServer"].Trim(),
-                TenantDatabase = ConfigurationManager.AppSettings["TenantDatabase"].Trim(),
+                TenantDatabase1 = ConfigurationManager.AppSettings["TenantDatabase1"].Trim(),
+                TenantDatabase2 = ConfigurationManager.AppSettings["TenantDatabase2"].Trim(),
 
                 RecommendationDatabaseServer = ConfigurationManager.AppSettings["RecommendationDatabaseServer"].Trim(),
                 RecommendationDatabase = ConfigurationManager.AppSettings["RecommendationDatabase"].Trim(),
@@ -154,6 +179,71 @@ namespace WingTipTickets
             }
 
             return appConfig;
+        }
+
+        private static void CreateIndex(SearchServiceClient searchServiceClient)
+        {
+            if (!searchServiceClient.Indexes.Exists("concerts"))
+            {
+                searchServiceClient.Indexes.Create(new Index
+                {
+                    Name = "concerts",
+
+                    Fields = new List<Field>
+                    {
+                        new Field { Name = "ConcertId", Type = DataType.String, IsKey = true, IsFilterable = true, IsRetrievable = true },
+                        new Field { Name = "ConcertName", Type = DataType.String, IsRetrievable = true },
+                        new Field { Name = "ConcertDate", Type = DataType.DateTimeOffset, IsFilterable = true, IsFacetable = true, IsSortable = true, IsRetrievable = true },
+                        new Field { Name = "VenueId", Type = DataType.Int32, IsFilterable = true, IsRetrievable = true },
+                        new Field { Name = "VenueName", Type = DataType.String, IsFilterable = true, IsFacetable = true },
+                        new Field { Name = "VenueCity", Type = DataType.String, IsFilterable = true, IsFacetable = true },
+                        new Field { Name = "VenueState", Type = DataType.String, IsFilterable = true, IsFacetable = true },
+                        new Field { Name = "VenueCountry", Type = DataType.String, IsFilterable = true, IsFacetable = true },
+                        new Field { Name = "PerformerId", Type = DataType.Int32, IsFilterable = true, IsRetrievable = true },
+                        new Field { Name = "PeformerName", Type = DataType.String, IsFilterable = true, IsFacetable = true },
+                        new Field { Name = "FullTitle", Type = DataType.String, IsRetrievable = true, IsSearchable = true },
+                        new Field { Name = "Popularity", Type = DataType.Int32, IsRetrievable = true, IsFilterable = true, IsSortable = true }
+                    },
+
+                    Suggesters = new List<Suggester>
+                    {
+                        new Suggester
+                        {
+                            Name = "sg",
+                            SearchMode = SuggesterSearchMode.AnalyzingInfixMatching,
+                            SourceFields = { "FullTitle" }
+                        }
+                    }
+                });
+            }
+        }
+
+        private static void CreateIndexer(SearchServiceClient searchServiceClient)
+        {
+            if (searchServiceClient.DataSources.List().All(d => d.Name != "concertssql"))
+            {
+                var connectionString = GetTenantConnectionString(Config.SearchServiceName);
+
+                searchServiceClient.DataSources.Create(new DataSource
+                {
+                    Name = "concertssql",
+                    Type = "azuresql",
+                    Container = new DataContainer { Name = "ConcertSearch" },
+                    Credentials = new DataSourceCredentials { ConnectionString = connectionString },
+                    DataChangeDetectionPolicy = new HighWaterMarkChangeDetectionPolicy("RowVersion")
+                });
+            }
+
+            if (searchServiceClient.Indexers.List().All(i => i.Name != "fromsql"))
+            {
+                searchServiceClient.Indexers.Create(new Indexer
+                {
+                    Name = "fromsql",
+                    DataSourceName = "concertssql",
+                    TargetIndexName = "concerts",
+                    Schedule = new IndexingSchedule { Interval = TimeSpan.FromMinutes(5), StartTime = DateTimeOffset.Now }
+                });
+            }
         }
 
         #endregion

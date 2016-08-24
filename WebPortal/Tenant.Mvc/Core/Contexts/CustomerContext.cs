@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
+using Microsoft.Rest.TransientFaultHandling;
 using Tenant.Mvc.Core.Models;
 using WingTipTickets;
 
@@ -20,7 +21,7 @@ namespace Tenant.Mvc.Core.Contexts
                 var customers = new List<CustomerModel>();
                 var query = String.Format(@"Select CustomerId, FirstName, LastName, Email, ContactNbr from Customers Where Email <> 'admin@admin.com'");
 
-                using (var cmd = new SqlCommand(query, WingtipTicketApp.CreateTenantSqlConnection()))
+                using (var cmd = new SqlCommand(query, WingtipTicketApp.CreateTenantConnectionDatabase1()))
                 {
                     using (var sdAdapter = new SqlDataAdapter(cmd))
                     {
@@ -53,11 +54,19 @@ namespace Tenant.Mvc.Core.Contexts
 
             public bool CreateUser(string firstName, string lastName, string email, string phonenumber, string password)
             {
+                var database1Result = CreateUserOnDatabase(firstName, lastName, email, phonenumber, password, true, WingtipTicketApp.CreateTenantConnectionDatabase1());
+                var database2Result = CreateUserOnDatabase(firstName, lastName, email, phonenumber, password, false, WingtipTicketApp.CreateTenantConnectionDatabase2());
+
+                return database1Result;
+            }
+
+            private bool CreateUserOnDatabase(string firstName, string lastName, string email, string phonenumber, string password, bool setSession, SqlConnection connection)
+            {
                 var query = String.Format(@"Insert into Customers (FirstName, LastName, Email, ContactNbr, Password)
                                         Values ('{0}', '{1}', '{2}', '{3}', '{4}');
                                         Select @@Identity as 'Identity'", firstName, lastName, email, phonenumber, password);
 
-                using (var cmd = new SqlCommand(query, WingtipTicketApp.CreateTenantSqlConnection()))
+                using (var cmd = new SqlCommand(query, connection))
                 {
                     using (var sdAdapter = new SqlDataAdapter(cmd))
                     {
@@ -75,9 +84,12 @@ namespace Tenant.Mvc.Core.Contexts
                                 CustomerId = Convert.ToInt32(dsUser.Tables[0].Rows[0]["Identity"])
                             };
 
-                            Startup.SessionUsers.Add(newUser);
-                            HttpContext.Current.Session["SessionUser"] = newUser;
-                            LogAction("Added new user - " + firstName + " " + lastName);
+                            if (setSession)
+                            {
+                                Startup.SessionUsers.Add(newUser);
+                                HttpContext.Current.Session["SessionUser"] = newUser;
+                                LogAction("Added new user - " + firstName + " " + lastName);
+                            }
 
                             return true;
                         }
@@ -93,7 +105,7 @@ namespace Tenant.Mvc.Core.Contexts
 
             public bool UserExists(string email)
             {
-                using (var conn = WingtipTicketApp.CreateTenantSqlConnection())
+                using (var conn = WingtipTicketApp.CreateTenantConnectionDatabase1())
                 {
                     using (var dbReader = new SqlCommand(String.Format(@"Select CustomerId From Customers Where Email={0}", email), conn).ExecuteReader())
                     {
@@ -106,7 +118,7 @@ namespace Tenant.Mvc.Core.Contexts
             {
                 var query = String.Format(@"Select FirstName, LastName, CustomerId from Customers Where Email='{0}' and Password='{1}'", email, password);
 
-                using (var cmd = new SqlCommand(query, WingtipTicketApp.CreateTenantSqlConnection()))
+                using (var cmd = new SqlCommand(query, WingtipTicketApp.CreateTenantConnectionDatabase1()))
                 {
                     using (var sdAdapter = new SqlDataAdapter(cmd))
                     {

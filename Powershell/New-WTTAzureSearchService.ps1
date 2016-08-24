@@ -83,11 +83,14 @@ function New-WTTAzureSearchService
 		try
 		{
 			# Register Azure Search as a provider
-			$status = (Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Search).RegistrationState
-			if ($status -ne "Registered")
-			{
-			    $null = Register-AzureRmResourceProvider -ProviderNamespace Microsoft.Search -Force
-			}
+			Do
+            {
+                $status = (Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Search).RegistrationState
+			    if ($status -ne "Registered")
+			    {
+			        $null = Register-AzureRmResourceProvider -ProviderNamespace Microsoft.Search -Force
+			    }
+            }Until($status -eq "Registered")
 
             WriteLabel("Checking for Azure Search Service $wttEnvironmentApplicationName")
             $searchExist = $true
