@@ -163,6 +163,7 @@ function New-WTTEnvironment
 		$azureSqlServerSecondaryNameExists = $null
 		$secondaryServerLocation = ""
         $primaryServerLocation = $WTTEnvironmentPrimaryServerLocation
+        $wttServiceBusName = $wTTEnvironmentApplicationName+'-ns'
 
 		Try
 		{
