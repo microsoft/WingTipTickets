@@ -18,7 +18,7 @@ CREATE EXTERNAL TABLE asb.DimCurrency
 )
 WITH (
     LOCATION='DimCurrency.txt.gz'
-  , DATA_SOURCE = wttdatacampdwwestus
+  , DATA_SOURCE = wttdatacampwestus
   , FILE_FORMAT = gzip_tab_delimited_text_file
 );
 
@@ -64,7 +64,7 @@ CREATE EXTERNAL TABLE asb.DimDate
 )
 WITH (
     LOCATION='DimDate.txt.gz'
-  , DATA_SOURCE = wttdatacampdwwestus
+  , DATA_SOURCE = wttdatacampwestus
   , FILE_FORMAT = gzip_tab_delimited_text_file
 );
 
@@ -90,7 +90,7 @@ CREATE EXTERNAL TABLE asb.DimGeography
 )
 WITH (
     LOCATION='DimGeography.txt.gz'
-  , DATA_SOURCE = wttdatacampdwwestus
+  , DATA_SOURCE = wttdatacampwestus
   , FILE_FORMAT = gzip_tab_delimited_text_file
 );
 
@@ -110,7 +110,7 @@ CREATE EXTERNAL TABLE asb.DimPerformer
 )
 WITH (
     LOCATION='DimPerformer.txt.gz'
-  , DATA_SOURCE = wttdatacampdwwestus
+  , DATA_SOURCE = wttdatacampwestus
   , FILE_FORMAT = gzip_tab_delimited_text_file
 );
 
@@ -134,7 +134,7 @@ CREATE EXTERNAL TABLE asb.DimConcert
 )
 WITH (
     LOCATION='DimConcert.txt.gz'
-  , DATA_SOURCE = wttdatacampdwwestus
+  , DATA_SOURCE = wttdatacampwestus
   , FILE_FORMAT = gzip_tab_delimited_text_file
 );
 
@@ -165,7 +165,7 @@ CREATE EXTERNAL TABLE asb.DimPromotion
 )
 WITH (
     LOCATION='DimPromotion.txt.gz'
-  , DATA_SOURCE = wttdatacampdwwestus
+  , DATA_SOURCE = wttdatacampwestus
   , FILE_FORMAT = gzip_tab_delimited_text_file
 );
 
@@ -197,7 +197,7 @@ CREATE EXTERNAL TABLE asb.DimSalesTerritory
 )
 WITH (
     LOCATION='DimSalesTerritory.txt.gz'
-  , DATA_SOURCE = wttdatacampdwwestus
+  , DATA_SOURCE = wttdatacampwestus
   , FILE_FORMAT = gzip_tab_delimited_text_file
 );
 
@@ -235,7 +235,7 @@ CREATE EXTERNAL TABLE asb.DimVenue
 )
 WITH (
     LOCATION='DimVenue.txt.gz'
-  , DATA_SOURCE = wttdatacampdwwestus
+  , DATA_SOURCE = wttdatacampwestus
   , FILE_FORMAT = gzip_tab_delimited_text_file
 );
 
@@ -273,7 +273,7 @@ CREATE EXTERNAL TABLE asb.FactSales
 )
 WITH (
     LOCATION='FactSales.txt.gz'
-  , DATA_SOURCE = wttdatacampdwwestus
+  , DATA_SOURCE = wttdatacampwestus
   , FILE_FORMAT = gzip_tab_delimited_text_file
 );
 
@@ -319,6 +319,6 @@ CREATE EXTERNAL TABLE asb.DimCustomer
 )
 WITH (
     LOCATION='DimCustomer.txt.gz'
-  , DATA_SOURCE = wttdatacampdwwestus
+  , DATA_SOURCE = wttdatacampwestus
   , FILE_FORMAT = gzip_tab_delimited_text_file
 );
