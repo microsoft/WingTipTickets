@@ -74,9 +74,23 @@ function New-WTTAzureDocumentDb
         $iotDatabase = "iotdata"
         $iotRawDatabase = "iotrawdata"
 
-        $newIOTDatabase = "https://$wttDocumentDbName.documents.azure.com/dbs"
+        $method = "Post"
+        $resourceId = "dbs/"
+        $resourceType = "dbs"
+        $date = (Get-Date).ToUniversalTime()
+        $xDate = $date.ToString('r',[System.Globalization.CultureInfo]::InvariantCulture)
+        $masterKey = $documentDBPrimaryKey
+        $docDBToken = createAuthToken $method $resourceId $resourceType $date $masterKey
+        $header = @{"Authorization" = "$docDBToken";`
+                    "x-ms-version" = "2015-08-06";`
+                    "x-ms-date" = "$xDate";`
+                    "Content-Type" = "application/query+json";`
+                    "x-ms-documentdb-is-upsert"="true"}
+
+
+        $newIOTDatabase = "https://$wttDocumentDbName.documents.azure.com:443/dbs"
         $body = "{""id"": ""$iotDatabase""}"
-        $newIOTDatabasePost = Invoke-RestMethod -Uri $newIOTDatabase -Body $body -Method Post -Headers $headers -ContentType "application/json"
+        $newIOTDatabasePost = Invoke-RestMethod -Uri $newIOTDatabase -Body $body -Method Post -Headers $header -ContentType "application/json" -Verbose
 
         $newIOTDatabaseCollection = "https://$wttDocumentDbName.documents.azure.com/dbs/$iotDatabase/colls"
         $body = "{
@@ -99,11 +113,36 @@ function New-WTTAzureDocumentDb
                             }
                  }"
         $newIOTDatabaseCollectionPost = Invoke-RestMethod -Uri $newIOTDatabaseCollection -Method Post -Body $body -Headers @{"Authorization"=$authHeader} -ContentType "application/json" -x-ms-offer-throughput "400"
-
 	}
 	Catch
 	{
 		WriteValue("Failed")
 		WriteError($Error)
 	}
-} 
+}
+function createAuthToken ($method, $resourceId, $resourceType, $date, $masterKey)
+{
+  $keyBytes = [System.Convert]::FromBase64String($masterKey)
+  $sigCleartext = @($method.ToLower() + "`n" + $resourceType.ToLower() + "`n" + $resourceId + "`n" + $date.ToString().ToLower() + "`n" + "" + "`n")
+  $bytesSigClear =[Text.Encoding]::UTF8.GetBytes($sigCleartext)
+  $hmacsha = new-object -TypeName System.Security.Cryptography.HMACSHA256 -ArgumentList (,$keyBytes) 
+  $hash = $hmacsha.ComputeHash($bytesSigClear)  
+  $signature = [System.Convert]::ToBase64String($hash)
+  #$key = $('type=master&ver=1.0&sig=' + $signature)
+  $key  = [System.Web.HttpUtility]::UrlEncode($('type=master&ver=1.0&sig=' + $signature)) # needs Snapin System.web!
+  return $key
+}
+
+
+function createAuthToken ($method, $resourceType, $date, $masterKey)
+{
+  $keyBytes = [System.Convert]::FromBase64String($masterKey)
+  $sigCleartext = @($method.ToLower() + "`n" + $resourceType.ToLower() + "`n" + $date.ToString().ToLower() + "`n" + "" + "`n")
+  $bytesSigClear =[Text.Encoding]::UTF8.GetBytes($sigCleartext)
+  $hmacsha = new-object -TypeName System.Security.Cryptography.HMACSHA256 -ArgumentList (,$keyBytes) 
+  $hash = $hmacsha.ComputeHash($bytesSigClear) 
+  $signature = [System.Convert]::ToBase64String($hash)
+  $key = $('type=master&ver=1.0&sig=' + $signature)
+  #$key  = [System.Web.HttpUtility]::UrlEncode($('type=master&ver=1.0&sig=' + $signature)) # needs Snapin System.web!
+  return $key
+}
