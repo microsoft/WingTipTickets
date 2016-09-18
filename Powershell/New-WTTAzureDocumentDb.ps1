@@ -29,7 +29,8 @@ function New-WTTAzureDocumentDb
 
 	try
 	{
-		WriteLabel("Creating DocumentDB")
+        #load System.Web Assembly
+        $systemWebAssembly = [reflection.assembly]::loadwithpartialname("system.web")
 
 		#Register DocumentDB provider service
 		Do{
@@ -41,8 +42,9 @@ function New-WTTAzureDocumentDb
         }until($status -eq "Registered")
 
 		# Create DocumentDb Account
-		New-AzureRmResource -resourceName $WTTDocumentDbName -Location $WTTDocumentDbLocation -ResourceGroupName $azureResourceGroupName -ResourceType "Microsoft.DocumentDb/databaseAccounts" -ApiVersion 2015-04-08 -PropertyObject @{"name" = $WTTDocumentDbName; "databaseAccountOfferType" = "Standard"} -force
+        New-AzureRmResource -resourceName $WTTDocumentDbName -Location $WTTDocumentDbLocation -ResourceGroupName $azureResourceGroupName -ResourceType "Microsoft.DocumentDb/databaseAccounts" -ApiVersion 2015-04-08 -PropertyObject @{"name" = $WTTDocumentDbName; "databaseAccountOfferType" = "Standard"} -force
 		$docDBDeployed = (Get-AzureRmResource -ResourceName $WTTDocumentDbName -ResourceGroupName $azureResourceGroupName -ExpandProperties -ResourceType "Microsoft.DocumentDb/databaseAccounts").Properties.provisioningstate
+        WriteLabel("Creating DocumentDB")
         if($docDBDeployed -eq "Succeeded")
         {
             WriteValue("Successful")
@@ -52,67 +54,105 @@ function New-WTTAzureDocumentDb
             WriteError("Failed")
         }
         $documentDBPrimaryKey = (Invoke-AzureRmResourceAction -ResourceGroupName $azureResourceGroupName -ResourceName $wttDocumentDbName -ResourceType Microsoft.DocumentDb/databaseAccounts -Action listkeys -Force).primarymasterkey
-        # Load ADAL Assemblies
-        $adal = "${env:ProgramFiles(x86)}\Microsoft SDKs\Azure\PowerShell\ServiceManagement\Azure\Services\Microsoft.IdentityModel.Clients.ActiveDirectory.dll"
-        $adalforms = "${env:ProgramFiles(x86)}\Microsoft SDKs\Azure\PowerShell\ServiceManagement\Azure\Services\Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms.dll"
-        $null = [System.Reflection.Assembly]::LoadFrom($adal)
-        $null = [System.Reflection.Assembly]::LoadFrom($adalforms)
-        # Setup authentication to Azure
-        $tenantId = (Get-AzureRmContext).Tenant.TenantId
-        $clientId = "1950a258-227b-4e31-a9cf-717495945fc2"
-        # Set redirect URI for Azure PowerShell
-        $redirectUri = "urn:ietf:wg:oauth:2.0:oob"
-        # Set Resource URI to Azure Service Management API
-        $resourceAppIdURI = "https://management.core.windows.net/"
-        # Set Authority to Azure AD Tenant;
-        $authority = "https://login.windows.net/$tenantId"
-        # Create Authentication Context tied to Azure AD Tenant
-        $authContext = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext" -ArgumentList $authority  
-        $authResult = $authContext.AcquireToken($resourceAppIdURI, $clientId, $redirectUri, "Auto")
-        $authHeader = $authResult.CreateAuthorizationHeader()
-        $headers = @{"Authorization" = $authHeader}
-        $iotDatabase = "iotdata"
-        $iotRawDatabase = "iotrawdata"
-
-        $method = "Post"
-        $resourceId = "dbs/"
-        $resourceType = "dbs"
-        $date = (Get-Date).ToUniversalTime()
-        $xDate = $date.ToString('r',[System.Globalization.CultureInfo]::InvariantCulture)
-        $masterKey = $documentDBPrimaryKey
-        $docDBToken = createAuthToken $method $resourceId $resourceType $date $masterKey
-        $header = @{"Authorization" = "$docDBToken";`
-                    "x-ms-version" = "2015-08-06";`
-                    "x-ms-date" = "$xDate";`
-                    "Content-Type" = "application/query+json";`
-                    "x-ms-documentdb-is-upsert"="true"}
-
-
-        $newIOTDatabase = "https://$wttDocumentDbName.documents.azure.com:443/dbs"
-        $body = "{""id"": ""$iotDatabase""}"
-        $newIOTDatabasePost = Invoke-RestMethod -Uri $newIOTDatabase -Body $body -Method Post -Headers $header -ContentType "application/json" -Verbose
-
-        $newIOTDatabaseCollection = "https://$wttDocumentDbName.documents.azure.com/dbs/$iotDatabase/colls"
-        $body = "{
-                    ""id"": ""$iotDatabase"",
-                            ""indexingPolicy"": {
-                                ""automatic"": true,
-                                ""indexingMode"": ""Consistent"",
-                                ""includedPaths"": [
-                                {
-                                    ""path"": ""/*"",
-                                    ""indexes"": [
-                                     {
-                                        ""dataType"": ""String"",
-                                        ""precision"": -1,
-                                        ""kind"": ""Range""
-                                     }
-                                   ]
+       
+        #Create DocDB Database
+        $iotArray = @("iotdata","iotrawdata")
+        foreach($item in $iotArray)
+        {
+            WriteLabel("Creating DocDB Database $item")
+            $method = "Post"
+            $resourceId = ""
+            $resourceType = "dbs"
+            $date = (Get-Date).ToUniversalTime()
+            $xDate = $date.ToString('r',[System.Globalization.CultureInfo]::InvariantCulture)
+            $masterKey = $documentDBPrimaryKey
+            $docDBToken = createAuthToken $method $resourceId $resourceType $xDate $masterKey
+            $header = @{"Authorization" = "$docDBToken";`
+                        "x-ms-date" = "$xDate";`
+                        "x-ms-version" = "2015-08-06"
+                        }
+            $newIOTDatabase = "https://$wttDocumentDbName.documents.azure.com:443/dbs"
+            $body = "{""id"": ""$item""}"
+            $newIOTDatabasePost = Invoke-RestMethod -Uri $newIOTDatabase -Body $body -Method Post -Headers $header -ContentType "application/json"
+        
+            #Get DocDB Database
+            $method = "Get"
+            $resourceId = ""
+            $resourceType = "dbs"
+            $date = (Get-Date).ToUniversalTime()
+            $xDate = $date.ToString('r',[System.Globalization.CultureInfo]::InvariantCulture)
+            $masterKey = $documentDBPrimaryKey
+            $docDBToken = createAuthToken $method $resourceId $resourceType $xDate $masterKey      
+            $header = @{"Authorization" = "$docDBToken";`
+                        "x-ms-date" = "$xDate";`
+                        "x-ms-version" = "2015-08-06"
+                        }
+            $getIOTDatabase = Invoke-RestMethod -Uri $newIOTDatabase -Method Get -Headers $header -ContentType "application/json"
+            $dbs = @($getIOTDatabase.Databases.id)
+            foreach($db in $dbs)
+            {
+                if($db -like $item)
+                {
+                    WriteValue "Successful"
+                }
+            }
+            
+            WriteLabel("Creating DocDB Database Collection $item")
+            #Create DocDB Database Collection       
+            $method = "Post"
+            $resourceId = "dbs/$item"
+            $resourceType = "colls"
+            $date = (Get-Date).ToUniversalTime()
+            $xDate = $date.ToString('r',[System.Globalization.CultureInfo]::InvariantCulture)
+            $masterKey = $documentDBPrimaryKey
+            $docDBToken = createAuthToken $method $resourceId $resourceType $xDate $masterKey
+            $header = @{"Authorization" = "$docDBToken";`
+                        "x-ms-date" = "$xDate";`
+                        "x-ms-version" = "2015-08-06";`
+                        "x-ms-offer-throughput" = "400"
+                        }
+            $newIOTDatabaseCollection = "https://$wttDocumentDbName.documents.azure.com/dbs/$item/colls"
+            $body = "{
+                        ""id"": ""$item"",
+                                ""indexingPolicy"": {
+                                    ""automatic"": true,
+                                    ""indexingMode"": ""Consistent"",
+                                    ""includedPaths"": [
+                                    {
+                                        ""path"": ""/*"",
+                                        ""indexes"": [
+                                         {
+                                            ""dataType"": ""String"",
+                                            ""precision"": -1,
+                                            ""kind"": ""Range""
+                                         }
+                                       ]
+                                    }
+                                  ]
                                 }
-                              ]
-                            }
-                 }"
-        $newIOTDatabaseCollectionPost = Invoke-RestMethod -Uri $newIOTDatabaseCollection -Method Post -Body $body -Headers @{"Authorization"=$authHeader} -ContentType "application/json" -x-ms-offer-throughput "400"
+                     }"
+            $newIOTDatabaseCollectionPost = Invoke-RestMethod -Uri $newIOTDatabaseCollection -Method Post -Body $body -Headers $header -ContentType "application/json"
+        
+            #Get DocDB Database Collection
+            $method = "Get"
+            $resourceId = "dbs/$item"
+            $resourceType = "colls"
+            $date = (Get-Date).ToUniversalTime()
+            $xDate = $date.ToString('r',[System.Globalization.CultureInfo]::InvariantCulture)
+            $masterKey = $documentDBPrimaryKey
+            $docDBToken = createAuthToken $method $resourceId $resourceType $xDate $masterKey
+            $header = @{"Authorization" = "$docDBToken";`
+                        "x-ms-date" = "$xDate";`
+                        "x-ms-version" = "2015-08-06"
+                        }
+            $getIOTDatabaseCollectionURL = "https://$wttDocumentDbName.documents.azure.com/dbs/$item/colls"
+            $getIOTDatabaseCollection = Invoke-RestMethod -Uri $getIOTDatabaseCollectionURL -Method Get -Headers $header
+            if($getIOTDatabaseCollection.DocumentCollections.id -like $item)
+            {
+                WriteValue("Successful")
+            }            
+        }
+
 	}
 	Catch
 	{
@@ -120,29 +160,14 @@ function New-WTTAzureDocumentDb
 		WriteError($Error)
 	}
 }
-function createAuthToken ($method, $resourceId, $resourceType, $date, $masterKey)
+function createAuthToken ($method, $resourceId, $resourceType, $xdate, $masterKey)
 {
   $keyBytes = [System.Convert]::FromBase64String($masterKey)
-  $sigCleartext = @($method.ToLower() + "`n" + $resourceType.ToLower() + "`n" + $resourceId + "`n" + $date.ToString().ToLower() + "`n" + "" + "`n")
+  $sigCleartext = @($method.ToLower() + "`n" + $resourceType.ToLower() + "`n" + $resourceId + "`n" + $xdate.ToLowerInvariant() + "`n" + "" + "`n")
   $bytesSigClear =[Text.Encoding]::UTF8.GetBytes($sigCleartext)
   $hmacsha = new-object -TypeName System.Security.Cryptography.HMACSHA256 -ArgumentList (,$keyBytes) 
   $hash = $hmacsha.ComputeHash($bytesSigClear)  
   $signature = [System.Convert]::ToBase64String($hash)
-  #$key = $('type=master&ver=1.0&sig=' + $signature)
-  $key  = [System.Web.HttpUtility]::UrlEncode($('type=master&ver=1.0&sig=' + $signature)) # needs Snapin System.web!
-  return $key
-}
-
-
-function createAuthToken ($method, $resourceType, $date, $masterKey)
-{
-  $keyBytes = [System.Convert]::FromBase64String($masterKey)
-  $sigCleartext = @($method.ToLower() + "`n" + $resourceType.ToLower() + "`n" + $date.ToString().ToLower() + "`n" + "" + "`n")
-  $bytesSigClear =[Text.Encoding]::UTF8.GetBytes($sigCleartext)
-  $hmacsha = new-object -TypeName System.Security.Cryptography.HMACSHA256 -ArgumentList (,$keyBytes) 
-  $hash = $hmacsha.ComputeHash($bytesSigClear) 
-  $signature = [System.Convert]::ToBase64String($hash)
-  $key = $('type=master&ver=1.0&sig=' + $signature)
-  #$key  = [System.Web.HttpUtility]::UrlEncode($('type=master&ver=1.0&sig=' + $signature)) # needs Snapin System.web!
+  $key  = [System.Web.HttpUtility]::UrlEncode($('type=master&ver=1.0&sig=' + $signature))
   return $key
 }

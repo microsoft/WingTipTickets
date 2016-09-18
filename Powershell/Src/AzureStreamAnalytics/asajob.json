@@ -23,7 +23,8 @@
 						"ServiceBusNamespace": "<servicebusnamespace>",
 						"SharedAccessPolicyKey": "<sharedaccesspolicykey>",
 						"SharedAccessPolicyName": "<sharedaccesspolicyname>",
-						"SourcePartitionCount": 4
+						"SourcePartitionCount": 4,
+						"consumerGroupName": "<consumerGroupName>"
 					}
 				}
 			}
@@ -44,7 +45,8 @@
 						"AccountID": "<documentDBID>",
 						"AccountKey": "<documentDBAccountKey>",
 						"database": "<documentDBDatabaseName>",
-						"CollectionNamePattern": "<collectionNamePattern>"
+						"CollectionNamePattern": "<collectionNamePattern>",
+						"PartitionKey": "id"
 					}
 				}
 			}

@@ -32,25 +32,33 @@
 
     try{
 
-    $wttASAJobName = $wttASAJob
-    if($wttASAJobName.Length -gt 24) { $wttASAJobName = $wttASAJobName.Remove(23) }
+        $wttASAJobName = $wttASAJob
+        if($wttASAJobName.Length -gt 24) { $wttASAJobName = $wttASAJobName.Remove(23) }
 
-    $inputEventHubName = 
-    $currentNamespace = Get-AzureSBNamespace -Name $wttServiceBusName
-    $namespaceManager = [Microsoft.ServiceBus.NamespaceManager]::CreateFromConnectionString($CurrentNamespace.ConnectionString)
-    $serviceBusAuth = (Get-AzureSBAuthorizationRule -Namespace $wttServiceBusName).ConnectionString.Split(';')
-    $sharedaccesspolicykey = $serviceBusAuth[2].Substring(16)
-    $sharedaccesspolicyname = $serviceBusAuth[1].Substring(20)
-    $documentDBID = $azureDocumentDbName
-    $documentDBAccountKey = (Invoke-AzureRmResourceAction -ResourceGroupName $azureResourceGroupName -ResourceName $azureDocumentDbName -ResourceType Microsoft.DocumentDb/databaseAccounts -Action listkeys -Force).primarymasterkey
-    $asaJobFile = @{}
-    $asaJobFile.Add($wttEventHubName)
-    $asaJobFile.Add($wttServiceBusName)
-    $asaJobFile.Add($sharedaccesspolicykey)
-    $asaJobFile.Add($sharedaccesspolicyname)
-    $asaJobFile.Add($azureDocumentDbName)
-    $asaJobFile.Add($documentDBID)
-    $asaJobFile.Add($documentDBAccountKey)
+        $inputEventHubName = $wttEventHubName
+        $servicebusnamespace = $wttServiceBusName
+        $currentNamespace = Get-AzureSBNamespace -Name $wttServiceBusName
+        $namespaceManager = [Microsoft.ServiceBus.NamespaceManager]::CreateFromConnectionString($CurrentNamespace.ConnectionString)
+        $serviceBusAuth = (Get-AzureSBAuthorizationRule -Namespace $wttServiceBusName).ConnectionString.Split(';')
+        $sharedaccesspolicykey = $serviceBusAuth[2].Substring(16)
+        $sharedaccesspolicyname = $serviceBusAuth[1].Substring(20)
+        $documentDBID = $azureDocumentDbName
+        $documentDBAccountKey = (Invoke-AzureRmResourceAction -ResourceGroupName $azureResourceGroupName -ResourceName $azureDocumentDbName -ResourceType Microsoft.DocumentDb/databaseAccounts -Action listkeys -Force).primarymasterkey
+        $documentDBDatabaseName = "iotdata"
+        $collectionNamePattern = "iotdata"
+        $consumerGroupName = "asajob"
+        $asaJobFile = @{}
+        $asaJobFile.Add('<wttASALocation>',$wttASALocation)
+        $asaJobFile.Add('<inputEventHubName>',$inputEventHubName)
+        $asaJobFile.Add('<servicebusnamespace>',$servicebusnamespace)
+        $asaJobFile.Add('<sharedaccesspolicykey>',$sharedaccesspolicykey)
+        $asaJobFile.Add('<sharedaccesspolicyname>',$sharedaccesspolicyname)
+        $asaJobFile.Add('<azureDocumentDbName>',$azureDocumentDbName)
+        $asaJobFile.Add('<documentDBID>',$documentDBID)
+        $asaJobFile.Add('<documentDBAccountKey>',$documentDBAccountKey)
+        $asaJobFile.Add('<documentDBDatabaseName>',$documentDBDatabaseName)
+        $asaJobFile.Add('<collectionNamePattern>',$collectionNamePattern)
+        $asaJobFile.Add('<consumerGroupName>',$consumerGroupName)
 
         #Check registration status of Azure Stream Analytics
         Do
@@ -61,87 +69,41 @@
                 $null = Register-AzureRmResourceProvider -ProviderNamespace Microsoft.StreamAnalytics
             }
         }until($status.RegistrationState -eq "Registered")
+        
+        $newASADirectory = New-Item -ItemType Directory -Name ASA -Path .\Temp\Json -Force
+        $copyASAJob = Copy-Item .\src\AzureStreamAnalytics\ASAJob.json -Destination .\temp\json\asa\ -Force
+        $files = Get-ChildItem ".\temp\json\asa\*" -Include ASAJob.json -Recurse -ErrorAction Stop
 
-
-    New-AzureRmStreamAnalyticsJob -ResourceGroupName $azureResourceGroupName -Name $wttASAJob
+        foreach($file in $files){
+            Update-ASAJSONFile  $file.FullName      
+        }
+        WriteLabel("Creating ASA Job")
+        $newASAJob = New-AzureRmStreamAnalyticsJob -ResourceGroupName $azureResourceGroupName -Name $wttASAJobName -File ".\temp\json\asa\ASAjob.json"
+        if($newASAJob.JobName -eq $wttASAJobName)
+        {
+            WriteValue("Success")
+        }
     }
     catch
     {
         WriteValue("Failed")
 		WriteError($Error)
     }
-
+}
 function Update-ASAJSONFile( $file ){
 	Write-Host  -foreground green (Get-Date)   "Updating [$file]"
 
 	(Get-Content $file ) | Foreach-Object {
-		$_  -replace '<inputEventHubName>', $global:dict["<inputEventHubName>"] `
-            -replace '<outputEventHubName>', $global:dict["<outputEventHubName>"] `
- 		    -replace '<servicebusnamespace>', $global:dict["<servicebusnamespace>"] `
- 		    -replace '<sharedaccesspolicykey>', $global:dict["<sharedaccesspolicykey>"] `
- 		    -replace '<sharedaccesspolicyname>', $global:dict["<sharedaccesspolicyname>"] `
-			-replace '<sqlserver>', $global:dict["<azuredbname>"] `
-			-replace '<dbname>', $global:dict["<dbname>"] `
- 		    -replace '<userid>', $global:dict["<userid>"] `
- 		    -replace '<password>', $global:dict["<password>"] `
-		
+		$_  -replace '<wttASALocation>', $asaJobFile["<wttASALocation>"] `
+            -replace '<inputEventHubName>', $asaJobFile["<inputEventHubName>"] `
+ 		    -replace '<servicebusnamespace>', $asaJobFile["<servicebusnamespace>"] `
+ 		    -replace '<sharedaccesspolicykey>', $asaJobFile["<sharedaccesspolicykey>"] `
+ 		    -replace '<sharedaccesspolicyname>', $asaJobFile["<sharedaccesspolicyname>"] `
+			-replace '<documentDBID>', $asaJobFile["<documentDBID>"] `
+			-replace '<documentDBAccountKey>', $asaJobFile["<documentDBAccountKey>"] `
+ 		    -replace '<documentDBDatabaseName>', $asaJobFile["<documentDBDatabaseName>"] `
+ 		    -replace '<collectionNamePattern>', $asaJobFile["<collectionNamePattern>"] `
+            -replace '<consumerGroupName>',$asaJobFile["<consumerGroupName>"]`
 	} | Set-Content  $file
 
-}
-function SetGlobalParams {
-    #this function must be called after ValidateParams
-    
-
-
-    $global:defaultResourceName = $output 
-	$global:inputEventHubName = $output+'input'
-    $global:outputEventHubName = $output+'output'
-	$global:ServiceBusNamespace = $output
-    
-    $global:configPath = ($PSScriptRoot+'\temp\setup\' + $global:useCaseName + '.txt')
-
-    $global:dict = @{}    
-
-
-
-}
-function SetMappingDictionary {
-    #map the global vars to the dictionary  used for string substitution
-
-    $global:dict.Add('<azuredbname>',$global:sqlserverName)
-    $global:dict.Add('<userid>', $global:sqlServerLogin)
-    $global:dict.Add('<password>', $global:sqlServerPassword)
-    $global:dict.Add('<dbname>',$global:sqlDBName)
-	$global:dict.Add('<usecase>',$global:useCaseName)
-	$global:dict.Add('<inputEventHubName>',$global:inputEventHubName)
-    $global:dict.Add('<outputEventHubName>',$global:outputEventHubName)
-	$global:dict.Add('<servicebusnamespace>',$global:ServiceBusNamespace)
-	$global:dict.Add('<sharedaccesspolicyname>',$global:sharedaccesskeyname)
-	$global:dict.Add('<sharedaccesspolicykey>',$global:sharedaccesskey)
-
-
-}
-function CreateASAJob{
-    Write-Host "Preparing ASA job config file......" -NoNewline
-	copy -Path "src\\$global:useCaseName\\ASAJob\\ASAJob.json" -Destination temp\json\asa\ -Force
-    $files = Get-ChildItem "temp\json\asa\*" -Include ASAJob.json -Recurse -ErrorAction Stop
-	
-    foreach($file in $files){
-        Update-ASAJSONFile  $file.FullName      
-    }
-	Write-Host 'Prepared.'
-	
-	Write-Host "Creating the ASA Job......" -NoNewline
-	try{
-        Switch-AzureMode AzureResourceManager
-        $ASAJob = New-AzureStreamAnalyticsJob -File "temp\json\asa\ASAjob.json" -Name $global:defaultResourceName -ResourceGroupName $global:resourceGroupName -ErrorAction Stop
-	    if ($ASAJob.JobName -eq $global:defaultResourceName){
-            Write-Host 'Created.'
-	    }
-    }
-    catch{
-        Write-Host 'Error.'
-        throw
-    }
-}
 }

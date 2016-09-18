@@ -67,6 +67,7 @@ function New-WTTAzureEventHub
             }
         }Until($ehExist -eq $true)
         
+        $nugetImport = .\NuGet.\NuGet.exe restore ".\NuGet\packages.config" -PackagesDirectory ".\Nuget\Packages"
         $serviceBusDLL = Get-ChildItem -Recurse ".\Nuget\packages\*ServiceBus*" -Include *.dll
         add-type -path $serviceBusDLL
 
@@ -132,7 +133,6 @@ function New-WTTAzureEventHub
         if($eventHubSASKeyName -and $EventHubsKeyName)
         {
             WriteValue("Success")
-            
         }
         Else
         {
