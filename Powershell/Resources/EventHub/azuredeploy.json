@@ -75,6 +75,10 @@
       "NamespaceConnectionString":{  
          "type":"string",
          "value":"[listkeys(variables('authRuleResourceId'), variables('apiVersion')).primaryConnectionString]"
+      },
+      "SharedAccessPolicyPrimaryKey":{  
+         "type":"string",
+         "value":"[listkeys(variables('authRuleResourceId'), variables('apiVersion')).primaryKey]"
       }
     }
 }

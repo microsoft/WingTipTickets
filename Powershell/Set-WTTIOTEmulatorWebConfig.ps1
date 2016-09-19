@@ -56,7 +56,7 @@ function Set-WTTIOTEmulatorWebConfig
 			WriteLabel("Setting Config Settings")
 
 			$docDBName = "https://$azureDocumentDbName.documents.azure.com:443/"
-            $sbConnectionString  = (Get-AzureSBNamespace -Name $wttServiceBusName).connectionstring
+            
 
 			# Build web application settings
 			$settings = New-Object Hashtable
@@ -67,7 +67,7 @@ function Set-WTTIOTEmulatorWebConfig
                     "DocumentDbDatabase" = "$documentDbDatabase";
                     "DocumentDbCollection" = "$documentDbCollection";
                     "EventHub" = "$wttEventHubName";
-                    "Microsoft.ServiceBus.ConnectionString" = "$sbConnectionString"
+                    "Microsoft.ServiceBus.ConnectionString" = "$wttServiceBusName"
 			}
 
 			# Add the settings to the website

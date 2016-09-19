@@ -22,7 +22,7 @@ function New-WTTAzureEventHub
 		$wttEventHubName,
 
 		# DocumentDb Location
-		[Parameter(Mandatory=$false, HelpMessage="Please specify the datacenter location for your Azure DocumentDb Service ('Central US', 'East US', 'East US 2', 'West US 2', 'West US', 'North Central US', 'South Central US', 'West Central US', 'East Asia', 'Southeast Asia', 'Brazil South', 'Japan East', 'Japan West', 'North Europe', 'West Europe', 'Canada Central', 'Canada East')?")]
+		[Parameter(Mandatory=$false, HelpMessage="Please specify the datacenter location for your Azure Event Hub Service ('Central US', 'East US', 'East US 2', 'West US 2', 'West US', 'North Central US', 'South Central US', 'West Central US', 'East Asia', 'Southeast Asia', 'Brazil South', 'Japan East', 'Japan West', 'North Europe', 'West Europe', 'Canada Central', 'Canada East')?")]
 		[ValidateSet('Central US', 'East US', 'East US 2', 'West US 2', 'West US', 'North Central US', 'South Central US', 'West Central US', 'East Asia', 'Southeast Asia', 'Brazil South', 'Japan East', 'Japan West', 'North Europe', 'West Europe', 'Canada Central', 'Canada East')]
 		$wttEventHubLocation,
 
@@ -39,7 +39,12 @@ function New-WTTAzureEventHub
     try{
         $params = @{namespaceName = "$wttServiceBusName";eventHubName = "$wttEventHubName"; consumerGroupName = "$consumerGroupName";location = "$wttEventHubLocation"; }
         $newEventHub = New-AzureRmResourceGroupDeployment -ResourceGroupName $azureResourceGroupName -TemplateFile .\Resources\EventHub\azuredeploy.json -TemplateParameterObject $params
-        $newEventHub.Outputs | Out-File .\eventhub.txt -Append
+        if($newEventHub)
+        {
+            $eventHubConnectionString = $newEventHub.Outputs.Values.value[0]
+            WriteValue("Successful")
+            return $eventHubConnectionString
+        }        
     }
     catch{
         WriteValue("Failed")
