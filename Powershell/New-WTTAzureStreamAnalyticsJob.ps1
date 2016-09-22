@@ -31,7 +31,6 @@
 	)
 
     try{
-
         $wttASAJobName = $wttASAJob
         if($wttASAJobName.Length -gt 24) { $wttASAJobName = $wttASAJobName.Remove(23) }
 

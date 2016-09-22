@@ -657,7 +657,7 @@ function New-WTTEnvironment
             Start-Sleep -s 240
 
             #New Azure Service Bus and Event Hub
-            New-WTTAzureEventHub -wttEventHubName $wttEventHubName -wttServiceBusName $wttServiceBusName -wttEventHubLocation $primaryServerLocation
+            $eventHubConnectionString = New-WTTAzureEventHub -wttEventHubName $wttEventHubName -wttServiceBusName $wttServiceBusName -wttEventHubLocation $primaryServerLocation
             
             #New Azure Stream Analytics Job
             #Get wttASALocation setting      

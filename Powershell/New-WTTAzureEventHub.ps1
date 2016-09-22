@@ -37,6 +37,35 @@ function New-WTTAzureEventHub
     WriteLabel("Creating Azure Service Bus")
     
     try{
+        WriteLabel("Checking for Service Bus Provider")
+	    $provider =  (Get-AzureRmResourceProvider -ProviderNamespace Microsoft.ServiceBus).RegistrationState
+
+	    if ($provider -ne "Registered")
+	    {
+		    WriteValue("Not Found")
+		    WriteLabel("Registering Service Bus Provider")
+		    $null = Register-AzureRmResourceProvider -ProviderNamespace Microsoft.ServiceBus
+		    WriteValue("Successful")
+	    }
+	    else
+	    {
+		    WriteValue("Found")
+	    }
+    	WriteLabel("Checking for Event Hub Provider")
+	    $provider =  (Get-AzureRmResourceProvider -ProviderNamespace Microsoft.EventHub).RegistrationState
+
+	    if ($provider -ne "Registered")
+	    {
+		    WriteValue("Not Found")
+		    WriteLabel("Registering Event Hub Provider")
+		    $null = Register-AzureRmResourceProvider -ProviderNamespace Microsoft.EventHub
+		    WriteValue("Successful")
+	    }
+	    else
+	    {
+		    WriteValue("Found")
+	    }
+
         $params = @{namespaceName = "$wttServiceBusName";eventHubName = "$wttEventHubName"; consumerGroupName = "$consumerGroupName";location = "$wttEventHubLocation"; }
         $newEventHub = New-AzureRmResourceGroupDeployment -ResourceGroupName $azureResourceGroupName -TemplateFile .\Resources\EventHub\azuredeploy.json -TemplateParameterObject $params
         if($newEventHub)
