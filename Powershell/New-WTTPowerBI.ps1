@@ -61,7 +61,8 @@ function New-WTTPowerBI
     Try
     {
         #Check status of Power BI service
-        Do{
+        Do
+        {
             $status = Get-AzureRmResourceProvider -ProviderNamespace Microsoft.PowerBI
             if ($status.RegistrationState -ne "Registered")
             {
@@ -123,7 +124,7 @@ function New-WTTPowerBI
                 # Acquire token
                 $authResult = $authContext.AcquireToken($resourceAppIdURI, $clientId, $redirectUri, "Auto")
                 $authHeader = $authResult.CreateAuthorizationHeader()
-                $headers = @{"Authorization" = $authHeader}     
+                $headers = @{"Authorization" = $authHeader}  
             
                 WriteLabel("Deploying Power BI Workspace Collection")
                 #create Power BI Workspace Collection

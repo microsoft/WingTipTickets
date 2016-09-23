@@ -61,6 +61,10 @@ function New-WTTEnvironment
 		[Parameter(Mandatory = $false)] 
 		[String]$webAppSecondaryPackageName,
 
+		# IOT Emulator Azure Web Site WebDeploy Package Name
+		[Parameter(Mandatory = $false)] 
+		[String]$iotEmulatorAppPackageName,
+
         #This parameter is used by deploy-wttenvironment.ps1
 		[Parameter(Mandatory = $false)]
 		[string]
@@ -149,6 +153,17 @@ function New-WTTEnvironment
 			$azureWebSiteSecondaryWebDeployPackagePath = $WebAppPackagePath + "\" + $webAppSecondaryPackageName
 		}
 
+        if($iotEmulatorAppPackageName -eq "")
+		{
+			$iotEmulatorAppPackageName = "wttiotemulator.zip"
+			$iotEmulatorAppPackagePath = $WebAppPackagePath + "\" + $iotEmulatorAppPackageName
+		}
+		else
+		{
+			$iotEmulatorAppPackageName = $iotEmulatorAppPackageName
+			$iotEmulatorAppPackagePath = $WebAppPackagePath + "\" + $iotEmulatorAppPackageName
+		}
+
 		$localPath = (Get-Item -Path ".\" -Verbose).FullName
 
 		$wttEnvironmentApplicationName = $WTTEnvironmentApplicationName.ToLower()
@@ -163,6 +178,10 @@ function New-WTTEnvironment
 		$azureSqlServerSecondaryNameExists = $null
 		$secondaryServerLocation = ""
         $primaryServerLocation = $WTTEnvironmentPrimaryServerLocation
+        $wttServiceBusName = $wTTEnvironmentApplicationName+'-ns'
+        $wttEventHubName = $wTTEnvironmentApplicationName
+        $wttASAJob = $wTTEnvironmentApplicationName+'asajob'
+        $iotEmulatorApp = $wTTEnvironmentApplicationName+'iotemulator'
 
 		Try
 		{
@@ -543,7 +562,33 @@ function New-WTTEnvironment
 					WriteValue("Successful")
 				}
 			} While($secondaryWebApp.Name -ne $azureSqlServerSecondaryName)
-			start-sleep -s 120
+        
+        
+            #Create IOT Emulator App Plan
+            WriteLabel("Creating IOT Emulator application service plan '$iotEmulatorApp'")
+			$iotEmulatorAppPlan = ""
+			Do
+			{
+				$iotEmulatorAppPlan = New-AzureRmAppServicePlan -name $iotEmulatorApp -location $primaryServerLocation -tier standard -resourcegroupname $azureresourcegroupname
+				if($iotEmulatorAppPlan.Name -eq $iotEmulatorApp)
+				{
+					WriteValue("Successful")
+				}
+			} While ($iotEmulatorAppPlan.Name -ne $iotEmulatorApp)
+            
+            #Create IOT Emulator Web App
+			WriteLabel("Creating IOT Emulator application '$iotEmulatorApp'")
+			$iotEmulatorWebApp = ""
+			Do
+			{
+				$iotEmulatorWebApp = New-AzureRMWebApp -Location $primaryServerLocation -AppServicePlan $iotEmulatorApp -ResourceGroupName $azureResourceGroupName -Name $iotEmulatorApp
+				if($iotEmulatorWebApp.Name -eq $iotEmulatorApp)
+				{
+					WriteValue("Successful")
+				}
+			} While($iotEmulatorWebApp.Name -ne $iotEmulatorApp)       
+        
+        	start-sleep -s 120
 
 			# Deploy Web Applications
 			LineBreak
@@ -553,7 +598,10 @@ function New-WTTEnvironment
 			WriteLabel("Deploying Secondary application '$azureSqlServerSecondaryName'")
             LineBreak
 			Deploy-WTTWebApplication -azureStorageAccountName $azureStorageAccountName -azureResourceGroupName $azureResourceGroupName -Websitename $azureSqlServerSecondaryName -WebAppPackagePath $WebAppPackagePath -webAppPackageName $webAppSecondaryPackageName
-
+            LineBreak
+            WriteLabel("Deploying Secondary application '$iotEmulatorApp'")
+            Deploy-WTTWebApplication -azureStorageAccountName $azureStorageAccountName -azureResourceGroupName $azureResourceGroupName -Websitename $iotEmulatorApp -WebAppPackagePath $WebAppPackagePath -webAppPackageName $iotEmulatorAppPackageName
+            
 			# Create Traffic Manager Profile
 			LineBreak
 			New-WTTAzureTrafficManagerProfile -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -AzureResourceGroupName $azureResourceGroupName
@@ -608,6 +656,37 @@ function New-WTTEnvironment
 		    writeValue("Successful")
             Start-Sleep -s 240
 
+            #New Azure Service Bus and Event Hub
+            $eventHubConnectionString = New-WTTAzureEventHub -wttEventHubName $wttEventHubName -wttServiceBusName $wttServiceBusName -wttEventHubLocation $primaryServerLocation
+            
+            #New Azure Stream Analytics Job
+            #Get wttASALocation setting      
+            $wttASALocation =
+                Switch ($primaryServerLocation)
+                {
+                    'West US' {'West US'}
+                    'North Europe' {'North Europe'}
+                    'West Europe' {'West Europe'}
+                    'East US' {'East US'}
+                    'North Central US' {'North Central US'}
+                    'East US 2' {'East US 2'}
+                    'South Central US' {'South Central US'}
+                    'Central US' {'South Central US'}
+                    'Brazil South' {'Brazil South'}
+                    'Southeast Asia' {'Southeast Asia'}
+                    'East Asia' {'East Asia'}
+                    'Japan East' {'Japan East'}
+                    'Japan West' {'Japan West'}
+                    'Canada Central' {'North Central US'}
+                    'Canada East' {'North Central US'}
+                    'West India' {'Southeast Asia'}
+                    'South India' {'Southeast Asia'}
+                    'Central India' {'Southeast Asia'}
+                    default {'West US'}
+                }
+            
+            New-WTTAzureStreamAnalyticsJob -azureResourceGroupName $azureResourceGroupName -wttASAJob $wttasajob -wttASALocation $wttASALocation -wttServiceBusName $wttServiceBusName -wttEventHubName $wttEventHubName -azureDocumentDbName $azureDocumentDbName
+            
 			# Set the Application Settings
 			$searchName = (Find-AzureRmResource -ResourceType Microsoft.Search/searchServices -ResourceGroupName $azureResourceGroupName -ResourceNameContains $azuresearchservicename).name
 			$searchServicePrimaryManagementKey = (Invoke-AzureRmResourceAction -ResourceGroupName $azureResourceGroupName -ResourceName $searchName -ResourceType Microsoft.Search/searchServices -Action listAdminkeys -Force).PrimaryKey
@@ -621,7 +700,9 @@ function New-WTTEnvironment
 
 			Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -azureResourceGroupName $azureResourceGroupName -Websitename $azureSqlServerPrimaryName -SearchName $searchName -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlServerPrimaryName $azureSqlServerPrimaryName -AzureSqlServerSecondaryName $azureSqlServerSecondaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey $documentDbPrimaryKey -powerbiSigningKey $powerbiSigningKey -powerbiWorkspaceCollection $powerbiWorkspaceCollection -powerbiWorkspaceId $powerbiWorkspaceId -seatMapReportID $seatMapReportID -TenantEventType $TenantEventType
 			Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -azureResourceGroupName $azureResourceGroupName -Websitename $azureSqlServerSecondaryName -SearchName $searchName -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlServerPrimaryName $azureSqlServerSecondaryName -AzureSqlServerSecondaryName $azureSqlServerPrimaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey $documentDbPrimaryKey -powerbiSigningKey $powerbiSigningKey -powerbiWorkspaceCollection $powerbiWorkspaceCollection -powerbiWorkspaceId $powerbiWorkspaceId -seatMapReportID $seatMapReportID -TenantEventType $TenantEventType
-            
+            Set-WTTIOTEmulatorWebConfig -azureResourceGroupName $azureResourceGroupName -Websitename $iotEmulatorApp -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey $documentDbPrimaryKey -documentDbDatabase "iotrawdata" -documentDbCollection "iotrawdata" -wttEventHubName $wttEventHubName -wttServiceBusName $eventHubConnectionString
+
+
             Start-Sleep -Seconds 20
 			# Enable Auditing on Azure SQL Database Server
 			# Appears to be a name resolution issue if Auditing is enabled, as Azure Search will not redirect to the database server
