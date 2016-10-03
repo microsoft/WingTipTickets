@@ -238,18 +238,18 @@ function Populate-DBSchema
 			    $Command.CommandText =
     				"
 	    				Set Identity_Insert [dbo].[Venues] On 
-		    			Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) Values (1, N'Conrad Fischer Stands', 1000, N'', 1)
-			    		Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) Values (2, N'Hayden Lawrence Gardens', 1000, N'', 2)
-				    	Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) Values (3, N'Rene Charron Highrise', 1000, N'', 3)
-					    Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) Values (4, N'Aldo Richter Hall', 1000, N'', 4)
-					    Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) Values (5, N'Harriet Collier Auditorium', 1000, N'', 5)
-					    Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) Values (6, N'Samuel Boyle Center', 1000, N'', 6)
-					    Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) Values (7, N'Millie Stevens Memorial Plaza', 1000, N'', 7)
-					    Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) Values (8, N'Louisa Zimmerman Stadium', 1000, N'', 8)
-					    Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) Values (9, N'Lara Ehrle Amphitheter', 1000, N'', 9)
-					    Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) Values (10, N'Antione Lacroix Dome', 1000, N'', 10)
-					    Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) Values (11, N'Claude LAngelier Field', 1000, N'', 11)
-					    Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId]) Values (12, N'Maya Haynes Arena', 1000, N'', 10)
+		    			Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId], [Longitude], [Latitude]) Values (1, N'Conrad Fischer Stands', 1000, N'', 1, N'34.0522° N', N'118.2437° W')
+						Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId], [Longitude], [Latitude]) Values (2, N'Hayden Lawrence Gardens', 1000, N'', 2, N'39.7392° N', N'104.9903° W')
+						Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId], [Longitude], [Latitude]) Values (3, N'Rene Charron Highrise', 1000, N'', 3, N'30.3322° N', N'81.6557° W')
+						Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId], [Longitude], [Latitude]) Values (4, N'Aldo Richter Hall', 1000, N'', 4, N'42.3601° N', N'71.0589° W')
+						Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId], [Longitude], [Latitude]) Values (5, N'Harriet Collier Auditorium', 1000, N'', 5, N'42.3314° N', N'83.0458° W')
+						Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId], [Longitude], [Latitude]) Values (6, N'Samuel Boyle Center', 1000, N'', 6, N'43.0481° N', N'76.1474° W')
+						Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId], [Longitude], [Latitude]) Values (7, N'Millie Stevens Memorial Plaza', 1000, N'', 7, N'45.5231° N', N'122.6765° W')
+						Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId], [Longitude], [Latitude]) Values (8, N'Louisa Zimmerman Stadium', 1000, N'', 8,  N'30.2672° N', N'97.7431° W')
+						Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId], [Longitude], [Latitude]) Values (9, N'Lara Ehrle Amphitheter', 1000, N'', 9, N'40.7608° N', N'111.8910° W')
+						Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId], [Longitude], [Latitude]) Values (10, N'Antione Lacroix Dome', 1000, N'', 10, N'47.6062° N', N'122.3321° W')
+						Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId], [Longitude], [Latitude]) Values (11, N'Claude LAngelier Field', 1000, N'', 11, N'47.6588° N', N'117.4260° W')
+						Insert [dbo].[Venues] ([VenueId], [VenueName], [Capacity], [Description], [CityId], [Longitude], [Latitude]) Values (12, N'Maya Haynes Arena', 1000, N'', 10, N'47.6062° N', N'122.3321° W')
 					    Set Identity_Insert [dbo].[Venues] Off
 				    "
 
