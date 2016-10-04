@@ -53,7 +53,7 @@ namespace IOTSoundReaderEmulator.Repositories
             }
 
             return
-                $"Server=tcp:{databaseServer},1433;Database={database};User ID={username}@{server[0]};Password={password};Trusted_Connection=False;Encrypt=True;Connection Timeout=30;";
+                $"Server=tcp:{databaseServer + CloudConfiguration.UnsecuredDatabaseUrl},1433;Database={database};User ID={username}@{server[0]};Password={password};Trusted_Connection=False;Encrypt=True;Connection Timeout=30;";
         }
         #endregion
 

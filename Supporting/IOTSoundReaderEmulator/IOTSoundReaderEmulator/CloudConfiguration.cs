@@ -22,5 +22,7 @@ namespace IOTSoundReaderEmulator
         public static string DocumentDbKey => ConfigurationManager.AppSettings["DocumentDbKey"];
         public static string DocumentDbDatabaseName => ConfigurationManager.AppSettings["DocumentDbDatabaseName"];
         public static string DocumentDbCollectionName => ConfigurationManager.AppSettings["DocumentDbCollectionName"];
+
+        public static string UnsecuredDatabaseUrl = ".database.windows.net";
     }
 }
