@@ -15,7 +15,7 @@ namespace IOTSoundReaderEmulator
 
         //Event Hub config
         public static string EventHubName => ConfigurationManager.AppSettings["EventHubName"];
-        public static string EventHubConnString => ConfigurationManager.AppSettings["EventHubConnString"];
+        public static string EventHubConnString => ConfigurationManager.AppSettings["Microsoft.ServiceBus.ConnectionString"];
 
         //DocumentDB config
         public static string DocumentDbUri => ConfigurationManager.AppSettings["DocumentDbUri"];
