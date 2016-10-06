@@ -27,7 +27,11 @@
         
         # DocumentDb Name
 		[Parameter(Mandatory=$false)]
-        $azureDocumentDbName
+        $azureDocumentDbName,
+        
+        # Event Hub Connection String
+		[Parameter(Mandatory=$false)]
+        $eventHubConnectionString
 	)
 
     try{
@@ -36,9 +40,10 @@
 
         $inputEventHubName = $wttEventHubName
         $servicebusnamespace = $wttServiceBusName
-        $currentNamespace = Get-AzureSBNamespace -Name $wttServiceBusName
-        $namespaceManager = [Microsoft.ServiceBus.NamespaceManager]::CreateFromConnectionString($CurrentNamespace.ConnectionString)
-        $serviceBusAuth = (Get-AzureSBAuthorizationRule -Namespace $wttServiceBusName).ConnectionString.Split(';')
+        #$currentNamespace = Get-AzureSBNamespace -Name $wttServiceBusName
+        #$namespaceManager = [Microsoft.ServiceBus.NamespaceManager]::CreateFromConnectionString($CurrentNamespace.ConnectionString)
+        #$serviceBusAuth = (Get-AzureSBAuthorizationRule -Namespace $wttServiceBusName).ConnectionString.Split(';')
+        $serviceBusAuth = $eventHubConnectionString.Split(';')
         $sharedaccesspolicykey = $serviceBusAuth[2].Substring(16)
         $sharedaccesspolicyname = $serviceBusAuth[1].Substring(20)
         $documentDBID = $azureDocumentDbName

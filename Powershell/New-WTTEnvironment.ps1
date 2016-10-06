@@ -620,7 +620,7 @@ function New-WTTEnvironment
                 }
 
             # New Azure Power BI Service
-            New-WTTPowerBI -azureResourceGroupName $azureResourceGroupName -AzurePowerBIName $azurePowerBIWorkspaceCollection -azurePowerBILocation $azurePowerBILocation -AzureSqlServerName $azureSqlServerPrimaryName -adminUserName $adminUserName -adminPassword $adminPassword -AzureSqlDatabaseName $AzureSqlDatabaseName -azureDWDatabaseName $AzureSqlDWDatabaseName
+            $pbiOutPut = New-WTTPowerBI -azureResourceGroupName $azureResourceGroupName -AzurePowerBIName $azurePowerBIWorkspaceCollection -azurePowerBILocation $azurePowerBILocation -AzureSqlServerName $azureSqlServerPrimaryName -adminUserName $adminUserName -adminPassword $adminPassword -AzureSqlDatabaseName $AzureSqlDatabaseName -azureDWDatabaseName $AzureSqlDWDatabaseName
             Start-Sleep -Seconds 30
 
             WriteLabel("Pausing DataWarehouse database")
@@ -629,7 +629,7 @@ function New-WTTEnvironment
             Start-Sleep -s 240
 
             #New Azure Service Bus and Event Hub
-            $eventHubConnectionString = New-WTTAzureEventHub -wttEventHubName $wttEventHubName -wttServiceBusName $wttServiceBusName -wttEventHubLocation $primaryServerLocation
+            $eventHubConnectionString = New-WTTAzureEventHub -azureResourceGroupName $azureResourceGroupName -wttEventHubName $wttEventHubName -wttServiceBusName $wttServiceBusName -wttEventHubLocation $primaryServerLocation
             
             #New Azure Stream Analytics Job
             #Get wttASALocation setting      
@@ -657,19 +657,17 @@ function New-WTTEnvironment
                     default {'West US'}
                 }
             
-            New-WTTAzureStreamAnalyticsJob -azureResourceGroupName $azureResourceGroupName -wttASAJob $wttasajob -wttASALocation $wttASALocation -wttServiceBusName $wttServiceBusName -wttEventHubName $wttEventHubName -azureDocumentDbName $azureDocumentDbName
+            New-WTTAzureStreamAnalyticsJob -azureResourceGroupName $azureResourceGroupName -wttASAJob $wttasajob -wttASALocation $wttASALocation -wttServiceBusName $wttServiceBusName -wttEventHubName $wttEventHubName -azureDocumentDbName $azureDocumentDbName -eventHubConnectionString $eventHubConnectionString
             
 			# Set the Application Settings
 			$searchName = (Find-AzureRmResource -ResourceType Microsoft.Search/searchServices -ResourceGroupName $azureResourceGroupName -ResourceNameContains $azuresearchservicename).name
 			$searchServicePrimaryManagementKey = (Invoke-AzureRmResourceAction -ResourceGroupName $azureResourceGroupName -ResourceName $searchName -ResourceType Microsoft.Search/searchServices -Action listAdminkeys -Force).PrimaryKey
             $documentDBPrimaryKey = (Invoke-AzureRmResourceAction -ResourceGroupName $azureResourceGroupName -ResourceName $azureDocumentDbName -ResourceType Microsoft.DocumentDb/databaseAccounts -Action listkeys -Force).primarymasterkey
-            $pbiTextFile = (Get-ChildItem -Recurse -Include *.txt | where {$_.Name -like "powerbi*"}).Name
-            $pbiSettings = Get-Content $pbiTextFile
             $powerbiWorkspaceCollection = $azurePowerBIWorkspaceCollection
-            $powerbiSigningKey = $pbiSettings[0]
-            $powerbiWorkspaceId = $pbiSettings[1]
-            $seatMapReportID = $pbiSettings[2]
-
+            $powerbiSigningKey = $pbiOutPut.powerbiSigningKey
+            $powerbiWorkspaceId = $pbiOutPut.powerbiWorkspaceId
+            $seatMapReportID = $pbiOutPut.seatMapReportID
+            
 			Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -azureResourceGroupName $azureResourceGroupName -Websitename $azureSqlServerPrimaryName -SearchName $searchName -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlServerPrimaryName $azureSqlServerPrimaryName -AzureSqlServerSecondaryName $azureSqlServerSecondaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey $documentDbPrimaryKey -powerbiSigningKey $powerbiSigningKey -powerbiWorkspaceCollection $powerbiWorkspaceCollection -powerbiWorkspaceId $powerbiWorkspaceId -seatMapReportID $seatMapReportID -TenantEventType $TenantEventType -documentDbDatabase "iotrawdata" -documentDbCollection "iotrawdata" -wttEventHubName $wttEventHubName -wttServiceBusName $eventHubConnectionString
 			Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -azureResourceGroupName $azureResourceGroupName -Websitename $azureSqlServerSecondaryName -SearchName $searchName -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlServerPrimaryName $azureSqlServerSecondaryName -AzureSqlServerSecondaryName $azureSqlServerPrimaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey $documentDbPrimaryKey -powerbiSigningKey $powerbiSigningKey -powerbiWorkspaceCollection $powerbiWorkspaceCollection -powerbiWorkspaceId $powerbiWorkspaceId -seatMapReportID $seatMapReportID -TenantEventType $TenantEventType -documentDbDatabase "iotrawdata" -documentDbCollection "iotrawdata" -wttEventHubName $wttEventHubName -wttServiceBusName $eventHubConnectionString
             

@@ -178,9 +178,9 @@ function Set-WTTEnvironmentWebConfig
                     "SeatMapReportId" = "$seatMapReportID";
 
                     #Wtt IOT Settings
-                    "DocumentDbDatabase" = "$documentDbDatabase";
-                    "DocumentDbCollection" = "$documentDbCollection";
-                    "EventHub" = "$wttEventHubName";
+                    "DocumentDbDatabaseName" = "$documentDbDatabase";
+                    "DocumentDbCollectionName" = "$documentDbCollection";
+                    "EventHubName" = "$wttEventHubName";
                     "Microsoft.ServiceBus.ConnectionString" = "$wttServiceBusName"
 			}
 

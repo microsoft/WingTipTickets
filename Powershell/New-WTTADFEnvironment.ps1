@@ -180,7 +180,8 @@ function CreateDatabase()
         $recommendationExist = $false
         Do
         {
-            $recommendationDB = Get-AzureRmSqlDatabase -DatabaseName $azureSQLDatabaseName -ServerName $azureSQLServerName -ResourceGroupName $azureResourceGroupName -ErrorAction SilentlyContinue
+            $recommendationDB = Find-AzureRmResource -ResourceType "Microsoft.Sql/servers/databases" -ResourceGroupNameContains $azureResourceGroupName -ResourceNameContains $azureSQLDatabaseName
+            #$recommendationDB = Get-AzureRmSqlDatabase -DatabaseName $azureSQLDatabaseName -ServerName $azureSQLServerName -ResourceGroupName $azureResourceGroupName -ErrorAction SilentlyContinue
             if(!$recommendationDB)
             {
 		        # Create Database

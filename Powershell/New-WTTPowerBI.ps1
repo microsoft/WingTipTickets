@@ -56,7 +56,7 @@ function New-WTTPowerBI
     # Set environment variables
     $azurePowerBIWorkspaceCollection = $AzurePowerBIName
     $powerBIReportFiles = ".\Resources\PowerBI"
-    $log = Get-ChildItem .\powerbi.txt -ErrorAction SilentlyContinue | Remove-Item -Force -ErrorAction SilentlyContinue
+    $pbiOutPut = @{}
 
     Try
     {
@@ -146,14 +146,12 @@ function New-WTTPowerBI
                 {
                     WriteError("Unable to find Power BI Workspace Collection")
                 }
-
-                #$powerBIWorkspaceCollectionCreate.name | Out-File powerbi.txt -Append
-            
+                           
                 #Get Power BI Workspace Collection Key
                 $powerBIWorkspaceCOllectionKeyURL =  "https://management.azure.com/subscriptions/$azureSubscriptionID/resourceGroups/$azureResourceGroupName/providers/Microsoft.PowerBI/workspaceCollections/$azurePowerBIWorkspaceCollection/listKeys?api-version=2016-01-29"
                 $powerBIWorkspaceCOllectionKey = Invoke-RestMethod -Uri $powerBIWorkspaceCOllectionKeyURL -Method POST -Headers $headers
                 $pbikey = $powerBIWorkspaceCOllectionKey.key1 
-                $pbikey | Out-File .\powerbi.txt -Append
+                $pbiOutPut.Add('powerbiSigningKey',$pbikey)
             }
             Catch
             {
@@ -191,8 +189,8 @@ function New-WTTPowerBI
             # Get the Power BI workspace ID
             $powerBIWorkspaceGet = Invoke-RestMethod -Uri $powerBIWorkspaceURL -Method GET -ContentType "application/json" -Headers $header
             $powerBIWorkspaceID = $powerBIWorkspaceGet.Value.WorkspaceId
-            $powerBIWorkspaceID | Out-File .\powerbi.txt -Append
-        
+            $pbiOutPut.Add('powerbiWorkspaceId',$powerBIWorkspaceID)
+                    
             #Import Power BI Reports
             $reports = Get-ChildItem "$powerBIReportFiles\*.pbix"
             ForEach($report in $reports)
@@ -337,8 +335,8 @@ function New-WTTPowerBI
                     $powerBIGetReport = Invoke-RestMethod -Uri $powerBIGetReportURL -Method GET -ContentType "application/json" -Headers $header
                     $report = $powerBIGetReport.value | Where-Object {$_.name -eq "seatingmap"}
                     $reportid = $report.id
-                    $reportid | Out-File .\powerbi.txt -Append
-
+                    $pbiOutPut.Add('SeatMapReportId',$reportid)
+                    
                     if($report)
                     {
                         WriteValue("Successful")
@@ -347,6 +345,8 @@ function New-WTTPowerBI
                     {
                         WriteError("Failed")
                     }
+
+                    return $pbiOutPut
 
                 }          
             }

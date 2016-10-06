@@ -37,6 +37,7 @@ function New-WTTAzureEventHub
     WriteLabel("Creating Azure Service Bus")
     
     try{
+        $eventHubConnectionString = ""
         WriteLabel("Checking for Service Bus Provider")
 	    $provider =  (Get-AzureRmResourceProvider -ProviderNamespace Microsoft.ServiceBus).RegistrationState
 
@@ -65,18 +66,23 @@ function New-WTTAzureEventHub
 	    {
 		    WriteValue("Found")
 	    }
-
+        WriteLabel("Deploying Azure Event Hub")
         $params = @{namespaceName = "$wttServiceBusName";eventHubName = "$wttEventHubName"; consumerGroupName = "$consumerGroupName";location = "$wttEventHubLocation"; }
         $newEventHub = New-AzureRmResourceGroupDeployment -ResourceGroupName $azureResourceGroupName -TemplateFile .\Resources\EventHub\azuredeploy.json -TemplateParameterObject $params
+        Start-Sleep -Seconds 20
         if($newEventHub)
         {
             $eventHubConnectionString = $newEventHub.Outputs.Values.value[0]
-            WriteValue("Successful")
             return $eventHubConnectionString
-        }        
+            WriteValue("Successful")
+        }
+        else
+        {
+            WriteError("Failed")
+        }
     }
     catch{
-        WriteValue("Failed")
+        WriteError("Deployment Failed")
 		WriteError($Error)
     }   
 }
