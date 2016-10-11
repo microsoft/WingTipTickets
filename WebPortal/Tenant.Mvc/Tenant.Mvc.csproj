@@ -472,6 +472,49 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\jobs\continuous\IOTSoundReaderEmulator\DocumentDB.Spatial.Sql.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Data\jobs\continuous\IOTSoundReaderEmulator\IOTSoundReaderEmulator.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Data\jobs\continuous\IOTSoundReaderEmulator\IOTSoundReaderEmulator.pdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Data\jobs\continuous\IOTSoundReaderEmulator\IOTSoundReaderEmulator.vshost.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Data\jobs\continuous\IOTSoundReaderEmulator\Microsoft.Azure.Documents.Client.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Data\jobs\continuous\IOTSoundReaderEmulator\Microsoft.Azure.Documents.Client.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Data\jobs\continuous\IOTSoundReaderEmulator\Microsoft.Azure.Documents.ServiceInterop.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Data\jobs\continuous\IOTSoundReaderEmulator\Microsoft.ServiceBus.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Data\jobs\continuous\IOTSoundReaderEmulator\Microsoft.ServiceBus.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Data\jobs\continuous\IOTSoundReaderEmulator\Microsoft.WindowsAzure.Configuration.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Data\jobs\continuous\IOTSoundReaderEmulator\Microsoft.WindowsAzure.Configuration.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Data\jobs\continuous\IOTSoundReaderEmulator\Newtonsoft.Json.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Data\jobs\continuous\IOTSoundReaderEmulator\Newtonsoft.Json.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Data\jobs\continuous\IOTSoundReaderEmulator\PlaceHolder.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Data\PlaceHolder.txt" />
     <Content Include="Content\Img\Classical\arrows2.png" />
     <Content Include="Content\Img\Classical\floor-plan-new.png" />
     <Content Include="Content\Img\Classical\icon1.png" />
@@ -499,6 +542,15 @@
     <Content Include="Content\Scripts\respond.js" />
     <Content Include="Content\Scripts\respond.min.js" />
     <Content Include="Content\Scripts\jquery.ui-1.11.4.js" />
+    <Content Include="App_Data\jobs\continuous\IOTSoundReaderEmulator\IOTSoundReaderEmulator.exe.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Data\jobs\continuous\IOTSoundReaderEmulator\IOTSoundReaderEmulator.vshost.exe.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Data\jobs\continuous\IOTSoundReaderEmulator\IOTSoundReaderEmulator.vshost.exe.manifest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Content\Scripts\_references.js" />
     <Content Include="Content\Stylesheets\bootstrap-select.css" />
     <Content Include="Content\Stylesheets\jquery.fileupload.css" />
