@@ -27,10 +27,8 @@ namespace IOTSoundReaderEmulator.Senders
                 Console.WriteLine("{0} > Exception: {1}", DateTime.Now, exception.Message);
                 Console.ResetColor();
             }
-
         }
 
         #endregion
-
     }
 }

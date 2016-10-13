@@ -17,7 +17,11 @@ namespace IOTSoundReaderEmulator
         private static void Main(string[] args)
         {
             _venueRepository = new VenueRepository();
-            _senders = new List<ISender> {new EventHubSender(), new DocumentDbSender()};
+            _senders = new List<ISender>
+            {
+                new EventHubSender(),
+                new DocumentDbSender()
+            };
 
             while (true) //loop forever
             {
@@ -36,8 +40,6 @@ namespace IOTSoundReaderEmulator
             }
         }
 
-
-
         private static SoundRecord GetSoundLevel()
         {
             Random rnd = new Random();
@@ -50,6 +52,7 @@ namespace IOTSoundReaderEmulator
 
             //get venue details from repo
             var venueModel = _venueRepository.GetVenueInformation(venueId);
+
             if (!string.IsNullOrEmpty(venueModel.Longitude))
             {
                 longitude = venueModel.Longitude;
@@ -62,8 +65,19 @@ namespace IOTSoundReaderEmulator
             SoundRecord soundRecord = new SoundRecord
             {
                 DateTime = DateTime.Now,
-                Latitude = latitude,
-                Longitude = longitude,
+                Location = new SoundRecord.GeoLocation()
+                {
+                    Type = "Feature",
+                    Geometry = new SoundRecord.GeoGeometry()
+                    {
+                        Type = "Point",
+                        Coordinates = new List<string>()
+                        {
+                            longitude,
+                            latitude
+                        }
+                    }
+                },
                 DecibelLevel = decibelLevel,
                 DeviceId = deviceId,
                 VenueId = venueId
@@ -71,6 +85,5 @@ namespace IOTSoundReaderEmulator
 
             return soundRecord;
         }
-
     }
 }

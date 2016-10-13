@@ -40,11 +40,9 @@ namespace IOTSoundReaderEmulator.Senders
             }
         }
 
-
         #endregion
 
         #region Private methods
-
 
         private async Task<DocumentCollection> GetDocumentCollection()
         {
@@ -69,7 +67,6 @@ namespace IOTSoundReaderEmulator.Senders
             return documentCollection;
         }
 
-
         private async Task<Database> GetDatabase()
         {
             string databaseName = CloudConfiguration.DocumentDbDatabaseName;
@@ -90,6 +87,5 @@ namespace IOTSoundReaderEmulator.Senders
         }
 
         #endregion
-
     }
 }
