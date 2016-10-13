@@ -8,7 +8,7 @@ namespace IOTSoundReaderEmulator.Models
         public int DeviceId { get; set; }
         public string Longitude { get; set; }
         public string Latitude { get; set; }
-        public string DateTime { get; set; }
+        public DateTime DateTime { get; set; }
         public decimal DecibelLevel { get; set; }
     }
 }

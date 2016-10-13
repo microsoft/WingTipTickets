@@ -42,10 +42,9 @@ namespace IOTSoundReaderEmulator
         {
             Random rnd = new Random();
             int venueId = rnd.Next(1, 13); //VenueId: Random between 1 & 12
-            int deviceId = rnd.Next(1, 5); //DeviceId: Random between 1 & 4
+            int deviceId = rnd.Next(1, 1001); //DeviceId: Random between 1 & 1000
             int decibelLevel = rnd.Next(60, 131); //DecibelLevel: Random between 60 & 130
 
-            string dateTime = DateTime.Now.ToString("M/d/yyyy h:mm:ss tt", CultureInfo.InvariantCulture); //DateTime: Current date and time e.g "9/14/2016 10:25:34 PM"
             string longitude = "";
             string latitude = "";
 
@@ -62,7 +61,7 @@ namespace IOTSoundReaderEmulator
 
             SoundRecord soundRecord = new SoundRecord
             {
-                DateTime = dateTime,
+                DateTime = DateTime.Now,
                 Latitude = latitude,
                 Longitude = longitude,
                 DecibelLevel = decibelLevel,
