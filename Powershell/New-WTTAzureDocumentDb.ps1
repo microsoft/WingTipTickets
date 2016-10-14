@@ -114,22 +114,30 @@ function New-WTTAzureDocumentDb
             $newIOTDatabaseCollection = "https://$wttDocumentDbName.documents.azure.com/dbs/$item/colls"
             $body = "{
                         ""id"": ""$item"",
-                                ""indexingPolicy"": {
+                                ""indexingMode"": ""consistent"",
                                     ""automatic"": true,
-                                    ""indexingMode"": ""Consistent"",
                                     ""includedPaths"": [
-                                    {
-                                        ""path"": ""/*"",
-                                        ""indexes"": [
-                                         {
-                                            ""dataType"": ""String"",
-                                            ""precision"": -1,
-                                            ""kind"": ""Range""
-                                         }
-                                       ]
-                                    }
-                                  ]
-                                }
+                                        {
+                                            ""path"": ""/*"",
+                                            ""indexes"": [
+                                                {
+                                                    ""kind"": ""Range"",
+                                                    ""dataType"": ""Number"",
+                                                    ""precision"": -1
+                                                },
+                                                {
+                                                    ""kind"": ""Range"",
+                                                    ""dataType"": ""String"",
+                                                    ""precision"": -1
+                                                },
+                                                {
+                                                    ""kind"": ""Spatial"",
+                                                    ""dataType"": ""Point""
+                                                }
+                                            ]
+                                        }
+                                    ],
+                        ""excludedPaths"": []
                      }"
             $newIOTDatabaseCollectionPost = Invoke-RestMethod -Uri $newIOTDatabaseCollection -Method Post -Body $body -Headers $header -ContentType "application/json"
         
