@@ -28,14 +28,13 @@ namespace IOTSoundReaderEmulator.Repositories
                         venueModel = new VenueModel
                         {
                             VenueId = !Convert.IsDBNull(reader["VenueId"]) ? Convert.ToInt32(reader["VenueId"]) : default(int),
-                            Latitude = !Convert.IsDBNull(reader["Latitude"]) ? Convert.ToString(reader["Latitude"]) : default(string),
-                            Longitude = !Convert.IsDBNull(reader["Longitude"]) ? Convert.ToString(reader["Longitude"]) : default(string),
+                            Latitude = !Convert.IsDBNull(reader["Latitude"]) ? Convert.ToDecimal(reader["Latitude"]) : default(decimal),
+                            Longitude = !Convert.IsDBNull(reader["Longitude"]) ? Convert.ToDecimal(reader["Longitude"]) : default(decimal),
                         };
                     }
                 }
             }
-
-
+            
             return venueModel;
         }
 
