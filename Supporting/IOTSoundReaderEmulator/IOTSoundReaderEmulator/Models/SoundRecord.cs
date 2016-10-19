@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft;
+using Newtonsoft.Json;
 
 namespace IOTSoundReaderEmulator.Models
 {
@@ -13,8 +15,10 @@ namespace IOTSoundReaderEmulator.Models
 
 		public class GeoLocation
 		{
-			public string Type { get; set; }
-			public List<decimal> Coordinates { get; set; }
+            [JsonProperty("type")]
+            public string Type { get; set; }
+            [JsonProperty("coordinates")]
+            public List<decimal> Coordinates { get; set; }
 		}
 	}
 }
