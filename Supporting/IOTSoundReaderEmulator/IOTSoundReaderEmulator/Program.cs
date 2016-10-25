@@ -10,13 +10,19 @@ namespace IOTSoundReaderEmulator
 {
 	internal class Program
 	{
-		private static VenueRepository _venueRepository;
-		private static List<ISender> _senders;
+        #region Fields
 
-		private static void Main(string[] args)
+        private static VenueRepository _venueRepository;
+	    private static SeatSectionRepository _seatSectionRepository;
+		private static List<ISender> _senders;
+        private static Random _rnd;
+        #endregion
+
+        private static void Main(string[] args)
 		{
 			_venueRepository = new VenueRepository();
-			_senders = new List<ISender>
+            _seatSectionRepository = new SeatSectionRepository();
+            _senders = new List<ISender>
 			{
 				new EventHubSender(),
 				new DocumentDbSender()
@@ -26,8 +32,8 @@ namespace IOTSoundReaderEmulator
 			{
 				// Generate a random sleep time. 
 				// To fake iot devices are random intervals pick up sounds
-				Random rnd = new Random();
-				var sleepTime = rnd.Next(500, 2000);
+				 _rnd = new Random();
+				var sleepTime = _rnd.Next(500, 2000);
 				Thread.Sleep(sleepTime);
 
 				var soundRecord = GetSoundLevel();
@@ -41,31 +47,22 @@ namespace IOTSoundReaderEmulator
 
 		private static SoundRecord GetSoundLevel()
 		{
-			Random rnd = new Random();
-			int venueId = rnd.Next(1, 13); //VenueId: Random between 1 & 12
-			int deviceId = rnd.Next(1, 1001); //DeviceId: Random between 1 & 1000
+			int venueId = _rnd.Next(1, 13); //VenueId: Random between 1 & 12
+            int sectionNumber = _rnd.Next(1, 11); //All venues has 10 seating sections
+            int seatSectionId = ((venueId - 1)*10) + sectionNumber;
 
-            //get decibelLevel
-            int decibelLevel;
+            //Read SeatCount from SeatSection table for calculated SectionId
+		    int seatCount = _seatSectionRepository.GetSeatCount(seatSectionId);
+
+            //Generate a SeatNumber between 1 and SeatCount read above
+            int seatNumber = _rnd.Next(1, seatCount + 1);
+
+            int deviceId = seatNumber + _seatSectionRepository.CalculateSum(venueId, seatSectionId); //the final Seat Position
+
             DateTime currentDateTime = DateTime.UtcNow;
-            var currentMinute = currentDateTime.Minute;
-            if (currentMinute >= 15 && currentMinute <= 25 && deviceId % 2 == 0)
-            {
-                decibelLevel = rnd.Next(120, 141); //DecibelLevel: Random between 120 & 140
-            }
-            else if (currentMinute >= 25 && currentMinute <= 35 && deviceId % 3 == 0)
-            {
-                decibelLevel = rnd.Next(40, 61); //DecibelLevel: Random between 40 & 60
-            }
-            else if (currentMinute >= 35 && currentMinute <= 45 && deviceId % 5 == 0)
-            {
-                decibelLevel = rnd.Next(120, 141); //DecibelLevel: Random between 120 & 140
-            }
-            else
-            {
-                decibelLevel = rnd.Next(80, 101); //DecibelLevel: Random between 80 & 100
-            }
-
+            //get decibelLevel
+            int decibelLevel = GetDecibelLevel(currentDateTime.Minute, deviceId);
+            
             decimal longitude = 0;
             decimal latitude = 0;
 
@@ -91,11 +88,35 @@ namespace IOTSoundReaderEmulator
 				},
 				DecibelLevel = decibelLevel,
 				DeviceId = deviceId,
-				VenueId = venueId
+				VenueId = venueId,
+                Seat = seatNumber,
+                SeatSection = seatSectionId
 			};
 
 			return soundRecord;
 		}
-	}
+
+        private static int GetDecibelLevel(int currentMinute, int deviceId)
+        {
+            int decibelLevel;
+            if (currentMinute >= 15 && currentMinute <= 25 && deviceId % 2 == 0)
+            {
+                decibelLevel = _rnd.Next(120, 141); //DecibelLevel: Random between 120 & 140
+            }
+            else if (currentMinute >= 25 && currentMinute <= 35 && deviceId % 3 == 0)
+            {
+                decibelLevel = _rnd.Next(40, 61); //DecibelLevel: Random between 40 & 60
+            }
+            else if (currentMinute >= 35 && currentMinute <= 45 && deviceId % 5 == 0)
+            {
+                decibelLevel = _rnd.Next(120, 141); //DecibelLevel: Random between 120 & 140
+            }
+            else
+            {
+                decibelLevel = _rnd.Next(80, 101); //DecibelLevel: Random between 80 & 100
+            }
+            return decibelLevel;
+        }
+    }
 }
 

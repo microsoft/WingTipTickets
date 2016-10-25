@@ -65,17 +65,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CloudConfiguration.cs" />
+    <Compile Include="Helpers\Helper.cs" />
     <Compile Include="Interfaces\ISender.cs" />
     <Compile Include="Models\SoundRecord.cs" />
     <Compile Include="Models\VenueModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\SeatSectionRepository.cs" />
     <Compile Include="Repositories\VenueRepository.cs" />
     <Compile Include="Senders\DocumentDbSender.cs" />
     <Compile Include="Senders\EventHubSender.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />

@@ -13,7 +13,7 @@ namespace IOTSoundReaderEmulator.Repositories
             VenueModel venueModel = null;
             string sqlScript = "SELECT * FROM [dbo].[Venues] WHERE [VenueId] = " + venueId;
 
-            var connectionString = BuildConnectionString(CloudConfiguration.TenantPrimaryDatabaseServer, CloudConfiguration.TenantDatabase1, CloudConfiguration.DatabaseUser, CloudConfiguration.DatabasePassword, CloudConfiguration.RunningInDev);
+            var connectionString = Helpers.Helper.BuildConnectionString(CloudConfiguration.TenantPrimaryDatabaseServer, CloudConfiguration.TenantDatabase1, CloudConfiguration.DatabaseUser, CloudConfiguration.DatabasePassword, CloudConfiguration.RunningInDev);
 
             using (var connection = new SqlConnection(connectionString))
             {
@@ -39,22 +39,5 @@ namespace IOTSoundReaderEmulator.Repositories
         }
 
         #endregion
-
-        #region Private methods
-        private static string BuildConnectionString(string databaseServer, string database, string username, string password, bool runningInDev)
-        {
-            var server = databaseServer.Split('.');
-
-            if (runningInDev)
-            {
-                return
-                    $"Server={server[0]};Database={database};User ID={username};Password={password};Connection Timeout=30;";
-            }
-
-            return
-                $"Server=tcp:{databaseServer + CloudConfiguration.UnsecuredDatabaseUrl},1433;Database={database};User ID={username}@{server[0]};Password={password};Trusted_Connection=False;Encrypt=True;Connection Timeout=30;";
-        }
-        #endregion
-
     }
 }

@@ -9,11 +9,14 @@ namespace IOTSoundReaderEmulator.Models
 	{
 		public int VenueId { get; set; }
 		public int DeviceId { get; set; }
-		public GeoLocation Location { get; set; }
+        public int Seat { get; set; }
+        public int SeatSection { get; set; }
+        public GeoLocation Location { get; set; }
 		public string DateTime { get; set; }
 		public decimal DecibelLevel { get; set; }
+      
 
-		public class GeoLocation
+        public class GeoLocation
 		{
             [JsonProperty("type")]
             public string Type { get; set; }
