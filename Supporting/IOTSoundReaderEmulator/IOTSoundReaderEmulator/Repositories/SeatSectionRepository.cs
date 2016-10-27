@@ -39,7 +39,7 @@ namespace IOTSoundReaderEmulator.Repositories
             int sum = 0;
 
             string sqlScript =
-                $"SELECT Sum(SeatCount) FROM [dbo].[SeatSection] WHERE [VenueId] = {venueId} AND [SeatSectionId] < {seatSectionId}";
+                $"SELECT ISNULL(Sum(SeatCount), 0) FROM [dbo].[SeatSection] WHERE [VenueId] = {venueId} AND [SeatSectionId] < {seatSectionId}";
 
             var connectionString = Helpers.Helper.BuildConnectionString(CloudConfiguration.TenantPrimaryDatabaseServer, CloudConfiguration.TenantDatabase1, CloudConfiguration.DatabaseUser, CloudConfiguration.DatabasePassword, CloudConfiguration.RunningInDev);
 
