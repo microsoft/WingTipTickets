@@ -48,7 +48,7 @@ namespace IOTSoundReaderEmulator
 		private static SoundRecord GetSoundLevel()
 		{
 			int venueId = _rnd.Next(1, 13); //VenueId: Random between 1 & 12
-            int sectionNumber = _rnd.Next(1, 13); //random number between 1 & 12
+            int sectionNumber = _rnd.Next(1, 11); //sectionNumber: Random between 1 & 10
             int seatSectionId = ((venueId - 1)*10) + sectionNumber;
 
             //Read SeatCount from SeatSection table for calculated SectionId
