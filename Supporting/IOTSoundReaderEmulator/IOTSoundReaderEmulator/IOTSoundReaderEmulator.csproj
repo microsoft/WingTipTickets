@@ -68,6 +68,7 @@
     <Compile Include="Helpers\Helper.cs" />
     <Compile Include="Interfaces\ISender.cs" />
     <Compile Include="Models\SoundRecord.cs" />
+    <Compile Include="Models\SeatSectionModel.cs" />
     <Compile Include="Models\VenueModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

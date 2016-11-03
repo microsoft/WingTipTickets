@@ -10,13 +10,13 @@ namespace IOTSoundReaderEmulator.Senders
 {
     public class DocumentDbSender : ISender
     {
-        #region Fields
+        #region - Fields -
 
         private DocumentClient _documentClient;
 
         #endregion
 
-        #region Public methods
+        #region - Public Methods -
 
         public async void SendInfo(SoundRecord soundRecord)
         {
@@ -42,7 +42,7 @@ namespace IOTSoundReaderEmulator.Senders
 
         #endregion
 
-        #region Private methods
+        #region - Private Methods -
 
         private async Task<DocumentCollection> GetDocumentCollection()
         {
@@ -71,8 +71,7 @@ namespace IOTSoundReaderEmulator.Senders
         {
             string databaseName = CloudConfiguration.DocumentDbDatabaseName;
 
-            var database =
-                _documentClient.CreateDatabaseQuery().Where(db => db.Id == databaseName).AsEnumerable().FirstOrDefault();
+            var database = _documentClient.CreateDatabaseQuery().Where(db => db.Id == databaseName).AsEnumerable().FirstOrDefault();
 
             // If the database does not exist, create a new database
             if (database == null)

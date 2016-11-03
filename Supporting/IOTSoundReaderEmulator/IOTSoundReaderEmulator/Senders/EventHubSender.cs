@@ -9,7 +9,7 @@ namespace IOTSoundReaderEmulator.Senders
 {
     public class EventHubSender : ISender
     {
-        #region Public methods
+        #region - Public Methods -
 
         public void SendInfo(SoundRecord soundRecord)
         {
