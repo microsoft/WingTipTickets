@@ -5,7 +5,7 @@
 	This script is used to create a new WingtipTickets (WTT) Demo Environment.
 .EXAMPLE
 	New-WTTEnvironment 
-WingTipTickets PowerShell Version 2.5 - Azure Data Warehouse
+WingTipTickets PowerShell Version 3.0
 #>
 function New-WTTEnvironment
 {
@@ -18,8 +18,8 @@ function New-WTTEnvironment
 		$WTTEnvironmentApplicationName,
 
 		# Primary Server Location
-		[Parameter(Mandatory=$false, HelpMessage="Please specify the primary location for your WTT Environment ('East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast', 'Canada Central', 'Canada East')?")]
-		[ValidateSet('East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast', 'Canada Central', 'Canada East', 'EastUS', 'WestUS', 'SouthCentralUS', 'NorthCentralUS', 'CentralUS', 'EastAsia', 'WestEurope', 'EastUS2', 'JapanEast', 'JapanWest', 'BrazilSouth', 'NorthEurope', 'SoutheastAsia', 'AustraliaEast', 'AustraliaSoutheast', 'CanadaCentral', 'CanadaEast')]
+		[Parameter(Mandatory=$false, HelpMessage="Please specify the primary location for your WTT Environment ('West US 2', 'UK West', 'UK South', 'East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast', 'Canada Central', 'Canada East')?")]
+		[ValidateSet('West US 2', 'UK West', 'UK South', 'East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast', 'Canada Central', 'Canada East', 'EastUS', 'WestUS', 'SouthCentralUS', 'NorthCentralUS', 'CentralUS', 'EastAsia', 'WestEurope', 'EastUS2', 'JapanEast', 'JapanWest', 'BrazilSouth', 'NorthEurope', 'SoutheastAsia', 'AustraliaEast', 'AustraliaSoutheast', 'CanadaCentral', 'CanadaEast', 'UKSouth', 'UKWest', 'WestUS2')]
 		[String]
 		$WTTEnvironmentPrimaryServerLocation,
 
@@ -90,6 +90,9 @@ function New-WTTEnvironment
 		LineBreak
 
 		# Setup Parameter Defaults
+
+		$wttEnvironmentApplicationName = $WTTEnvironmentApplicationName.ToLower()
+
 		if($adminUserName -eq "")
 		{
 			$adminUserName = "developer"
@@ -114,6 +117,10 @@ function New-WTTEnvironment
 		{
 			$AzureSqlDWDatabaseName = "CustomerDW"
 		}
+        if(!$azureStorageAccountName)
+        {
+            $azureStorageAccountName = $wTTEnvironmentApplicationName
+        }
 
 		if($WebAppPackagePath -eq "")
 		{
@@ -166,9 +173,6 @@ function New-WTTEnvironment
 
 		$localPath = (Get-Item -Path ".\" -Verbose).FullName
 
-		$wttEnvironmentApplicationName = $WTTEnvironmentApplicationName.ToLower()
-
-		$azureStorageAccountName = $wTTEnvironmentApplicationName
 		$azureDocumentDbName = $wTTEnvironmentApplicationName
         $azurePowerBIWorkspaceCollection = $WTTEnvironmentApplicationName
 		$azureSqlServerPrimaryName = $wTTEnvironmentApplicationName + "primary"
@@ -194,7 +198,7 @@ function New-WTTEnvironment
 			$azureSecondarySqlDatabaseServer = $null
 
 			# Check installed PowerShell Version
-			WriteLabel("Checking for Azure PowerShell Version 1.0.1 or later")
+			WriteLabel("Checking for Azure PowerShell Version 3.0.0 or later")
 			if($installedAzurePowerShellVersion -lt 1)
 			{
 	            $module = Get-Module AzureRM.profile
@@ -206,7 +210,7 @@ function New-WTTEnvironment
 	            else
 	            {
 		            WriteValue("Failed")
-		            WriteError("Make sure that you are signed in and that PowerShell is not older than version 1.0.1.")
+		            WriteError("Make sure that you are signed in and that PowerShell is not older than version 3.0.0.")
 		            WriteError("Please install from: http://azure.microsoft.com/en-us/downloads/, under Command-line tools, under Windows PowerShell, click Install")
 		            break
 	            }
@@ -356,8 +360,11 @@ function New-WTTEnvironment
 					'East Asia' {'East Asia'}
 					'Japan East' {'Japan East'}
 					'Japan West' {'Japan West'}
-                    'Canada Central' {'North Central US'}
-                    'Canada East' {'East US'}
+                    'Canada Central' {'Canada Central'}
+                    'Canada East' {'Canada East'}
+                    'UK South' {'North Europe'}
+					'UK West' {'West Europe'}
+                    'West US 2' {'West US 2'}
 					default {'West US'}
 				}
 			WriteValue("Successful")
@@ -589,7 +596,7 @@ function New-WTTEnvironment
             Start-Sleep -Seconds 60
 
 			# Deploy ADF environment
-			New-WTTADFEnvironment -ApplicationName $WTTEnvironmentApplicationName -azureResourceGroupName $azureResourceGroupName -azureSqlServerName $azureSqlServerPrimaryName -azureSQLDatabaseName "Recommendations" -DatabaseEdition "Basic" -adminUserName $adminUserName -adminPassword $adminPassword
+			New-WTTADFEnvironment -ApplicationName $WTTEnvironmentApplicationName -azureStorageAccountName $azureStorageAccountName -azureResourceGroupName $azureResourceGroupName -azureSqlServerName $azureSqlServerPrimaryName -azureSQLDatabaseName "Recommendations" -DatabaseEdition "Basic" -adminUserName $adminUserName -adminPassword $adminPassword
 
 			Start-Sleep -Seconds 30
             
@@ -616,6 +623,9 @@ function New-WTTEnvironment
                     'West India' {'Southeast Asia'}
                     'South India' {'Southeast Asia'}
                     'Central India' {'Southeast Asia'}
+                    'West US 2' {'West US'}
+                    'UK South' {'North Europe'}
+					'UK West' {'West Europe'}
                     default {'West US'}
                 }
 
@@ -654,6 +664,9 @@ function New-WTTEnvironment
                     'West India' {'Southeast Asia'}
                     'South India' {'Southeast Asia'}
                     'Central India' {'Southeast Asia'}
+                    'UK South' {'North Europe'}
+					'UK West' {'West Europe'}
+                    'West US 2' {'West US'}
                     default {'West US'}
                 }
             
@@ -802,7 +815,7 @@ function CheckInstalledPowerShell($module)
 	$installedVersion = $module
 	$installedVersionVersion = $installedVersion.Version
 	$installedVersionVersion = $installedVersionVersion -replace '\s',''
-	$minimumRequiredVersion = '1.4.0'
+	$minimumRequiredVersion = '3.0.0'
 	$ver1 = GetVersionStringAsArray $installedVersionVersion
 	$ver2 = GetVersionStringAsArray $minimumRequiredVersion
 	if ($ver1[0] -lt $ver2[0]) 

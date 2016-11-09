@@ -22,8 +22,8 @@ function New-WTTAzureEventHub
 		$wttEventHubName,
 
 		# DocumentDb Location
-		[Parameter(Mandatory=$false, HelpMessage="Please specify the datacenter location for your Azure Event Hub Service ('Central US', 'East US', 'East US 2', 'West US 2', 'West US', 'North Central US', 'South Central US', 'West Central US', 'East Asia', 'Southeast Asia', 'Brazil South', 'Japan East', 'Japan West', 'North Europe', 'West Europe', 'Canada Central', 'Canada East')?")]
-		[ValidateSet('Central US', 'East US', 'East US 2', 'West US 2', 'West US', 'North Central US', 'South Central US', 'West Central US', 'East Asia', 'Southeast Asia', 'Brazil South', 'Japan East', 'Japan West', 'North Europe', 'West Europe', 'Canada Central', 'Canada East')]
+		[Parameter(Mandatory=$true, HelpMessage="Please specify the primary location for your WTT Environment ('West US 2', 'UK West', 'UK South', 'East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast', 'Canada Central', 'Canada East')?")]
+		[ValidateSet('West US 2', 'UK West', 'UK South', 'East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast', 'Canada Central', 'Canada East', 'EastUS', 'WestUS', 'SouthCentralUS', 'NorthCentralUS', 'CentralUS', 'EastAsia', 'WestEurope', 'EastUS2', 'JapanEast', 'JapanWest', 'BrazilSouth', 'NorthEurope', 'SoutheastAsia', 'AustraliaEast', 'AustraliaSoutheast', 'CanadaCentral', 'CanadaEast', 'UKSouth', 'UKWest', 'WestUS2')]
 		$wttEventHubLocation,
 
         [Parameter(Mandatory=$true)]

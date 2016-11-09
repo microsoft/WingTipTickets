@@ -16,6 +16,11 @@ function New-WTTADFEnvironment
 		[String]
 		$ApplicationName,
 
+        # Storage Account Name
+        [Parameter(Mandatory=$true)]
+		[String]
+        $azureStorageAccountName,
+
 		# Resource Group Name
 		[Parameter(Mandatory=$true)]
 		[String]
@@ -115,10 +120,10 @@ function RegisterProvider()
 function GetStorageAccountKey()
 {
 	# Get Storage Account Primary Key
-    $storageExists = Find-AzureRmResource -ResourceNameContains $ApplicationName -ResourceGroupNameContains $azureResourceGroupName -ResourceType Microsoft.Storage/storageaccounts
+    $storageExists = Find-AzureRmResource -ResourceNameContains $azureStorageAccountName -ResourceGroupNameContains $azureResourceGroupName -ResourceType Microsoft.Storage/storageaccounts
     if($storageExists)
     {
-	    $storageAccountkey = (Get-AzureRMStorageAccountKey -ResourceGroupName $azureResourceGroupName -storageAccountName $ApplicationName).Value[0]
+	    $storageAccountkey = (Get-AzureRMStorageAccountKey -ResourceGroupName $azureResourceGroupName -storageAccountName $azureStorageAccountName).Value[0]
     }
     Else
     {
@@ -132,7 +137,7 @@ function CreateStorageContainer($storageAccountKey)
         WriteLabel("Creating Storage Container")
         try{
             # Get Context
-            $context = New-AzureStorageContext -storageAccountName $ApplicationName -StorageAccountKey $storageAccountKey -ErrorAction SilentlyContinue
+            $context = New-AzureStorageContext -storageAccountName $azureStorageAccountName -StorageAccountKey $storageAccountKey -ErrorAction SilentlyContinue
              
             $containerExist = Get-AzureStorageContainer -Name 'productrec' -Context $context -ErrorAction SilentlyContinue
             if(!$containerExist)
@@ -159,7 +164,7 @@ function SetupMappingDictionary($StorageAccountKey)
 {
 	# Set up the Mapping Dictionary
 	$global:dict = @{}
-	$global:dict.Add('<account name>', $ApplicationName)
+	$global:dict.Add('<account name>', $azureStorageAccountName)
 	$global:dict.Add('<account key>', $StorageAccountKey)
 	$global:dict.Add('<azuredbname>', $azureSQLServerName)
 	$global:dict.Add('<userid>', $adminUserName)
@@ -336,7 +341,7 @@ function PopulateProductRecommendation($StorageAccountKey)
 	}
 
 	# Get the Storage Context
-	$context = New-AzureStorageContext –StorageAccountName $ApplicationName -StorageAccountKey $storageAccountKey -ea silentlycontinue
+	$context = New-AzureStorageContext –StorageAccountName $azureStorageAccountName -StorageAccountKey $storageAccountKey -ea silentlycontinue
 	If ($context -eq $null) { throw "Invalid storage account name and/or storage key provided" }
 
 	# Check for Script Container

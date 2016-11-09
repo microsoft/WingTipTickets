@@ -13,8 +13,8 @@
 		$wttASAJob,
 
 		# DocumentDb Location
-		[Parameter(Mandatory=$false, HelpMessage="Please specify the datacenter location for your Azure DocumentDb Service ('Central US', 'West Europe', 'East US 2', 'North Europe', 'Japan East', 'West US', 'Southeast Asia', 'South Central US', 'East Asia', 'Japan West', 'North Central US', 'East US', 'Brazil South')?")]
-		[ValidateSet('Central US', 'West Europe', 'East US 2', 'North Europe', 'Japan East', 'West US', 'Southeast Asia', 'South Central US', 'East Asia', 'Japan West', 'North Central US', 'East US', 'Brazil South')]
+		[Parameter(Mandatory=$true, HelpMessage="Please specify the primary location for your WTT Environment ('West US 2', 'UK West', 'UK South', 'East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast', 'Canada Central', 'Canada East')?")]
+		[ValidateSet('West US 2', 'UK West', 'UK South', 'East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast', 'Canada Central', 'Canada East', 'EastUS', 'WestUS', 'SouthCentralUS', 'NorthCentralUS', 'CentralUS', 'EastAsia', 'WestEurope', 'EastUS2', 'JapanEast', 'JapanWest', 'BrazilSouth', 'NorthEurope', 'SoutheastAsia', 'AustraliaEast', 'AustraliaSoutheast', 'CanadaCentral', 'CanadaEast', 'UKSouth', 'UKWest', 'WestUS2')]
 		$wttASALocation,
 
         [Parameter(Mandatory=$true)]
