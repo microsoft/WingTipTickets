@@ -141,10 +141,8 @@ function New-WTTAzureSearchService
                     {
                         $newSearchService = New-AzureRmResourceGroupDeployment -ResourceGroupName $azureResourceGroupName -TemplateUri "https://gallery.azure.com/artifact/20151001/Microsoft.Search.1.0.9/DeploymentTemplates/searchServiceDefaultTemplate.json" -nameFromTemplate $wttEnvironmentApplicationName -sku basic -location $searchLocation -partitionCount 1 -replicaCount 1
                         $newSearchServiceExists = (Find-AzureRmResource -ResourceType "Microsoft.Search" -ResourceNameContains $wttEnvironmentApplicationName -ExpandProperties).properties.state
-                        $newSearchServiceExistsnow = $false
                         if($newSearchServiceExists -eq "Ready")
                         {
-                            $newSearchServiceExistsnow = $true
                             WriteValue("Success")
                         }                 
                     }
@@ -154,8 +152,6 @@ function New-WTTAzureSearchService
                     }
                 }  
             }
-            
-
             else
             {
                 foreach($searchLocation in $listSearchServicesLocation)
@@ -164,10 +160,8 @@ function New-WTTAzureSearchService
                     {
                         $newSearchService = New-AzureRmResourceGroupDeployment -ResourceGroupName $azureResourceGroupName -TemplateUri "https://gallery.azure.com/artifact/20151001/Microsoft.Search.1.0.9/DeploymentTemplates/searchServiceDefaultTemplate.json" -nameFromTemplate $wttEnvironmentApplicationName -sku free -location $searchLocation -partitionCount 1 -replicaCount 1
                         $newSearchServiceExists = (Find-AzureRmResource -ResourceType "Microsoft.Search" -ResourceNameContains $wttEnvironmentApplicationName -ExpandProperties).properties.state
-                        $newSearchServiceExistsnow = $false
                         if($newSearchServiceExists -eq "Ready")
                         {
-                            $newSearchServiceExistsnow = $true
                             WriteValue("Success")
                         }       
                     }

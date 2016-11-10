@@ -59,6 +59,40 @@ function New-WTTAzureDocumentDb
         $iotArray = @("iotdata","iotrawdata")
         foreach($item in $iotArray)
         {
+
+            # Check if DocDB Database exists
+            WriteLabel("Checking if DocDB Database $item exists")
+            $method = "Get"
+            $resourceId = ""
+            $resourceType = "dbs"
+            $date = (Get-Date).ToUniversalTime()
+            $xDate = $date.ToString('r',[System.Globalization.CultureInfo]::InvariantCulture)
+            $masterKey = $documentDBPrimaryKey
+            $docDBToken = createAuthToken $method $resourceId $resourceType $xDate $masterKey      
+            $header = @{"Authorization" = "$docDBToken";`
+                        "x-ms-date" = "$xDate";`
+                        "x-ms-version" = "2015-08-06"
+                        }
+            $newIOTDatabase = "https://$wttDocumentDbName.documents.azure.com:443/dbs"
+            $getIOTDatabaseExist = Invoke-RestMethod -Uri $newIOTDatabase -Method Get -Headers $header -ContentType "application/json"
+
+            if($getIOTDatabaseExist.databases.id -like $item)
+            {
+                $method = "Delete"
+                $resourceId = "dbs/$item"
+                $resourceType = "dbs"
+                $date = (Get-Date).ToUniversalTime()
+                $xDate = $date.ToString('r',[System.Globalization.CultureInfo]::InvariantCulture)
+                $masterKey = $documentDBPrimaryKey
+                $docDBToken = createAuthToken $method $resourceId $resourceType $xDate $masterKey      
+                $header = @{"Authorization" = "$docDBToken";`
+                        "x-ms-date" = "$xDate";`
+                        "x-ms-version" = "2015-08-06"
+                        }
+                $deleteIOTDatabase = "https://$wttDocumentDbName.documents.azure.com:443/dbs/$item"
+                $deleteDocDB = Invoke-RestMethod -Uri $deleteIOTDatabase -Method Delete -Headers $header -ContentType "application/json"
+            }
+            
             WriteLabel("Creating DocDB Database $item")
             $method = "Post"
             $resourceId = ""
@@ -138,7 +172,7 @@ function New-WTTAzureDocumentDb
                                         }
                                     ],
                         ""excludedPaths"": []
-                     }"
+                        }"
             $newIOTDatabaseCollectionPost = Invoke-RestMethod -Uri $newIOTDatabaseCollection -Method Post -Body $body -Headers $header -ContentType "application/json"
         
             #Get DocDB Database Collection
@@ -158,9 +192,8 @@ function New-WTTAzureDocumentDb
             if($getIOTDatabaseCollection.DocumentCollections.id -like $item)
             {
                 WriteValue("Successful")
-            }            
+            }
         }
-
 	}
 	Catch
 	{
