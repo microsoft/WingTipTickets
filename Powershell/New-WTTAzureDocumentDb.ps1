@@ -78,6 +78,7 @@ function New-WTTAzureDocumentDb
 
             if($getIOTDatabaseExist.databases.id -like $item)
             {
+                WriteValue("Exists, Deleting")
                 $method = "Delete"
                 $resourceId = "dbs/$item"
                 $resourceType = "dbs"
@@ -91,6 +92,10 @@ function New-WTTAzureDocumentDb
                         }
                 $deleteIOTDatabase = "https://$wttDocumentDbName.documents.azure.com:443/dbs/$item"
                 $deleteDocDB = Invoke-RestMethod -Uri $deleteIOTDatabase -Method Delete -Headers $header -ContentType "application/json"
+            }
+            else
+            {
+                WriteValue("Doesn't exist")
             }
             
             WriteLabel("Creating DocDB Database $item")

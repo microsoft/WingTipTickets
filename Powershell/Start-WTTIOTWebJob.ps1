@@ -31,6 +31,19 @@ function Start-WTTIOTWebJob
 	{
 		try
 		{
+
+            #load System.Web Assembly
+            $systemWebAssembly = [reflection.assembly]::loadwithpartialname("system.web")
+
+		    #Register Web provider service
+		    Do{
+                $status = (Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Web).RegistrationState
+		        if ($status -ne "Registered")
+		        {
+			        Register-AzureRmResourceProvider -ProviderNamespace Microsoft.Web
+		        }
+            }until($status -eq "Registered")
+
             # Load ADAL Assemblies
             $adal = "${env:ProgramFiles(x86)}\Microsoft SDKs\Azure\PowerShell\ServiceManagement\Azure\Services\Microsoft.IdentityModel.Clients.ActiveDirectory.dll"
             $adalforms = "${env:ProgramFiles(x86)}\Microsoft SDKs\Azure\PowerShell\ServiceManagement\Azure\Services\Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms.dll"
@@ -56,7 +69,7 @@ function Start-WTTIOTWebJob
             $headers = @{"Authorization" = $authHeader}   
             
             WriteLabel("Starting primary web application web job")
-            $getWebJobStatus =  "https://management.azure.com/subscriptions/$azureSubscriptionID/resourceGroups/$azureResourceGroupName/providers/Microsoft.Web/sites/$Websitename/webJobs"+"?api-version=2016-0-01"
+            $getWebJobStatus =  "https://management.azure.com/subscriptions/$azureSubscriptionID/resourceGroups/$azureResourceGroupName/providers/Microsoft.Web/sites/$Websitename/webJobs"+"?api-version=2016-08-01"
             $web = Invoke-RestMethod -Uri $getWebJobStatus -Method Get -Headers $headers
             if($web.value.properties.status -eq 'Stopped')
             {
@@ -80,8 +93,7 @@ function Start-WTTIOTWebJob
             {
                 WriteValue("Successful")
             }
-
-    }
+        }
         catch
         {
             WriteError($Error)
