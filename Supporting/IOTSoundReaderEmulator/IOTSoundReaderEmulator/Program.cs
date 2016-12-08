@@ -37,7 +37,7 @@ namespace IOTSoundReaderEmulator
 	            // Generate a random sleep time. 
 	            // To fake iot devices are random intervals pick up sounds
 	            _rnd = new Random();
-	            var sleepTime = _rnd.Next(5, 20);
+	            var sleepTime = _rnd.Next(10, 20);
 	            Thread.Sleep(sleepTime);
 
 	            var soundRecord = GetSoundLevel();

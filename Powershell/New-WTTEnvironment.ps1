@@ -412,9 +412,9 @@ function New-WTTEnvironment
                     else
                     {
                         Push-Location -StackName wtt
-                        $result = Invoke-Sqlcmd -Username "$adminUserName@$azureSqlServerPrimaryName" -Password $adminPassword -ServerInstance "$azureSqlServerPrimaryName.database.windows.net" -Database $AzureSqlDatabaseName -Query "Select * from Customers;" -QueryTimeout 0 -SuppressProviderContextWarning
+                        $result = Invoke-Sqlcmd -Username "$adminUserName@$azureSqlServerPrimaryName" -Password $adminPassword -ServerInstance "$azureSqlServerPrimaryName.database.windows.net" -Database $AzureSqlDatabaseName -Query "Select CustomerId from Customers;" -QueryTimeout 0 -SuppressProviderContextWarning
                         Pop-Location -StackName wtt
-                        if($result -eq $null)
+                        if(!$result)
                         {
                             WriteError("Customer1 Database is not deployed")
                             $null = Remove-AzureRmSqlDatabase -ServerName $azureSqlServerPrimaryName -DatabaseName $AzureSqlDatabaseName -ResourceGroupName $azureResourceGroupName -Force -ErrorAction SilentlyContinue
@@ -450,9 +450,9 @@ function New-WTTEnvironment
                     else
                     {
                         Push-Location -StackName wtt
-                        $result = Invoke-Sqlcmd -Username "$adminUserName@$azureSqlServerPrimaryName" -Password $adminPassword -ServerInstance "$azureSqlServerPrimaryName.database.windows.net" -Database "Customer2" -Query "Select * from Customers;" -QueryTimeout 0 -SuppressProviderContextWarning
+                        $result = Invoke-Sqlcmd -Username "$adminUserName@$azureSqlServerPrimaryName" -Password $adminPassword -ServerInstance "$azureSqlServerPrimaryName.database.windows.net" -Database "Customer2" -Query "Select CustomerId from Customers;" -QueryTimeout 0 -SuppressProviderContextWarning
                         Pop-Location -StackName wtt
-                        if([string]$result -eq $null)
+                        if(!$result)
                         {
                             WriteError("Customer2 Database is not deployed")
                             $null = Remove-AzureRmSqlDatabase -ServerName $azureSqlServerPrimaryName -DatabaseName "Customer2" -ResourceGroupName $azureResourceGroupName -Force -ErrorAction SilentlyContinue
@@ -485,9 +485,9 @@ function New-WTTEnvironment
                     else
                     {
                         Push-Location -StackName wtt
-                        $result = Invoke-Sqlcmd -Username "$adminUserName@$azureSqlServerPrimaryName" -Password $adminPassword -ServerInstance "$azureSqlServerPrimaryName.database.windows.net" -Database "Customer3" -Query "Select * from Customers;" -QueryTimeout 0 -SuppressProviderContextWarning
+                        $result = Invoke-Sqlcmd -Username "$adminUserName@$azureSqlServerPrimaryName" -Password $adminPassword -ServerInstance "$azureSqlServerPrimaryName.database.windows.net" -Database "Customer3" -Query "Select CustomerId from Customers;" -QueryTimeout 0 -SuppressProviderContextWarning
                         Pop-Location -StackName wtt
-                        if([string]$result -eq $null)
+                        if(!$result)
                         {
                             WriteError("Customer3 Database is not deployed")
                             $null = Remove-AzureRmSqlDatabase -ServerName $azureSqlServerPrimaryName -DatabaseName "Customer3" -ResourceGroupName $azureResourceGroupName -Force -ErrorAction SilentlyContinue
