@@ -248,7 +248,7 @@ function New-WTTPowerBI
                     $powerBIDataSetID = $bi.datasets.id
                 }
                                 
-                if($powerBIWorkspace -ne 'Seatingmap')
+                if($powerBIWorkspace -clike 'TicketSales*')
                 {       
                     WriteLabel("Setting Power BI Report $report Connection String")
                     #Get Data Sources Gateway
@@ -258,7 +258,7 @@ function New-WTTPowerBI
                     #Post All connections
                     $powerBISetAllConnectionsURL = "https://api.powerbi.com/beta/collections/$azurePowerBIWorkspaceCollection/workspaces/$powerBIWorkspaceID/datasets/$powerBIDataSetID/Default.SetAllConnections"
                     $powerBISetAllConnectionsConnString = "{
-                                                            ""connectionString"": ""Data source=tcp:$AzureSqlServerName.database.windows.net,1433;initial catalog=$AzureSqlDWDatabaseName;Persist Security info=True;Encrypt=True;TrustServerCertificate=False""
+                                                            ""connectionString"": ""Data source=tcp:$AzureSqlServerName.database.windows.net,1433;initial catalog=CustomerDW;Persist Security info=True;Encrypt=True;TrustServerCertificate=False""
                                                             }"
                     $powerBISetAllConnectionsPost = Invoke-RestMethod -Uri $powerBISetAllConnectionsURL -Method POST -ContentType "application/json" -Body $powerBISetAllConnectionsConnString -Headers $header
                 
@@ -345,16 +345,16 @@ function New-WTTPowerBI
                     {
                         WriteError("Failed")
                     }
-
-                    return $pbiOutPut
-
                 }          
             }
         }
-        Catch
-        {
-            Write-Error "Error: $Error"
-        }
+            Catch
+            {
+                Write-Error "Error: $Error"
+            }
+
+        return $pbiOutPut
+
       }
     }  
     Catch
