@@ -153,6 +153,7 @@ function New-WTTAzureDocumentDb
             $newIOTDatabaseCollection = "https://$wttDocumentDbName.documents.azure.com/dbs/$item/colls"
             $body = "{
                         ""id"": ""$item"",
+                            ""indexingPolicy"": {
                                 ""indexingMode"": ""consistent"",
                                     ""automatic"": true,
                                     ""includedPaths"": [
@@ -177,7 +178,8 @@ function New-WTTAzureDocumentDb
                                         }
                                     ],
                         ""excludedPaths"": []
-                        }"
+                        }
+                      }"
             $newIOTDatabaseCollectionPost = Invoke-RestMethod -Uri $newIOTDatabaseCollection -Method Post -Body $body -Headers $header -ContentType "application/json"
         
             #Get DocDB Database Collection
