@@ -159,42 +159,42 @@ function New-WTTPowerBI
             }
             Try
             {
-            #Create Power BI Provisioning Token
-            $appToken = [Microsoft.PowerBI.Security.PowerBIToken]::CreateProvisionToken($azurePowerBIWorkspaceCollection)
-            $token = $appToken.Generate($pbikey)
+                #Create Power BI Provisioning Token
+                $appToken = [Microsoft.PowerBI.Security.PowerBIToken]::CreateProvisionToken($azurePowerBIWorkspaceCollection)
+                $token = $appToken.Generate($pbikey)
             
-            $workspaceExist = $false
-            WriteLabel("Deploying Power BI Workspace")
-            Do
-            {
-                #Create Power BI Workspace
-                $powerBIWorkspaceURL = "https://api.powerbi.com/beta/collections/$azurePowerBIWorkspaceCollection/workspaces"
-                $header = @{authorization = "AppToken $token"}
-                $powerBIWorkspaceCreate =  Invoke-RestMethod -Uri $powerBIWorkspaceURL -Method POST -ContentType "application/json" -Headers $header
-                $powerBIWorkspaceGet =  Invoke-RestMethod -Uri $powerBIWorkspaceURL -Method GET -ContentType "application/json" -Headers $header
-
-                If(!$powerBIWorkspaceGet.WorkspaceId)
+                $workspaceExist = $false
+                WriteLabel("Deploying Power BI Workspace")
+                Do
                 {
-                    WriteValue("Successful")
-                    $workspaceExist = $true
-                }
-                Else
-                {
-                    WriteError("Unable to find Power BI Workspace")
-                    $workspaceExist = $false
-                }
+                    #Create Power BI Workspace
+                    $powerBIWorkspaceURL = "https://api.powerbi.com/beta/collections/$azurePowerBIWorkspaceCollection/workspaces"
+                    $header = @{authorization = "AppToken $token"}
+                    $powerBIWorkspaceCreate =  Invoke-RestMethod -Uri $powerBIWorkspaceURL -Method POST -ContentType "application/json" -Headers $header
+                    $powerBIWorkspaceGet =  Invoke-RestMethod -Uri $powerBIWorkspaceURL -Method GET -ContentType "application/json" -Headers $header
 
-            }until($workspaceExist -eq $true)
+                    If(!$powerBIWorkspaceGet.WorkspaceId)
+                    {
+                        WriteValue("Successful")
+                        $workspaceExist = $true
+                    }
+                    Else
+                    {
+                        WriteError("Unable to find Power BI Workspace")
+                        $workspaceExist = $false
+                    }
 
-            # Get the Power BI workspace ID
-            $powerBIWorkspaceGet = Invoke-RestMethod -Uri $powerBIWorkspaceURL -Method GET -ContentType "application/json" -Headers $header
-            $powerBIWorkspaceID = $powerBIWorkspaceGet.Value.WorkspaceId
-            $pbiOutPut.Add('powerbiWorkspaceId',$powerBIWorkspaceID)
+                }until($workspaceExist -eq $true)
+
+                # Get the Power BI workspace ID
+                $powerBIWorkspaceGet = Invoke-RestMethod -Uri $powerBIWorkspaceURL -Method GET -ContentType "application/json" -Headers $header
+                $powerBIWorkspaceID = $powerBIWorkspaceGet.Value.WorkspaceId
+                $pbiOutPut.Add('powerbiWorkspaceId',$powerBIWorkspaceID)
                     
-            #Import Power BI Reports
-            $reports = Get-ChildItem "$powerBIReportFiles\*.pbix"
-            ForEach($report in $reports)
-            {   
+                #Import Power BI Reports
+                $reports = Get-ChildItem "$powerBIReportFiles\*.pbix"
+                ForEach($report in $reports)
+                {   
                 $powerBIWorkspace =
                 Switch($report.Name)
                 {
@@ -337,17 +337,17 @@ function New-WTTPowerBI
                     $reportid = $report.id
                     $pbiOutPut.Add('SeatMapReportId',$reportid)
                     
-                    if($report)
-                    {
-                        WriteValue("Successful")
-                    }
-                    else
-                    {
-                        WriteError("Failed")
-                    }
-                }          
+                        if($report)
+                        {
+                            WriteValue("Successful")
+                        }
+                        else
+                        {
+                            WriteError("Failed")
+                        }
+                    }          
+                }
             }
-        }
             Catch
             {
                 Write-Error "Error: $Error"
