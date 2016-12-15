@@ -22,8 +22,8 @@ function New-WTTAzureSearchService
 		$azureResourceGroupName,
 
 		# Azure Search Service Location
-		[Parameter(Mandatory=$true, HelpMessage="Please specify the datacenter location for your Azure Search Service ('East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast')?")]
-		[ValidateSet('East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast')]
+		[Parameter(Mandatory=$true, HelpMessage="Please specify the primary location for your WTT Environment ('West US 2', 'UK West', 'UK South', 'East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast', 'Canada Central', 'Canada East')?")]
+		[ValidateSet('West US 2', 'UK West', 'UK South', 'East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast', 'Canada Central', 'Canada East', 'EastUS', 'WestUS', 'SouthCentralUS', 'NorthCentralUS', 'CentralUS', 'EastAsia', 'WestEurope', 'EastUS2', 'JapanEast', 'JapanWest', 'BrazilSouth', 'NorthEurope', 'SoutheastAsia', 'AustraliaEast', 'AustraliaSoutheast', 'CanadaCentral', 'CanadaEast', 'UKSouth', 'UKWest', 'WestUS2')]
 		[String]
 		$AzureSearchServiceLocation,
 
@@ -50,6 +50,10 @@ function New-WTTAzureSearchService
 
 	Process
 	{
+        $ErrorActionPreference = "SilentlyContinue"
+        $InformationPreference = "SilentlyContinue"
+        $WarningPreference = "SilentlyContinue"
+
 		# Check Defaults
 		if ($wttEnvironmentApplicationName.Length -gt 60)
 		{
@@ -109,7 +113,7 @@ function New-WTTAzureSearchService
                     else
                     {
                         Remove-AzureRmResource -ResourceName $wttEnvironmentApplicationName -ResourceType "Microsoft.Search/searchServices" -ResourceGroupName $azureResourceGroupName -Force
-                        $searchExist = $false
+                        $searchExist = $true
                     }
                 }
                 else
@@ -117,7 +121,7 @@ function New-WTTAzureSearchService
                     WriteValue("Success")
                     $searchExist = $false
                 }
-            }until($searchExist-eq $false)
+            }while($searchExist-eq $true)
                        
             #Get list of Search Service locations and add to an array
             $listSearchServicesLocations = (Get-AzureRmResourceProvider -ListAvailable | Where-Object {$_.ProviderNamespace -eq 'Microsoft.Search'}).locations   
@@ -135,12 +139,10 @@ function New-WTTAzureSearchService
                 {  
                     try
                     {
-                        $newSearchService = New-AzureRmResourceGroupDeployment -ResourceGroupName $azureResourceGroupName -TemplateUri "https://gallery.azure.com/artifact/20151001/Microsoft.Search.1.0.9/DeploymentTemplates/searchServiceDefaultTemplate.json" -nameFromTemplate $wttEnvironmentApplicationName -sku basic -location $AzureSearchServiceLocation -partitionCount 1 -replicaCount 1
+                        $newSearchService = New-AzureRmResourceGroupDeployment -ResourceGroupName $azureResourceGroupName -TemplateUri "https://gallery.azure.com/artifact/20151001/Microsoft.Search.1.0.9/DeploymentTemplates/searchServiceDefaultTemplate.json" -nameFromTemplate $wttEnvironmentApplicationName -sku basic -location $searchLocation -partitionCount 1 -replicaCount 1
                         $newSearchServiceExists = (Find-AzureRmResource -ResourceType "Microsoft.Search" -ResourceNameContains $wttEnvironmentApplicationName -ExpandProperties).properties.state
-                        $newSearchServiceExistsnow = $false
                         if($newSearchServiceExists -eq "Ready")
                         {
-                            $newSearchServiceExistsnow = $true
                             WriteValue("Success")
                         }                 
                     }
@@ -150,20 +152,16 @@ function New-WTTAzureSearchService
                     }
                 }  
             }
-            
-
             else
             {
                 foreach($searchLocation in $listSearchServicesLocation)
                 {  
                     try
                     {
-                        $newSearchService = New-AzureRmResourceGroupDeployment -ResourceGroupName $azureResourceGroupName -TemplateUri "https://gallery.azure.com/artifact/20151001/Microsoft.Search.1.0.9/DeploymentTemplates/searchServiceDefaultTemplate.json" -nameFromTemplate $wttEnvironmentApplicationName -sku free -location $AzureSearchServiceLocation -partitionCount 1 -replicaCount 1
+                        $newSearchService = New-AzureRmResourceGroupDeployment -ResourceGroupName $azureResourceGroupName -TemplateUri "https://gallery.azure.com/artifact/20151001/Microsoft.Search.1.0.9/DeploymentTemplates/searchServiceDefaultTemplate.json" -nameFromTemplate $wttEnvironmentApplicationName -sku free -location $searchLocation -partitionCount 1 -replicaCount 1
                         $newSearchServiceExists = (Find-AzureRmResource -ResourceType "Microsoft.Search" -ResourceNameContains $wttEnvironmentApplicationName -ExpandProperties).properties.state
-                        $newSearchServiceExistsnow = $false
                         if($newSearchServiceExists -eq "Ready")
                         {
-                            $newSearchServiceExistsnow = $true
                             WriteValue("Success")
                         }       
                     }

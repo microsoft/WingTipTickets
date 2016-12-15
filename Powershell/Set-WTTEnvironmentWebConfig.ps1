@@ -91,7 +91,23 @@ function Set-WTTEnvironmentWebConfig
         # Tenant Event Type Pop, Rock, Classical
         [Parameter(Mandatory = $false)]
         [string]
-        $TenantEventType
+        $TenantEventType,
+        
+        # Azure DocumentDb Database
+		[Parameter(Mandatory = $false)] 
+		[String]$documentDbDatabase,
+
+		# Azure DocumentDb Database Collection
+		[Parameter(Mandatory = $false)] 
+		[String]$documentDbCollection,
+        
+		# Azure Event Hub Name
+		[Parameter(Mandatory = $false)] 
+		[String]$wttEventHubName,
+
+        # Azure Service Bus Name
+		[Parameter(Mandatory = $false)] 
+		[String]$wttServiceBusName
 	)
 
 	Process
@@ -159,7 +175,13 @@ function Set-WTTEnvironmentWebConfig
                     "powerbiSigningKey" = "$powerbiSigningKey";
                     "powerbiWorkspaceCollection" = "$powerbiWorkspaceCollection";
                     "powerbiWorkspaceId" = "$powerbiWorkspaceId";
-                    "SeatMapReportId" = "$seatMapReportID"
+                    "SeatMapReportId" = "$seatMapReportID";
+
+                    #Wtt IOT Settings
+                    "DocumentDbDatabaseName" = "$documentDbDatabase";
+                    "DocumentDbCollectionName" = "$documentDbCollection";
+                    "EventHubName" = "$wttEventHubName";
+                    "Microsoft.ServiceBus.ConnectionString" = "$wttServiceBusName"
 			}
 
 			# Add the settings to the website

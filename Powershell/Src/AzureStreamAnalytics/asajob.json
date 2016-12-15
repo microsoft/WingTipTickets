@@ -1,0 +1,55 @@
+{
+	"location": "<wttASALocation>",
+	"properties": {
+		"sku": {
+			"name": "standard"
+		},
+		"EventsOutOfOrderMaxDelayInSeconds": 5,
+		"EventsOutOfOrderPolicy": "Adjust",
+		"inputs": [{
+			"name": "EventHub",
+			"properties": {
+				"type": "stream",
+				"serialization": {
+					"type": "JSON",
+					"properties": {
+						"encoding": "UTF8"
+					}
+				},
+				"datasource": {
+					"type": "Microsoft.ServiceBus/EventHub",
+					"properties": {
+						"EventHubName": "<inputeventhubname>",
+						"ServiceBusNamespace": "<servicebusnamespace>",
+						"SharedAccessPolicyKey": "<sharedaccesspolicykey>",
+						"SharedAccessPolicyName": "<sharedaccesspolicyname>",
+						"SourcePartitionCount": 4,
+						"consumerGroupName": "<consumerGroupName>"
+					}
+				}
+			}
+		}],
+		"transformation": {
+			"name": "ProcessAllIOTData",
+			"properties": {
+				"streamingUnits": 1,
+				"query": "SELECT * INTO DocumentDB FROM EventHub"
+			}
+		},
+		"outputs": [{
+			"name": "DocumentDB",
+			"properties": {
+				"datasource": {
+					"type": "Microsoft.Storage/DocumentDB",
+					"properties": {
+						"AccountID": "<documentDBID>",
+						"AccountKey": "<documentDBAccountKey>",
+						"database": "<documentDBDatabaseName>",
+						"CollectionNamePattern": "<collectionNamePattern>",
+						"PartitionKey": "id"
+					}
+				}
+			}
+		}]
+	}
+}

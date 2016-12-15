@@ -56,12 +56,13 @@ function New-WTTPowerBI
     # Set environment variables
     $azurePowerBIWorkspaceCollection = $AzurePowerBIName
     $powerBIReportFiles = ".\Resources\PowerBI"
-    $log = Get-ChildItem .\powerbi.txt -ErrorAction SilentlyContinue | Remove-Item -Force -ErrorAction SilentlyContinue
+    $pbiOutPut = @{}
 
     Try
     {
         #Check status of Power BI service
-        Do{
+        Do
+        {
             $status = Get-AzureRmResourceProvider -ProviderNamespace Microsoft.PowerBI
             if ($status.RegistrationState -ne "Registered")
             {
@@ -123,7 +124,7 @@ function New-WTTPowerBI
                 # Acquire token
                 $authResult = $authContext.AcquireToken($resourceAppIdURI, $clientId, $redirectUri, "Auto")
                 $authHeader = $authResult.CreateAuthorizationHeader()
-                $headers = @{"Authorization" = $authHeader}     
+                $headers = @{"Authorization" = $authHeader}  
             
                 WriteLabel("Deploying Power BI Workspace Collection")
                 #create Power BI Workspace Collection
@@ -145,14 +146,12 @@ function New-WTTPowerBI
                 {
                     WriteError("Unable to find Power BI Workspace Collection")
                 }
-
-                #$powerBIWorkspaceCollectionCreate.name | Out-File powerbi.txt -Append
-            
+                           
                 #Get Power BI Workspace Collection Key
                 $powerBIWorkspaceCOllectionKeyURL =  "https://management.azure.com/subscriptions/$azureSubscriptionID/resourceGroups/$azureResourceGroupName/providers/Microsoft.PowerBI/workspaceCollections/$azurePowerBIWorkspaceCollection/listKeys?api-version=2016-01-29"
                 $powerBIWorkspaceCOllectionKey = Invoke-RestMethod -Uri $powerBIWorkspaceCOllectionKeyURL -Method POST -Headers $headers
                 $pbikey = $powerBIWorkspaceCOllectionKey.key1 
-                $pbikey | Out-File .\powerbi.txt -Append
+                $pbiOutPut.Add('powerbiSigningKey',$pbikey)
             }
             Catch
             {
@@ -160,42 +159,42 @@ function New-WTTPowerBI
             }
             Try
             {
-            #Create Power BI Provisioning Token
-            $appToken = [Microsoft.PowerBI.Security.PowerBIToken]::CreateProvisionToken($azurePowerBIWorkspaceCollection)
-            $token = $appToken.Generate($pbikey)
+                #Create Power BI Provisioning Token
+                $appToken = [Microsoft.PowerBI.Security.PowerBIToken]::CreateProvisionToken($azurePowerBIWorkspaceCollection)
+                $token = $appToken.Generate($pbikey)
             
-            $workspaceExist = $false
-            WriteLabel("Deploying Power BI Workspace")
-            Do
-            {
-                #Create Power BI Workspace
-                $powerBIWorkspaceURL = "https://api.powerbi.com/beta/collections/$azurePowerBIWorkspaceCollection/workspaces"
-                $header = @{authorization = "AppToken $token"}
-                $powerBIWorkspaceCreate =  Invoke-RestMethod -Uri $powerBIWorkspaceURL -Method POST -ContentType "application/json" -Headers $header
-                $powerBIWorkspaceGet =  Invoke-RestMethod -Uri $powerBIWorkspaceURL -Method GET -ContentType "application/json" -Headers $header
-
-                If(!$powerBIWorkspaceGet.WorkspaceId)
+                $workspaceExist = $false
+                WriteLabel("Deploying Power BI Workspace")
+                Do
                 {
-                    WriteValue("Successful")
-                    $workspaceExist = $true
-                }
-                Else
-                {
-                    WriteError("Unable to find Power BI Workspace")
-                    $workspaceExist = $false
-                }
+                    #Create Power BI Workspace
+                    $powerBIWorkspaceURL = "https://api.powerbi.com/beta/collections/$azurePowerBIWorkspaceCollection/workspaces"
+                    $header = @{authorization = "AppToken $token"}
+                    $powerBIWorkspaceCreate =  Invoke-RestMethod -Uri $powerBIWorkspaceURL -Method POST -ContentType "application/json" -Headers $header
+                    $powerBIWorkspaceGet =  Invoke-RestMethod -Uri $powerBIWorkspaceURL -Method GET -ContentType "application/json" -Headers $header
 
-            }until($workspaceExist -eq $true)
+                    If(!$powerBIWorkspaceGet.WorkspaceId)
+                    {
+                        WriteValue("Successful")
+                        $workspaceExist = $true
+                    }
+                    Else
+                    {
+                        WriteError("Unable to find Power BI Workspace")
+                        $workspaceExist = $false
+                    }
 
-            # Get the Power BI workspace ID
-            $powerBIWorkspaceGet = Invoke-RestMethod -Uri $powerBIWorkspaceURL -Method GET -ContentType "application/json" -Headers $header
-            $powerBIWorkspaceID = $powerBIWorkspaceGet.Value.WorkspaceId
-            $powerBIWorkspaceID | Out-File .\powerbi.txt -Append
-        
-            #Import Power BI Reports
-            $reports = Get-ChildItem "$powerBIReportFiles\*.pbix"
-            ForEach($report in $reports)
-            {   
+                }until($workspaceExist -eq $true)
+
+                # Get the Power BI workspace ID
+                $powerBIWorkspaceGet = Invoke-RestMethod -Uri $powerBIWorkspaceURL -Method GET -ContentType "application/json" -Headers $header
+                $powerBIWorkspaceID = $powerBIWorkspaceGet.Value.WorkspaceId
+                $pbiOutPut.Add('powerbiWorkspaceId',$powerBIWorkspaceID)
+                    
+                #Import Power BI Reports
+                $reports = Get-ChildItem "$powerBIReportFiles\*.pbix"
+                ForEach($report in $reports)
+                {   
                 $powerBIWorkspace =
                 Switch($report.Name)
                 {
@@ -249,7 +248,7 @@ function New-WTTPowerBI
                     $powerBIDataSetID = $bi.datasets.id
                 }
                                 
-                if($powerBIWorkspace -ne 'Seatingmap')
+                if($powerBIWorkspace -clike 'TicketSales*')
                 {       
                     WriteLabel("Setting Power BI Report $report Connection String")
                     #Get Data Sources Gateway
@@ -259,7 +258,7 @@ function New-WTTPowerBI
                     #Post All connections
                     $powerBISetAllConnectionsURL = "https://api.powerbi.com/beta/collections/$azurePowerBIWorkspaceCollection/workspaces/$powerBIWorkspaceID/datasets/$powerBIDataSetID/Default.SetAllConnections"
                     $powerBISetAllConnectionsConnString = "{
-                                                            ""connectionString"": ""Data source=tcp:$AzureSqlServerName.database.windows.net,1433;initial catalog=$AzureSqlDWDatabaseName;Persist Security info=True;Encrypt=True;TrustServerCertificate=False""
+                                                            ""connectionString"": ""Data source=tcp:$AzureSqlServerName.database.windows.net,1433;initial catalog=CustomerDW;Persist Security info=True;Encrypt=True;TrustServerCertificate=False""
                                                             }"
                     $powerBISetAllConnectionsPost = Invoke-RestMethod -Uri $powerBISetAllConnectionsURL -Method POST -ContentType "application/json" -Body $powerBISetAllConnectionsConnString -Headers $header
                 
@@ -336,24 +335,26 @@ function New-WTTPowerBI
                     $powerBIGetReport = Invoke-RestMethod -Uri $powerBIGetReportURL -Method GET -ContentType "application/json" -Headers $header
                     $report = $powerBIGetReport.value | Where-Object {$_.name -eq "seatingmap"}
                     $reportid = $report.id
-                    $reportid | Out-File .\powerbi.txt -Append
-
-                    if($report)
-                    {
-                        WriteValue("Successful")
-                    }
-                    else
-                    {
-                        WriteError("Failed")
-                    }
-
-                }          
+                    $pbiOutPut.Add('SeatMapReportId',$reportid)
+                    
+                        if($report)
+                        {
+                            WriteValue("Successful")
+                        }
+                        else
+                        {
+                            WriteError("Failed")
+                        }
+                    }          
+                }
             }
-        }
-        Catch
-        {
-            Write-Error "Error: $Error"
-        }
+            Catch
+            {
+                Write-Error "Error: $Error"
+            }
+
+        return $pbiOutPut
+
       }
     }  
     Catch

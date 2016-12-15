@@ -5,7 +5,7 @@
 	This script is used to create a new WingtipTickets (WTT) Demo Environment.
 .EXAMPLE
 	New-WTTEnvironment 
-WingTipTickets PowerShell Version 2.5 - Azure Data Warehouse
+WingTipTickets PowerShell Version 3.0
 #>
 function New-WTTEnvironment
 {
@@ -18,8 +18,8 @@ function New-WTTEnvironment
 		$WTTEnvironmentApplicationName,
 
 		# Primary Server Location
-		[Parameter(Mandatory=$false, HelpMessage="Please specify the primary location for your WTT Environment ('East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast', 'Canada Central', 'Canada East')?")]
-		[ValidateSet('East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast', 'Canada Central', 'Canada East', 'EastUS', 'WestUS', 'SouthCentralUS', 'NorthCentralUS', 'CentralUS', 'EastAsia', 'WestEurope', 'EastUS2', 'JapanEast', 'JapanWest', 'BrazilSouth', 'NorthEurope', 'SoutheastAsia', 'AustraliaEast', 'AustraliaSoutheast', 'CanadaCentral', 'CanadaEast')]
+		[Parameter(Mandatory=$false, HelpMessage="Please specify the primary location for your WTT Environment ('West US 2', 'UK West', 'UK South', 'East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast', 'Canada Central', 'Canada East')?")]
+		[ValidateSet('West US 2', 'UK West', 'UK South', 'East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast', 'Canada Central', 'Canada East', 'EastUS', 'WestUS', 'SouthCentralUS', 'NorthCentralUS', 'CentralUS', 'EastAsia', 'WestEurope', 'EastUS2', 'JapanEast', 'JapanWest', 'BrazilSouth', 'NorthEurope', 'SoutheastAsia', 'AustraliaEast', 'AustraliaSoutheast', 'CanadaCentral', 'CanadaEast', 'UKSouth', 'UKWest', 'WestUS2')]
 		[String]
 		$WTTEnvironmentPrimaryServerLocation,
 
@@ -61,6 +61,10 @@ function New-WTTEnvironment
 		[Parameter(Mandatory = $false)] 
 		[String]$webAppSecondaryPackageName,
 
+		# IOT Emulator Azure Web Site WebDeploy Package Name
+		[Parameter(Mandatory = $false)] 
+		[String]$iotEmulatorAppPackageName,
+
         #This parameter is used by deploy-wttenvironment.ps1
 		[Parameter(Mandatory = $false)]
 		[string]
@@ -86,6 +90,9 @@ function New-WTTEnvironment
 		LineBreak
 
 		# Setup Parameter Defaults
+
+		$wttEnvironmentApplicationName = $WTTEnvironmentApplicationName.ToLower()
+
 		if($adminUserName -eq "")
 		{
 			$adminUserName = "developer"
@@ -110,6 +117,10 @@ function New-WTTEnvironment
 		{
 			$AzureSqlDWDatabaseName = "CustomerDW"
 		}
+        if(!$azureStorageAccountName)
+        {
+            $azureStorageAccountName = $wTTEnvironmentApplicationName
+        }
 
 		if($WebAppPackagePath -eq "")
 		{
@@ -149,11 +160,19 @@ function New-WTTEnvironment
 			$azureWebSiteSecondaryWebDeployPackagePath = $WebAppPackagePath + "\" + $webAppSecondaryPackageName
 		}
 
+        if($iotEmulatorAppPackageName -eq "")
+		{
+			$iotEmulatorAppPackageName = "wttiotemulator.zip"
+			$iotEmulatorAppPackagePath = $WebAppPackagePath + "\" + $iotEmulatorAppPackageName
+		}
+		else
+		{
+			$iotEmulatorAppPackageName = $iotEmulatorAppPackageName
+			$iotEmulatorAppPackagePath = $WebAppPackagePath + "\" + $iotEmulatorAppPackageName
+		}
+
 		$localPath = (Get-Item -Path ".\" -Verbose).FullName
 
-		$wttEnvironmentApplicationName = $WTTEnvironmentApplicationName.ToLower()
-
-		$azureStorageAccountName = $wTTEnvironmentApplicationName
 		$azureDocumentDbName = $wTTEnvironmentApplicationName
         $azurePowerBIWorkspaceCollection = $WTTEnvironmentApplicationName
 		$azureSqlServerPrimaryName = $wTTEnvironmentApplicationName + "primary"
@@ -163,6 +182,10 @@ function New-WTTEnvironment
 		$azureSqlServerSecondaryNameExists = $null
 		$secondaryServerLocation = ""
         $primaryServerLocation = $WTTEnvironmentPrimaryServerLocation
+        $wttServiceBusName = $wTTEnvironmentApplicationName+'-ns'
+        $wttEventHubName = $wTTEnvironmentApplicationName
+        $wttASAJob = $wTTEnvironmentApplicationName+'asajob'
+        $iotEmulatorApp = $wTTEnvironmentApplicationName+'iotemulator'
 
 		Try
 		{
@@ -175,7 +198,7 @@ function New-WTTEnvironment
 			$azureSecondarySqlDatabaseServer = $null
 
 			# Check installed PowerShell Version
-			WriteLabel("Checking for Azure PowerShell Version 1.0.1 or later")
+			WriteLabel("Checking for Azure PowerShell Version 3.0.0 or later")
 			if($installedAzurePowerShellVersion -lt 1)
 			{
 	            $module = Get-Module AzureRM.profile
@@ -187,7 +210,7 @@ function New-WTTEnvironment
 	            else
 	            {
 		            WriteValue("Failed")
-		            WriteError("Make sure that you are signed in and that PowerShell is not older than version 1.0.1.")
+		            WriteError("Make sure that you are signed in and that PowerShell is not older than version 3.0.0.")
 		            WriteError("Please install from: http://azure.microsoft.com/en-us/downloads/, under Command-line tools, under Windows PowerShell, click Install")
 		            break
 	            }
@@ -337,8 +360,11 @@ function New-WTTEnvironment
 					'East Asia' {'East Asia'}
 					'Japan East' {'Japan East'}
 					'Japan West' {'Japan West'}
-                    'Canada Central' {'North Central US'}
-                    'Canada East' {'East US'}
+                    'Canada Central' {'Canada Central'}
+                    'Canada East' {'Canada East'}
+                    'UK South' {'North Europe'}
+					'UK West' {'West Europe'}
+                    'West US 2' {'West US 2'}
 					default {'West US'}
 				}
 			WriteValue("Successful")
@@ -386,9 +412,9 @@ function New-WTTEnvironment
                     else
                     {
                         Push-Location -StackName wtt
-                        $result = Invoke-Sqlcmd -Username "$adminUserName@$azureSqlServerPrimaryName" -Password $adminPassword -ServerInstance "$azureSqlServerPrimaryName.database.windows.net" -Database $AzureSqlDatabaseName -Query "Select * from Customers;" -QueryTimeout 0 -SuppressProviderContextWarning
+                        $result = Invoke-Sqlcmd -Username "$adminUserName@$azureSqlServerPrimaryName" -Password $adminPassword -ServerInstance "$azureSqlServerPrimaryName.database.windows.net" -Database $AzureSqlDatabaseName -Query "Select CustomerId from Customers;" -QueryTimeout 0 -SuppressProviderContextWarning
                         Pop-Location -StackName wtt
-                        if($result -eq $null)
+                        if(!$result)
                         {
                             WriteError("Customer1 Database is not deployed")
                             $null = Remove-AzureRmSqlDatabase -ServerName $azureSqlServerPrimaryName -DatabaseName $AzureSqlDatabaseName -ResourceGroupName $azureResourceGroupName -Force -ErrorAction SilentlyContinue
@@ -424,9 +450,9 @@ function New-WTTEnvironment
                     else
                     {
                         Push-Location -StackName wtt
-                        $result = Invoke-Sqlcmd -Username "$adminUserName@$azureSqlServerPrimaryName" -Password $adminPassword -ServerInstance "$azureSqlServerPrimaryName.database.windows.net" -Database "Customer2" -Query "Select * from Customers;" -QueryTimeout 0 -SuppressProviderContextWarning
+                        $result = Invoke-Sqlcmd -Username "$adminUserName@$azureSqlServerPrimaryName" -Password $adminPassword -ServerInstance "$azureSqlServerPrimaryName.database.windows.net" -Database "Customer2" -Query "Select CustomerId from Customers;" -QueryTimeout 0 -SuppressProviderContextWarning
                         Pop-Location -StackName wtt
-                        if([string]$result -eq $null)
+                        if(!$result)
                         {
                             WriteError("Customer2 Database is not deployed")
                             $null = Remove-AzureRmSqlDatabase -ServerName $azureSqlServerPrimaryName -DatabaseName "Customer2" -ResourceGroupName $azureResourceGroupName -Force -ErrorAction SilentlyContinue
@@ -459,9 +485,9 @@ function New-WTTEnvironment
                     else
                     {
                         Push-Location -StackName wtt
-                        $result = Invoke-Sqlcmd -Username "$adminUserName@$azureSqlServerPrimaryName" -Password $adminPassword -ServerInstance "$azureSqlServerPrimaryName.database.windows.net" -Database "Customer3" -Query "Select * from Customers;" -QueryTimeout 0 -SuppressProviderContextWarning
+                        $result = Invoke-Sqlcmd -Username "$adminUserName@$azureSqlServerPrimaryName" -Password $adminPassword -ServerInstance "$azureSqlServerPrimaryName.database.windows.net" -Database "Customer3" -Query "Select CustomerId from Customers;" -QueryTimeout 0 -SuppressProviderContextWarning
                         Pop-Location -StackName wtt
-                        if([string]$result -eq $null)
+                        if(!$result)
                         {
                             WriteError("Customer3 Database is not deployed")
                             $null = Remove-AzureRmSqlDatabase -ServerName $azureSqlServerPrimaryName -DatabaseName "Customer3" -ResourceGroupName $azureResourceGroupName -Force -ErrorAction SilentlyContinue
@@ -542,8 +568,9 @@ function New-WTTEnvironment
 				{
 					WriteValue("Successful")
 				}
-			} While($secondaryWebApp.Name -ne $azureSqlServerSecondaryName)
-			start-sleep -s 120
+			} While($secondaryWebApp.Name -ne $azureSqlServerSecondaryName) 
+        
+        	start-sleep -s 120
 
 			# Deploy Web Applications
 			LineBreak
@@ -553,7 +580,7 @@ function New-WTTEnvironment
 			WriteLabel("Deploying Secondary application '$azureSqlServerSecondaryName'")
             LineBreak
 			Deploy-WTTWebApplication -azureStorageAccountName $azureStorageAccountName -azureResourceGroupName $azureResourceGroupName -Websitename $azureSqlServerSecondaryName -WebAppPackagePath $WebAppPackagePath -webAppPackageName $webAppSecondaryPackageName
-
+            
 			# Create Traffic Manager Profile
 			LineBreak
 			New-WTTAzureTrafficManagerProfile -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -AzureResourceGroupName $azureResourceGroupName
@@ -569,7 +596,7 @@ function New-WTTEnvironment
             Start-Sleep -Seconds 60
 
 			# Deploy ADF environment
-			New-WTTADFEnvironment -ApplicationName $WTTEnvironmentApplicationName -azureResourceGroupName $azureResourceGroupName -azureSqlServerName $azureSqlServerPrimaryName -azureSQLDatabaseName "Recommendations" -DatabaseEdition "Basic" -adminUserName $adminUserName -adminPassword $adminPassword
+			New-WTTADFEnvironment -ApplicationName $WTTEnvironmentApplicationName -azureStorageAccountName $azureStorageAccountName -azureResourceGroupName $azureResourceGroupName -azureSqlServerName $azureSqlServerPrimaryName -azureSQLDatabaseName "Recommendations" -DatabaseEdition "Basic" -adminUserName $adminUserName -adminPassword $adminPassword
 
 			Start-Sleep -Seconds 30
             
@@ -596,11 +623,14 @@ function New-WTTEnvironment
                     'West India' {'Southeast Asia'}
                     'South India' {'Southeast Asia'}
                     'Central India' {'Southeast Asia'}
+                    'West US 2' {'West US'}
+                    'UK South' {'North Europe'}
+					'UK West' {'West Europe'}
                     default {'West US'}
                 }
 
             # New Azure Power BI Service
-            New-WTTPowerBI -azureResourceGroupName $azureResourceGroupName -AzurePowerBIName $azurePowerBIWorkspaceCollection -azurePowerBILocation $azurePowerBILocation -AzureSqlServerName $azureSqlServerPrimaryName -adminUserName $adminUserName -adminPassword $adminPassword -AzureSqlDatabaseName $AzureSqlDatabaseName -azureDWDatabaseName $AzureSqlDWDatabaseName
+            $pbiOutPut = New-WTTPowerBI -azureResourceGroupName $azureResourceGroupName -AzurePowerBIName $azurePowerBIWorkspaceCollection -azurePowerBILocation $azurePowerBILocation -AzureSqlServerName $azureSqlServerPrimaryName -adminUserName $adminUserName -adminPassword $adminPassword -AzureSqlDatabaseName $AzureSqlDatabaseName -azureDWDatabaseName $AzureSqlDWDatabaseName
             Start-Sleep -Seconds 30
 
             WriteLabel("Pausing DataWarehouse database")
@@ -608,20 +638,56 @@ function New-WTTEnvironment
 		    writeValue("Successful")
             Start-Sleep -s 240
 
+            #New Azure Service Bus and Event Hub
+            $eventHubConnectionString = New-WTTAzureEventHub -azureResourceGroupName $azureResourceGroupName -wttEventHubName $wttEventHubName -wttServiceBusName $wttServiceBusName -wttEventHubLocation $primaryServerLocation
+            
+            #New Azure Stream Analytics Job
+            #Get wttASALocation setting      
+            $wttASALocation =
+                Switch ($primaryServerLocation)
+                {
+                    'West US' {'West US'}
+                    'North Europe' {'North Europe'}
+                    'West Europe' {'West Europe'}
+                    'East US' {'East US'}
+                    'North Central US' {'North Central US'}
+                    'East US 2' {'East US 2'}
+                    'South Central US' {'South Central US'}
+                    'Central US' {'South Central US'}
+                    'Brazil South' {'Brazil South'}
+                    'Southeast Asia' {'Southeast Asia'}
+                    'East Asia' {'East Asia'}
+                    'Japan East' {'Japan East'}
+                    'Japan West' {'Japan West'}
+                    'Canada Central' {'North Central US'}
+                    'Canada East' {'North Central US'}
+                    'West India' {'Southeast Asia'}
+                    'South India' {'Southeast Asia'}
+                    'Central India' {'Southeast Asia'}
+                    'UK South' {'North Europe'}
+					'UK West' {'West Europe'}
+                    'West US 2' {'West US'}
+                    default {'West US'}
+                }
+            
+            New-WTTAzureStreamAnalyticsJob -azureResourceGroupName $azureResourceGroupName -wttASAJob $wttasajob -wttASALocation $wttASALocation -wttServiceBusName $wttServiceBusName -wttEventHubName $wttEventHubName -azureDocumentDbName $azureDocumentDbName -eventHubConnectionString $eventHubConnectionString
+            
 			# Set the Application Settings
 			$searchName = (Find-AzureRmResource -ResourceType Microsoft.Search/searchServices -ResourceGroupName $azureResourceGroupName -ResourceNameContains $azuresearchservicename).name
 			$searchServicePrimaryManagementKey = (Invoke-AzureRmResourceAction -ResourceGroupName $azureResourceGroupName -ResourceName $searchName -ResourceType Microsoft.Search/searchServices -Action listAdminkeys -Force).PrimaryKey
             $documentDBPrimaryKey = (Invoke-AzureRmResourceAction -ResourceGroupName $azureResourceGroupName -ResourceName $azureDocumentDbName -ResourceType Microsoft.DocumentDb/databaseAccounts -Action listkeys -Force).primarymasterkey
-            $pbiTextFile = (Get-ChildItem -Recurse -Include *.txt | where {$_.Name -like "powerbi*"}).Name
-            $pbiSettings = Get-Content $pbiTextFile
             $powerbiWorkspaceCollection = $azurePowerBIWorkspaceCollection
-            $powerbiSigningKey = $pbiSettings[0]
-            $powerbiWorkspaceId = $pbiSettings[1]
-            $seatMapReportID = $pbiSettings[2]
-
-			Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -azureResourceGroupName $azureResourceGroupName -Websitename $azureSqlServerPrimaryName -SearchName $searchName -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlServerPrimaryName $azureSqlServerPrimaryName -AzureSqlServerSecondaryName $azureSqlServerSecondaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey $documentDbPrimaryKey -powerbiSigningKey $powerbiSigningKey -powerbiWorkspaceCollection $powerbiWorkspaceCollection -powerbiWorkspaceId $powerbiWorkspaceId -seatMapReportID $seatMapReportID -TenantEventType $TenantEventType
-			Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -azureResourceGroupName $azureResourceGroupName -Websitename $azureSqlServerSecondaryName -SearchName $searchName -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlServerPrimaryName $azureSqlServerSecondaryName -AzureSqlServerSecondaryName $azureSqlServerPrimaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey $documentDbPrimaryKey -powerbiSigningKey $powerbiSigningKey -powerbiWorkspaceCollection $powerbiWorkspaceCollection -powerbiWorkspaceId $powerbiWorkspaceId -seatMapReportID $seatMapReportID -TenantEventType $TenantEventType
+            $powerbiSigningKey = $pbiOutPut.powerbiSigningKey
+            $powerbiWorkspaceId = $pbiOutPut.powerbiWorkspaceId
+            $seatMapReportID = $pbiOutPut.seatMapReportID
             
+			Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -azureResourceGroupName $azureResourceGroupName -Websitename $azureSqlServerPrimaryName -SearchName $searchName -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlServerPrimaryName $azureSqlServerPrimaryName -AzureSqlServerSecondaryName $azureSqlServerSecondaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey $documentDbPrimaryKey -powerbiSigningKey $powerbiSigningKey -powerbiWorkspaceCollection $powerbiWorkspaceCollection -powerbiWorkspaceId $powerbiWorkspaceId -seatMapReportID $seatMapReportID -TenantEventType $TenantEventType -documentDbDatabase "iotrawdata" -documentDbCollection "iotrawdata" -wttEventHubName $wttEventHubName -wttServiceBusName $eventHubConnectionString
+			Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -azureResourceGroupName $azureResourceGroupName -Websitename $azureSqlServerSecondaryName -SearchName $searchName -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlServerPrimaryName $azureSqlServerSecondaryName -AzureSqlServerSecondaryName $azureSqlServerPrimaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey $documentDbPrimaryKey -powerbiSigningKey $powerbiSigningKey -powerbiWorkspaceCollection $powerbiWorkspaceCollection -powerbiWorkspaceId $powerbiWorkspaceId -seatMapReportID $seatMapReportID -TenantEventType $TenantEventType -documentDbDatabase "iotrawdata" -documentDbCollection "iotrawdata" -wttEventHubName $wttEventHubName -wttServiceBusName $eventHubConnectionString
+            
+            Start-Sleep -Seconds 30
+
+            Start-WTTIOTWebJob -azureResourceGroupName $azureResourceGroupName -Websitename $azureSqlServerPrimaryName -primaryWebAppLocation $primaryServerLocation
+
             Start-Sleep -Seconds 20
 			# Enable Auditing on Azure SQL Database Server
 			# Appears to be a name resolution issue if Auditing is enabled, as Azure Search will not redirect to the database server
@@ -753,7 +819,7 @@ function CheckInstalledPowerShell($module)
 	$installedVersion = $module
 	$installedVersionVersion = $installedVersion.Version
 	$installedVersionVersion = $installedVersionVersion -replace '\s',''
-	$minimumRequiredVersion = '1.4.0'
+	$minimumRequiredVersion = '3.0.0'
 	$ver1 = GetVersionStringAsArray $installedVersionVersion
 	$ver2 = GetVersionStringAsArray $minimumRequiredVersion
 	if ($ver1[0] -lt $ver2[0]) 
