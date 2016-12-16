@@ -62,41 +62,40 @@ Function Test-WTTAzureSQLConnection
 	)
 
     $azureSqlDatabase = Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains $AzureSqlServerName -ResourceGroupNameContains $azureResourceGroupName
-
-    if($azureSqlDatabase.Name -like $AzureSqlServerName)
+    try
     {
-        $Stoploop = $false
-        [int]$Retrycount = "0"
-        do 
+        if($azureSqlDatabase.Name -like $AzureSqlServerName)
         {
-	        try 
-            {
+            $Stoploop = 1
+            $Retrycount = 0
+            do 
+            {   
+                $Retrycount++
 		        $sql = $azureSqlDatabase.Name
                 $ConnectionString = "Server=tcp:$sql.database.windows.net; Database=$AzureSqlDatabaseName; User ID=$AdminUserName; Password=$AdminPassword; Trusted_Connection=False; Encrypt=True;"
                 $sqlConn = new-object ("Data.SqlClient.SqlConnection") $connectionString
                 $sqlConn.Open()
-                    if ($sqlConn.State -eq 'Open')
-                    {
-                        $sqlConn.Close();
-                        Return "success"
-                    }
-		        $Stoploop = $true
-		    }
-	        catch 
-            {
-		        if ($Retrycount -gt 6)
+                if ($sqlConn.State -eq 'Open')
+                {
+                    $sqlConn.Close();
+                    Return "success"
+                    $Stoploop = 2
+                }                   
+		    
+		        if ($Retrycount -eq 6)
                 {
 			        Write-Host "Could not send Information after 6 retrys."
-			        $Stoploop = $true
+			        $Stoploop = 2
+                    return
 		        }
-		        else 
-                {
-                    Write-Host "Could not connect to SQL Server."
-                    Return "Error"
-		        }
-	        }
-            Start-Sleep -Seconds 20
+
+                Start-Sleep -Seconds 20
+            }While ($Stoploop -eq 1)
         }
-        While ($Stoploop -eq $false)
+    }
+    catch
+    {
+        Write-Host "Could not connect to SQL Server."
+        Return "Error"
     }
 }
