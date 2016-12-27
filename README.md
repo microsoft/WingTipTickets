@@ -5,3 +5,5 @@ There are two Word documents, one that describes that HOL setup, and another tha
 Source-code for the application is also available in the sourcecode sub-directory
 
 This release works with Azure PowerShell version 2.0.1. https://github.com/Azure/azure-powershell/releases
+
+This branch contains WTT Azure Data Factory scenario derived from Azure Data Factory TechNetLabs Hands-on Lab.
