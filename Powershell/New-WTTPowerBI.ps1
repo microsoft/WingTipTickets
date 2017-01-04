@@ -163,28 +163,23 @@ function New-WTTPowerBI
                 $appToken = [Microsoft.PowerBI.Security.PowerBIToken]::CreateProvisionToken($azurePowerBIWorkspaceCollection)
                 $token = $appToken.Generate($pbikey)
             
-                $workspaceExist = $false
                 WriteLabel("Deploying Power BI Workspace")
-                Do
+
+                #Create Power BI Workspace
+                $powerBIWorkspaceURL = "https://api.powerbi.com/beta/collections/$azurePowerBIWorkspaceCollection/workspaces"
+                $header = @{authorization = "AppToken $token"}
+                $powerBIWorkspaceCreate =  Invoke-RestMethod -Uri $powerBIWorkspaceURL -Method POST -ContentType "application/json" -Headers $header
+                Start-Sleep -Seconds 30
+                $powerBIWorkspaceGet =  Invoke-RestMethod -Uri $powerBIWorkspaceURL -Method GET -ContentType "application/json" -Headers $header
+
+                If(!$powerBIWorkspaceGet.WorkspaceId)
                 {
-                    #Create Power BI Workspace
-                    $powerBIWorkspaceURL = "https://api.powerbi.com/beta/collections/$azurePowerBIWorkspaceCollection/workspaces"
-                    $header = @{authorization = "AppToken $token"}
-                    $powerBIWorkspaceCreate =  Invoke-RestMethod -Uri $powerBIWorkspaceURL -Method POST -ContentType "application/json" -Headers $header
-                    $powerBIWorkspaceGet =  Invoke-RestMethod -Uri $powerBIWorkspaceURL -Method GET -ContentType "application/json" -Headers $header
-
-                    If(!$powerBIWorkspaceGet.WorkspaceId)
-                    {
-                        WriteValue("Successful")
-                        $workspaceExist = $true
-                    }
-                    Else
-                    {
-                        WriteError("Unable to find Power BI Workspace")
-                        $workspaceExist = $false
-                    }
-
-                }until($workspaceExist -eq $true)
+                    WriteValue("Successful")
+                }
+                Else
+                {
+                    WriteError("Unable to find Power BI Workspace")
+                }
 
                 # Get the Power BI workspace ID
                 $powerBIWorkspaceGet = Invoke-RestMethod -Uri $powerBIWorkspaceURL -Method GET -ContentType "application/json" -Headers $header
