@@ -47,8 +47,7 @@ namespace Tenant.Mvc
                 "~/Content/Stylesheets/powerbi.css"));
 
             bundles.Add(new StyleBundle("~/styles/site").Include(
-                "~/Content/Stylesheets/site.css",
-                "~/Content/Stylesheets/recommendation.css"));
+                "~/Content/Stylesheets/site.css"));
         }
 
         #endregion

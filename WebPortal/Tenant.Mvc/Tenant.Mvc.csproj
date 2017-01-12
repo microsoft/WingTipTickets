@@ -17,7 +17,7 @@
     <AssemblyName>Tenant.Mvc</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
-    <UseIISExpress>false</UseIISExpress>
+    <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -322,7 +322,6 @@
     <Compile Include="Controllers\FindSeatsController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Core\Helpers\PowerBiHelper.cs" />
-    <Compile Include="Controllers\RecommendationController.cs" />
     <Compile Include="Controllers\ReportsController.cs" />
     <Compile Include="Controllers\VenueAdministrationController.cs" />
     <Compile Include="Controllers\CityController.cs" />
@@ -456,16 +455,8 @@
     <Compile Include="Models\FindSeatsViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\Models\CustomerRec.cs" />
-    <Compile Include="Core\Repositories\Recommendations\CustomerRepository.cs" />
-    <Compile Include="Core\Interfaces\Recommendations\ICustomerRepository.cs" />
-    <Compile Include="Core\Interfaces\Recommendations\IProductsRepository.cs" />
-    <Compile Include="Core\Interfaces\Recommendations\IPromotionsRepository.cs" />
-    <Compile Include="Core\Interfaces\Recommendations\ITelemetryRepository.cs" />
     <Compile Include="Core\Models\Product.cs" />
-    <Compile Include="Core\Repositories\Recommendations\ProductsRepository.cs" />
     <Compile Include="Core\Models\Promotion.cs" />
-    <Compile Include="Core\Repositories\Recommendations\PromotionsRepository.cs" />
-    <Compile Include="Core\Repositories\Recommendations\TelemetryRepository.cs" />
     <Compile Include="Core\Repositories\Tenant\VenueMetaDataRepository.cs" />
     <Compile Include="Core\Repositories\Tenant\BaseRepository.cs" />
     <Compile Include="Startup.cs" />
@@ -754,8 +745,6 @@
     <Content Include="Views\EventAdministration\Index.cshtml" />
     <Content Include="Views\Venue\Index.cshtml" />
     <Content Include="Views\Version\Index.cshtml" />
-    <Content Include="Views\Recommendation\Details.cshtml" />
-    <Content Include="Views\Recommendation\Index.cshtml" />
     <Content Include="Views\Shared\_ConcertList.cshtml" />
     <Content Include="Views\Shared\_Account.cshtml" />
     <Content Include="Views\Shared\_VenueList.cshtml" />

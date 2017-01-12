@@ -12,8 +12,6 @@ using Unity.Mvc5;
 using TenantRepositories = Tenant.Mvc.Core.Repositories.Tenant;
 using TenantInterfaces = Tenant.Mvc.Core.Interfaces.Tenant;
 
-using RecommendationRepositories = Tenant.Mvc.Core.Repositories.Recommendations;
-using RecommendationInterfaces = Tenant.Mvc.Core.Interfaces.Recommendations;
 
 namespace Tenant.Mvc
 {
@@ -28,7 +26,6 @@ namespace Tenant.Mvc
 
             RegisterSqlConnection(container, settings);
             RegisterTenantComponents(container);
-            RegisterRecommendationComponents(container);
             RegisterEventHubComponents(settings, container);
 
             DependencyResolver.SetResolver(new UnityDependencyResolver(container));
@@ -69,15 +66,6 @@ namespace Tenant.Mvc
             container.RegisterType<TenantInterfaces.IFindSeatsRepository, TenantRepositories.FindSeatsRepository>();
         }
 
-        private static void RegisterRecommendationComponents(UnityContainer container)
-        {
-            // Register recommendation components
-            container.RegisterType<RecommendationInterfaces.ICustomerRepository, RecommendationRepositories.CustomerRepository>();
-            container.RegisterType<RecommendationInterfaces.IProductsRepository, RecommendationRepositories.ProductsRepository>();
-            container.RegisterType<RecommendationInterfaces.IPromotionsRepository, RecommendationRepositories.PromotionsRepository>();
-            container.RegisterType<RecommendationInterfaces.ITelemetryRepository, RecommendationRepositories.TelemetryRepository>();
-            container.RegisterType<IUserStore<CustomerRec>, RecommendationRepositories.CustomerRepository>();
-        }
 
         private static void RegisterEventHubComponents(NameValueCollection settings, UnityContainer container)
         {
