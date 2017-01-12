@@ -323,7 +323,6 @@
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Core\Helpers\PowerBiHelper.cs" />
     <Compile Include="Controllers\ReportsController.cs" />
-    <Compile Include="Controllers\VenueAdministrationController.cs" />
     <Compile Include="Controllers\CityController.cs" />
     <Compile Include="Controllers\EventsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -412,7 +411,6 @@
     <Compile Include="Core\Interfaces\Tenant\ITicketRepository.cs" />
     <Compile Include="Core\Interfaces\Tenant\IVenueRepository.cs" />
     <Compile Include="Models\ConcertListViewModel.cs" />
-    <Compile Include="Core\Interfaces\Tenant\IVenueMetaDataRepository.cs" />
     <Compile Include="Models\LookupViewModel.cs" />
     <Compile Include="Core\Repositories\Tenant\ArtistRepository.cs" />
     <Compile Include="Core\Repositories\Tenant\CityRepository.cs" />
@@ -457,7 +455,6 @@
     <Compile Include="Core\Models\CustomerRec.cs" />
     <Compile Include="Core\Models\Product.cs" />
     <Compile Include="Core\Models\Promotion.cs" />
-    <Compile Include="Core\Repositories\Tenant\VenueMetaDataRepository.cs" />
     <Compile Include="Core\Repositories\Tenant\BaseRepository.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -737,8 +734,6 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\VenueAdministration\Edit.cshtml" />
-    <Content Include="Views\VenueAdministration\Index.cshtml" />
     <Content Include="Views\Events\Index.cshtml" />
     <Content Include="Views\City\Index.cshtml" />
     <Content Include="Views\FindSeats\Index.cshtml" />

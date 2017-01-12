@@ -15,7 +15,6 @@ namespace Tenant.Mvc.Controllers
     {
         #region - Fields -
 
-        private readonly IVenueMetaDataRepository _venueMetaDataRepository;
         private readonly IConcertRepository _concertRepository;
         private readonly ITicketRepository _ticketRepository;
         private readonly IVenueRepository _venueRepository;
@@ -25,17 +24,15 @@ namespace Tenant.Mvc.Controllers
 
         #region - Constructors -
 
-        public FindSeatsController(IVenueMetaDataRepository venueMetaDataRepository, IConcertRepository concertRepository, ITicketRepository ticketRepository, IVenueRepository venueRepository, IFindSeatsRepository findSeatsRepository)
+        public FindSeatsController(IConcertRepository concertRepository, ITicketRepository ticketRepository, IVenueRepository venueRepository, IFindSeatsRepository findSeatsRepository)
         {
             // Setup Fields
-            _venueMetaDataRepository = venueMetaDataRepository;
             _concertRepository = concertRepository;
             _ticketRepository = ticketRepository;
             _venueRepository = venueRepository;
             _findSeatsRepository = findSeatsRepository;
 
             // Setup Callbacks
-            _venueMetaDataRepository.StatusCallback = DisplayMessage;
             _concertRepository.StatusCallback = DisplayMessage;
             _ticketRepository.StatusCallback = DisplayMessage;
             _venueRepository.StatusCallback = DisplayMessage;
@@ -58,21 +55,6 @@ namespace Tenant.Mvc.Controllers
             // Add Collections
             viewModel.ExpirationMonths = GetCardExpirationMonths();
             viewModel.ExpirationYears = GetCardExpirationYears();
-
-            // Get DocumentDB MetaData
-            VenueMetaData metaData = null;
-            if (!WingtipTicketApp.Config.RunningInDev)
-            {
-                metaData = await _venueMetaDataRepository.GetVenueMetaData(viewModel.Concert.VenueId);
-            }
-
-            viewModel.VenueMetaData = 
-                metaData != null ? 
-                new FindSeatsViewModel.VenueMetaDataViewModel()
-                {
-                    VenueId = metaData.VenueId,
-                    Data = metaData.Data,
-                } : null;
 
             // Get SeatMap
             if (!WingtipTicketApp.Config.RunningInDev)
