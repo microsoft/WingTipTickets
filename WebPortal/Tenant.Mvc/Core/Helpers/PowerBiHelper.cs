@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Web;
 using System.Web.Mvc;
-using Microsoft.PowerBI.Api.Beta;
-using Microsoft.PowerBI.Api.Beta.Models;
+using Microsoft.PowerBI.Api.V1;
+using Microsoft.PowerBI.Api.V1.Models;
 using Microsoft.PowerBI.Security;
 using Microsoft.Rest;
 using Tenant.Mvc.Controllers;
@@ -33,10 +33,7 @@ namespace Tenant.Mvc.Core.Helpers
 
         public static SelectList FetchReports(string reportId, string exclude = null)
         {
-            // Create a dev token for fetch
-            var devToken = PowerBIToken.CreateDevToken(WorkspaceCollection, WorkspaceId);
-
-            using (var client = CreatePowerBiClient(devToken))
+            using (var client = CreatePowerBiClient())
             {
                 var reportsResponse = ReportsExtensions.GetReports(client.Reports, WorkspaceCollection, WorkspaceId);
 
@@ -51,12 +48,9 @@ namespace Tenant.Mvc.Core.Helpers
 
         public static ReportsController.FetchReportResult FetchReport(string reportId)
         {
-            // Create a dev token for fetch
-            var devToken = PowerBIToken.CreateDevToken(WorkspaceCollection, WorkspaceId);
-
-            using (var client = CreatePowerBiClient(devToken))
+            using (var client = CreatePowerBiClient())
             {
-                var reports = ReportsExtensions.GetReports(client.Reports, WorkspaceCollection, WorkspaceId);
+                var reports = client.Reports.GetReports(WorkspaceCollection, WorkspaceId);
                 var report = reports.Value.FirstOrDefault(r => r.Id == reportId);
 
                 if (report != null)
@@ -83,10 +77,7 @@ namespace Tenant.Mvc.Core.Helpers
 
         public static void UploadReport(HttpPostedFileBase postedFile)
         {
-            // Create a dev token for import
-            var devToken = PowerBIToken.CreateDevToken(WorkspaceCollection, WorkspaceId);
-
-            using (var client = CreatePowerBiClient(devToken))
+            using (var client = CreatePowerBiClient())
             {
                 // Import PBIX file from the file stream
                 var import = ImportsExtensions.PostImportWithFile(client.Imports, WorkspaceCollection, WorkspaceId, postedFile.InputStream, Path.GetFileNameWithoutExtension(postedFile.FileName));
@@ -102,10 +93,7 @@ namespace Tenant.Mvc.Core.Helpers
 
         public static void UpdateConnection()
         {
-            // Create a dev token for update
-            var devToken = PowerBIToken.CreateDevToken(WorkspaceCollection, WorkspaceId);
-
-            using (var client = CreatePowerBiClient(devToken))
+            using (var client = CreatePowerBiClient())
             {
                 // Get DataSets
                 var dataset = DatasetsExtensions.GetDatasets(client.Datasets, WorkspaceCollection, WorkspaceId).Value.Last();
@@ -115,7 +103,7 @@ namespace Tenant.Mvc.Core.Helpers
                 var delta = new GatewayDatasource
                 {
                     CredentialType = "Basic",
-                    
+
                     BasicCredentials = new BasicCredentials
                     {
                         Username = WingtipTicketApp.Config.DatabaseUser,
@@ -136,10 +124,10 @@ namespace Tenant.Mvc.Core.Helpers
 
         #region - Private Methods -
 
-        private static IPowerBIClient CreatePowerBiClient(PowerBIToken token)
+        private static IPowerBIClient CreatePowerBiClient()
         {
-            var jwt = token.Generate(ConfigHelper.PowerbiSigningKey);
-            var credentials = new TokenCredentials(jwt, "AppToken");
+            var jwt = ConfigHelper.PowerbiSigningKey;
+            var credentials = new TokenCredentials(jwt, "AppKey");
 
             var client = new PowerBIClient(credentials)
             {
@@ -148,6 +136,7 @@ namespace Tenant.Mvc.Core.Helpers
 
             return client;
         }
+
 
         #endregion
     }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
-using Microsoft.PowerBI.Api.Beta.Models;
+using Microsoft.PowerBI.Api.V1.Models;
 using Newtonsoft.Json;
 
 namespace Tenant.Mvc.Models

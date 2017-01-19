@@ -5,14 +5,13 @@ using System.Linq;
 using System.Threading;
 using System.Web;
 using System.Web.Mvc;
-using Microsoft.PowerBI.Api.Beta;
-using Microsoft.PowerBI.Api.Beta.Models;
 using Microsoft.PowerBI.Security;
 using Microsoft.Rest;
 using Tenant.Mvc.Core.Helpers;
 using Tenant.Mvc.Core.Interfaces.Tenant;
 using Tenant.Mvc.Models;
 using WingTipTickets;
+using Microsoft.PowerBI.Api.V1.Models;
 
 namespace Tenant.Mvc.Controllers
 {
