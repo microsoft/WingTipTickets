@@ -53,7 +53,7 @@
 		WriteValue("Successful")
 
 		# Build Paths
-		$templateFilePath = (Get-Item -Path ".\" -Verbose).FullName + "\Resources\DataFactory\Website\Deployment.json"
+		$templateFilePath = (Get-Item -Path ".\" -Verbose).FullName + "\Resources\Website\Deployment.json"
 		$packageUri = "https://$azureStorageAccountName.blob.core.windows.net/deployment-files/$webAppPackageName"
 
 		WriteLabel("Deploying Web Application '$Websitename'")

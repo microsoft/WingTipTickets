@@ -41,6 +41,11 @@ function New-WTTPowerBI
 		[Parameter(Mandatory=$true)]
 		[String]
 		$azureSqlDatabaseName,
+        
+        # Azure Tenant SQL Database Name
+		[Parameter(Mandatory=$true)]
+		[String]
+		$azureSqlReportDatabaseName,
 
 		# Azure Power BI Location
 		[Parameter(Mandatory=$true)]
@@ -241,7 +246,7 @@ function New-WTTPowerBI
                     #Post All connections
                     $powerBISetAllConnectionsURL = "https://api.powerbi.com/v1.0/collections/$azurePowerBIWorkspaceCollection/workspaces/$powerBIWorkspaceID/datasets/$powerBIDataSetID/Default.SetAllConnections"
                     $powerBISetAllConnectionsConnString = "{
-                                                            ""connectionString"": ""Data source=tcp:$AzureSqlServerName.database.windows.net,1433;initial catalog=CustomerDW;Persist Security info=True;Encrypt=True;TrustServerCertificate=False""
+                                                            ""connectionString"": ""Data source=tcp:$AzureSqlServerName.database.windows.net,1433;initial catalog=$azureSqlReportDatabaseName;Persist Security info=True;Encrypt=True;TrustServerCertificate=False""
                                                             }"
                     $powerBISetAllConnectionsPost = Invoke-RestMethod -Uri $powerBISetAllConnectionsURL -Method POST -ContentType "application/json" -Body $powerBISetAllConnectionsConnString -Headers $header
                 

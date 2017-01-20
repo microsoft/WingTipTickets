@@ -186,6 +186,7 @@ function New-WTTEnvironment
         $wttEventHubName = $wTTEnvironmentApplicationName
         $wttASAJob = $wTTEnvironmentApplicationName+'asajob'
         $iotEmulatorApp = $wTTEnvironmentApplicationName+'iotemulator'
+        $azureSqlReportDatabaseName = "wingtipreporting"
 
 		Try
 		{
@@ -595,11 +596,21 @@ function New-WTTEnvironment
 
             Start-Sleep -Seconds 60
 
+            WriteLabel("Pausing DataWarehouse database")
+	    	$null = Suspend-AzureRMSqlDatabase –ResourceGroupName $azureResourceGroupName –ServerName $azureSqlServerPrimaryName –DatabaseName $AzureSqlDWDatabaseName
+		    writeValue("Successful")
+            Start-Sleep -s 240
+
 			# Deploy ADF environment
-			New-WTTADFEnvironment -ApplicationName $WTTEnvironmentApplicationName -azureStorageAccountName $azureStorageAccountName -azureResourceGroupName $azureResourceGroupName -azureSqlServerName $azureSqlServerPrimaryName -azureSQLDatabaseName "Recommendations" -DatabaseEdition "Basic" -adminUserName $adminUserName -adminPassword $adminPassword
+			New-WTTADFEnvironment -ApplicationName $WTTEnvironmentApplicationName -azureResourceGroupName $azureResourceGroupName
 
 			Start-Sleep -Seconds 30
             
+            # Deploy Azure SQL Reporting database
+            Deploy-WTTReportDB -azureResourceGroupName $azureResourceGroupName -azureSqlServerName $azureSqlServerPrimaryName -adminUserName $adminUserName -adminPassword $adminPassword -azureSqlDatabaseName $azureSqlReportDatabaseName -azureStorageAccountName wttdatacampwestus
+            
+            Start-Sleep -Seconds 30
+
             $azurePowerBILocation =
                 Switch ($primaryServerLocation)
                 {
@@ -630,14 +641,9 @@ function New-WTTEnvironment
                 }
 
             # New Azure Power BI Service
-            $pbiOutPut = New-WTTPowerBI -azureResourceGroupName $azureResourceGroupName -AzurePowerBIName $azurePowerBIWorkspaceCollection -azurePowerBILocation $azurePowerBILocation -AzureSqlServerName $azureSqlServerPrimaryName -adminUserName $adminUserName -adminPassword $adminPassword -AzureSqlDatabaseName $AzureSqlDatabaseName -azureDWDatabaseName $AzureSqlDWDatabaseName
+            $pbiOutPut = New-WTTPowerBI -azureResourceGroupName $azureResourceGroupName -AzurePowerBIName $azurePowerBIWorkspaceCollection -azurePowerBILocation $azurePowerBILocation -AzureSqlServerName $azureSqlServerPrimaryName -adminUserName $adminUserName -adminPassword $adminPassword -AzureSqlDatabaseName $AzureSqlDatabaseName -azureSqlReportDatabaseName $azureSqlReportDatabaseName
             Start-Sleep -Seconds 30
-
-            WriteLabel("Pausing DataWarehouse database")
-	    	$null = Suspend-AzureRMSqlDatabase –ResourceGroupName $azureResourceGroupName –ServerName $azureSqlServerPrimaryName –DatabaseName $AzureSqlDWDatabaseName
-		    writeValue("Successful")
-            Start-Sleep -s 240
-
+       
             #New Azure Service Bus and Event Hub
             $eventHubConnectionString = New-WTTAzureEventHub -azureResourceGroupName $azureResourceGroupName -wttEventHubName $wttEventHubName -wttServiceBusName $wttServiceBusName -wttEventHubLocation $primaryServerLocation
             
