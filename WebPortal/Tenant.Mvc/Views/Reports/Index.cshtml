@@ -51,8 +51,7 @@
     {
         <div class="row">
             <div class="col-xs-12">
-                @Html.PowerBIAccessToken(Model.AccessToken)
-                @Html.PowerBIReportFor(m => m.Report, new { style = "height:85vh" })
+                @Html.PowerBIReportFor(m => m.Report, new { style = "height:85vh", powerbi_access_token = Model.AccessToken })
             </div>
         </div>
     }

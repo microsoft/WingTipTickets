@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -35,7 +36,7 @@ namespace Tenant.Mvc.Core.Helpers
         {
             using (var client = CreatePowerBiClient())
             {
-                var reportsResponse = ReportsExtensions.GetReports(client.Reports, WorkspaceCollection, WorkspaceId);
+                var reportsResponse = client.Reports.GetReports(WorkspaceCollection, WorkspaceId);
 
                 if (!string.IsNullOrEmpty(exclude))
                 {
@@ -80,12 +81,12 @@ namespace Tenant.Mvc.Core.Helpers
             using (var client = CreatePowerBiClient())
             {
                 // Import PBIX file from the file stream
-                var import = ImportsExtensions.PostImportWithFile(client.Imports, WorkspaceCollection, WorkspaceId, postedFile.InputStream, Path.GetFileNameWithoutExtension(postedFile.FileName));
+                var import = client.Imports.PostImportWithFile(WorkspaceCollection, WorkspaceId, postedFile.InputStream, Path.GetFileNameWithoutExtension(postedFile.FileName));
                 
                 // Poll the import to check when succeeded
                 while (import.ImportState != "Succeeded" && import.ImportState != "Failed")
                 {
-                    import = ImportsExtensions.GetImportById(client.Imports, WorkspaceCollection, WorkspaceId, import.Id);
+                    import = client.Imports.GetImportById(WorkspaceCollection, WorkspaceId, import.Id);
                     Thread.Sleep(1000);
                 }
             }
@@ -96,14 +97,26 @@ namespace Tenant.Mvc.Core.Helpers
             using (var client = CreatePowerBiClient())
             {
                 // Get DataSets
-                var dataset = DatasetsExtensions.GetDatasets(client.Datasets, WorkspaceCollection, WorkspaceId).Value.Last();
-                var datasources = DatasetsExtensions.GetGatewayDatasources(client.Datasets, WorkspaceCollection, WorkspaceId, dataset.Id).Value;
+                var dataset = client.Datasets.GetDatasets(WorkspaceCollection, WorkspaceId).Value.Last();
+
+                var connectionString =
+                    $"Data Source=tcp:{WingtipTicketApp.Config.TenantDatabaseServer}.database.windows.net,1433;Initial Catalog={WingtipTicketApp.Config.TenantDatabase1};User ID={WingtipTicketApp.Config.DatabaseUser};Password={WingtipTicketApp.Config.DatabasePassword};";
+
+                // udpate the connectionstring details 
+                var connectionParameters = new Dictionary<string, object>
+                {
+                    {"connectionString", connectionString}
+                };
+                client.Datasets.SetAllConnections(WorkspaceCollection, WorkspaceId, dataset.Id, connectionParameters);
+
+
+                var datasources =
+                    client.Datasets.GetGatewayDatasources(WorkspaceCollection, WorkspaceId, dataset.Id).Value;
 
                 // Build Credentials
                 var delta = new GatewayDatasource
                 {
                     CredentialType = "Basic",
-
                     BasicCredentials = new BasicCredentials
                     {
                         Username = WingtipTicketApp.Config.DatabaseUser,
@@ -115,7 +128,8 @@ namespace Tenant.Mvc.Core.Helpers
                 foreach (var datasource in datasources)
                 {
                     // Update the datasource with the specified credentials
-                    GatewaysExtensions.PatchDatasource(client.Gateways, WorkspaceCollection, WorkspaceId, datasource.GatewayId, datasource.Id, delta);
+                    client.Gateways.PatchDatasource(WorkspaceCollection, WorkspaceId, datasource.GatewayId,
+                        datasource.Id, delta);
                 }
             }
         }

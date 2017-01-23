@@ -159,11 +159,7 @@
                 {
                     Model.SeatMap.EmbedUrl += "&filterPaneEnabled=false&$filter=BookedSeats/ConcertFilterId eq '" + Model.Concert.ConcertId + "'";
 
-                    @Html.PowerBIAccessTokenFor(m => m.AccessToken)
-                    @Html.PowerBIReportFor(m => m.SeatMap, new
-                    {
-                        style = "height:85vh"
-                    })
+                    @Html.PowerBIReportFor(m => m.SeatMap, new { style = "height:85vh", powerbi_access_token = Model.AccessToken })
                 }
                 else
                 {
