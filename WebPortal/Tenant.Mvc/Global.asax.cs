@@ -79,7 +79,7 @@ namespace WingTipTickets
             {
                 CreateIndex(searchServiceClient);
                 CreateIndexer(searchServiceClient);
-                //searchServiceClient.Indexers.Run("fromsql");
+                searchServiceClient.Indexers.Run("fromsql");
             }
 
             SearchIndexClient = searchServiceClient.Indexes.GetClient("concerts");
