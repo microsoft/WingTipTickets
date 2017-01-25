@@ -18,7 +18,7 @@
     <AssemblyName>Tenant.Mvc</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
-    <UseIISExpress>true</UseIISExpress>
+    <UseIISExpress>false</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -111,25 +111,17 @@
     <Reference Include="Microsoft.Owin.Security.OpenIdConnect">
       <HintPath>..\packages\Microsoft.Owin.Security.OpenIdConnect.3.0.1\lib\net45\Microsoft.Owin.Security.OpenIdConnect.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.PowerBI.Api, Version=1.1.4.17008, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.PowerBI.Api.1.1.4\lib\portable-net45+win+wpa81+MonoAndroid10+xamarinios10+MonoTouch10\Microsoft.PowerBI.Api.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Microsoft.PowerBI.Api, Version=1.1.3.16224, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.PowerBI.Api.1.1.3\lib\portable-net45+win+wpa81+MonoAndroid10+xamarinios10+MonoTouch10\Microsoft.PowerBI.Api.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.PowerBI.AspNet.Mvc, Version=1.1.4.17008, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.PowerBI.AspNet.Mvc.1.1.4\lib\net45\Microsoft.PowerBI.AspNet.Mvc.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Microsoft.PowerBI.AspNet.Mvc, Version=1.1.3.16224, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.PowerBI.AspNet.Mvc.1.1.3\lib\net45\Microsoft.PowerBI.AspNet.Mvc.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.PowerBI.AspNet.WebForms, Version=1.1.4.17008, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.PowerBI.AspNet.WebForms.1.1.4\lib\net45\Microsoft.PowerBI.AspNet.WebForms.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.PowerBI.Core, Version=1.1.4.17008, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.PowerBI.Core.1.1.4\lib\net45\Microsoft.PowerBI.Core.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.PowerBI.Owin.Security, Version=1.1.4.17008, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.PowerBI.Owin.Security.1.1.4\lib\net45\Microsoft.PowerBI.Owin.Security.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Microsoft.PowerBI.Core, Version=1.1.3.16224, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.PowerBI.Core.1.1.3\lib\net45\Microsoft.PowerBI.Core.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.TransientFaultHandling, Version=6.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -707,7 +699,6 @@
     <None Include="Properties\PublishProfiles\AutoProvisioner.pubxml" />
     <None Include="Properties\PublishProfiles\Deployment-Primary.pubxml" />
     <None Include="Properties\PublishProfiles\Deployment-Secondary.pubxml" />
-    <Content Include="Content\Scripts\powerbi.js" />
     <Content Include="scripts\powerbi.js" />
     <Content Include="scripts\powerbi.min.js" />
     <Content Include="SqlScripts\TrimConcerts.sql">
@@ -763,6 +754,9 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="scripts\typings\powerbi.d.ts" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
@@ -782,7 +776,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>31369</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost/Tenant.Mvc</IISUrl>
+          <IISUrl>http://localhost/WingTipTickets</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

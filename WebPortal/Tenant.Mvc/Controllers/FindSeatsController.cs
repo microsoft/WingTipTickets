@@ -64,6 +64,8 @@ namespace Tenant.Mvc.Controllers
                 viewModel.AccessToken = seatMap.AccessToken;
             }
 
+            //viewModel.SeatMap.EmbedUrl += "&$filter={BookedSeats/ConcertFilterId} eq " + concertId;
+
             return View(viewModel);
         }
 

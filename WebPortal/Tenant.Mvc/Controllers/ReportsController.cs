@@ -20,12 +20,9 @@ namespace Tenant.Mvc.Controllers
         #region - Fields -
 
         private const string DefaultReportCode = "DefaultReportId";
-
-        #endregion
-
-        #region - Fields -
-
+        
         private readonly IApplicationDefaultsRepository _defaultsRepository;
+        private string _defaultReportId = null;
 
         #endregion
 
@@ -38,6 +35,9 @@ namespace Tenant.Mvc.Controllers
 
             // Setup Callbacks
             _defaultsRepository.StatusCallback = DisplayMessage;
+
+            // Setup Default ReportId
+            _defaultReportId = _defaultsRepository.GetApplicationDefault(DefaultReportCode);
         }
 
         #endregion
@@ -50,29 +50,25 @@ namespace Tenant.Mvc.Controllers
             ReportsViewModel viewModel;
 
             // Get the default report
-            var defaultReport = PowerBiHelper.FetchReport(_defaultsRepository.GetApplicationDefault(DefaultReportCode));
-            
+            var reportList = PowerBiHelper.FetchReports(ConfigHelper.SeatMapReportId);
+            var reportDefault = PowerBiHelper.FetchReport(_defaultReportId);
+
             // Build up the view model
-            if (defaultReport.Report != null)
-            {
-                viewModel = new ReportsViewModel()
+            viewModel = reportDefault.Report != null
+                ? new ReportsViewModel()
                 {
-                    SelectedReportId = new Guid(defaultReport.Report.Id),
-                    Reports = PowerBiHelper.FetchReports(defaultReport.Report.Id, "Seatingmap"),
-                    Report = defaultReport.Report,
-                    AccessToken = defaultReport.AccessToken
-                };
-            }
-            else
-            {
-                viewModel = new ReportsViewModel()
+                    SelectedReportId = new Guid(reportDefault.Report.Id),
+                    Reports = new SelectList(reportList, "Id", "Name", _defaultReportId),
+                    Report = reportDefault.Report,
+                    AccessToken = PowerBiHelper.CreatePowerBiToken(reportDefault.Report.Id)
+                }
+                : new ReportsViewModel()
                 {
                     SelectedReportId = Guid.Empty,
-                    Reports = PowerBiHelper.FetchReports(null, "Seatingmap"),
+                    Reports = new SelectList(reportList, "Id", "Name", _defaultReportId),
                     Report = null,
                     AccessToken = string.Empty
                 };
-            }
 
             return View(viewModel);
         }
@@ -81,10 +77,11 @@ namespace Tenant.Mvc.Controllers
         public ActionResult Index(ReportsViewModel viewModel)
         {
             // Get the selected report
+            var reportList = PowerBiHelper.FetchReports(ConfigHelper.SeatMapReportId);
             var reportResult = PowerBiHelper.FetchReport(viewModel.SelectedReportId.ToString());
 
             // Build up the view model
-            viewModel.Reports = PowerBiHelper.FetchReports(viewModel.SelectedReportId.ToString());
+            viewModel.Reports = new SelectList(reportList, "Id", "Name", _defaultReportId);
             viewModel.Report = reportResult.Report;
             viewModel.AccessToken = reportResult.AccessToken;
 
@@ -116,7 +113,6 @@ namespace Tenant.Mvc.Controllers
                 }
 
                 PowerBiHelper.UploadReport(postedFile);
-                PowerBiHelper.UpdateConnection();
 
                 results.Add(new UploadFileViewModel()
                 {

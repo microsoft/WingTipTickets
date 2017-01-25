@@ -158,8 +158,8 @@
                 if (Model.SeatMap != null)
                 {
                     Model.SeatMap.EmbedUrl += "&filterPaneEnabled=false&$filter=BookedSeats/ConcertFilterId eq '" + Model.Concert.ConcertId + "'";
-
-                    @Html.PowerBIReportFor(m => m.SeatMap, new { style = "height:85vh", powerbi_access_token = Model.AccessToken })
+                        
+                    @Html.PowerBIReportFor(m => m.SeatMap, new { id = "pbi-report", style = "height:85vh", @powerbi_access_token = Model.AccessToken })}
                 }
                 else
                 {
@@ -294,15 +294,55 @@
 <!-- -------------------------------------------------------------------------------------------------------------------------- -->
 
 <script src="~/Content/Scripts/jquery-1.9.1.min.js"></script>
-<script>
-    $( document ).ready(function() 
+
+@section Scripts
+{
+    <script>
+    $( document ).ready(function()
     {
+        // Setup Filters
+       var basicFilter = {
+            $schema: "http://powerbi.com/product/schema#basic",
+            target: {
+                table: 'BookedSeats',
+                column: 'ConcertFilterId'
+            },
+            operator: 'eq',
+            values: [@Model.Concert.ConcertId]
+        };
+
+        // Model.SeatMap.EmbedUrl += "&filterPaneEnabled=false&$filter=BookedSeats/ConcertFilterId eq '" + Model.Concert.ConcertId + "'";
+        // For complete list of embed configuration see the following wiki page
+        // https://github.com/Microsoft/PowerBI-JavaScript/wiki/Embed-Configuration-Details
+        var reportConfig = {
+            settings:
+            {
+                filterPaneEnabled: false
+            },
+            //filters: [ basicFilter ]
+        };
+
+        var reportElement = document.getElementById('pbi-report');
+
+        // Embed report
+        // https://microsoft.github.io/PowerBI-JavaScript/classes/_src_service_.service.html#embed
+        var report = powerbi.embed(reportElement, reportConfig);
+
+        // For a complete guide to event handling see the following wiki page
+        // https://github.com/Microsoft/PowerBI-JavaScript/wiki/Handling-Events
+        report.on('loaded',
+            function ()
+            {
+                //debugger;
+                //report.setFilters([basicFilter]);
+            });
+
         $("#puchaseTicket").click(function()
         {
             // Get the values and seat numbers
             var values = getFormValues();
             var seatNumbers = getSeatNumbers(values.selectedSeats, values.ticketQuantity);
-            
+
             // Set purchase & dialog fields
             setPurchaseFields(values, seatNumbers);
             setDialogFields(values, seatNumbers);
@@ -335,7 +375,7 @@
                 ticketPrice: $("#Concert_SeatSectionId option:selected").text().split(" - ")[1].replace("$","").replace(",00",""),
                 ticketTotal: 0
             };
-            
+
             values.ticketTotal = values.ticketPrice * values.ticketQuantity;
 
             return values;
@@ -345,7 +385,7 @@
         {
             // Get the seat number
             var seatNumbers = [];
-            
+
             $(selectedSeats).each(function(index)
             {
                 seatNumbers += $(this).attr("data-seatnumber");
@@ -385,10 +425,10 @@
                 cache: false,
                 type: "GET",
                 url: '@Url.Action("GetSeatLayout", "FindSeats")',
-                data: 
-                { 
+                data:
+                {
                     concertId: concertId,
-                    ticketLevelId: ticketLevelId 
+                    ticketLevelId: ticketLevelId
                 },
                 dataType: "json",
                 success: function(values)
@@ -470,6 +510,7 @@
         }
     });
 </script>
+}
 
 @if (Model.VenueMetaData != null)
 {

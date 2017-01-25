@@ -51,7 +51,7 @@
     {
         <div class="row">
             <div class="col-xs-12">
-                @Html.PowerBIReportFor(m => m.Report, new { style = "height:85vh", powerbi_access_token = Model.AccessToken })
+                @Html.PowerBIReportFor(m => m.Report, new { id = "pbi-report", style = "height:85vh", @powerbi_access_token = Model.AccessToken })
             </div>
         </div>
     }
@@ -73,6 +73,29 @@
 @section Scripts
 {
 <script type="text/javascript" language="javascript">
+
+    $(function () {
+        // For complete list of embed configuration see the following wiki page
+        // https://github.com/Microsoft/PowerBI-JavaScript/wiki/Embed-Configuration-Details
+        var reportConfig = {
+            settings: {
+                filterPaneEnabled: false
+            }
+        };
+        var reportElement = document.getElementById('pbi-report');
+
+        // Embed report
+        // https://microsoft.github.io/PowerBI-JavaScript/classes/_src_service_.service.html#embed
+        var report = powerbi.embed(reportElement, reportConfig);
+
+        // For a complete guide to event handling see the following wiki page
+        // https://github.com/Microsoft/PowerBI-JavaScript/wiki/Handling-Events
+        report.on('loaded',
+            function ()
+            {
+                //debugger;
+            });
+    });
 
     function UpdateDefaultReport() {
         var selectedReportId = $("#SelectedReportId").val();

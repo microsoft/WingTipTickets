@@ -31,7 +31,7 @@ namespace Tenant.Mvc
                 "~/Content/Scripts/respond.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/powerbi").Include(
-                "~/Content/Scripts/powerbi.js"));
+                "~/Scripts/powerbi.js"));
         }
 
         private static void RegisterStyles(BundleCollection bundles)
