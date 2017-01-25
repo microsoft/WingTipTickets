@@ -79,7 +79,7 @@ function Deploy-WTTReportDB
 			# Check if Server Exists
 			WriteLabel("Checking for SQL database")
             $existingDbServer = Get-AzureRmSqlServer -resourcegroupname $azureResourceGroupName -ServerName $AzureSqlServerName -ErrorVariable existingDbServerErrors -ErrorAction SilentlyContinue
-			if ($existingDbServer -ne $null)
+			if ($existingDbServer)
 			{
 				$dbServerExists = $true
                 WriteValue("Found")
@@ -106,27 +106,11 @@ function Deploy-WTTReportDB
 				WriteLabel("Checking for SQL database")
 				$azureSqlDatabase = Find-AzureRmResource -ResourceType "Microsoft.Sql/servers/databases" -ResourceNameContains $azureSqlDatabaseName -ResourceGroupNameContains $azureResourceGroupName
 
-				if ($azureSqlDatabase -ne $null)
+				if ($azureSqlDatabase)
 				{
-					$dbExists = $true
 					WriteValue("Found")
-
-                    $sqlServer = (Find-AzureRmResource -ResourceType "Microsoft.Sql/servers" -ResourceNameContains "primary" -ExpandProperties -ResourceGroupNameContains $azureResourceGroupName).properties.FullyQualifiedDomainName
-                    $tables = Invoke-Sqlcmd -Username "$adminUserName@$azureSqlServerName" -Password $adminPassword -ServerInstance $sqlServer -Database $azureSqlDatabaseName -Query "select name from sys.tables" -QueryTimeout 0 -SuppressProviderContextWarning -IgnoreProviderContext -ErrorAction SilentlyContinue
-                    if($tables.count -gt 0)
-                    {
-                        foreach($table in $tables)
-                        {
-                            $table = $table.name
-                            $dropTables = Invoke-Sqlcmd -Username "$adminUserName@$azureSqlServerName" -Password $adminPassword -ServerInstance $sqlServer -Database $azureSqlDatabaseName -Query "DROP TABLE $table" -QueryTimeout 0 -SuppressProviderContextWarning -IgnoreProviderContext -ErrorAction SilentlyContinue
-                        }
-                    }
-                    
-                    $view = Invoke-Sqlcmd -Username "$adminUserName@$azureSqlServerName" -Password $adminPassword -ServerInstance $sqlServer -Database $azureSqlDatabaseName -Query "select name from sys.views" -QueryTimeout 0 -SuppressProviderContextWarning -IgnoreProviderContext -ErrorAction SilentlyContinue
-                    if($view.count -gt 0)
-                    {
-                        $dropView = Invoke-Sqlcmd -Username "$adminUserName@$azureSqlServerName" -Password $adminPassword -ServerInstance $sqlServer -Database $azureSqlDatabaseName -Query "DROP View SalesReport" -QueryTimeout 0 -SuppressProviderContextWarning -IgnoreProviderContext -ErrorAction SilentlyContinue
-                    }    
+                    Remove-AzureRmSqlDatabase -DatabaseName $azureSqlDatabaseName -ServerName $azureSqlServerName -ResourceGroupName $azureResourceGroupName -Force
+                    $dbExists = $true
 				}
                 else
                 {
@@ -135,15 +119,11 @@ function Deploy-WTTReportDB
                 }
 
 				if ($dbExists -eq $true)
-				{					
-					$dbExists = $false
-					
-                    if(!$azureSqlDatabase )
-                    {
-                        WriteLabel("Creating database '$azureSqlDatabaseName'")
-		    			$importRequest = New-AzureRmSqlDatabaseImport -ResourceGroupName $azureResourceGroupName -ServerName $azureSqlServerName -DatabaseName $azureSqlDatabaseName -StorageKeytype $StorageKeyType -StorageKey $storageAccountKey -StorageUri $StorageUri -AdministratorLogin $adminUserName -AdministratorLoginPassword $sqlAdminPassword -Edition "Standard" -ServiceObjectiveName S1 -DatabaseMaxSizeBytes 50000
-	    				start-sleep -Seconds 330
-                    }
+                {	
+
+                    WriteLabel("Creating database '$azureSqlDatabaseName'")
+		    		$importRequest = New-AzureRmSqlDatabaseImport -ResourceGroupName $azureResourceGroupName -ServerName $azureSqlServerName -DatabaseName $azureSqlDatabaseName -StorageKeytype $StorageKeyType -StorageKey $storageAccountKey -StorageUri $StorageUri -AdministratorLogin $adminUserName -AdministratorLoginPassword $sqlAdminPassword -Edition "Standard" -ServiceObjectiveName S1 -DatabaseMaxSizeBytes 50000
+	    			start-sleep -Seconds 330
     				
 					#Test SQL Server Connection
 					$testSQLConnection = Test-WTTAzureSQLConnection -AzureSqlServerName $AzureSqlServerName -adminUserName $adminUserName -adminPassword $adminPassword -AzureSqlDatabaseName $azureSqlDatabaseName -azureResourceGroupName $azureResourceGroupName

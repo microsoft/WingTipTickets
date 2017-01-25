@@ -117,7 +117,7 @@ function New-WTTPowerBI
             # Set Authority to Azure AD Tenant
             $authority = "https://login.windows.net/$tenantId"
             # Create Authentication Context tied to Azure AD Tenant
-            $authContext = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext" -ArgumentList $authority            
+            $authContext = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext" -ArgumentList $authority         
 
             Try
             {

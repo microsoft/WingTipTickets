@@ -503,6 +503,16 @@ function New-WTTEnvironment
 			    }
             }While($dbExists -eq $false)
 
+            if($azurePrimarySqlDatabaseServer)
+            {
+                $azureSqlDatabase = Find-AzureRmResource -ResourceType "Microsoft.Sql/servers/databases" -ResourceNameContains $azureSqlReportDatabaseName -ResourceGroupNameContains $azureResourceGroupName
+
+                if(!$azureSqlDatabase)
+                {
+                    New-AzureRmSqlDatabase -ResourceGroupName $azureResourceGroupName -DatabaseName $azureSqlReportDatabaseName -Edition Basic -ServerName $azureSqlServerPrimaryName
+                }
+            }
+
             Start-Sleep -Seconds 30
 			if ($primaryServerLocation -notcontains "" -and $secondaryServerLocation -notcontains "")                 
 			{
@@ -520,73 +530,9 @@ function New-WTTEnvironment
 			}
 
 			# Create service plans
-			LineBreak
-
-				# Create primary web application plan
-			WriteLabel("Creating Primary application service plan '$azureSqlServerPrimaryName'")
-			$primaryAppPlan = ""
-			Do
-			{
-				$primaryAppPlan = New-AzureRmAppServicePlan -name $azureSqlServerPrimaryName -location $primaryServerLocation -tier standard -resourcegroupname $azureresourcegroupname
-				if($primaryAppPlan.Name -eq $azureSqlServerPrimaryName)
-				{
-					WriteValue("Successful")
-				}
-			} While ($primaryAppPlan.Name -ne $azureSqlServerPrimaryName)
-
-			# Create secondary web application plan
-			WriteLabel("Creating Secondary application service plan '$azureSqlServerSecondaryName'")
-			$secondaryAppPlan = ""
-			Do
-			{
-				$secondaryAppPlan = New-AzureRmAppServicePlan -name $azureSqlServerSecondaryName -location $secondaryServerLocation -tier standard -resourcegroupname $azureresourcegroupname
-				if($secondaryAppPlan.Name -eq $azureSqlServerSecondaryName)
-				{
-					WriteValue("Successful")
-				}
-			} While($secondaryAppPlan.Name -ne $azureSqlServerSecondaryName)
-			LineBreak
-
-			# Create Primary web application
-			WriteLabel("Creating Primary application '$azureSqlServerPrimaryName'")
-			$primaryWebApp = ""
-			Do
-			{
-				$primaryWebApp = New-AzureRMWebApp -Location $primaryServerLocation -AppServicePlan $azureSqlServerPrimaryName -ResourceGroupName $azureResourceGroupName -Name $azureSqlServerPrimaryName
-				if($primaryWebApp.Name -eq $azureSqlServerPrimaryName)
-				{
-					WriteValue("Successful")
-				}
-			} While($primaryWebApp.Name -ne $azureSqlServerPrimaryName)
-
-			# Create Secondary web application
-			WriteLabel("Creating Secondary application '$azureSqlServerSecondaryName'")
-			$secondaryWebApp = ""
-			Do
-            {
-				$secondaryWebApp = New-AzureRMWebApp -Location $secondaryServerLocation -AppServicePlan $azureSqlServerSecondaryName -ResourceGroupName $azureResourceGroupName -Name $azureSqlServerSecondaryName
-				if($secondaryWebApp.Name -eq $azureSqlServerSecondaryName)
-				{
-					WriteValue("Successful")
-				}
-			} While($secondaryWebApp.Name -ne $azureSqlServerSecondaryName) 
-        
+			
+			LineBreak       
         	start-sleep -s 120
-
-			# Deploy Web Applications
-			LineBreak
-			WriteLabel("Deploying Primary application '$azureSqlServerPrimaryName'")
-            LineBreak
-			Deploy-WTTWebApplication -azureStorageAccountName $azureStorageAccountName -azureResourceGroupName $azureResourceGroupName -Websitename $azureSqlServerPrimaryName -WebAppPackagePath $WebAppPackagePath -webAppPackageName $webAppPrimaryPackageName
-			WriteLabel("Deploying Secondary application '$azureSqlServerSecondaryName'")
-            LineBreak
-			Deploy-WTTWebApplication -azureStorageAccountName $azureStorageAccountName -azureResourceGroupName $azureResourceGroupName -Websitename $azureSqlServerSecondaryName -WebAppPackagePath $WebAppPackagePath -webAppPackageName $webAppSecondaryPackageName
-            
-			# Create Traffic Manager Profile
-			LineBreak
-			New-WTTAzureTrafficManagerProfile -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -AzureResourceGroupName $azureResourceGroupName
-			# Add Azure WebSite Endpoints to Traffic Manager Profile
-			Add-WTTAzureTrafficManagerEndpoint -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -azurePrimaryWebAppName $azureSqlServerPrimaryName -azureSecondaryWebAppName $azureSqlServerSecondaryName -AzureTrafficManagerEndpointStatus "Enabled" -AzureResourceGroupName $azureResourceGroupName
 
 			# Deploy Azure Data Warehouse on the primary database server. This may run for about 15 minutes.
 			if ($azurePrimarySqlDatabaseServer -ne $null)
@@ -601,15 +547,61 @@ function New-WTTEnvironment
 		    writeValue("Successful")
             Start-Sleep -s 240
 
+			# Enable Auditing on Azure SQL Database Server
+			# Appears to be a name resolution issue if Auditing is enabled, as Azure Search will not redirect to the database server
+            $auditStorage = Find-AzureRmResource -ResourceType Microsoft.Storage/storageaccounts -ResourceNameContains $azureStorageAccountName -ResourceGroupNameContains $azureResourceGroupName
+            if ($auditStorage -ne $null)
+            {
+			    if ($azurePrimarySqlDatabaseServer -ne $null)
+			    {
+                    $sqlAudit = $false
+				    LineBreak
+				    WriteLabel("Setting Primary SQL Server Auditing Policy")
+                    Do
+                    {
+                        If (New-Object System.Net.Sockets.TCPClient -ArgumentList "$azureSqlServerPrimaryName.database.windows.net",1433) 
+                        { 
+                            $azureStorageAccountName = $auditStorage.Name
+                            $setPrimaryAzureSqlDatabaseServerAuditingPolicy = Set-AzureRmSqlDatabaseServerAuditingPolicy -ResourceGroupName $azureResourceGroupName -ServerName $azureSqlServerPrimaryName -StorageAccountName $azureStorageAccountName -TableIdentifier "wtt" -EventType PlainSQL_Success, PlainSQL_Failure, ParameterizedSQL_Success, ParameterizedSQL_Failure, StoredProcedure_Success, StoredProcedure_Success -WarningVariable null -WarningAction SilentlyContinue                                                 
+                            $sqlAudit = $true
+                        } 
+                        If ($? -eq $false) 
+                        {
+                            $sqlAudit = $false
+                        }
+                    }While($sqlAudit -eq $false)
+				    WriteValue("Successful")
+			    }
+
+			    if ($azureSecondarySqlDatabaseServer -ne $null)
+			    {
+                    $sqlAudit = $false
+				    WriteLabel("Setting Secondary SQL Server Auditing Policy")
+                    Do
+                    {
+                        If (New-Object System.Net.Sockets.TCPClient -ArgumentList "$azureSqlServerSecondaryName.database.windows.net",1433) 
+                        { 
+                            $azureStorageAccountName = $auditStorage.Name
+                            $setSecondaryAzureSqlDatabaseServerAuditingPolicy = Set-AzureRmSqlDatabaseServerAuditingPolicy -ResourceGroupName $azureResourceGroupName -ServerName $azureSqlServerSecondaryName -StorageAccountName $azureStorageAccountName -TableIdentifier "wtt" -EventType PlainSQL_Success, PlainSQL_Failure, ParameterizedSQL_Success, ParameterizedSQL_Failure, StoredProcedure_Success, StoredProcedure_Success -WarningVariable null -WarningAction SilentlyContinue
+                            $sqlAudit = $true
+                        } 
+                        If ($? -eq $false) 
+                        {
+                            $sqlAudit = $false
+                        }
+                    }While($sqlAudit -eq $false)
+				    WriteValue("Successful")
+			    }
+            }
+            else
+            {
+                WriteError("Unable to find Azure Storage Account")
+            }
+
 			# Deploy ADF environment
 			New-WTTADFEnvironment -ApplicationName $WTTEnvironmentApplicationName -azureResourceGroupName $azureResourceGroupName
 
 			Start-Sleep -Seconds 30
-            
-            # Deploy Azure SQL Reporting database
-            Deploy-WTTReportDB -azureResourceGroupName $azureResourceGroupName -azureSqlServerName $azureSqlServerPrimaryName -adminUserName $adminUserName -adminPassword $adminPassword -azureSqlDatabaseName $azureSqlReportDatabaseName -azureStorageAccountName wttdatacampwestus
-            
-            Start-Sleep -Seconds 30
 
             $azurePowerBILocation =
                 Switch ($primaryServerLocation)
@@ -687,65 +679,25 @@ function New-WTTEnvironment
             $powerbiWorkspaceId = $pbiOutPut.powerbiWorkspaceId
             $seatMapReportID = $pbiOutPut.seatMapReportID
             
-			Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -azureResourceGroupName $azureResourceGroupName -Websitename $azureSqlServerPrimaryName -SearchName $searchName -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlServerPrimaryName $azureSqlServerPrimaryName -AzureSqlServerSecondaryName $azureSqlServerSecondaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey $documentDbPrimaryKey -powerbiSigningKey $powerbiSigningKey -powerbiWorkspaceCollection $powerbiWorkspaceCollection -powerbiWorkspaceId $powerbiWorkspaceId -seatMapReportID $seatMapReportID -TenantEventType $TenantEventType -documentDbDatabase "iotrawdata" -documentDbCollection "iotrawdata" -wttEventHubName $wttEventHubName -wttServiceBusName $eventHubConnectionString
-			Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -azureResourceGroupName $azureResourceGroupName -Websitename $azureSqlServerSecondaryName -SearchName $searchName -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlServerPrimaryName $azureSqlServerSecondaryName -AzureSqlServerSecondaryName $azureSqlServerPrimaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey $documentDbPrimaryKey -powerbiSigningKey $powerbiSigningKey -powerbiWorkspaceCollection $powerbiWorkspaceCollection -powerbiWorkspaceId $powerbiWorkspaceId -seatMapReportID $seatMapReportID -TenantEventType $TenantEventType -documentDbDatabase "iotrawdata" -documentDbCollection "iotrawdata" -wttEventHubName $wttEventHubName -wttServiceBusName $eventHubConnectionString
-            
+            # Deploy Web Applications
+			LineBreak
+			Deploy-WTTWebApplication -azureStorageAccountName $azureStorageAccountName -azureResourceGroupName $azureResourceGroupName -Websitename $azureSqlServerPrimaryName -WebAppPackagePath $WebAppPackagePath -webAppPackageName $webAppPrimaryPackageName -webAppLocation $primaryServerLocation -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -SearchName $searchName -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlServerPrimaryName $azureSqlServerPrimaryName -AzureSqlServerSecondaryName $azureSqlServerSecondaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey $documentDbPrimaryKey -powerbiSigningKey $powerbiSigningKey -powerbiWorkspaceCollection $powerbiWorkspaceCollection -powerbiWorkspaceId $powerbiWorkspaceId -seatMapReportID $seatMapReportID -TenantEventType $TenantEventType -documentDbDatabase "iotrawdata" -documentDbCollection "iotrawdata" -wttEventHubName $wttEventHubName -wttServiceBusName $eventHubConnectionString
+            LineBreak
+			Deploy-WTTWebApplication -azureStorageAccountName $azureStorageAccountName -azureResourceGroupName $azureResourceGroupName -Websitename $azureSqlServerSecondaryName -WebAppPackagePath $WebAppPackagePath -webAppPackageName $webAppSecondaryPackageName -webAppLocation $secondaryServerLocation -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -SearchName $searchName -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlServerPrimaryName $azureSqlServerSecondaryName -AzureSqlServerSecondaryName $azureSqlServerPrimaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey $documentDbPrimaryKey -powerbiSigningKey $powerbiSigningKey -powerbiWorkspaceCollection $powerbiWorkspaceCollection -powerbiWorkspaceId $powerbiWorkspaceId -seatMapReportID $seatMapReportID -TenantEventType $TenantEventType -documentDbDatabase "iotrawdata" -documentDbCollection "iotrawdata" -wttEventHubName $wttEventHubName -wttServiceBusName $eventHubConnectionString
+
+            # Create Traffic Manager Profile
+			LineBreak
+			New-WTTAzureTrafficManagerProfile -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -AzureResourceGroupName $azureResourceGroupName
+			# Add Azure WebSite Endpoints to Traffic Manager Profile
+			Add-WTTAzureTrafficManagerEndpoint -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -azurePrimaryWebAppName $azureSqlServerPrimaryName -azureSecondaryWebAppName $azureSqlServerSecondaryName -AzureTrafficManagerEndpointStatus "Enabled" -AzureResourceGroupName $azureResourceGroupName
+
             Start-Sleep -Seconds 30
 
             Start-WTTIOTWebJob -azureResourceGroupName $azureResourceGroupName -Websitename $azureSqlServerPrimaryName -primaryWebAppLocation $primaryServerLocation
-
-            Start-Sleep -Seconds 20
-			# Enable Auditing on Azure SQL Database Server
-			# Appears to be a name resolution issue if Auditing is enabled, as Azure Search will not redirect to the database server
-            $auditStorage = Find-AzureRmResource -ResourceType Microsoft.Storage/storageaccounts -ResourceNameContains $azureStorageAccountName -ResourceGroupNameContains $azureResourceGroupName
-            if ($auditStorage -ne $null)
-            {
-			    if ($azurePrimarySqlDatabaseServer -ne $null)
-			    {
-                    $sqlAudit = $false
-				    LineBreak
-				    WriteLabel("Setting Primary SQL Server Auditing Policy")
-                    Do
-                    {
-                        If (New-Object System.Net.Sockets.TCPClient -ArgumentList "$azureSqlServerPrimaryName.database.windows.net",1433) 
-                        { 
-                            $azureStorageAccountName = $auditStorage.Name
-                            $setPrimaryAzureSqlDatabaseServerAuditingPolicy = Set-AzureRmSqlDatabaseServerAuditingPolicy -ResourceGroupName $azureResourceGroupName -ServerName $azureSqlServerPrimaryName -StorageAccountName $azureStorageAccountName -TableIdentifier "wtt" -EventType PlainSQL_Success, PlainSQL_Failure, ParameterizedSQL_Success, ParameterizedSQL_Failure, StoredProcedure_Success, StoredProcedure_Success -WarningVariable null -WarningAction SilentlyContinue                                                 
-                            $sqlAudit = $true
-                        } 
-                        If ($? -eq $false) 
-                        {
-                            $sqlAudit = $false
-                        }
-                    }While($sqlAudit -eq $false)
-				    WriteValue("Successful")
-			    }
-
-			    if ($azureSecondarySqlDatabaseServer -ne $null)
-			    {
-                    $sqlAudit = $false
-				    WriteLabel("Setting Secondary SQL Server Auditing Policy")
-                    Do
-                    {
-                        If (New-Object System.Net.Sockets.TCPClient -ArgumentList "$azureSqlServerSecondaryName.database.windows.net",1433) 
-                        { 
-                            $azureStorageAccountName = $auditStorage.Name
-                            $setSecondaryAzureSqlDatabaseServerAuditingPolicy = Set-AzureRmSqlDatabaseServerAuditingPolicy -ResourceGroupName $azureResourceGroupName -ServerName $azureSqlServerSecondaryName -StorageAccountName $azureStorageAccountName -TableIdentifier "wtt" -EventType PlainSQL_Success, PlainSQL_Failure, ParameterizedSQL_Success, ParameterizedSQL_Failure, StoredProcedure_Success, StoredProcedure_Success -WarningVariable null -WarningAction SilentlyContinue
-                            $sqlAudit = $true
-                        } 
-                        If ($? -eq $false) 
-                        {
-                            $sqlAudit = $false
-                        }
-                    }While($sqlAudit -eq $false)
-				    WriteValue("Successful")
-			    }
-            }
-            else
-            {
-                WriteError("Unable to find Azure Storage Account")
-            }
-
+            
+            # Deploy Azure SQL Reporting database
+            Deploy-WTTReportDB -azureResourceGroupName $azureResourceGroupName -azureSqlServerName $azureSqlServerPrimaryName -adminUserName $adminUserName -adminPassword $adminPassword -azureSqlDatabaseName $azureSqlReportDatabaseName -azureStorageAccountName wttdatacampwestus
+            
             WriteLabel("Traffic Manager URL")
             WriteValue("$wTTEnvironmentApplicationName.trafficmanager.net")
 			LineBreak
