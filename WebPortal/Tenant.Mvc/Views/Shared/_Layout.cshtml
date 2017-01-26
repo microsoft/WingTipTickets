@@ -388,15 +388,15 @@
         </script>
 
         @Html.Raw(TempData["msg"])
-                <script src="https://msdemoanalytics.azurewebsites.net/scripts/telemetry.js"></script>
+        <script src="https://msdemoanalytics.azurewebsites.net/scripts/telemetry.js"></script>
         <script>
-            MS.DemoTelemetry.sendDemoTelemetry('https://msdemoanalytics.azurewebsites.net/api/telemetry', {
-            demoName: 'DemoAnalytics.Samples.JavaScript',
+        MS.DemoTelemetry.sendDemoTelemetry('https://msdemoanalytics.azurewebsites.net/api/telemetry', {
+            demoName: 'Wingtips Tickets',
             tags: {
-                Products: ['List', 'Of', 'Products'],
-                Audience: ['Target', 'Audience']
-                }
-            });
+                Products: ['SQL Server 2016', 'Azure PowerShell', '.NET', 'Azure'],
+                Audience: ['Developer']
+            }
+        });
         </script>
     </body>
 </html>
