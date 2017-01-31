@@ -503,6 +503,7 @@ function New-WTTEnvironment
 			    }
             }While($dbExists -eq $false)
 
+            Start-Sleep -Seconds 30
             if($azurePrimarySqlDatabaseServer)
             {
                 $azureSqlDatabase = Find-AzureRmResource -ResourceType "Microsoft.Sql/servers/databases" -ResourceNameContains $azureSqlReportDatabaseName -ResourceGroupNameContains $azureResourceGroupName
