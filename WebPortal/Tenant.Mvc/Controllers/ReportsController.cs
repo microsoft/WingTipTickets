@@ -150,11 +150,8 @@ namespace Tenant.Mvc.Controllers
 
 
         [HttpPost]
-        public void ApplyDiscount(string discount, string seatDescription, dynamic filters)
+        public void ApplyDiscount(string discount, string seatDescription, string venue)
         {
-            //todo: get venue name from report
-            string venue = "Conrad Fischer Stands";
-
             var splittedString = seatDescription.Split(new string[] {"Seat"}, StringSplitOptions.None);
 
             //get venueId

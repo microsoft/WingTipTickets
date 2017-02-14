@@ -107,7 +107,7 @@
     <script type="text/javascript" language="javascript">
 
         var selectedSeat;
-        var filters;
+        var venue;
 
         $(function () {
             // For complete list of embed configuration see the following wiki page
@@ -153,15 +153,12 @@
                         return el.name === e.detail.newPage.name;
                     });
                 });
-            debugger;
+            
             report.on('dataSelected',
                 function (event) {
                     selectedSeat = event.detail.dataPoints[0].identity[0].equals;
+                    venue = event.detail.dataPoints[0].identity[1].equals;
                 });
-
-            report.on('filtersApplied', event => {
-                 filters = event.details.filters;
-            });
 
             // For a complete guide to page navigation see the following wiki page
             // https://github.com/Microsoft/PowerBI-JavaScript/wiki/Page-Navigation
@@ -198,7 +195,7 @@
             $.ajax({
                 type: "POST",
                 url: '@Url.Action("ApplyDiscount", "Reports")',
-                data: { discount: discountRate, seatDescription: selectedSeat, filters: filters },
+                data: { discount: discountRate, seatDescription: selectedSeat, venue: venue },
                 dataType: "json",
                 success: function () {
                     //showAlert("Confirmation", "A discount of <strong>'" + $("#DiscountRate").val() + "'</strong> has been applied to <strong>'" + selectedSeat + "'</strong>.");
