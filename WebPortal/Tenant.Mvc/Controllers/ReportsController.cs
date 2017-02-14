@@ -162,7 +162,7 @@ namespace Tenant.Mvc.Controllers
 
             DiscountModel model = new DiscountModel
             {
-                Discount = Convert.ToDecimal(discount),
+                Discount = Convert.ToInt32(discount),
                 SeatNumber = Convert.ToInt32(splittedString[1]),
                 SeatSectionId = seatSection.SeatSectionId,
                 InitialPrice = seatSection.TicketPrice,

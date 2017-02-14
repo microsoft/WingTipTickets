@@ -13,7 +13,7 @@ namespace Tenant.Mvc.Core.Models
         public int SeatSectionId { get; set; }
         public int SeatNumber { get; set; }
         public decimal InitialPrice { get; set; }
-        public decimal Discount { get; set; }
+        public int Discount { get; set; }
         public decimal FinalPrice { get; set; }
 
         #endregion
@@ -24,7 +24,7 @@ namespace Tenant.Mvc.Core.Models
         {
         }
 
-        public DiscountedSeatModel(int discountId, int seatSectionId, int seatNumber, decimal initialPrice, decimal discount, decimal finalPrice)
+        public DiscountedSeatModel(int discountId, int seatSectionId, int seatNumber, decimal initialPrice, int discount, decimal finalPrice)
         {
             DiscountId = discountId;
             SeatSectionId = seatSectionId;

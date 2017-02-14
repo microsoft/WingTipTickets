@@ -29,7 +29,7 @@ namespace Tenant.Mvc.Core.Contexts
 
                         discountedSeatModels.AddRange(
                             from DataRow dr in ds.Tables[0].Rows
-                            select new DiscountedSeatModel(Convert.ToInt32(dr[0].ToString()), Convert.ToInt32(dr[1].ToString()), Convert.ToInt32(dr[2].ToString()), Convert.ToDecimal(dr[3].ToString()), Convert.ToDecimal(dr[4].ToString()), Convert.ToDecimal(dr[5].ToString())));
+                            select new DiscountedSeatModel(Convert.ToInt32(dr[0].ToString()), Convert.ToInt32(dr[1].ToString()), Convert.ToInt32(dr[2].ToString()), Convert.ToDecimal(dr[3].ToString()), Convert.ToInt32(dr[4].ToString()), Convert.ToDecimal(dr[5].ToString())));
                     }
                 }
             }
