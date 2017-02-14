@@ -18,6 +18,11 @@ namespace Tenant.Mvc.Core.Repositories.Tenant
             return Context.Venues.GetVenueByVenueId(venueId);
         }
 
+        public int GetVenueIdByVenueName(string venueName)
+        {
+            return Context.Venues.GetVenueIdByVenueName(venueName);
+        }
+
         //public List<SeatSection> GetSeatMapForVenue(int venueId)
         //{
         //    return Context.Venues.GetSeatMapForVenue(venueId);

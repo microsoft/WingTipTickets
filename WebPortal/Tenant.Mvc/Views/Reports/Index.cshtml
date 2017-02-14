@@ -23,37 +23,69 @@
     <div class="row">
         <div class="col-xs-12 no-padding">
 
-        @using (Html.BeginForm("Index", "Reports", FormMethod.Post, new { @class = "form-inline" }))
-        {
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <div class="form-group">
-                        <label>Available Reports:</label>
-                        @Html.DropDownListFor(model => model.SelectedReportId, @Model.Reports, new { @class = "form-control", style = "width: 200px; margin-left: 10px;" })
-                    </div>
+            @using (Html.BeginForm("Index", "Reports", FormMethod.Post, new { @class = "form-inline" }))
+            {
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label>Available Reports:</label>
+                            @Html.DropDownListFor(model => model.SelectedReportId, @Model.Reports, new { @class = "form-control", style = "width: 200px; margin-left: 10px;" })
+                        </div>
 
-                    <div class="form-group pull-right">
-                        <button type="submit" class="btn btn-default btn-themed-secondary" style="margin-bottom: 0px;">Show Report</button>
-                        <button type="button" class="btn btn-info" style="margin-bottom: 0px;" onclick="UpdateDefaultReport()">Set as Default</button>
-                        <a href="@Url.Action("Upload", "Reports")" class="btn btn-info" style="margin-bottom: 0px;">Upload Report</a>
+                        <div class="form-group pull-right">
+                            <button type="submit" class="btn btn-default btn-themed-secondary" style="margin-bottom: 0px;">Show Report</button>
+                            <button type="button" class="btn btn-info" style="margin-bottom: 0px;" onclick="UpdateDefaultReport()">Set as Default</button>
+                            <a href="@Url.Action("Upload", "Reports")" class="btn btn-info" style="margin-bottom: 0px;">Upload Report</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        }
+            }
 
         </div>
     </div>
 
 </div>
 
+
 @{
     if (Model.Report != null)
     {
-        <div class="row">
-            <div class="col-xs-12">
-                @Html.PowerBIReportFor(m => m.Report, new { id = "pbi-report", style = "height:85vh", @powerbi_access_token = Model.AccessToken })
+        if (Model.Report.Name == "Complete Seat Map" || Model.Report.Name == "Probability of sale" || Model.Report.Name == "SeatingMapTest1")
+        {
+            <div class="row">
+                <div class="col-xs-10">
+                    @Html.PowerBIReportFor(m => m.Report, new { id = "pbi-report", style = "height:85vh", @powerbi_access_token = Model.AccessToken })
+                </div>
+                <div class="col-xs-2">
+                    <h3>Optimize Seats</h3>
+
+                    <label>Select a discount price</label>
+
+                
+                        <div class="itemRow">
+                            @Html.RadioButtonFor(model => model.DiscountRate, "10") %10
+                            </div>
+                            <div class="itemRow">
+                                @Html.RadioButtonFor(model => model.DiscountRate, "20") %20
+                            </div>
+                            <div class="itemRow">
+                                @Html.RadioButtonFor(model => model.DiscountRate, "30") %30
+                            </div>
+                   
+                  
+                        <button type="button" class="btn btn-info" style="margin-bottom: 0px;" onclick="ApplyDiscount()">Apply</button>
+                   
+                </div>
             </div>
-        </div>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-xs-12">
+                    @Html.PowerBIReportFor(m => m.Report, new { id = "pbi-report", style = "height:85vh", @powerbi_access_token = Model.AccessToken })
+                </div>
+            </div>
+        }
     }
     else
     {
@@ -72,48 +104,111 @@
 <!-- -------------------------------------------------------------------------------------------------------------------------- -->
 @section Scripts
 {
-<script type="text/javascript" language="javascript">
+    <script type="text/javascript" language="javascript">
 
-    $(function () {
-        // For complete list of embed configuration see the following wiki page
-        // https://github.com/Microsoft/PowerBI-JavaScript/wiki/Embed-Configuration-Details
-        var reportConfig = {
-            settings: {
-                filterPaneEnabled: false
-            }
-        };
-        var reportElement = document.getElementById('pbi-report');
+        var selectedSeat;
+        var filters;
 
-        // Embed report
-        // https://microsoft.github.io/PowerBI-JavaScript/classes/_src_service_.service.html#embed
-        var report = powerbi.embed(reportElement, reportConfig);
+        $(function () {
+            // For complete list of embed configuration see the following wiki page
+            // https://github.com/Microsoft/PowerBI-JavaScript/wiki/Embed-Configuration-Details
+            var reportConfig = {
+                settings: {
+                    filterPaneEnabled: true
+                }
+            };
+            var reportElement = document.getElementById('pbi-report');
 
-        // For a complete guide to event handling see the following wiki page
-        // https://github.com/Microsoft/PowerBI-JavaScript/wiki/Handling-Events
-        report.on('loaded',
-            function ()
-            {
-                //debugger;
+            // Embed report
+            // https://microsoft.github.io/PowerBI-JavaScript/classes/_src_service_.service.html#embed
+            var report = powerbi.embed(reportElement, reportConfig);
+
+            var pages = [];
+            var pageIndex = 0;
+            var currentPage = null;
+
+            // For a complete guide to event handling see the following wiki page
+            // https://github.com/Microsoft/PowerBI-JavaScript/wiki/Handling-Events
+            report.on('loaded',
+                function () {
+                    // Get report pages
+                    // https://microsoft.github.io/PowerBI-JavaScript/classes/_src_report_.report.html#getpages
+                    report.getPages()
+                        .then(function (reportPages) {
+                            pages = reportPages;
+                        });
+                });
+
+            // Handling pageChanged event
+            // https://microsoft.github.io/PowerBI-JavaScript/classes/_src_report_.report.html#on
+            report.on('pageChanged',
+                function (e) {
+                    currentPage = e.detail.newPage;
+
+                    if (pages.length === 0) {
+                        return;
+                    }
+
+                    pageIndex = pages.findIndex(function (el) {
+                        return el.name === e.detail.newPage.name;
+                    });
+                });
+            debugger;
+            report.on('dataSelected',
+                function (event) {
+                    selectedSeat = event.detail.dataPoints[0].identity[0].equals;
+                });
+
+            report.on('filtersApplied', event => {
+                 filters = event.details.filters;
             });
-    });
 
-    function UpdateDefaultReport() {
-        var selectedReportId = $("#SelectedReportId").val();
-        var selectedReportText = $("#SelectedReportId option:selected").text();
+            // For a complete guide to page navigation see the following wiki page
+            // https://github.com/Microsoft/PowerBI-JavaScript/wiki/Page-Navigation
+            function changePage(direction) {
+                var nextPageIndex = pageIndex + direction;
+                if (nextPageIndex < 0) nextPageIndex = pages.length - 1;
+                if (nextPageIndex >= pages.length) nextPageIndex = 0;
 
-        $.ajax({
-            type: "POST",
-            url: '@Url.Action("UpdateDefaultReport", "Reports")',
-            data: { reportId: selectedReportId },
-            dataType: "json",
-            success: function () {
-                showAlert("Confirmation", "The <strong>'" + selectedReportText + "'</strong> report has been set as the default");
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                debugger;
+                pages[nextPageIndex].setActive();
             }
         });
-    }
 
-</script>
+        function UpdateDefaultReport() {
+            var selectedReportId = $("#SelectedReportId").val();
+            var selectedReportText = $("#SelectedReportId option:selected").text();
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("UpdateDefaultReport", "Reports")',
+                data: { reportId: selectedReportId },
+                dataType: "json",
+                success: function () {
+                    showAlert("Confirmation", "The <strong>'" + selectedReportText + "'</strong> report has been set as the default");
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    debugger;
+                }
+            });
+        }
+
+        function ApplyDiscount() {
+            var discountRate = $("#DiscountRate").val();
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("ApplyDiscount", "Reports")',
+                data: { discount: discountRate, seatDescription: selectedSeat, filters: filters },
+                dataType: "json",
+                success: function () {
+                    //showAlert("Confirmation", "A discount of <strong>'" + $("#DiscountRate").val() + "'</strong> has been applied to <strong>'" + selectedSeat + "'</strong>.");
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    debugger;
+                }
+            });
+        }
+
+
+    </script>
 }

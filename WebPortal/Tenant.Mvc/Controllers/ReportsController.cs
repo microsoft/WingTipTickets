@@ -12,6 +12,7 @@ using Tenant.Mvc.Core.Interfaces.Tenant;
 using Tenant.Mvc.Models;
 using WingTipTickets;
 using Microsoft.PowerBI.Api.V1.Models;
+using Tenant.Mvc.Core.Models;
 
 namespace Tenant.Mvc.Controllers
 {
@@ -22,16 +23,22 @@ namespace Tenant.Mvc.Controllers
         private const string DefaultReportCode = "DefaultReportId";
         
         private readonly IApplicationDefaultsRepository _defaultsRepository;
+        private readonly IVenueRepository _venueRepository;
+        private readonly ISeatSectionRepository _seatSectionRepository;
+        private readonly IDiscountRepository _discountRepository;
         private string _defaultReportId = null;
 
         #endregion
 
         #region - Controllers -
 
-        public ReportsController(IApplicationDefaultsRepository defaultsRepository)
+        public ReportsController(IApplicationDefaultsRepository defaultsRepository, IVenueRepository venueRepository, ISeatSectionRepository seatSectionRepository, IDiscountRepository discountRepository)
         {
             // Setup Fields
             _defaultsRepository = defaultsRepository;
+            _venueRepository = venueRepository;
+            _seatSectionRepository = seatSectionRepository;
+            _discountRepository = discountRepository;
 
             // Setup Callbacks
             _defaultsRepository.StatusCallback = DisplayMessage;
@@ -141,6 +148,37 @@ namespace Tenant.Mvc.Controllers
             return Json(new { succeeded = true }, JsonRequestBehavior.AllowGet);
         }
 
+
+        [HttpPost]
+        public void ApplyDiscount(string discount, string seatDescription, dynamic filters)
+        {
+            //todo: get venue name from report
+            string venue = "Conrad Fischer Stands";
+
+            var splittedString = seatDescription.Split(new string[] {"Seat"}, StringSplitOptions.None);
+
+            //get venueId
+            var venueId = _venueRepository.GetVenueIdByVenueName(venue);
+
+            //get initial price and seat section Id
+            var seatSection = _seatSectionRepository.GetSeatSection(venueId, splittedString[0]);
+
+            DiscountModel model = new DiscountModel
+            {
+                Discount = Convert.ToDecimal(discount),
+                SeatNumber = Convert.ToInt32(splittedString[1]),
+                SeatSectionId = seatSection.SeatSectionId,
+                InitialPrice = seatSection.TicketPrice,
+                FinalPrice = seatSection.TicketPrice*(seatSection.TicketPrice*(Convert.ToDecimal(discount)/100))
+            };
+
+            var discountedModel = _discountRepository.ApplyDiscount(model);
+
+            DisplayMessage(discountedModel != null
+                ? string.Format("A discount of {0}% has been applied to {1}.", discountedModel.Discount, seatDescription)
+                : "Failed to apply discount.");
+        }
+
         #endregion
 
         #region - FetchReportResult Class -
@@ -152,5 +190,7 @@ namespace Tenant.Mvc.Controllers
         }
 
         #endregion
+
+
     }
 }

@@ -13,7 +13,11 @@ namespace Tenant.Mvc.Core.Models
         public string CustomerName { get; set; }
 
         public int Quantity { get; set; }
-        public List<string> Seats { get; set; }
+        public string Seat { get; set; }
+        public int TMinusDaysToConcert { get; set; }
+        public decimal InitialPrice { get; set; }
+        public decimal Discount { get; set; }
+        public decimal FinalPrice { get; set; }
 
         #endregion
     }

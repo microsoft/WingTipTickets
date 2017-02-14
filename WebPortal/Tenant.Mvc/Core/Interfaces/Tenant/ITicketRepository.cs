@@ -6,6 +6,6 @@ namespace Tenant.Mvc.Core.Interfaces.Tenant
     public interface ITicketRepository : IBaseRepository
     {
         List<ConcertTicketLevel> GetTicketLevelById(int concertId);
-        List<ConcertTicket> WriteNewTicketToDb(PurchaseTicketsModel model);
+        List<ConcertTicket> WriteNewTicketToDb(List<PurchaseTicketsModel> model);
     }
 }

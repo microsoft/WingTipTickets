@@ -13,7 +13,7 @@ namespace Tenant.Mvc.Core.Repositories.Tenant
             return Context.Tickets.GetTicketLevelById(concertId);
         }
 
-        public List<ConcertTicket> WriteNewTicketToDb(PurchaseTicketsModel model)
+        public List<ConcertTicket> WriteNewTicketToDb(List<PurchaseTicketsModel> model)
         {
             return Context.Tickets.WriteNewTicketToDb(model);
         }

@@ -125,28 +125,34 @@ namespace Tenant.Mvc.Core.Contexts
 
             #region - Save Methods -
 
-            public List<ConcertTicket> WriteNewTicketToDb(PurchaseTicketsModel model)
+            public List<ConcertTicket> WriteNewTicketToDb(List<PurchaseTicketsModel> model)
             {
+                List<ConcertTicket> purchasedTickets = new List<ConcertTicket>();
+
                 using (var insertConnection = WingtipTicketApp.CreateTenantConnectionDatabase1())
                 {
                     insertConnection.Open();
 
-                    for (var i = 0; i < model.Quantity; i++)
+                    for (var i = 0; i < model.Count; i++)
                     {
-                        var ticketName = String.Format("Ticket ({0} of {1}) for user {2} to concert-{3}", (i + 1), model.Quantity, model.CustomerName, model.ConcertId);
-                        var insertQuery = String.Format(@"INSERT INTO Tickets (CustomerId, Name, TicketLevelId, ConcertId, PurchaseDate, SeatNumber) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')", model.CustomerId, ticketName, model.SeatSectionId, model.ConcertId, DateTime.Now, model.Seats[i]);
+                        var ticketName = String.Format("Ticket ({0} of {1}) for user {2} to concert-{3}", (i + 1), model.Count, model[i].CustomerName, model[i].ConcertId);
+                        var insertQuery = String.Format(@"INSERT INTO Tickets (CustomerId, Name, TicketLevelId, ConcertId, PurchaseDate, SeatNumber, TMinusDaysToConcert, InitialPrice, Discount, FinalPrice) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}')", model[i].CustomerId, ticketName, model[i].SeatSectionId, model[i].ConcertId, DateTime.Now, model[i].Seat, model[i].TMinusDaysToConcert, model[i].InitialPrice, model[i].Discount, model[i].FinalPrice);
 
                         using (var insertCommand = new SqlCommand(insertQuery, insertConnection))
                         {
                             insertCommand.ExecuteNonQuery();
                         }
+
+                        var tickets = ReturnPurchasedTicketsByConcertId(model[i].CustomerId, model[i].ConcertId);
+                        purchasedTickets.AddRange(tickets);
                     }
 
                     insertConnection.Close();
                     insertConnection.Dispose();
+
                 }
 
-                return ReturnPurchasedTicketsByConcertId(model.CustomerId, model.ConcertId);
+                return purchasedTickets;
             }
 
             #endregion

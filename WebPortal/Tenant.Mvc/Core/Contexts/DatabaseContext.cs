@@ -12,7 +12,10 @@ namespace Tenant.Mvc.Core.Contexts
         public CustomerContext Customers { get; set; }
         public PurchaseTicketsModel Purchase { get; set; }
         public VenueContext Venues { get; set; }
-        
+        public DiscountContext Discount { get; set; }
+        public SeatSectionContext SeatSection { get; set; }
+
+
         #endregion
 
         #region - Constructors -
@@ -24,6 +27,8 @@ namespace Tenant.Mvc.Core.Contexts
             Customers = new CustomerContext();
             Purchase = new PurchaseTicketsModel();
             Venues = new VenueContext();
+            Discount = new DiscountContext();
+            SeatSection = new SeatSectionContext();
         }
 
         #endregion

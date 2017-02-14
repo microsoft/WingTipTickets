@@ -19,18 +19,20 @@ namespace Tenant.Mvc.Controllers
         private readonly ITicketRepository _ticketRepository;
         private readonly IVenueRepository _venueRepository;
         private readonly IFindSeatsRepository _findSeatsRepository;
+        private readonly IDiscountRepository _discountRepository;
 
         #endregion
 
         #region - Constructors -
 
-        public FindSeatsController(IConcertRepository concertRepository, ITicketRepository ticketRepository, IVenueRepository venueRepository, IFindSeatsRepository findSeatsRepository)
+        public FindSeatsController(IConcertRepository concertRepository, ITicketRepository ticketRepository, IVenueRepository venueRepository, IFindSeatsRepository findSeatsRepository, IDiscountRepository discountRepository)
         {
             // Setup Fields
             _concertRepository = concertRepository;
             _ticketRepository = ticketRepository;
             _venueRepository = venueRepository;
             _findSeatsRepository = findSeatsRepository;
+            _discountRepository = discountRepository;
 
             // Setup Callbacks
             _concertRepository.StatusCallback = DisplayMessage;
@@ -81,21 +83,48 @@ namespace Tenant.Mvc.Controllers
             {
                 return RedirectToAction("Index", "Home");
             }
-            
-            // Map to Domain Model
-            var domainModel = new PurchaseTicketsModel()
-            {
-                ConcertId = viewModel.Purchase.ConcertId,
-                SeatSectionId = viewModel.Purchase.SeatSectionId,
-                Quantity = viewModel.Purchase.Quantity,
-                Seats = viewModel.Purchase.Seats.Replace(" ", "").Split(',').ToList(),
 
-                CustomerId = ((CustomerModel)Session["SessionUser"]).CustomerId,
-                CustomerName = ((CustomerModel)Session["SessionUser"]).FirstName
-            };
+            var domainModels = new List<PurchaseTicketsModel>();
+
+            var seats = viewModel.Purchase.Seats.Replace(" ", "").Split(',').ToList();
+            var seatSectionId = viewModel.Purchase.SeatSectionId;
+
+            //get concert date to calculate number of days prior concert
+            var concertId = viewModel.Purchase.ConcertId;
+            var selectedConcert = _concertRepository.GetConcertById(concertId);
+            var concertDate = selectedConcert.ConcertDate;
+
+            foreach (var seat in seats)
+            {
+                //verify if seat has discount
+                var discountedSeats = _discountRepository.GetDiscountedSeat(seatSectionId, Convert.ToInt32(seat));
+
+                // Map to Domain Model
+                var domainModel = new PurchaseTicketsModel()
+                {
+                    ConcertId = concertId,
+                    SeatSectionId = seatSectionId,
+                    Quantity = viewModel.Purchase.Quantity,
+                    Seat = seat,
+                    CustomerId = ((CustomerModel)Session["SessionUser"]).CustomerId,
+                    CustomerName = ((CustomerModel)Session["SessionUser"]).FirstName,
+                    TMinusDaysToConcert = (concertDate - DateTime.Now).Days
+                };
+
+                if (discountedSeats.Count > 0)
+                {
+                    var discountSeatAndSeatSection = discountedSeats.First();
+                    domainModel.InitialPrice = discountSeatAndSeatSection.InitialPrice;
+                    domainModel.FinalPrice = discountSeatAndSeatSection.FinalPrice;
+                    domainModel.Discount = discountSeatAndSeatSection.Discount;
+                }
+
+                domainModels.Add(domainModel);
+            }
+
 
             // Purchase Tickets and Display Result
-            var ticketsPurchased = _ticketRepository.WriteNewTicketToDb(domainModel);
+            var ticketsPurchased = _ticketRepository.WriteNewTicketToDb(domainModels);
 
             DisplayMessage(ticketsPurchased != null 
                 ? string.Format("Successfully purchased tickets. You now have {0} tickets for this concert. Confirmation # {1}", ticketsPurchased.Count, ticketsPurchased[0].TicketId) 
