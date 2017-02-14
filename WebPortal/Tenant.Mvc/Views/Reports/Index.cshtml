@@ -50,7 +50,7 @@
 @{
     if (Model.Report != null)
     {
-        if (Model.Report.Name == "Complete Seat Map" || Model.Report.Name == "Probability of sale" || Model.Report.Name == "SeatingMapTest1")
+        if (Model.Report.Name == "Complete Seat Map")
         {
             <div class="row">
                 <div class="col-xs-10">
@@ -61,20 +61,18 @@
 
                     <label>Select a discount price</label>
 
-                
-                        <div class="itemRow">
-                            @Html.RadioButtonFor(model => model.DiscountRate, "10") %10
-                            </div>
-                            <div class="itemRow">
-                                @Html.RadioButtonFor(model => model.DiscountRate, "20") %20
-                            </div>
-                            <div class="itemRow">
-                                @Html.RadioButtonFor(model => model.DiscountRate, "30") %30
-                            </div>
-                   
-                  
-                        <button type="button" class="btn btn-info" style="margin-bottom: 0px;" onclick="ApplyDiscount()">Apply</button>
-                   
+                    <div class="itemRow">
+                        @Html.RadioButtonFor(model => model.DiscountRate, "10") %10
+                    </div>
+                    <div class="itemRow">
+                        @Html.RadioButtonFor(model => model.DiscountRate, "20") %20
+                    </div>
+                    <div class="itemRow">
+                        @Html.RadioButtonFor(model => model.DiscountRate, "30") %30
+                    </div>
+
+                    <button type="button" class="btn btn-info" style="margin-bottom: 0px;" onclick="ApplyDiscount()">Apply</button>
+
                 </div>
             </div>
         }
@@ -153,7 +151,7 @@
                         return el.name === e.detail.newPage.name;
                     });
                 });
-            
+
             report.on('dataSelected',
                 function (event) {
                     selectedSeat = event.detail.dataPoints[0].identity[0].equals;
