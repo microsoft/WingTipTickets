@@ -156,7 +156,7 @@
         }
         if(!$ReportName)
         {
-            $TenantEventType = "Complete Seat Map"
+            $ReportName = "Complete Seat Map"
         }
 		$docDBName = "https://$azuComplete Seat MapreDocumentDbName.documents.azure.com:443/"
 

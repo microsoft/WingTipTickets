@@ -196,7 +196,7 @@
                 data: { discount: discountRate, seatDescription: selectedSeat, venue: venue },
                 dataType: "json",
                 success: function () {
-                    //showAlert("Confirmation", "A discount of <strong>'" + $("#DiscountRate").val() + "'</strong> has been applied to <strong>'" + selectedSeat + "'</strong>.");
+                    showAlert("Confirmation", "A discount of %<strong>'" + discountRate + "'</strong> has been applied to <strong>'" + selectedSeat + "'</strong>.");
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     debugger;
