@@ -17,8 +17,6 @@ namespace Tenant.Mvc.Models
         public Report Report { get; set; }
         public string AccessToken { get; set; }
 
-        public string SelectedSeat { get; set; }
-        public string DiscountRate { get; set; }
         #endregion
     }
 }

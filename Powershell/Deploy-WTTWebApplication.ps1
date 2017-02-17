@@ -121,7 +121,12 @@
 
         # Azure Service Bus Name
 		[Parameter(Mandatory = $false)] 
-		[String]$wttServiceBusName
+		[String]$wttServiceBusName,
+		
+		# Seat Map Report with graohs Name 
+        [Parameter(Mandatory = $false)]
+        [string]
+        $ReportName
 	)
 	Try
 	{
@@ -149,8 +154,11 @@
         {
             $TenantEventType = "pop"
         }
-
-		$docDBName = "https://$azureDocumentDbName.documents.azure.com:443/"
+        if(!$ReportName)
+        {
+            $TenantEventType = "Complete Seat Map"
+        }
+		$docDBName = "https://$azuComplete Seat MapreDocumentDbName.documents.azure.com:443/"
 
 		$containerName = "deployment-files"
 
@@ -183,7 +191,7 @@
 		if(!$webSiteExist)
 		{
 			# Deploy application
-			$webDeployment = New-AzureRmResourceGroupDeployment -ResourceGroupName $azureResourceGroupName -Name $Websitename -TemplateFile $templateFilePath -siteName $Websitename -Mode Incremental -hostingPlanName $Websitename -packageUri $packageUri -sitelocation $webAppLocation -sku "Standard" -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -AzureSqlServerPrimaryName $AzureSqlServerPrimaryName -AzureSqlServerSecondaryName $AzureSqlServerSecondaryName -AdminUserName $AdminUserName -AdminPassword $AdminPassword -AzureSqlDatabase1Name $AzureSqlDatabase1Name -AzureSqlDatabase2Name $AzureSqlDatabase2Name -SearchName $SearchName -SearchServicePrimaryManagementKey $SearchServicePrimaryManagementKey -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey $documentDbPrimaryKey -powerbiSigningKey $powerbiSigningKey -powerbiWorkspaceCollection $powerbiWorkspaceCollection -powerbiWorkspaceId $powerbiWorkspaceId -seatMapReportID $seatMapReportID -TenantEventType $TenantEventType -documentDbDatabase $documentDbDatabase -documentDbCollection $documentDbCollection -wttEventHubName $wttEventHubName -wttServiceBusName $wttServiceBusName
+			$webDeployment = New-AzureRmResourceGroupDeployment -ResourceGroupName $azureResourceGroupName -Name $Websitename -TemplateFile $templateFilePath -siteName $Websitename -Mode Incremental -hostingPlanName $Websitename -packageUri $packageUri -sitelocation $webAppLocation -sku "Standard" -WTTEnvironmentApplicationName $WTTEnvironmentApplicationName -AzureSqlServerPrimaryName $AzureSqlServerPrimaryName -AzureSqlServerSecondaryName $AzureSqlServerSecondaryName -AdminUserName $AdminUserName -AdminPassword $AdminPassword -AzureSqlDatabase1Name $AzureSqlDatabase1Name -AzureSqlDatabase2Name $AzureSqlDatabase2Name -SearchName $SearchName -SearchServicePrimaryManagementKey $SearchServicePrimaryManagementKey -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey $documentDbPrimaryKey -powerbiSigningKey $powerbiSigningKey -powerbiWorkspaceCollection $powerbiWorkspaceCollection -powerbiWorkspaceId $powerbiWorkspaceId -seatMapReportID $seatMapReportID -TenantEventType $TenantEventType -documentDbDatabase $documentDbDatabase -documentDbCollection $documentDbCollection -wttEventHubName $wttEventHubName -wttServiceBusName $wttServiceBusName -ReportName $ReportName
 			if($webDeployment.ProvisioningState -eq "Failed")
 			{
 				WriteValue("Unsuccessful")

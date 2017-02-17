@@ -40,7 +40,9 @@ function Populate-Tickets
     )
 
     $date = (Get-Date -Format "yyyy-MM-dd HH:mm:ss")
+	$currentDate = Get-Date
     $customerID = 1
+
 
     #Test SQL Server Connection
 	$testSQLConnection = Test-WTTAzureSQLConnection -AzureSqlServerName $AzureSqlServerName -adminUserName $AdminUserName -adminPassword $AdminPassword -AzureSqlDatabaseName $AzureSqlDatabaseName -azureResourceGroupName $azureResourceGroupName
@@ -49,8 +51,9 @@ function Populate-Tickets
 		WriteError("Unable to connect to SQL Server")
 	}
 	Else
-	{
+	{	
         $updateDB = Invoke-Sqlcmd -Username "$AdminUserName@$AzureSqlServerName" -Password "$AdminPassword" -ServerInstance "$AzureSqlServerName.database.windows.net" -Database $AzureSqlDatabaseName -Query "set Identity_insert dbo.tickets on" -QueryTimeout 0 -SuppressProviderContextWarning
+		
         $concertID = @(1..12)
 
         foreach ($concert in $concertID)
@@ -75,7 +78,13 @@ function Populate-Tickets
                 {
                     $name = "Ticket for user admin to concert-$concert"
                     $ticketLevel = $ticketLevelID[0]
-                    $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber]) Values ($customerID, '$name', $ticketLevel, $concert, '$date', $seat)"
+					$randomDate = RandomDate
+					$purchaseDate = Get-Date $randomDate -Format "yyyy-MM-dd HH:mm:ss"
+					$tminusDaysToConcert = ($currentDate-$randomDate).duration().days
+					$initialPrice = GetTicketIntialPrice $ticketLevel	
+					$discount = RandomDiscount
+					$finalPrice = $initialPrice - ($initialPrice*($discount)/100)
+                    $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber], [TMinusDaysToConcert], [InitialPrice], [Discount], [FinalPrice]) Values ($customerID, '$name', $ticketLevel, $concert, '$purchaseDate', $seat, $tminusDaysToConcert, $initialPrice, $discount, $finalPrice)"
                     $updateDB = Invoke-Sqlcmd -Username "$AdminUserName@$AzureSqlServerName" -Password "$AdminPassword" -ServerInstance "$AzureSqlServerName.database.windows.net" -Database $AzureSqlDatabaseName -Query $command -QueryTimeout 0 -SuppressProviderContextWarning
                 }
 
@@ -84,7 +93,13 @@ function Populate-Tickets
                 {
                     $name = "Ticket for user admin to concert-$concert"
                     $ticketLevel = $ticketLevelID[1]
-                    $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber]) Values ($customerID, '$name', $ticketLevel, $concert, '$date', $seat)"
+					$randomDate = RandomDate
+					$purchaseDate = Get-Date $randomDate -Format "yyyy-MM-dd HH:mm:ss"
+					$tminusDaysToConcert = ($currentDate-$randomDate).duration().days
+					$initialPrice = GetTicketIntialPrice $ticketLevel			
+					$discount = RandomDiscount
+					$finalPrice = $initialPrice - ($initialPrice*($discount)/100)
+                    $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber], [TMinusDaysToConcert], [InitialPrice], [Discount], [FinalPrice]) Values ($customerID, '$name', $ticketLevel, $concert, '$purchaseDate', $seat, $tminusDaysToConcert, $initialPrice, $discount, $finalPrice)"
                     $updateDB = Invoke-Sqlcmd -Username "$AdminUserName@$AzureSqlServerName" -Password "$AdminPassword" -ServerInstance "$AzureSqlServerName.database.windows.net" -Database $AzureSqlDatabaseName -Query $command -QueryTimeout 0 -SuppressProviderContextWarning
                 }
 
@@ -93,7 +108,13 @@ function Populate-Tickets
                 {     
                     $name = "Ticket for user admin to concert-$concert"
                     $ticketLevel = $ticketLevelID[2]
-                    $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber]) Values ($customerID, '$name', $ticketLevel, $concert, '$date', $seat)"
+					$randomDate = RandomDate
+					$purchaseDate = Get-Date $randomDate -Format "yyyy-MM-dd HH:mm:ss"
+					$tminusDaysToConcert = ($currentDate-$randomDate).duration().days
+					$initialPrice = GetTicketIntialPrice $ticketLevel	
+					$discount = RandomDiscount
+					$finalPrice = $initialPrice - ($initialPrice*($discount)/100)
+                    $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber], [TMinusDaysToConcert], [InitialPrice], [Discount], [FinalPrice]) Values ($customerID, '$name', $ticketLevel, $concert, '$purchaseDate', $seat, $tminusDaysToConcert, $initialPrice, $discount, $finalPrice)"
                     $updateDB = Invoke-Sqlcmd -Username "$AdminUserName@$AzureSqlServerName" -Password "$AdminPassword" -ServerInstance "$AzureSqlServerName.database.windows.net" -Database $AzureSqlDatabaseName -Query $command -QueryTimeout 0 -SuppressProviderContextWarning
                 }
 
@@ -102,7 +123,13 @@ function Populate-Tickets
                 {
                     $name = "Ticket for user admin to concert-$concert"
                     $ticketLevel = $ticketLevelID[3]
-                    $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber]) Values ($customerID, '$name', $ticketLevel, $concert, '$date', $seat)"
+					$randomDate = RandomDate
+					$purchaseDate = Get-Date $randomDate -Format "yyyy-MM-dd HH:mm:ss"
+					$tminusDaysToConcert = ($currentDate-$randomDate).duration().days
+					$initialPrice = GetTicketIntialPrice $ticketLevel		
+					$discount = RandomDiscount
+					$finalPrice = $initialPrice - ($initialPrice*($discount)/100)
+                    $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber], [TMinusDaysToConcert], [InitialPrice], [Discount], [FinalPrice]) Values ($customerID, '$name', $ticketLevel, $concert, '$purchaseDate', $seat, $tminusDaysToConcert, $initialPrice, $discount, $finalPrice)"
                     $updateDB = Invoke-Sqlcmd -Username "$AdminUserName@$AzureSqlServerName" -Password "$AdminPassword" -ServerInstance "$AzureSqlServerName.database.windows.net" -Database $AzureSqlDatabaseName -Query $command -QueryTimeout 0 -SuppressProviderContextWarning
                 }
 
@@ -111,7 +138,13 @@ function Populate-Tickets
                 { 
                     $name = "Ticket for user admin to concert-$concert"
                     $ticketLevel = $ticketLevelID[4]
-                    $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber]) Values ($customerID, '$name', $ticketLevel, $concert, '$date', $seat)"
+					$randomDate = RandomDate
+					$purchaseDate = Get-Date $randomDate -Format "yyyy-MM-dd HH:mm:ss"
+					$tminusDaysToConcert = ($currentDate-$randomDate).duration().days
+					$initialPrice = GetTicketIntialPrice $ticketLevel	
+					$discount = RandomDiscount
+					$finalPrice = $initialPrice - ($initialPrice*($discount)/100)
+                    $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber], [TMinusDaysToConcert], [InitialPrice], [Discount], [FinalPrice]) Values ($customerID, '$name', $ticketLevel, $concert, '$purchaseDate', $seat, $tminusDaysToConcert, $initialPrice, $discount, $finalPrice)"
                     $updateDB = Invoke-Sqlcmd -Username "$AdminUserName@$AzureSqlServerName" -Password "$AdminPassword" -ServerInstance "$AzureSqlServerName.database.windows.net" -Database $AzureSqlDatabaseName -Query $command -QueryTimeout 0 -SuppressProviderContextWarning
                 }
 
@@ -120,7 +153,13 @@ function Populate-Tickets
                 {
                     $name = "Ticket for user admin to concert-$concert"
                     $ticketLevel = $ticketLevelID[5]
-                    $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber]) Values ($customerID, '$name', $ticketLevel, $concert, '$date', $seat)"
+					$randomDate = RandomDate
+					$purchaseDate = Get-Date $randomDate -Format "yyyy-MM-dd HH:mm:ss"
+					$tminusDaysToConcert = ($currentDate-$randomDate).duration().days
+					$initialPrice = GetTicketIntialPrice $ticketLevel			
+					$discount = RandomDiscount
+					$finalPrice = $initialPrice - ($initialPrice*($discount)/100)
+                    $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber], [TMinusDaysToConcert], [InitialPrice], [Discount], [FinalPrice]) Values ($customerID, '$name', $ticketLevel, $concert, '$purchaseDate', $seat, $tminusDaysToConcert, $initialPrice, $discount, $finalPrice)"
                     $updateDB = Invoke-Sqlcmd -Username "$AdminUserName@$AzureSqlServerName" -Password "$AdminPassword" -ServerInstance "$AzureSqlServerName.database.windows.net" -Database $AzureSqlDatabaseName -Query $command -QueryTimeout 0 -SuppressProviderContextWarning
                 }
 
@@ -129,7 +168,13 @@ function Populate-Tickets
                 {
                     $name = "Ticket for user admin to concert-$concert"
                     $ticketLevel = $ticketLevelID[6]
-                    $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber]) Values ($customerID, '$name', $ticketLevel, $concert, '$date', $seat)"
+					$randomDate = RandomDate
+					$purchaseDate = Get-Date $randomDate -Format "yyyy-MM-dd HH:mm:ss"
+					$tminusDaysToConcert = ($currentDate-$randomDate).duration().days
+					$initialPrice = GetTicketIntialPrice $ticketLevel	
+					$discount = RandomDiscount
+					$finalPrice = $initialPrice - ($initialPrice*($discount)/100)
+                    $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber], [TMinusDaysToConcert], [InitialPrice], [Discount], [FinalPrice]) Values ($customerID, '$name', $ticketLevel, $concert, '$purchaseDate', $seat, $tminusDaysToConcert, $initialPrice, $discount, $finalPrice)"
                     $updateDB = Invoke-Sqlcmd -Username "$AdminUserName@$AzureSqlServerName" -Password "$AdminPassword" -ServerInstance "$AzureSqlServerName.database.windows.net" -Database $AzureSqlDatabaseName -Query $command -QueryTimeout 0 -SuppressProviderContextWarning
                 }
 
@@ -138,7 +183,13 @@ function Populate-Tickets
                 { 
                     $name = "Ticket for user admin to concert-$concert"
                     $ticketLevel = $ticketLevelID[7]
-                    $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber]) Values ($customerID, '$name', $ticketLevel, $concert, '$date', $seat)"
+					$randomDate = RandomDate
+					$purchaseDate = Get-Date $randomDate -Format "yyyy-MM-dd HH:mm:ss"
+					$tminusDaysToConcert = ($currentDate-$randomDate).duration().days
+					$initialPrice = GetTicketIntialPrice $ticketLevel	
+					$discount = RandomDiscount
+					$finalPrice = $initialPrice - ($initialPrice*($discount)/100)
+                    $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber], [TMinusDaysToConcert], [InitialPrice], [Discount], [FinalPrice]) Values ($customerID, '$name', $ticketLevel, $concert, '$purchaseDate', $seat, $tminusDaysToConcert, $initialPrice, $discount, $finalPrice)"
                     $updateDB = Invoke-Sqlcmd -Username "$AdminUserName@$AzureSqlServerName" -Password "$AdminPassword" -ServerInstance "$AzureSqlServerName.database.windows.net" -Database $AzureSqlDatabaseName -Query $command -QueryTimeout 0 -SuppressProviderContextWarning
                 }
 
@@ -147,7 +198,13 @@ function Populate-Tickets
                 {  
                     $name = "Ticket for user admin to concert-$concert"
                     $ticketLevel = $ticketLevelID[8]
-                    $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber]) Values ($customerID, '$name', $ticketLevel, $concert, '$date', $seat)"
+					$randomDate = RandomDate
+					$purchaseDate = Get-Date $randomDate -Format "yyyy-MM-dd HH:mm:ss"
+					$tminusDaysToConcert = ($currentDate-$randomDate).duration().days
+					$initialPrice = GetTicketIntialPrice $ticketLevel	
+					$discount = RandomDiscount
+					$finalPrice = $initialPrice - ($initialPrice*($discount)/100)
+                    $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber], [TMinusDaysToConcert], [InitialPrice], [Discount], [FinalPrice]) Values ($customerID, '$name', $ticketLevel, $concert, '$purchaseDate', $seat, $tminusDaysToConcert, $initialPrice, $discount, $finalPrice)"
                     $updateDB = Invoke-Sqlcmd -Username "$AdminUserName@$AzureSqlServerName" -Password "$AdminPassword" -ServerInstance "$AzureSqlServerName.database.windows.net" -Database $AzureSqlDatabaseName -Query $command -QueryTimeout 0 -SuppressProviderContextWarning
                 }
 
@@ -156,7 +213,13 @@ function Populate-Tickets
                 {
                     $name = "Ticket for user admin to concert-$concert"
                     $ticketLevel = $ticketLevelID[9]
-                    $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber]) Values ($customerID, '$name', $ticketLevel, $concert, '$date', $seat)"
+					$randomDate = RandomDate
+					$purchaseDate = Get-Date $randomDate -Format "yyyy-MM-dd HH:mm:ss"
+					$tminusDaysToConcert = ($currentDate-$randomDate).duration().days
+					$initialPrice = GetTicketIntialPrice $ticketLevel	
+					$discount = RandomDiscount
+					$finalPrice = $initialPrice - ($initialPrice*($discount)/100)
+                    $command = "Insert [dbo].[Tickets]([CustomerID], [Name], [TicketLevelID], [ConcertID], [PurchaseDate], [SeatNumber], [TMinusDaysToConcert], [InitialPrice], [Discount], [FinalPrice]) Values ($customerID, '$name', $ticketLevel, $concert, '$purchaseDate', $seat, $tminusDaysToConcert, $initialPrice, $discount, $finalPrice)"
                     $updateDB = Invoke-Sqlcmd -Username "$AdminUserName@$AzureSqlServerName" -Password "$AdminPassword" -ServerInstance "$AzureSqlServerName.database.windows.net" -Database $AzureSqlDatabaseName -Query $command -QueryTimeout 0 -SuppressProviderContextWarning
                 }       
         }
@@ -165,25 +228,63 @@ function Populate-Tickets
 
 function section101
 {
-    Get-Random -count 15 -InputObject (1..60)
+    Get-Random -count 30 -InputObject (1..60)
 }
 function section201to04
 {
-    Get-Random -Count 4 -InputObject (1..8)
+    Get-Random -Count 10 -InputObject (1..8)
 }
 function Section102
 {
-    Get-Random -Count 25 -InputObject (1..100)
+    Get-Random -Count 50 -InputObject (1..100)
 }
 function Section103
 {
-    Get-Random -Count 65 -InputObject (1..175)
+    Get-Random -Count 150 -InputObject (1..175)
 }
 function Section205to07
 {
-    Get-Random -Count 9 -InputObject (1..32)
+    Get-Random -Count 30 -InputObject (1..32)
 }
 function Section208
 {
-    Get-Random -Count 45 -InputObject (1..175)
+    Get-Random -Count 150 -InputObject (1..175)
+}
+function RandomDate()
+{
+	$numberOfDays = (0, 5, 10, 15, 20, 25, 30, 95, 200, 365)
+	
+	$num = Get-Random -InputObject ($numberOfDays)
+	$currentDate = Get-Date 
+   	$dateMin = $currentDate.AddDays(-$num) 
+	$dateMax = $currentDate.AddDays(1)
+
+	new-object datetime (Get-Random -min $dateMin.ticks -max $dateMax.ticks)
+}
+function RandomDiscount()
+{
+	$discountRanges = (0, 10, 20, 30)
+    Get-Random -InputObject ($discountRanges)
+}
+function GetTicketIntialPrice($ticketLevel)
+{
+	$ticketLevel = [string]$ticketLevel
+	$lastDigit = [string]$ticketLevel.Substring($ticketLevel.Length - 1)
+	
+	$ticketPrice  = switch ($lastDigit)
+	{
+		1 {100.00} 
+        2 {80.00} 
+        3 {60.00} 
+        4 {90.00} 
+        5 {90.00} 
+        6 {70.00} 
+        7 {70.00}
+        8 {50.00} 
+		9 {50.00}
+        0 {35.00} 
+        default {0}
+	}
+
+	return $ticketPrice   
 }

@@ -46,7 +46,7 @@ namespace Tenant.Mvc.Core.Repositories.Tenant
                     },
 
                     // Collections
-                    SeatSections = new SelectList(seatSections, "TicketLevelId", "Description", null),
+                    SeatSections = new SelectList(seatSections, "SeatSectionId", "Description", null),
                 };
 
                 return viewModel;

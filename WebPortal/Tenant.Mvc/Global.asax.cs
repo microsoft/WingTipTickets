@@ -35,6 +35,8 @@ namespace WingTipTickets
         public string SearchServiceName { get; set; }
         public string DocumentDbUri { get; set; }
         public string DocumentDbKey { get; set; }
+
+        public string ReportName { get; set; }
     }
 
     #endregion
@@ -147,6 +149,7 @@ namespace WingTipTickets
 
                 DocumentDbUri = ConfigurationManager.AppSettings["DocumentDbUri"].Trim(),
                 DocumentDbKey = ConfigurationManager.AppSettings["DocumentDbKey"].Trim(),
+                ReportName = ConfigurationManager.AppSettings["ReportName"].Trim()
             };
                 
             // Adjust Tenant Database Server

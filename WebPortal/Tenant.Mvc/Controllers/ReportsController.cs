@@ -42,6 +42,7 @@ namespace Tenant.Mvc.Controllers
 
             // Setup Callbacks
             _defaultsRepository.StatusCallback = DisplayMessage;
+            _discountRepository.StatusCallback = DisplayMessage;
 
             // Setup Default ReportId
             _defaultReportId = _defaultsRepository.GetApplicationDefault(DefaultReportCode);
@@ -150,7 +151,7 @@ namespace Tenant.Mvc.Controllers
 
 
         [HttpPost]
-        public void ApplyDiscount(string discount, string seatDescription, string venue)
+        public ActionResult ApplyDiscount(string discount, string seatDescription, string venue)
         {
             var splittedString = seatDescription.Split(new string[] {"Seat"}, StringSplitOptions.None);
 
@@ -166,7 +167,7 @@ namespace Tenant.Mvc.Controllers
                 SeatNumber = Convert.ToInt32(splittedString[1]),
                 SeatSectionId = seatSection.SeatSectionId,
                 InitialPrice = seatSection.TicketPrice,
-                FinalPrice = seatSection.TicketPrice*(seatSection.TicketPrice*(Convert.ToDecimal(discount)/100))
+                FinalPrice = seatSection.TicketPrice - (seatSection.TicketPrice*(Convert.ToDecimal(discount)/100))
             };
 
             var discountedModel = _discountRepository.ApplyDiscount(model);
@@ -174,6 +175,8 @@ namespace Tenant.Mvc.Controllers
             DisplayMessage(discountedModel != null
                 ? string.Format("A discount of {0}% has been applied to {1}.", discountedModel.Discount, seatDescription)
                 : "Failed to apply discount.");
+
+            return RedirectToAction("Index", "Home");
         }
 
         #endregion
