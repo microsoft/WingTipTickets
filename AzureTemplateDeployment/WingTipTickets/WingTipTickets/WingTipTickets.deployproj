@@ -32,10 +32,8 @@
       <Visible>False</Visible>
     </None>
     <Content Include="Scripts\Deploy-AzureResourceGroup.ps1" />
-    <Content Include="Templates\WebSiteSQLDatabase.json" />
-    <Content Include="Templates\WebSiteSQLDatabase.parameters.json" />
-    <Content Include="Templates\nested.json" />
-    <Content Include="Templates\nested.parameters.json" />
+    <None Include="Templates\azuredeploy.json" />
+    <None Include="Templates\azuredeploy.parameters.json" />
   </ItemGroup>
   <Target Name="GetReferenceAssemblyPaths" />
 </Project>

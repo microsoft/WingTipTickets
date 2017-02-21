@@ -602,7 +602,7 @@ function New-WTTEnvironment
 			# Deploy ADF environment
 			New-WTTADFEnvironment -ApplicationName $WTTEnvironmentApplicationName -azureResourceGroupName $azureResourceGroupName
 
-			Start-Sleep -Seconds 30
+			Start-Sleep -Seconds 180
 
             $azurePowerBILocation =
                 Switch ($primaryServerLocation)

@@ -1,12 +1,626 @@
 ﻿{
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
-    "parameters": {
+  "parameters": {
+    "primaryWebAppName": {
+      "type": "string",
+      "minLength": 1
     },
-    "variables": {
+    "primaryWebAppSKU": {
+      "type": "string",
+      "allowedValues": [
+        "Free",
+        "Shared",
+        "Basic",
+        "Standard"
+      ],
+      "defaultValue": "Free"
     },
-    "resources": [
-    ],
+    "primaryWebAppWorkerSize": {
+      "type": "string",
+      "allowedValues": [
+        "0",
+        "1",
+        "2"
+      ],
+      "defaultValue": "0"
+    },
+    "secondaryWebAppName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "secondaryWebAppSKU": {
+      "type": "string",
+      "allowedValues": [
+        "Free",
+        "Shared",
+        "Basic",
+        "Standard"
+      ],
+      "defaultValue": "Free"
+    },
+    "secondaryWebAppWorkerSize": {
+      "type": "string",
+      "allowedValues": [
+        "0",
+        "1",
+        "2"
+      ],
+      "defaultValue": "0"
+    },
+    "sqlserverAdminLogin": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "developer"
+    },
+    "sqlserverAdminLoginPassword": {
+      "type": "securestring",
+      "defaultValue": "P@ssword1"
+    },
+    "storageAccountType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_ZRS",
+        "Standard_GRS",
+        "Standard_RAGRS",
+        "Premium_LRS"
+      ]
+    },
+    "consumerGroupsDefaultName": {
+      "type": "string",
+      "defaultValue": "$Default"
+    },
+    "consumergroups_asajob_name": {
+      "type": "string",
+      "defaultValue": "asajob"
+    },
+    "eventHubSharedAccessPolicy": {
+      "type": "string",
+      "defaultValue": "RootManageSharedAccessKey"
+    }
+  },
+  "variables": {
+    "primaryWebAppName": "[concat('primaryWebApp', uniqueString(resourceGroup().id))]",
+    "secondaryWebAppName": "[concat('secondaryWebApp', uniqueString(resourceGroup().id))]",
+    "primarysqlserverName": "[concat('primarysqlserver', uniqueString(resourceGroup().id))]",
+    "secondarysqlserverName": "[concat('secondarysqlserver', uniqueString(resourceGroup().id))]",
+    "storageAccountName": "[concat('storageAccount', uniqueString(resourceGroup().id))]",
+    "dataFactoryName": "[concat('dataFactory', uniqueString(resourceGroup().id))]",
+    "documentDBName": "uniqueString(resourceGroup().id)",
+    "eventHubName": "uniqueString(resourceGroup().id)",
+    "customer1Db": "[concat(variables('primarysqlserverName'),'/','Customer1')]",
+    "customer2Db": "[concat(variables('primarysqlserverName'),'/','Customer2')]",
+    "customer3Db": "[concat(variables('primarysqlserverName'),'/','Customer3')]",
+    "wingtipReportingDb": "[concat(variables('primarysqlserverName'),'/','wingtipReporting')]",
+    "customer1DbStorageUri": "",
+    "customer2DbStorageUri": "",
+    "customer3DbStorageUri": "",
+    "wingtipReportingDbStorageUri": "",
+    "customerDWDb": "[concat(variables('primarysqlserverName'),'/','CustomerDW')]",
+    "searchServicesName": "uniqueString(resourceGroup().id)",
+    "powerBIName": "uniqueString(resourceGroup().id)",
+    "trafficManagerProfile": "uniqueString(resourceGroup().id)",
+    "streamAnalyticsJob": "[concat(uniqueString(resourceGroup().id),'job')]"
+  },
+  "resources": [
+    {
+      "name": "[variables('storageAccountName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-06-15",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "storageAccount"
+      },
+      "properties": {
+        "accountType": "[parameters('storageAccountType')]"
+      }
+    },
+    {
+      "name": "[variables('dataFactoryName')]",
+      "type": "Microsoft.DataFactory/dataFactories",
+      "location": "dataFactoryLocation",
+      "apiVersion": "2015-10-01",
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.DocumentDB/databaseAccounts",
+      "kind": "GlobalDocumentDB",
+      "name": "[variables('documentDBName')]",
+      "apiVersion": "2015-04-08",
+      "location": "Central US",
+      "tags": {},
+      "properties": {
+        "databaseAccountOfferType": "Standard",
+        "consistencyPolicy": {
+          "defaultConsistencyLevel": "Session",
+          "maxIntervalInSeconds": 5,
+          "maxStalenessPrefix": 100
+        },
+        "name": "[variables('documentDBName')]"
+      },
+      "resources": [],
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.EventHub/namespaces",
+      "sku": {
+        "name": "Standard",
+        "tier": "Standard",
+        "capacity": 1
+      },
+      "kind": "EventHub",
+      "name": "[variables('eventHubName')]",
+      "apiVersion": "2015-08-01",
+      "location": "Central US",
+      "tags": {},
+      "properties": {
+        "provisioningState": "Succeeded",
+        "status": "Active",
+        "createdAt": "2017-01-26T00:34:35.763Z",
+        "serviceBusEndpoint": "[concat('https://', variables('eventHubName'),'.servicebus.windows.net:443/')]",
+        "enabled": true,
+        "updatedAt": "2017-01-26T00:34:58.703Z"
+      },
+      "resources": [],
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.EventHub/namespaces/AuthorizationRules",
+      "name": "[parameters('eventHubSharedAccessPolicy')]",
+      "apiVersion": "2015-08-01",
+      "properties": {
+        "rights": [
+          "Listen",
+          "Manage",
+          "Send"
+        ]
+      },
+      "resources": [],
+      "dependsOn": [
+        "[resourceId('Microsoft.EventHub/namespaces', variables('eventHubName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.EventHub/namespaces/eventhubs",
+      "name": "[variables('eventHubName')]",
+      "apiVersion": "2015-08-01",
+      "location": "Central US",
+      "properties": {
+        "messageRetentionInDays": 7
+      },
+      "resources": [],
+      "dependsOn": [
+        "[resourceId('Microsoft.EventHub/namespaces', variables('eventHubName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.EventHub/namespaces/eventhubs/consumergroups",
+      "name": "[parameters('consumerGroupsDefaultName')]",
+      "apiVersion": "2015-08-01",
+      "location": "Central US",
+      "properties": {
+      },
+      "resources": [],
+      "dependsOn": [
+        "[resourceId('Microsoft.EventHub/namespaces', variables('eventHubName'))]",
+        "[resourceId('Microsoft.EventHub/namespaces/eventhubs', variables('eventHubName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.EventHub/namespaces/eventhubs/consumergroups",
+      "name": "[parameters('consumergroups_asajob_name')]",
+      "apiVersion": "2015-08-01",
+      "location": "Central US",
+      "properties": {
+      },
+      "resources": [],
+      "dependsOn": [
+        "[resourceId('Microsoft.EventHub/namespaces', variables('eventHubName'))]",
+        "[resourceId('Microsoft.EventHub/namespaces/eventhubs', variables('eventHubName'))]"
+      ]
+    },
+    {
+      "name": "[variables('streamAnalyticsJob')]",
+      "type": "Microsoft.StreamAnalytics/streamingjobs",
+      "apiVersion": "2015-10-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "properties": {
+          "sku": {
+            "name": "standard"
+          },
+          "EventsOutOfOrderMaxDelayInSeconds": 5,
+          "EventsOutOfOrderPolicy": "Adjust",
+          "inputs": [
+            {
+              "name": "EventHub",
+              "properties": {
+                "type": "stream",
+                "serialization": {
+                  "type": "JSON",
+                  "properties": {
+                    "encoding": "UTF8"
+                  }
+                },
+                "datasource": {
+                  "type": "Microsoft.ServiceBus/EventHub",
+                  "properties": {
+                    "EventHubName": "<inputeventhubname>",
+                    "ServiceBusNamespace": "<servicebusnamespace>",
+                    "SharedAccessPolicyKey": "<sharedaccesspolicykey>",
+                    "SharedAccessPolicyName": "<sharedaccesspolicyname>",
+                    "SourcePartitionCount": 4,
+                    "consumerGroupName": "<consumerGroupName>"
+                  }
+                }
+              }
+            }
+          ],
+          "transformation": {
+            "name": "ProcessAllIOTData",
+            "properties": {
+              "streamingUnits": 1,
+              "query": "SELECT * INTO DocumentDB FROM EventHub"
+            }
+          },
+          "outputs": [
+            {
+              "name": "DocumentDB",
+              "properties": {
+                "datasource": {
+                  "type": "Microsoft.Storage/DocumentDB",
+                  "properties": {
+                    "AccountID": "<documentDBID>",
+                    "AccountKey": "<documentDBAccountKey>",
+                    "database": "<documentDBDatabaseName>",
+                    "CollectionNamePattern": "<collectionNamePattern>",
+                    "PartitionKey": "id"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "[variables('primarysqlserverName')]",
+      "type": "Microsoft.Sql/servers",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2014-04-01-preview",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "primarysqlserver"
+      },
+      "properties": {
+        "administratorLogin": "[parameters('sqlserverAdminLogin')]",
+        "administratorLoginPassword": "[parameters('sqlserverAdminLoginPassword')]"
+      },
+      "resources": [
+        {
+          "name": "AllowAllWindowsAzureIps",
+          "type": "firewallrules",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[concat('Microsoft.Sql/servers/', variables('primarysqlserverName'))]"
+          ],
+          "properties": {
+            "startIpAddress": "0.0.0.0",
+            "endIpAddress": "0.0.0.0"
+          }
+        }
+      ]
+    },
+    {
+      "dependsOn": [
+        "[concat('Microsoft.Sql/servers/',variables('primarysqlserverName'))]"
+      ],
+      "name": "[variables('customer1Db')]",
+      "type": "Microsoft.Sql/servers/databases",
+      "apiVersion": "2014-04-01-preview",
+      "properties": {
+      },
+      "resources": [
+        {
+          "name": "Import",
+          "type": "extensions",
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[concat('Microsoft.Sql/servers/',variables('customer1Db'))]"
+          ],
+          "properties": {
+            "storageKeyType": "SharedAccessKey",
+            "storageKey": "?",
+            "storageUri": "[variables('customer1DbStorageUri')]",
+            "administratorLogin": "[concat(parameters('sqlserverAdminLogin'),'@',variables('primarysqlserverName'))]",
+            "administratorLoginPassword": "[parameters('sqlserverAdminLoginPassword')]",
+            "operationMode": "Import"
+          }
+        }
+      ]
+    },
+    {
+      "dependsOn": [
+        "[concat('Microsoft.Sql/servers/',variables('primarysqlserverName'))]"
+      ],
+      "name": "[variables('customer2Db')]",
+      "type": "Microsoft.Sql/servers/databases",
+      "apiVersion": "2014-04-01-preview",
+      "properties": {
+      },
+      "resources": [
+        {
+          "name": "Import",
+          "type": "extensions",
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[concat('Microsoft.Sql/servers/',variables('customer2Db'))]"
+          ],
+          "properties": {
+            "storageKeyType": "SharedAccessKey",
+            "storageKey": "?",
+            "storageUri": "[variables('customer2DbStorageUri')]",
+            "administratorLogin": "[concat(parameters('sqlserverAdminLogin'),'@',variables('primaryWebAppName'))]",
+            "administratorLoginPassword": "[parameters('sqlserverAdminLoginPassword')]",
+            "operationMode": "Import"
+          }
+        }
+      ]
+    },
+    {
+      "dependsOn": [
+        "[concat('Microsoft.Sql/servers/',variables('primarysqlserverName'))]"
+      ],
+      "name": "[variables('customer3Db')]",
+      "type": "Microsoft.Sql/servers/databases",
+      "apiVersion": "2014-04-01-preview",
+      "properties": {
+      },
+      "resources": [
+        {
+          "name": "Import",
+          "type": "extensions",
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[concat('Microsoft.Sql/servers/',variables('customer3Db'))]"
+          ],
+          "properties": {
+            "storageKeyType": "SharedAccessKey",
+            "storageKey": "?",
+            "storageUri": "[variables('customer3Db')]",
+            "administratorLogin": "[concat(parameters('sqlserverAdminLogin'),'@',variables('primarysqlserverName'))]",
+            "administratorLoginPassword": "[parameters('sqlserverAdminLoginPassword')]",
+            "operationMode": "Import"
+          }
+        }
+      ]
+    },
+    {
+      "dependsOn": [
+        "[concat('Microsoft.Sql/servers/',variables('primarysqlserverName'))]"
+      ],
+      "name": "[variables('wingtipReportingDb')]",
+      "type": "Microsoft.Sql/servers/databases",
+      "apiVersion": "2014-04-01-preview",
+      "properties": {
+      },
+      "resources": [
+        {
+          "name": "Import",
+          "type": "extensions",
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[concat('Microsoft.Sql/servers/',variables('wingtipReportingDb'))]"
+          ],
+          "properties": {
+            "storageKeyType": "SharedAccessKey",
+            "storageKey": "?",
+            "storageUri": "[variables('wingtipReportingDbStorageUri')]",
+            "administratorLogin": "[concat(parameters('sqlserverAdminLogin'),'@',variables('primarysqlserverName'))]",
+            "administratorLoginPassword": "[parameters('sqlserverAdminLoginPassword')]",
+            "operationMode": "Import"
+          }
+        }
+      ]
+    },
+    {
+      "dependsOn": [
+        "[concat('Microsoft.Sql/servers/',variables('primarysqlserverName'))]"
+      ],
+      "name": "[variables('customerDWDb')]",
+      "type": "Microsoft.Sql/servers/databases",
+      "apiVersion": "2014-04-01-preview",
+      "properties": {
+      },
+      "resources": [
+        {
+        }
+      ]
+    },
+    {
+      "name": "[variables('secondarysqlserverName')]",
+      "type": "Microsoft.Sql/servers",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2014-04-01-preview",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "secondarysqlserver"
+      },
+      "properties": {
+        "administratorLogin": "[parameters('sqlserverAdminLogin')]",
+        "administratorLoginPassword": "[parameters('sqlserverAdminLoginPassword')]"
+      },
+      "resources": [
+        {
+          "name": "AllowAllWindowsAzureIps",
+          "type": "firewallrules",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[concat('Microsoft.Sql/servers/', variables('secondarysqlserverName'))]"
+          ],
+          "properties": {
+            "startIpAddress": "0.0.0.0",
+            "endIpAddress": "0.0.0.0"
+          }
+        }
+      ]
+    },
+    {
+      "comments": "Generalized from resource: '/subscriptions/21433b96-1ecc-4393-9658-b7c41e5d8e5d/resourceGroups/gmt170wtt/providers/Microsoft.Search/searchServices/gmt170wtt'.",
+      "type": "Microsoft.Search/searchServices",
+      "sku": {
+        "name": "free"
+      },
+      "name": "[variables('searchServicesName')]",
+      "apiVersion": "2015-08-19",
+      "location": "West US",
+      "properties": {
+      },
+      "resources": [],
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.PowerBI/workspaceCollections",
+      "sku": {
+        "name": "S1",
+        "tier": "Standard"
+      },
+      "name": "[variables('powerBIName')]",
+      "apiVersion": "2016-01-29",
+      "location": "[resourceGroup().location]",
+      "tags": {},
+      "properties": {
+      },
+      "resources": [],
+      "dependsOn": []
+    },
+    {
+      "name": "[parameters('primaryWebAppName')]",
+      "type": "Microsoft.Web/serverfarms",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2014-06-01",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "primaryWebApp"
+      },
+      "properties": {
+        "name": "[parameters('primaryWebAppName')]",
+        "sku": "[parameters('primaryWebAppSKU')]",
+        "workerSize": "[parameters('primaryWebAppWorkerSize')]",
+        "numberOfWorkers": 1
+      }
+    },
+    {
+      "name": "[variables('primaryWebAppName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-08-01",
+      "dependsOn": [
+        "[concat('Microsoft.Web/serverfarms/', parameters('primaryWebAppName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('primaryWebAppName'))]": "Resource",
+        "displayName": "primaryWebApp"
+      },
+      "properties": {
+        "name": "[variables('primaryWebAppName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms/', parameters('primaryWebAppName'))]"
+      }
+    },
+    {
+      "name": "[parameters('secondaryWebAppName')]",
+      "type": "Microsoft.Web/serverfarms",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2014-06-01",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "secondaryWebApp"
+      },
+      "properties": {
+        "name": "[parameters('secondaryWebAppName')]",
+        "sku": "[parameters('secondaryWebAppSKU')]",
+        "workerSize": "[parameters('secondaryWebAppWorkerSize')]",
+        "numberOfWorkers": 1
+      }
+    },
+    {
+      "name": "[variables('secondaryWebAppName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2015-08-01",
+      "dependsOn": [
+        "[concat('Microsoft.Web/serverfarms/', parameters('secondaryWebAppName'))]"
+      ],
+      "tags": {
+        "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', parameters('secondaryWebAppName'))]": "Resource",
+        "displayName": "secondaryWebApp"
+      },
+      "properties": {
+        "name": "[variables('secondaryWebAppName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms/', parameters('secondaryWebAppName'))]"
+      }
+    },
+    {
+      "apiVersion": "2015-11-01",
+      "type": "Microsoft.Network/trafficManagerProfiles",
+      "name": "[variables('trafficManagerProfile')]",
+      "location": "global",
+      "dependsOn": [
+        "[concat('Microsoft.Web/serverfarms/',variables('primaryWebAppName'))]",
+        "[concat('Microsoft.Web/sites/',variables('primaryWebAppName'))]",
+        "[concat('Microsoft.Web/serverfarms/',variables('secondaryWebAppName'))]",
+        "[concat('Microsoft.Web/sites/',variables('secondaryWebAppName'))]"
+      ],
+      "properties": {
+        "profileStatus": "Enabled",
+        "trafficRoutingMethod": "Priority",
+        "dnsConfig": {
+          "relativeName": "[variables('trafficManagerProfile')]",
+          "ttl": 30
+        },
+        "monitorConfig": {
+          "protocol": "HTTP",
+          "port": 80,
+          "path": "/"
+        },
+        "endpoints": [
+          {
+            "dependsOn": [
+              "[resourceId('Microsoft.Network/trafficManagerProfiles/',variables('trafficManagerProfile'))]",
+              "[concat('Microsoft.Web/sites/',variables('primaryWebAppName'))]"
+            ],
+            "type": "Microsoft.Network/trafficManagerProfiles/azureEndpoints",
+            "location": "global",
+            "name": "[variables('primaryWebAppName')]",
+            "apiVersion": "2015-11-01",
+            "properties": {
+              "targetResourceId": "[resourceId('Microsoft.Web/sites/',variables('primaryWebAppName'))]",
+              "endpointStatus": "Enabled"
+            }
+          },
+          {
+            "dependsOn": [
+              "[resourceId('Microsoft.Network/trafficManagerProfiles/',variables('trafficManagerProfile'))]",
+              "[concat('Microsoft.Web/sites/',variables('secondaryWebAppName'))]"
+            ],
+            "type": "Microsoft.Network/trafficManagerProfiles/azureEndpoints",
+            "location": "global",
+            "name": "[variables('secondaryWebAppName')]",
+            "apiVersion": "2015-11-01",
+            "properties": {
+              "targetResourceId": "[resourceId('Microsoft.Web/sites/',variables('secondaryWebAppName'))]",
+              "endpointStatus": "Enabled"
+            }
+          }
+        ]
+      }
+    }
+  ],
     "outputs": {
     }
 }
