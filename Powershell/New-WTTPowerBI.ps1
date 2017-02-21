@@ -192,6 +192,7 @@ function New-WTTPowerBI
                     'WTTReports1.pbix' {'TicketSalesDashboard'}                  
                     'WTTReports2.pbix' {'TicketSalesQuantity'}
                     'seatingMap.pbix' {'Seatingmap'}
+					'Complete Seat Map.pbix' {'Complete Seat Map'}
                 }
 
                 $header = @{authorization = "AppKey $pbikey"}
