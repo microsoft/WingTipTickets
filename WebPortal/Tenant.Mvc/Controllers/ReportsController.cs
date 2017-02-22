@@ -153,6 +153,7 @@ namespace Tenant.Mvc.Controllers
         public JsonResult ApplyDiscount(string discount, string seatDescription, string venue)
         {
             var splittedString = seatDescription.Split(new string[] {"Seat"}, StringSplitOptions.None);
+            venue = "Conrad Fischer Stands";
 
             //get venueId
             var venueId = _venueRepository.GetVenueIdByVenueName(venue);

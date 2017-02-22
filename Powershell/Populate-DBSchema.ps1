@@ -156,6 +156,12 @@ function Populate-DBSchema
 			    $Result = $Command.ExecuteNonQuery()
 			    WriteValue("Successful")
 
+				WriteLabel("Cleaning AllSeats table")
+			    $Command.CommandText = "Delete From AllSeats"
+			    $Result = $Command.ExecuteNonQuery()
+			    WriteValue("Successful")
+
+				
 				# Populate ApplicationDefaults Table
 				WriteLabel("Populating ApplicationDefaults table")
 				$Command.CommandText =
