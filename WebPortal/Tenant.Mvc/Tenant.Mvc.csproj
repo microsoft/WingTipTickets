@@ -317,6 +317,7 @@
     <Compile Include="Controllers\EventAdministrationController.cs" />
     <Compile Include="Controllers\FindSeatsController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Core\Contexts\AllSeatsContext.cs" />
     <Compile Include="Core\Contexts\DiscountContext.cs" />
     <Compile Include="Core\Contexts\SeatSectionContext.cs" />
     <Compile Include="Core\Helpers\PowerBiHelper.cs" />
@@ -389,13 +390,16 @@
       <DependentUpon>WingTipTicketModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="Core\Helpers\ConfigHelper.cs" />
+    <Compile Include="Core\Interfaces\Tenant\IAllSeatsRepository.cs" />
     <Compile Include="Core\Interfaces\Tenant\IApplicationDefaultsRepository.cs" />
     <Compile Include="Core\Interfaces\Tenant\IBaseRepository.cs" />
     <Compile Include="Core\Interfaces\Tenant\IDiscountRepository.cs" />
     <Compile Include="Core\Interfaces\Tenant\ISeatSectionRepository.cs" />
+    <Compile Include="Core\Models\AllSeatsModel.cs" />
     <Compile Include="Core\Models\ApplicationDbContext.cs" />
     <Compile Include="Core\Models\DiscountedSeatModel.cs" />
     <Compile Include="Core\Models\DiscountModel.cs" />
+    <Compile Include="Core\Repositories\Tenant\AllSeatsRepository.cs" />
     <Compile Include="Core\Repositories\Tenant\DiscountRepository.cs" />
     <Compile Include="Core\Repositories\Tenant\FindSeatsRepository.cs" />
     <Compile Include="Core\Repositories\Tenant\ApplicationDefaultsRepository.cs" />

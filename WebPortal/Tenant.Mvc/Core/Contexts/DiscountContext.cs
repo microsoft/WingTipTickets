@@ -11,7 +11,7 @@ namespace Tenant.Mvc.Core.Contexts
 {
     public class DiscountContext
     {
-        #region - Save Methods -
+        #region - Get Methods -
 
         public List<DiscountedSeatModel> GetDiscountedSeat(int seatSectionId, int seatNumber)
         {

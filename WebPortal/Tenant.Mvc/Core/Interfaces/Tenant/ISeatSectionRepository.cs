@@ -11,5 +11,7 @@ namespace Tenant.Mvc.Core.Interfaces.Tenant
     public interface ISeatSectionRepository : IBaseRepository
     {
         SeatSectionModel GetSeatSection(int venueId, string description);
+
+        SeatSectionModel GetSeatSectionDetails(int seatSectionId);
     }
 }

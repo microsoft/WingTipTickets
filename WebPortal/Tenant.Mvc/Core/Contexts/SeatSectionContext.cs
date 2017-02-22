@@ -41,6 +41,38 @@ namespace Tenant.Mvc.Core.Contexts
             return seatSections.FirstOrDefault();
         }
 
+
+        public SeatSectionModel GetSeatSectionDetails(int seatSectionId)
+        {
+            var seatSections = new List<SeatSectionModel>();
+
+            var query =
+                $@"SELECT * FROM SeatSection WHERE SeatSectionId = {seatSectionId}";
+
+            using (var cmd = new SqlCommand(query, WingtipTicketApp.CreateTenantConnectionDatabase1()))
+            {
+                using (var sdAdapter = new SqlDataAdapter(cmd))
+                {
+                    var dsUser = new DataSet();
+                    sdAdapter.Fill(dsUser);
+
+                    if (dsUser.Tables.Count > 0)
+                    {
+                        seatSections.AddRange(from DataRow row in dsUser.Tables[0].Rows
+                                              select new SeatSectionModel()
+                                              {
+                                                  SeatSectionId = Convert.ToInt32(row["SeatSectionId"]),
+                                                  VenueId = Convert.ToInt32(row["VenueId"]),
+                                                  Description = row["Description"].ToString(),
+                                                  SeatCount = Convert.ToInt32(row["SeatCount"])
+                                              });
+                    }
+                }
+            }
+
+            return seatSections.FirstOrDefault();
+        }
+
         #endregion
 
     }

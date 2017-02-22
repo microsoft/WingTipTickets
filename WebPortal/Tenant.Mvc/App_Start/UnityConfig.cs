@@ -65,7 +65,8 @@ namespace Tenant.Mvc
             container.RegisterType<TenantInterfaces.IFindSeatsRepository, TenantRepositories.FindSeatsRepository>();
             container.RegisterType<TenantInterfaces.IDiscountRepository, TenantRepositories.DiscountRepository>();
             container.RegisterType<TenantInterfaces.ISeatSectionRepository, TenantRepositories.SeatSectionRepository>();
-            
+            container.RegisterType<TenantInterfaces.IAllSeatsRepository, TenantRepositories.AllSeatsRepository>();
+
         }
 
 

@@ -14,6 +14,11 @@ namespace Tenant.Mvc.Core.Repositories.Tenant
         {
             return Context.SeatSection.GetSeatSection(venueId, description);
         }
+
+        public SeatSectionModel GetSeatSectionDetails(int seatSectionId)
+        {
+            return Context.SeatSection.GetSeatSectionDetails(seatSectionId);
+        }
         #endregion
     }
 }
