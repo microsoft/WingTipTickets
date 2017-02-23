@@ -103,3 +103,26 @@ function CreateDataFactory()
 		throw $Error
 	}
 }
+
+function RemoveDataFactory()
+{
+    Try
+    {
+        WriteLabel("Checking data factory '$ApplicationName' status")
+        $dataFactory = Get-AzureRmDataFactory -Name $ApplicationName -ResourceGroupName $azureResourceGroupName -ErrorAction SilentlyContinue
+        if($dataFactory.ProvisioningState -eq "Succeeded")
+        {
+            WriteValue("Found")
+            $azureDataFactoryRemove = Remove-AzureRmDataFactory -Name $ApplicationName -ResourceGroupName $azureResourceGroupName -Force -ErrorAction SilentlyContinue
+        }
+        else
+        {
+            WriteValue("Not Deployed")
+        }
+    }
+    Catch
+    {
+        WriteValue("Failed")
+		throw $Error
+    }
+}

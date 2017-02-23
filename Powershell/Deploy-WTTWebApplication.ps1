@@ -123,7 +123,7 @@
 		[Parameter(Mandatory = $false)] 
 		[String]$wttServiceBusName,
 		
-		# Seat Map Report with graohs Name 
+		# Seat Map Report with graphs Name 
         [Parameter(Mandatory = $false)]
         [string]
         $ReportName
@@ -156,9 +156,9 @@
         }
         if(!$ReportName)
         {
-            $ReportName = "Complete Seat Map"
+            $ReportName = "VenueSales"
         }
-		$docDBName = "https://$azuComplete Seat MapreDocumentDbName.documents.azure.com:443/"
+		$docDBName = "https://$azureDocumentDbName.documents.azure.com:443/"
 
 		$containerName = "deployment-files"
 

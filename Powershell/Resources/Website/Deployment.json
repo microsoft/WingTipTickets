@@ -96,6 +96,9 @@
     },
     "wttServiceBusName": {
       "type": "string"
+    },
+    "reportName":{
+      "type": "string"
     }
   },
   "variables":{
@@ -169,7 +172,8 @@
             "powerbiWorkspaceId": "[parameters('powerbiWorkspaceId')]",
             "seatMapReportID": "[parameters('seatMapReportID')]",
             "EventHubName": "[parameters('wttEventHubName')]",
-            "Microsoft.ServiceBus.ConnectionString": "[parameters('wttServiceBusName')]"          
+            "Microsoft.ServiceBus.ConnectionString": "[parameters('wttServiceBusName')]",
+            "reportName": "[parameters('reportname')]"
           }
         }
       ]

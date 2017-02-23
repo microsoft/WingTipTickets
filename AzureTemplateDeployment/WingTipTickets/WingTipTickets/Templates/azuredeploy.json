@@ -79,6 +79,39 @@
     "eventHubSharedAccessPolicy": {
       "type": "string",
       "defaultValue": "RootManageSharedAccessKey"
+    },
+
+    "databaseCollation": {
+      "type": "string",
+      "minLength": 1,
+      "defaultValue": "SQL_Latin1_General_CP1_CI_AS"
+    },
+    "databaseEdition": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "Standard",
+        "Premium",
+        "DataWarehouse"
+      ]
+    },
+    "databaseRequestedServiceObjectiveName": {
+      "type": "string",
+      "defaultValue": "Basic",
+      "allowedValues": [
+        "Basic",
+        "S0",
+        "S1",
+        "S2",
+        "P1",
+        "P2",
+        "P3",
+        "DW400"
+      ],
+      "metadata": {
+        "description": "Describes the performance level for Edition"
+      }
     }
   },
   "variables": {
@@ -248,12 +281,12 @@
                 "datasource": {
                   "type": "Microsoft.ServiceBus/EventHub",
                   "properties": {
-                    "EventHubName": "<inputeventhubname>",
-                    "ServiceBusNamespace": "<servicebusnamespace>",
-                    "SharedAccessPolicyKey": "<sharedaccesspolicykey>",
-                    "SharedAccessPolicyName": "<sharedaccesspolicyname>",
+                    "EventHubName": "[variables('eventHubName')]",
+                    "ServiceBusNamespace": "[variables('eventHubName')]",
+                    "SharedAccessPolicyKey": "[concat(reference(resourceId('Microsoft.EventHub/namespaces', variables('eventHubName'),'/AuthorizationRules/RootManageSharedAccessKey')))]",
+                    "SharedAccessPolicyName": "[concat(reference(resourceId('Microsoft.EventHub/namespaces', variables('eventHubName'),'/AuthorizationRules/RootManageSharedAccessKey').listkeys.primaryKey))]",
                     "SourcePartitionCount": 4,
-                    "consumerGroupName": "<consumerGroupName>"
+                    "consumerGroupName": "[parameters('consumergroups_asajob_name')]"
                   }
                 }
               }
@@ -273,10 +306,10 @@
                 "datasource": {
                   "type": "Microsoft.Storage/DocumentDB",
                   "properties": {
-                    "AccountID": "<documentDBID>",
-                    "AccountKey": "<documentDBAccountKey>",
-                    "database": "<documentDBDatabaseName>",
-                    "CollectionNamePattern": "<collectionNamePattern>",
+                    "AccountID": "[variables('documentDBName')]",
+                    "AccountKey": "[concat(reference(resourceId('Microsoft.DocumentDb/databaseAccounts', variables('documentDBName').listkeys.primarymasterkey)))]",
+                    "database": "iotdata",
+                    "CollectionNamePattern": "iotdata",
                     "PartitionKey": "id"
                   }
                 }
@@ -323,6 +356,10 @@
       "type": "Microsoft.Sql/servers/databases",
       "apiVersion": "2014-04-01-preview",
       "properties": {
+        "collation": "[parameters('databaseCollation')]",
+        "edition": "[parameters('databaseEdition')]",
+        "maxSizeBytes": "1073741824",
+        "requestedServiceObjectiveName": "[parameters('databaseRequestedServiceObjectiveName')]"
       },
       "resources": [
         {
@@ -351,6 +388,10 @@
       "type": "Microsoft.Sql/servers/databases",
       "apiVersion": "2014-04-01-preview",
       "properties": {
+        "collation": "[parameters('databaseCollation')]",
+        "edition": "[parameters('databaseEdition')]",
+        "maxSizeBytes": "1073741824",
+        "requestedServiceObjectiveName": "[parameters('databaseRequestedServiceObjectiveName')]"
       },
       "resources": [
         {
@@ -379,6 +420,10 @@
       "type": "Microsoft.Sql/servers/databases",
       "apiVersion": "2014-04-01-preview",
       "properties": {
+        "collation": "[parameters('databaseCollation')]",
+        "edition": "Standard",
+        "maxSizeBytes": "1073741824",
+        "requestedServiceObjectiveName": "S2"
       },
       "resources": [
         {
@@ -407,6 +452,10 @@
       "type": "Microsoft.Sql/servers/databases",
       "apiVersion": "2014-04-01-preview",
       "properties": {
+        "collation": "[parameters('databaseCollation')]",
+        "edition": "[parameters('databaseEdition')]",
+        "maxSizeBytes": "1073741824",
+        "requestedServiceObjectiveName": "[parameters('databaseRequestedServiceObjectiveName')]"
       },
       "resources": [
         {
@@ -435,11 +484,11 @@
       "type": "Microsoft.Sql/servers/databases",
       "apiVersion": "2014-04-01-preview",
       "properties": {
-      },
-      "resources": [
-        {
-        }
-      ]
+        "collation": "[parameters('databaseCollation')]",
+        "edition": "DataWarehouse",
+        "maxSizeBytes": "1073741824",
+        "requestedServiceObjectiveName": "DW400"
+      }
     },
     {
       "name": "[variables('secondarysqlserverName')]",
@@ -471,7 +520,6 @@
       ]
     },
     {
-      "comments": "Generalized from resource: '/subscriptions/21433b96-1ecc-4393-9658-b7c41e5d8e5d/resourceGroups/gmt170wtt/providers/Microsoft.Search/searchServices/gmt170wtt'.",
       "type": "Microsoft.Search/searchServices",
       "sku": {
         "name": "free"

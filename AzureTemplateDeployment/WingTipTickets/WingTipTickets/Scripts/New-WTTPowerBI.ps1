@@ -60,38 +60,7 @@ function New-WTTPowerBI
 
     Try
     {
-        #Check status of Power BI service
-        Do
-        {
-            $status = Get-AzureRmResourceProvider -ProviderNamespace Microsoft.PowerBI
-            if ($status.RegistrationState -ne "Registered")
-            {
-                $null = Register-AzureRmResourceProvider -ProviderNamespace Microsoft.PowerBI
-            }
-        }until($status.RegistrationState -eq "Registered")
-
-        WriteLabel("Checking for Azure Power BI Service $AzurePowerBIName")
         
-        $powerBIService = Find-AzureRmResource -ResourceGroupNameContains $azureResourceGroupName -ResourceType "Microsoft.PowerBI/workspaceCollections" -ResourceNameContains $AzurePowerBIName -ExpandProperties -ErrorAction SilentlyContinue
-        if($powerBIService.Name -eq $AzurePowerBIName)
-        {
-            WriteValue("Failed")
-            WriteError("$AzurePowerBIName Power BI service already exists.")
-            Remove-AzureRmResource -ResourceName $AzurePowerBIName -ResourceType "Microsoft.PowerBI/workspaceCollections" -ResourceGroupName $azureResourceGroupName -ErrorAction SilentlyContinue -force
-            Start-Sleep -Seconds 300
-        }
-        else
-        {
-            WriteValue("Success")
-        }
-
-        $testSQLConnection = Test-WTTAzureSQLConnection -AzureSqlServerName $AzureSqlServerName -AdminUserName $AdminUserName -AdminPassword $AdminPassword -AzureSqlDatabaseName $AzureSqlDatabaseName -azureResourceGroupName $azureResourceGroupName
-        if ($testSQLConnection -notlike "success")
-        {
-            WriteError("Unable to connect to SQL Server")
-        }
-        else
-        {
             # Load ADAL Assemblies
             $adal = "${env:ProgramFiles(x86)}\Microsoft SDKs\Azure\PowerShell\ServiceManagement\Azure\Services\Microsoft.IdentityModel.Clients.ActiveDirectory.dll"
             $adalforms = "${env:ProgramFiles(x86)}\Microsoft SDKs\Azure\PowerShell\ServiceManagement\Azure\Services\Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms.dll"
@@ -342,8 +311,6 @@ function New-WTTPowerBI
             }
 
         return $pbiOutPut
-
-      }
     }  
     Catch
     {
