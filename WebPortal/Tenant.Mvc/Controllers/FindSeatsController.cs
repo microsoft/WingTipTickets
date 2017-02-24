@@ -103,9 +103,6 @@ namespace Tenant.Mvc.Controllers
 
             foreach (var seat in seats)
             {
-                //verify if seat has discount
-                var discountedSeats = _discountRepository.GetDiscountedSeat(seatSectionId, Convert.ToInt32(seat));
-
                 // Map to Domain Model
                 var domainModel = new PurchaseTicketsModel()
                 {
@@ -118,12 +115,13 @@ namespace Tenant.Mvc.Controllers
                     TMinusDaysToConcert = daysToConcert
                 };
 
+                //verify if seat has discount
+                var discountedSeats = _discountRepository.GetDiscountedSeat(seatSectionId, Convert.ToInt32(seat));
+
                 //there is discount on this seat
                 if (discountedSeats.Count > 0)
                 {
                     var discountSeatAndSeatSection = discountedSeats.First();
-                    domainModel.InitialPrice = discountSeatAndSeatSection.InitialPrice;
-                    domainModel.FinalPrice = discountSeatAndSeatSection.FinalPrice;
                     domainModel.Discount = discountSeatAndSeatSection.Discount;
                 }
 
