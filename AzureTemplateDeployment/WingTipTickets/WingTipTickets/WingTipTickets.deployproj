@@ -25,13 +25,14 @@
   <Import Condition=" Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Deployment\1.1\DeploymentProject.targets') " Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Deployment\1.1\DeploymentProject.targets" />
   <!-- vertag<:>end -->
   <ItemGroup>
-    <Folder Include="Scripts\" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Deployment.targets">
       <Visible>False</Visible>
     </None>
-    <Content Include="Scripts\Deploy-AzureResourceGroup.ps1" />
+    <None Include="Scripts\Deploy-WTTAzureDWDatabase.ps1" />
+    <None Include="Scripts\Deploy-WTTEnvironment.ps1" />
+    <None Include="Scripts\New-WTTAzureDocumentDb.ps1" />
+    <None Include="Scripts\New-WTTAzureSearchService.ps1" />
+    <None Include="Scripts\New-WTTPowerBI.ps1" />
     <None Include="Templates\azuredeploy.json" />
     <None Include="Templates\azuredeploy.parameters.json" />
   </ItemGroup>

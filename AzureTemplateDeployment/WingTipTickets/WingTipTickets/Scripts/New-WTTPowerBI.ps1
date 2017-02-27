@@ -60,6 +60,31 @@ function New-WTTPowerBI
 
     Try
     {
+        #Check status of Power BI service
+        Do
+        {
+            $status = Get-AzureRmResourceProvider -ProviderNamespace Microsoft.PowerBI
+            if ($status.RegistrationState -ne "Registered")
+            {
+                $null = Register-AzureRmResourceProvider -ProviderNamespace Microsoft.PowerBI
+            }
+        }until($status.RegistrationState -eq "Registered")
+
+        WriteLabel("Checking for Azure Power BI Service $AzurePowerBIName")
+        
+        $powerBIService = Find-AzureRmResource -ResourceGroupNameContains $azureResourceGroupName -ResourceType "Microsoft.PowerBI/workspaceCollections" -ResourceNameContains $AzurePowerBIName -ExpandProperties -ErrorAction SilentlyContinue
+        if($powerBIService.Name -eq $AzurePowerBIName)
+        {
+            WriteValue("Failed")
+            WriteError("$AzurePowerBIName Power BI service already exists.")
+            Remove-AzureRmResource -ResourceName $AzurePowerBIName -ResourceType "Microsoft.PowerBI/workspaceCollections" -ResourceGroupName $azureResourceGroupName -ErrorAction SilentlyContinue -force
+            Start-Sleep -Seconds 300
+        }
+        else
+        {
+            WriteValue("Success")
+        }
+
         
             # Load ADAL Assemblies
             $adal = "${env:ProgramFiles(x86)}\Microsoft SDKs\Azure\PowerShell\ServiceManagement\Azure\Services\Microsoft.IdentityModel.Clients.ActiveDirectory.dll"

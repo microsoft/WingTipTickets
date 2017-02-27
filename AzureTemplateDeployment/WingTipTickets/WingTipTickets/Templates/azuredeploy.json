@@ -2,6 +2,9 @@
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
   "parameters": {
+    "wttEnvironmentApplicationName": {
+      "type": "string"
+    },
     "primaryWebAppName": {
       "type": "string",
       "minLength": 1
@@ -112,11 +115,22 @@
       "metadata": {
         "description": "Describes the performance level for Edition"
       }
+    },
+    "tenantEventType": {
+      "type": "string",
+      "defaultValue": "Pop",
+      "allowedValues": [
+        "Pop",
+        "Rock",
+        "Classical"
+      ]
     }
   },
   "variables": {
     "primaryWebAppName": "[concat('primaryWebApp', uniqueString(resourceGroup().id))]",
+    "primaryWebAppUri": "https://wttdatacampwestus.blob.core.windows.net/wttwebapps",
     "secondaryWebAppName": "[concat('secondaryWebApp', uniqueString(resourceGroup().id))]",
+    "secondaryWebAppUri": "https://wttdatacampwestus.blob.core.windows.net/wttwebapps",
     "primarysqlserverName": "[concat('primarysqlserver', uniqueString(resourceGroup().id))]",
     "secondarysqlserverName": "[concat('secondarysqlserver', uniqueString(resourceGroup().id))]",
     "storageAccountName": "[concat('storageAccount', uniqueString(resourceGroup().id))]",
@@ -156,25 +170,6 @@
       "type": "Microsoft.DataFactory/dataFactories",
       "location": "dataFactoryLocation",
       "apiVersion": "2015-10-01",
-      "dependsOn": []
-    },
-    {
-      "type": "Microsoft.DocumentDB/databaseAccounts",
-      "kind": "GlobalDocumentDB",
-      "name": "[variables('documentDBName')]",
-      "apiVersion": "2015-04-08",
-      "location": "Central US",
-      "tags": {},
-      "properties": {
-        "databaseAccountOfferType": "Standard",
-        "consistencyPolicy": {
-          "defaultConsistencyLevel": "Session",
-          "maxIntervalInSeconds": 5,
-          "maxStalenessPrefix": 100
-        },
-        "name": "[variables('documentDBName')]"
-      },
-      "resources": [],
       "dependsOn": []
     },
     {
@@ -477,23 +472,9 @@
       ]
     },
     {
-      "dependsOn": [
-        "[concat('Microsoft.Sql/servers/',variables('primarysqlserverName'))]"
-      ],
-      "name": "[variables('customerDWDb')]",
-      "type": "Microsoft.Sql/servers/databases",
-      "apiVersion": "2014-04-01-preview",
-      "properties": {
-        "collation": "[parameters('databaseCollation')]",
-        "edition": "DataWarehouse",
-        "maxSizeBytes": "1073741824",
-        "requestedServiceObjectiveName": "DW400"
-      }
-    },
-    {
       "name": "[variables('secondarysqlserverName')]",
       "type": "Microsoft.Sql/servers",
-      "location": "[resourceGroup().location]",
+      "location": "[concat(reference(resourceId('Microsoft.Storage/StorageAccounts', variables('storageAccountName').secondaryLocation)))]",
       "apiVersion": "2014-04-01-preview",
       "dependsOn": [],
       "tags": {
@@ -518,34 +499,6 @@
           }
         }
       ]
-    },
-    {
-      "type": "Microsoft.Search/searchServices",
-      "sku": {
-        "name": "free"
-      },
-      "name": "[variables('searchServicesName')]",
-      "apiVersion": "2015-08-19",
-      "location": "West US",
-      "properties": {
-      },
-      "resources": [],
-      "dependsOn": []
-    },
-    {
-      "type": "Microsoft.PowerBI/workspaceCollections",
-      "sku": {
-        "name": "S1",
-        "tier": "Standard"
-      },
-      "name": "[variables('powerBIName')]",
-      "apiVersion": "2016-01-29",
-      "location": "[resourceGroup().location]",
-      "tags": {},
-      "properties": {
-      },
-      "resources": [],
-      "dependsOn": []
     },
     {
       "name": "[parameters('primaryWebAppName')]",
@@ -578,12 +531,59 @@
       "properties": {
         "name": "[variables('primaryWebAppName')]",
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms/', parameters('primaryWebAppName'))]"
-      }
+      },
+      "resources": [
+        {
+          "name": "MSDeploy",
+          "type": "extensions",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2015-08-01",
+          "dependsOn": [
+            "[concat('Microsoft.Web/sites/',variables('primaryWebAppName'))]"
+          ],
+          "properties": {
+            "packageUri": "[variables('primaryWebAppUri')]"
+          }
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "type": "config",
+          "name": "appsettings",
+          "dependsOn": [
+            "[concat('Microsoft.Web/sites/',variables('primaryWebAppName'))]",
+            "MSDeploy"
+          ],
+          "properties": {
+            "TenantName": "[parameters('WTTEnvironmentApplicationName')]",
+            "TenantEventType": "[parameters('tenantEventType')]",
+            "TenantPrimaryDatabaseServer": "[variables('primarysqlserverName')]",
+            "TenantSecondaryDatabaseServer": "[variables('secondarysqlserverName')]",
+            "TenantDatabase1": "[variables('customer1Db')]",
+            "TenantDatabase2": "[variables('customer2Db')]",
+            "DatabaseUser": "[parameters('sqlserverAdminLogin')]",
+            "DatabasePassword": "[parameters('sqlserverAdminLoginPassword')]",
+            "RunningInDev": "false",
+            "SearchServiceName": "[variables('searchServicesName')]",
+            "SearchServiceKey": "[parameters('SearchServicePrimaryManagementKey')]",
+            "DocumentDbUri": "[concat(reference(resourceId('microsoft.documentdb/databaseaccounts', variables('documentDBName').documentEndpoint)))]",
+            "DocumentDbKey": "[concat(reference(resourceId('microsoft.documentdb/databaseaccounts', variables('documentDBName').listkeys.primaryMasterKey)))]",
+            "DocumentDbDatabaseName": "iotrawdata",
+            "DocumentDbCollectionName": "iotrawdata",
+            "powerbiSigningKey": "[concat(reference(resourceId('microsoft.PowerBI/WorkspaceCollections', variables('powerBIName').listkeys.key1)))]",
+            "powerbiWorkspaceCollection": "[parameters('powerbiWorkspaceCollection')]",
+            "powerbiWorkspaceId": "[parameters('powerbiWorkspaceId')]",
+            "seatMapReportID": "[parameters('seatMapReportID')]",
+            "EventHubName": "[parameters('wttEventHubName')]",
+            "Microsoft.ServiceBus.ConnectionString": "[parameters('wttServiceBusName')]",
+            "reportName": "[parameters('reportname')]"
+          }
+        }
+      ]
     },
     {
       "name": "[parameters('secondaryWebAppName')]",
       "type": "Microsoft.Web/serverfarms",
-      "location": "[resourceGroup().location]",
+      "location": "[concat(reference(resourceId('Microsoft.Storage/StorageAccounts', variables('storageAccountName').secondaryLocation)))]",
       "apiVersion": "2014-06-01",
       "dependsOn": [],
       "tags": {
@@ -599,7 +599,7 @@
     {
       "name": "[variables('secondaryWebAppName')]",
       "type": "Microsoft.Web/sites",
-      "location": "[resourceGroup().location]",
+      "location": "[concat(reference(resourceId('Microsoft.Storage/StorageAccounts', variables('storageAccountName').secondaryLocation)))]",
       "apiVersion": "2015-08-01",
       "dependsOn": [
         "[concat('Microsoft.Web/serverfarms/', parameters('secondaryWebAppName'))]"
@@ -611,7 +611,54 @@
       "properties": {
         "name": "[variables('secondaryWebAppName')]",
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms/', parameters('secondaryWebAppName'))]"
-      }
+      },
+      "resources": [
+        {
+          "name": "MSDeploy",
+          "type": "extensions",
+          "location": "[variables('location')]",
+          "apiVersion": "2015-08-01",
+          "dependsOn": [
+            "[concat('Microsoft.Web/sites/',variables('wtpTenantRegistrationApp'))]"
+          ],
+          "properties": {
+            "packageUri": "[variables('wtpTenantRegistrationAppPackageUri')]"
+          }
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "type": "config",
+          "name": "appsettings",
+          "dependsOn": [
+            "[concat('Microsoft.Web/sites/',variables('wtpTenantRegistrationApp'))]",
+            "MSDeploy"
+          ],
+          "properties": {
+            "TenantName": "[parameters('WTTEnvironmentApplicationName')]",
+            "TenantEventType": "[parameters('TenantEventType')]",
+            "TenantPrimaryDatabaseServer": "[parameters('AzureSqlServerPrimaryName')]",
+            "TenantSecondaryDatabaseServer": "[parameters('AzureSqlServerSecondaryName')]",
+            "TenantDatabase1": "[parameters('AzureSqlDatabase1Name')]",
+            "TenantDatabase2": "[parameters('AzureSqlDatabase2Name')]",
+            "DatabaseUser": "[parameters('AdminUserName')]",
+            "DatabasePassword": "[parameters('AdminPassword')]",
+            "RunningInDev": "false",
+            "SearchServiceName": "[parameters('SearchName')]",
+            "SearchServiceKey": "[parameters('SearchServicePrimaryManagementKey')]",
+            "DocumentDbUri": "[variables('docDBName')]",
+            "DocumentDbKey": "[parameters('documentDbPrimaryKey')]",
+            "DocumentDbDatabaseName": "[parameters('documentDbDatabase')]",
+            "DocumentDbCollectionName": "[parameters('documentDbCollection')]",
+            "powerbiSigningKey": "[parameters('powerbiSigningKey')]",
+            "powerbiWorkspaceCollection": "[parameters('powerbiWorkspaceCollection')]",
+            "powerbiWorkspaceId": "[parameters('powerbiWorkspaceId')]",
+            "seatMapReportID": "[parameters('seatMapReportID')]",
+            "EventHubName": "[parameters('wttEventHubName')]",
+            "Microsoft.ServiceBus.ConnectionString": "[parameters('wttServiceBusName')]",
+            "reportName": "[parameters('reportname')]"
+          }
+        }
+      ]
     },
     {
       "apiVersion": "2015-11-01",

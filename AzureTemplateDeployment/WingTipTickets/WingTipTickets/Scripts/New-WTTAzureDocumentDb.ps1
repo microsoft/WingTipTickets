@@ -19,7 +19,12 @@ function New-WTTAzureDocumentDb
 
 		# DocumentDb Name
 		[Parameter(Mandatory=$false)]
-		$wttDocumentDbName
+		$wttDocumentDbName,
+
+		# DocumentDb Location
+		[Parameter(Mandatory=$true, HelpMessage="Please specify the primary location for your WTT Environment ('West US 2', 'UK West', 'UK South', 'East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast', 'Canada Central', 'Canada East')?")]
+		[ValidateSet('West US 2', 'UK West', 'UK South', 'East US', 'West US', 'South Central US', 'North Central US', 'Central US', 'East Asia', 'West Europe', 'East US 2', 'Japan East', 'Japan West', 'Brazil South', 'North Europe', 'Southeast Asia', 'Australia East', 'Australia Southeast', 'Canada Central', 'Canada East', 'EastUS', 'WestUS', 'SouthCentralUS', 'NorthCentralUS', 'CentralUS', 'EastAsia', 'WestEurope', 'EastUS2', 'JapanEast', 'JapanWest', 'BrazilSouth', 'NorthEurope', 'SoutheastAsia', 'AustraliaEast', 'AustraliaSoutheast', 'CanadaCentral', 'CanadaEast', 'UKSouth', 'UKWest', 'WestUS2')]
+		$wttDocumentDbLocation
 	)
 
 	try
@@ -27,7 +32,27 @@ function New-WTTAzureDocumentDb
         #load System.Web Assembly
         $systemWebAssembly = [reflection.assembly]::loadwithpartialname("system.web")
 
-		#
+		#Register DocumentDB provider service
+		Do{
+            $status = (Get-AzureRmResourceProvider -ProviderNamespace Microsoft.DocumentDb).RegistrationState
+		    if ($status -ne "Registered")
+		    {
+			    Register-AzureRmResourceProvider -ProviderNamespace Microsoft.DocumentDb
+		    }
+        }until($status -eq "Registered")
+
+		# Create DocumentDb Account
+        New-AzureRmResource -resourceName $WTTDocumentDbName -Location $WTTDocumentDbLocation -ResourceGroupName $azureResourceGroupName -ResourceType "Microsoft.DocumentDb/databaseAccounts" -ApiVersion 2015-04-08 -PropertyObject @{"name" = $WTTDocumentDbName; "databaseAccountOfferType" = "Standard"} -force
+		$docDBDeployed = (Get-AzureRmResource -ResourceName $WTTDocumentDbName -ResourceGroupName $azureResourceGroupName -ExpandProperties -ResourceType "Microsoft.DocumentDb/databaseAccounts").Properties.provisioningstate
+        WriteLabel("Creating DocumentDB")
+        if($docDBDeployed -eq "Succeeded")
+        {
+            WriteValue("Successful")
+        }
+        Else
+        {
+            WriteError("Failed")
+        }
         $documentDBPrimaryKey = (Invoke-AzureRmResourceAction -ResourceGroupName $azureResourceGroupName -ResourceName $wttDocumentDbName -ResourceType Microsoft.DocumentDb/databaseAccounts -Action listkeys -Force).primarymasterkey
        
         #Create DocDB Database
