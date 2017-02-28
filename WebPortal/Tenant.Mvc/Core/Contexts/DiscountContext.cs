@@ -17,7 +17,7 @@ namespace Tenant.Mvc.Core.Contexts
         {
             var discountedSeatModels = new List<DiscountedSeatModel>();
 
-            var sqlQuery = $@"SELECT * FROM Discount WHERE SeatSectionId = {seatSectionId} AND SeatNumber = {seatNumber}";
+            var sqlQuery = $@"SELECT * FROM Discount WHERE SeatSectionId = {seatSectionId} AND SeatNumber = {seatNumber} ORDER BY DiscountId DESC";
 
             using (var cmd = new SqlCommand(sqlQuery, WingtipTicketApp.CreateTenantConnectionDatabase1()))
             {
