@@ -70,19 +70,19 @@ function New-WTTPowerBI
             }
         }until($status.RegistrationState -eq "Registered")
 
-        WriteLabel("Checking for Azure Power BI Service $AzurePowerBIName")
+        Write-Host("Checking for Azure Power BI Service $AzurePowerBIName")
         
         $powerBIService = Find-AzureRmResource -ResourceGroupNameContains $azureResourceGroupName -ResourceType "Microsoft.PowerBI/workspaceCollections" -ResourceNameContains $AzurePowerBIName -ExpandProperties -ErrorAction SilentlyContinue
         if($powerBIService.Name -eq $AzurePowerBIName)
         {
-            WriteValue("Failed")
-            WriteError("$AzurePowerBIName Power BI service already exists.")
+            Write-Host("Failed")
+            Write-Host("$AzurePowerBIName Power BI service already exists.")
             Remove-AzureRmResource -ResourceName $AzurePowerBIName -ResourceType "Microsoft.PowerBI/workspaceCollections" -ResourceGroupName $azureResourceGroupName -ErrorAction SilentlyContinue -force
             Start-Sleep -Seconds 300
         }
         else
         {
-            WriteValue("Success")
+            Write-Host("Success")
         }
 
         
@@ -120,7 +120,7 @@ function New-WTTPowerBI
                 $authHeader = $authResult.CreateAuthorizationHeader()
                 $headers = @{"Authorization" = $authHeader}  
             
-                WriteLabel("Deploying Power BI Workspace Collection")
+                Write-Host("Deploying Power BI Workspace Collection")
                 #create Power BI Workspace Collection
                 $powerBIWorkspaceCollectionURL =  "https://management.azure.com/subscriptions/$azureSubscriptionID/resourceGroups/$azureResourceGroupName/providers/Microsoft.PowerBI/workspaceCollections/$azurePowerBIWorkspaceCollection"+"?api-version=2016-01-29"
                 $powerBIWorkspaceCollection = "{
@@ -134,11 +134,11 @@ function New-WTTPowerBI
                 $powerBIWorkspaceCollectionCreate =  Invoke-RestMethod -Uri $powerBIWorkspaceCollectionURL -Method Put -Body $powerBIWorkspaceCollection -ContentType "application/json; charset=utf-8" -Headers $headers
                 If($powerBIWorkspaceCollectionCreate.properties.provisioningState -eq "Succeeded")
                 {
-                    WriteValue("Successful")
+                    Write-Host("Successful")
                 }
                 Else
                 {
-                    WriteError("Unable to find Power BI Workspace Collection")
+                    Write-Host("Unable to find Power BI Workspace Collection")
                 }
                            
                 #Get Power BI Workspace Collection Key
@@ -153,7 +153,7 @@ function New-WTTPowerBI
             }
             Try
             {        
-                WriteLabel("Deploying Power BI Workspace")
+                Write-Host("Deploying Power BI Workspace")
 
                 #Create Power BI Workspace
                 $powerBIWorkspaceURL = "https://api.powerbi.com/v1.0/collections/$azurePowerBIWorkspaceCollection/workspaces"
@@ -164,11 +164,11 @@ function New-WTTPowerBI
 
                 If(!$powerBIWorkspaceGet.WorkspaceId)
                 {
-                    WriteValue("Successful")
+                    Write-Host("Successful")
                 }
                 Else
                 {
-                    WriteError("Unable to find Power BI Workspace")
+                    Write-Host("Unable to find Power BI Workspace")
                 }
 
                 # Get the Power BI workspace ID
@@ -191,7 +191,7 @@ function New-WTTPowerBI
 
                 $header = @{authorization = "AppKey $pbikey"}
 
-                WriteLabel("Uploading Power BI Report $report")
+                Write-Host("Uploading Power BI Report $report")
                 
                 # Configure settings to upload Power BI Report
                 $fileBin = [IO.File]::ReadAllBytes($report)                                                                                                  
@@ -215,11 +215,11 @@ function New-WTTPowerBI
                   
                 If($powerBIReportsGet.value.name -match $powerBIWorkspace)
                 {
-                    WriteValue("Successful")
+                    Write-Host("Successful")
                 }
                 Else
                 {
-                    WriteError("Unable to find Power BI Report")                        
+                    Write-Host("Unable to find Power BI Report")                        
                 }
                 
                 # Get Power BI report Import ID
@@ -233,7 +233,7 @@ function New-WTTPowerBI
                                 
                 if($powerBIWorkspace -clike 'TicketSales*')
                 {       
-                    WriteLabel("Setting Power BI Report $report Connection String")
+                    Write-Host("Setting Power BI Report $report Connection String")
                     #Get Data Sources Gateway
                     $powerBIGatewayDataSourcesGetURL = "https://api.powerbi.com/v1.0/collections/$azurePowerBIWorkspaceCollection/workspaces/$powerBIWorkspaceID/datasets/$powerBIDataSetID/Default.GetBoundGatewayDatasources"
                     $powerBIGatewayDataSourcesGet = Invoke-RestMethod -Uri $powerBIGatewayDataSourcesGetURL -Method GET -ContentType "application/json" -Headers $header
@@ -266,11 +266,11 @@ function New-WTTPowerBI
                     $report = $powerBIGetReport.value | Where-Object {$_.name -eq $powerBIWorkspace}
                     if($report) 
                     {
-                        WriteValue("Successful")
+                        Write-Host("Successful")
                     }
                     else
                     {
-                        WriteError("Failed")
+                        Write-Host("Failed")
                     }
 
                     # Get Dashboard Report ID
@@ -284,7 +284,7 @@ function New-WTTPowerBI
                 # Set Seating Chart Database Connection
                 else
                 {
-                    WriteLabel("Setting Power BI Report $report Connection String")
+                    Write-Host("Setting Power BI Report $report Connection String")
                     #Get Data Sources Gateway
                     $powerBIGatewayDataSourcesGetURL = "https://api.powerbi.com/v1.0/collections/$azurePowerBIWorkspaceCollection/workspaces/$powerBIWorkspaceID/datasets/$powerBIDataSetID/Default.GetBoundGatewayDatasources"
                     $powerBIGatewayDataSourcesGet = Invoke-RestMethod -Uri $powerBIGatewayDataSourcesGetURL -Method GET -ContentType "application/json" -Headers $header
@@ -323,11 +323,11 @@ function New-WTTPowerBI
                     
                 if($report)
                 {
-                    WriteValue("Successful")
+                    Write-Host("Successful")
                 }
                 else
                 {
-                    WriteError("Failed")
+                    Write-Host("Failed")
                 }
             }
             Catch

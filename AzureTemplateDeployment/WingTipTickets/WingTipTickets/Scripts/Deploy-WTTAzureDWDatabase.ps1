@@ -91,7 +91,7 @@ function Deploy-WTTAzureDWDatabase
 		}
 		Catch
 		{
-			WriteError("Azure SQL Server could not be found")
+			Write-Host("Azure SQL Server could not be found")
 			$dbServerExists = $false
 			$dbExists = $false
 		}
@@ -101,22 +101,21 @@ function Deploy-WTTAzureDWDatabase
 		{
 			Try
 			{
-				LineBreak
-				WriteLabel("Checking for DataWarehouse Database")
+				Write-Host("Checking for DataWarehouse Database")
 				$azureSqlDatabase = Find-AzureRmResource -ResourceType "Microsoft.Sql/servers/databases" -ResourceNameContains $azureDWDatabaseName -ResourceGroupNameContains $azureResourceGroupName
 
 				if ($azureSqlDatabase -ne $null)
 				{
 					$dbExists = $true
-					WriteValue("Found")
+					Write-Host("Found")
 				}
 				else
 				{
-                    WriteValue("Not Found")
+                    Write-Host("Not Found")
                     $dbExists = $false
                     
                     # Create database using 2000 units
-					WriteLabel("Creating database '$DWDatabaseName'")
+					Write-Host("Creating database '$DWDatabaseName'")
 					
                     $dwExist = 1
                     $retryCount = 0
@@ -126,18 +125,18 @@ function Deploy-WTTAzureDWDatabase
                         $azureDWExist = New-AzureRMSqlDatabase -RequestedServiceObjectiveName "DW2000" -ServerName $azureSqlServerName -DatabaseName $azureDWDatabaseName -Edition $DatabaseEdition -ResourceGroupName $azureResourceGroupName -Verbose:$false
                         if(!$azureDWExist)
                         {
-					        WriteValue("Unsuccessful, Retrying")
+					        Write-Host("Unsuccessful, Retrying")
                             $dwExist = 1
                             Start-Sleep -Seconds 60
                         }
                         else
                         {
-                            WriteValue("Successful")
+                            Write-Host("Successful")
                             $dwExist = 2
                         }
                         if($retryCount -eq 3)
                         {
-                            WriteError("Unable to create Azure DW Database")
+                            Write-Host("Unable to create Azure DW Database")
                             $dwExist = 2
                             return
                         }
@@ -148,11 +147,11 @@ function Deploy-WTTAzureDWDatabase
 					    # Set working location
 					    Push-Location -StackName wtt
 					    # Create Database tables
-					    ForEach($file in Get-ChildItem ".\Scripts\Datawarehouse" -Filter *.sql)
+					    ForEach($file in Get-ChildItem ".\Resources\Datawarehouse" -Filter *.sql)
 					    {
-						    WriteLabel("Executing Script '$file'")
-						    $result = Invoke-Sqlcmd -Username "$adminUserName@$azureSqlServerName" -Password $adminPassword -ServerInstance $DWServer -Database $azureDWDatabaseName -InputFile ".\Scripts\Datawarehouse\$file" -QueryTimeout 0 -SuppressProviderContextWarning -IgnoreProviderContext -ErrorAction SilentlyContinue
-						    WriteValue("Successful")
+						    Write-Host("Executing Script '$file'")
+						    $result = Invoke-Sqlcmd -Username "$adminUserName@$azureSqlServerName" -Password $adminPassword -ServerInstance $DWServer -Database $azureDWDatabaseName -InputFile ".\Resources\Datawarehouse\$file" -QueryTimeout 0 -SuppressProviderContextWarning -IgnoreProviderContext -ErrorAction SilentlyContinue
+						    Write-Host("Successful")
                             Start-Sleep -Seconds 60
 					    }
 
@@ -160,15 +159,15 @@ function Deploy-WTTAzureDWDatabase
 					    Pop-Location -StackName wtt
 
 					    # Downgrade to 100 units
-					    WriteLabel("Downgrading DataWarehouse database to 100 Units")
+					    Write-Host("Downgrading DataWarehouse database to 100 Units")
 					    $null = Set-AzureRmSqlDatabase -RequestedServiceObjectiveName "DW100" -ServerName $azureSqlServerName -DatabaseName $azureDWDatabaseName -ResourceGroupName $azureResourceGroupName -ErrorAction SilentlyContinue
-					    WriteValue("Successful")
+					    Write-Host("Successful")
                         Start-Sleep -s 180
                     }
 			}
 			Catch
 			{
-				WriteError($Error)
+				Write-Host($Error)
 				$dbExists = $false
 			}
 		}

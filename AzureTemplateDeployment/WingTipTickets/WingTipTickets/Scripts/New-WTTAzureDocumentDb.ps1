@@ -44,14 +44,14 @@ function New-WTTAzureDocumentDb
 		# Create DocumentDb Account
         New-AzureRmResource -resourceName $WTTDocumentDbName -Location $WTTDocumentDbLocation -ResourceGroupName $azureResourceGroupName -ResourceType "Microsoft.DocumentDb/databaseAccounts" -ApiVersion 2015-04-08 -PropertyObject @{"name" = $WTTDocumentDbName; "databaseAccountOfferType" = "Standard"} -force
 		$docDBDeployed = (Get-AzureRmResource -ResourceName $WTTDocumentDbName -ResourceGroupName $azureResourceGroupName -ExpandProperties -ResourceType "Microsoft.DocumentDb/databaseAccounts").Properties.provisioningstate
-        WriteLabel("Creating DocumentDB")
+        Write-Host("Creating DocumentDB")
         if($docDBDeployed -eq "Succeeded")
         {
-            WriteValue("Successful")
+            Write-Host("Successful")
         }
         Else
         {
-            WriteError("Failed")
+            Write-Host("Failed")
         }
         $documentDBPrimaryKey = (Invoke-AzureRmResourceAction -ResourceGroupName $azureResourceGroupName -ResourceName $wttDocumentDbName -ResourceType Microsoft.DocumentDb/databaseAccounts -Action listkeys -Force).primarymasterkey
        
@@ -61,7 +61,7 @@ function New-WTTAzureDocumentDb
         {
 
             # Check if DocDB Database exists
-            WriteLabel("Checking if DocDB Database $item exists")
+            Write-Host("Checking if DocDB Database $item exists")
             $method = "Get"
             $resourceId = ""
             $resourceType = "dbs"
@@ -78,7 +78,7 @@ function New-WTTAzureDocumentDb
 
             if($getIOTDatabaseExist.databases.id -like $item)
             {
-                WriteValue("Exists, Deleting")
+                Write-Host("Exists, Deleting")
                 $method = "Delete"
                 $resourceId = "dbs/$item"
                 $resourceType = "dbs"
@@ -95,10 +95,10 @@ function New-WTTAzureDocumentDb
             }
             else
             {
-                WriteValue("Doesn't exist")
+                Write-Host("Doesn't exist")
             }
             
-            WriteLabel("Creating DocDB Database $item")
+            Write-Host("Creating DocDB Database $item")
             $method = "Post"
             $resourceId = ""
             $resourceType = "dbs"
@@ -132,11 +132,11 @@ function New-WTTAzureDocumentDb
             {
                 if($db -like $item)
                 {
-                    WriteValue "Successful"
+                    Write-Host "Successful"
                 }
             }
             
-            WriteLabel("Creating DocDB Database Collection $item")
+            Write-Host("Creating DocDB Database Collection $item")
             #Create DocDB Database Collection       
             $method = "Post"
             $resourceId = "dbs/$item"
@@ -198,14 +198,14 @@ function New-WTTAzureDocumentDb
             $getIOTDatabaseCollection = Invoke-RestMethod -Uri $getIOTDatabaseCollectionURL -Method Get -Headers $header
             if($getIOTDatabaseCollection.DocumentCollections.id -like $item)
             {
-                WriteValue("Successful")
+                Write-Host("Successful")
             }
         }
 	}
 	Catch
 	{
-		WriteValue("Failed")
-		WriteError($Error)
+		Write-Host("Failed")
+		Write-Host($Error)
 	}
 }
 function createAuthToken ($method, $resourceId, $resourceType, $xdate, $masterKey)

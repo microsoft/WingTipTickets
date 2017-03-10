@@ -96,15 +96,15 @@ function New-WTTAzureSearchService
 			    }
             }Until($status -eq "Registered")
 
-            WriteLabel("Checking for Azure Search Service $wttEnvironmentApplicationName")
+            Write-Host("Checking for Azure Search Service $wttEnvironmentApplicationName")
             $searchExist = $true
             Do
             {
                 $listSearchService = Find-AzureRmResource -ResourceGroupNameContains $azureResourceGroupName -ResourceType Microsoft.Search/searchServices -ExpandProperties
                 if($listSearchService.Name -eq $wttEnvironmentApplicationName)
                 {
-                    WriteValue("Failed")
-                    WriteError("$wttEnvironmentApplicationName Search Service already exists.")
+                    Write-Host("Failed")
+                    Write-Host("$wttEnvironmentApplicationName Search Service already exists.")
                     $searchServiceExists = (Find-AzureRmResource -ResourceType "Microsoft.Search" -ResourceNameContains $wttEnvironmentApplicationName -ResourceGroupNameContains $azureResourceGroupName -ExpandProperties).properties.state
                     if($searchServiceExists -eq "Ready")
                     {
@@ -118,7 +118,7 @@ function New-WTTAzureSearchService
                 }
                 else
                 {
-                    WriteValue("Success")
+                    Write-Host("Success")
                     $searchExist = $false
                 }
             }while($searchExist-eq $true)
@@ -131,7 +131,7 @@ function New-WTTAzureSearchService
 				$null = $listSearchServicesLocation.Add($location)
 			}
             
-            WriteLabel("Deploying Azure Search Service $wttEnvironmentApplicationName")
+            Write-Host("Deploying Azure Search Service $wttEnvironmentApplicationName")
             $searchServiceSku = @((Find-AzureRmResource -ResourceType Microsoft.Search/searchServices -ExpandProperties).sku.name)
             if($searchServiceSku -like "free")
             {
@@ -143,7 +143,7 @@ function New-WTTAzureSearchService
                         $newSearchServiceExists = (Find-AzureRmResource -ResourceType "Microsoft.Search" -ResourceNameContains $wttEnvironmentApplicationName -ExpandProperties).properties.state
                         if($newSearchServiceExists -eq "Ready")
                         {
-                            WriteValue("Success")
+                            Write-Host("Success")
                         }                 
                     }
                     catch
@@ -162,7 +162,7 @@ function New-WTTAzureSearchService
                         $newSearchServiceExists = (Find-AzureRmResource -ResourceType "Microsoft.Search" -ResourceNameContains $wttEnvironmentApplicationName -ExpandProperties).properties.state
                         if($newSearchServiceExists -eq "Ready")
                         {
-                            WriteValue("Success")
+                            Write-Host("Success")
                         }       
                     }
                     catch
@@ -239,12 +239,12 @@ function New-WTTAzureSearchService
 			# Create indexer
 			$createSearchServiceIndexer = Invoke-RestMethod -Uri $azureSearchServiceIndexerURL -Method "POST" -Body $newSearchServiceIndexerJsonBody -Headers $headers -ContentType "application/json"
             
-            WriteValue("Success")
+            Write-Host("Success")
 			
 		}
 		Catch
 		{
-			WriteError($Error)
+			Write-Host($Error)
 		}
 	}
 }

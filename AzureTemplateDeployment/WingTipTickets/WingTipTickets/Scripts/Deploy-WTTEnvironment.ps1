@@ -27,7 +27,8 @@ function Deploy-WTTEnvironment
 	## Variables
 	$azureResourceGroupName = $WTTEnvironmentApplicationName
 	$azurePowerBIWorkspaceCollection = $WTTEnvironmentApplicationName
-	$azuresearchservicename = $wttenvironmentapplicationname.substring(0,60)
+	$azureStorageAccountName = $WTTEnvironmentApplicationName
+	$azuresearchservicename = $wttenvironmentapplicationname
 	$azureDocumentDbName = $wTTEnvironmentApplicationName
 	$azureSqlServerPrimaryName = $wTTEnvironmentApplicationName + 'primary'
 	$azureSqlServerSecondaryName = $wTTEnvironmentApplicationName + 'secondary'
@@ -38,7 +39,10 @@ function Deploy-WTTEnvironment
 	$adminPassword = "P@ssword1"
 	$path = (Get-Item -Path ".\" -Verbose).FullName + "\Templates"
 	$DeployWTTTemplateFile = "$path\azuredeploy.json"
-	$DeployWTTParameterFile = "$path\azuredeploy.parameters.json"
+	$DeployWebAppTemplateFile = "$path\azuredeploy1.json"
+	
+	Get-ChildItem -Path $localPath -Filter *.ps1 | Unblock-File
+	Get-ChildItem -Path $localPath -Filter *.ps1 | ForEach { . $_.FullName }
 
 	## Register needed Azure Resource Providers
 	$resourceProviders = @("microsoft.sql", "microsoft.web");
@@ -54,15 +58,29 @@ function Deploy-WTTEnvironment
 	if(!$resourceGroup)
 	{
 		Write-Host "Resource group '$WTTEnvironmentApplicationName' does not exist. To create a new resource group, please enter a location.";
-		if(!$resourceGroupLocation) {
-			$resourceGroupLocation = Read-Host "resourceGroupLocation";
+		if(!$WTTEnvironmentLocation) {
+			$WTTEnvironmentLocation = Read-Host "resourceGroupLocation";
 		}
-		Write-Host "Creating resource group '$WTTEnvironmentApplicationName' in location '$resourceGroupLocation'";
-		New-AzureRmResourceGroup -Name $WTTEnvironmentApplicationName -Location $resourceGroupLocation
+		Write-Host "Creating resource group '$WTTEnvironmentApplicationName' in location '$WTTEnvironmentLocation'";
+		New-AzureRmResourceGroup -Name $WTTEnvironmentApplicationName -Location $WTTEnvironmentLocation
 	}
 	else{
 		Write-Host "Using existing resource group '$WTTEnvironmentApplicationName'";
 	}
+
+	$azureDocumentDBService = New-WTTAzureDocumentDb -azureResourceGroupName $azureResourceGroupName -WTTDocumentDbName $azureDocumentDbName -WTTDocumentDbLocation $WTTEnvironmentLocation
+
+	# create tenant database by template
+	if(Test-Path $DeployWTTTemplateFile)
+    {
+		New-AzureRmResourceGroupDeployment -TemplateFile $DeployWTTTemplateFile -ResourceGroupName $azureResourceGroupName -wttEnvironmentApplicationName $WTTEnvironmentApplicationName
+	}
+	else
+	{
+		Write-Host "Unable to locate $DeployWTTTemplateFile"
+	}
+
+	Start-Sleep -Seconds 600
 
 	$azurePowerBILocation =
             Switch ($WTTEnvironmentLocation)
@@ -99,19 +117,19 @@ function Deploy-WTTEnvironment
 
 	$azuresearchservice = new-wttazuresearchservice -wttenvironmentapplicationname $wttenvironmentapplicationname -azureResourceGroupName $azureResourceGroupName -azuresearchservicelocation $WTTEnvironmentLocation -AzureSqlServerName $azureSqlServerPrimaryName -adminUserName $adminUserName -adminPassword $adminPassword -AzureSqlDatabaseName $AzureSqlDatabaseName
 	start-sleep -s 30
-		
-	$azureDocumentDBService = New-WTTAzureDocumentDb -azureResourceGroupName $azureResourceGroupName -WTTDocumentDbName $azureDocumentDbName -WTTDocumentDbLocation $WTTEnvironmentLocation
 
 	Deploy-WTTAzureDWDatabase -azureResourceGroupName $azureResourceGroupName -azureSqlServerName $azureSqlServerPrimaryName -DatabaseEdition "DataWarehouse" -adminUserName $adminUserName -adminPassword $adminPassword -azureDWDatabaseName $AzureSqlDWDatabaseName
-		
+
+	$secondaryLocation = (Get-AzureRMStorageAccount -ResourceGroupName $azureResourceGroupName -StorageAccountName $azureStorageAccountName).SecondaryLocation
+	$searchServicePrimaryManagementKey = (Invoke-AzureRmResourceAction -ResourceGroupName $azureResourceGroupName -ResourceName $azuresearchservicename -ResourceType Microsoft.Search/searchServices -Action listAdminkeys -Force).PrimaryKey
+	$seatMapReportId = $pbiOutPut.seatMapReportId
 	# create tenant database by template
-	if(Test-Path $DeployWTTTemplateFile)
+	if(Test-Path $DeployWebAppTemplateFile)
 	{
-		New-AzureRmResourceGroupDeployment -TemplateFile $DeployWTTTemplateFile -ResourceGroupName $WTTEnvironmentApplicationName
+		New-AzureRmResourceGroupDeployment -TemplateFile $DeployWebAppTemplateFile -ResourceGroupName $azureResourceGroupName -wttEnvironmentApplicationName $WTTEnvironmentApplicationName -powerbiWorkspaceId $pbiOutPut.powerbiWorkspaceId -seatMapReportID $seatMapReportId -secondaryLocation $secondaryLocation -SearchServiceKey $searchServicePrimaryManagementKey 
 	}
 	else
 	{
-		Write-Host "Unable to locate $DeployWTTTemplateFile"
+		Write-Host "Unable to locate $DeployWebAppTemplateFile"
 	}
-
 }

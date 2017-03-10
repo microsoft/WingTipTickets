@@ -34,7 +34,7 @@
     <None Include="Scripts\New-WTTAzureSearchService.ps1" />
     <None Include="Scripts\New-WTTPowerBI.ps1" />
     <None Include="Templates\azuredeploy.json" />
-    <None Include="Templates\azuredeploy.parameters.json" />
+    <None Include="Templates\azuredeploy1.json" />
   </ItemGroup>
   <Target Name="GetReferenceAssemblyPaths" />
 </Project>

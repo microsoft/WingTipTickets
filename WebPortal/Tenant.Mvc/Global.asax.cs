@@ -23,6 +23,7 @@ namespace WingTipTickets
         public string TenantDatabaseServer { get; set; }
         public string TenantDatabase1 { get; set; }
         public string TenantDatabase2 { get; set; }
+        public string wingtipReporting { get; set; }
 
         // Shared Settings
         public string DatabaseUser { get; set; }
@@ -138,6 +139,7 @@ namespace WingTipTickets
                 TenantDatabaseServer = ConfigurationManager.AppSettings["TenantPrimaryDatabaseServer"].Trim(),
                 TenantDatabase1 = ConfigurationManager.AppSettings["TenantDatabase1"].Trim(),
                 TenantDatabase2 = ConfigurationManager.AppSettings["TenantDatabase2"].Trim(),
+                wingtipReporting = ConfigurationManager.AppSettings["wingtipReporting"].Trim(),
 
                 DatabaseUser = ConfigurationManager.AppSettings["DatabaseUser"].Trim(),
                 DatabasePassword = ConfigurationManager.AppSettings["DatabasePassword"].Trim(),

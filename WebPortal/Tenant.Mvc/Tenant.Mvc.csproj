@@ -754,6 +754,7 @@
     <Content Include="Views\Reports\Index.cshtml" />
     <Content Include="Views\Reports\Upload.cshtml" />
     <Content Include="scripts\powerbi.js.map" />
+    <None Include="Properties\PublishProfiles\gmt195wttprimary - Web Deploy.pubxml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

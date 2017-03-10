@@ -73,7 +73,7 @@ function Start-WTTIOTWebJob
             $web = Invoke-RestMethod -Uri $getWebJobStatus -Method Get -Headers $headers
             if($web.value.properties.status -eq 'Stopped')
             {
-                #create Power BI Workspace Collection
+                #start web job
                 $startwebJob =  "https://web1.appsvcux.ext.azure.com/websites/api/Websites/StartWebJob"
 
                 $body = "{
