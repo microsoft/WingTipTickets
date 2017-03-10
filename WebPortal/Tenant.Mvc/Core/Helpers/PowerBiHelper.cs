@@ -117,6 +117,7 @@ namespace Tenant.Mvc.Core.Helpers
             {
                 // Update DataSet Connection
                 var connectionFormat = "Data source=tcp:{0},1433;initial catalog={1};Persist Security info=True;Encrypt=True;TrustServerCertificate=False";
+                var connectionString = string.Format(connectionFormat, WingtipTicketApp.Config.TenantDatabaseServer, WingtipTicketApp.Config.wingtipReporting); //, WingtipTicketApp.Config.DatabaseUser, WingtipTicketApp.Config.DatabasePassword);
 
                 var connectionParameters = new Dictionary<string, object>
                 {
