@@ -33,7 +33,10 @@
       "type": "string"
     },
     "SearchServiceKey": {
-      "type":  "string"
+      "type": "string"
+    },
+    "eventHubConnectionString": {
+      "type": "string"
     }
   },
   "variables": {
@@ -41,7 +44,7 @@
     "primaryWebAppUri": "https://wttdatacampwestus.blob.core.windows.net/wttwebapps/PrimaryPackage.zip",
     "secondaryWebAppName": "[concat(parameters('wttEnvironmentApplicationName'),'secondary')]",
     "secondaryWebAppUri": "https://wttdatacampwestus.blob.core.windows.net/wttwebapps/SecondaryPackage.zip",
-    "webAppSKU": "Basic",
+    "webAppSKU": "Standard",
     "webAppWorkerSize": "1",
     "customer1Db": "Customer1",
     "customer2Db": "Customer2",
@@ -171,7 +174,7 @@
             "powerbiWorkspaceId": "[parameters('powerbiWorkspaceId')]",
             "seatMapReportID": "[parameters('seatMapReportID')]",
             "EventHubName": "[variables('eventHubName')]",
-            "Microsoft.ServiceBus.ConnectionString": "[listkeys(concat('Microsoft.Eventhub/Namespaces/AuthorizationRules/RootManageSharedAccessKey/',variables('eventHubName')),'2015-08-01').primaryConnectionString]",
+            "Microsoft.ServiceBus.ConnectionString": "[parameters('eventHubConnectionString')]",
             "reportName": "[variables('reportName')]"
           }
         }
@@ -251,7 +254,7 @@
             "powerbiWorkspaceId": "[parameters('powerbiWorkspaceId')]",
             "seatMapReportID": "[parameters('seatMapReportID')]",
             "EventHubName": "[variables('eventHubName')]",
-            "Microsoft.ServiceBus.ConnectionString": "[listkeys(concat('Microsoft.Eventhub/Namespaces/AuthorizationRules/RootManageSharedAccessKey/',variables('eventHubName')),'2015-08-01').primaryConnectionString]",
+            "Microsoft.ServiceBus.ConnectionString": "[parameters('eventHubConnectionString')]",
             "reportName": "[variables('reportName')]"
           }
         }

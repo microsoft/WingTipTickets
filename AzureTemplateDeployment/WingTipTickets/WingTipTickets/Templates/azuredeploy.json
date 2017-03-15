@@ -374,7 +374,7 @@
         "properties": {
           "collation": "[parameters('databaseCollation')]",
           "edition": "Standard",
-          "requestedServiceObjectiveName": "S2"
+          "requestedServiceObjectiveName": "S3"
         },
         "resources": [
           {

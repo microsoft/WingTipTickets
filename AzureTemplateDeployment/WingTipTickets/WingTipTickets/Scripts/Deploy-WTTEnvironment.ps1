@@ -119,14 +119,18 @@ function Deploy-WTTEnvironment
 	start-sleep -s 30
 
 	Deploy-WTTAzureDWDatabase -azureResourceGroupName $azureResourceGroupName -azureSqlServerName $azureSqlServerPrimaryName -DatabaseEdition "DataWarehouse" -adminUserName $adminUserName -adminPassword $adminPassword -azureDWDatabaseName $AzureSqlDWDatabaseName
-
+	start-sleep 30
+	$suspend = Suspend-AzureRMSqlDatabase –ResourceGroupName $azureResourceGroupName –ServerName $azureSqlServerPrimaryName –DatabaseName $AzureSqlDWDatabaseName
 	$secondaryLocation = (Get-AzureRMStorageAccount -ResourceGroupName $azureResourceGroupName -StorageAccountName $azureStorageAccountName).SecondaryLocation
 	$searchServicePrimaryManagementKey = (Invoke-AzureRmResourceAction -ResourceGroupName $azureResourceGroupName -ResourceName $azuresearchservicename -ResourceType Microsoft.Search/searchServices -Action listAdminkeys -Force).PrimaryKey
 	$seatMapReportId = $pbiOutPut.seatMapReportId
+	$eventHubConnectionString = (Invoke-AzureRmResourceAction -ResourceGroupName $azureResourceGroupName -ResourceName $WTTEnvironmentApplicationName -ResourceType Microsoft.EventHub/Namespaces/AuthorizationRules/RootManageSharedAccessKey -Action listKeys -Force -ApiVersion 2015-08-01)
+	$eventHubString = $eventHubConnectionString.split(';')
+
 	# create tenant database by template
 	if(Test-Path $DeployWebAppTemplateFile)
 	{
-		New-AzureRmResourceGroupDeployment -TemplateFile $DeployWebAppTemplateFile -ResourceGroupName $azureResourceGroupName -wttEnvironmentApplicationName $WTTEnvironmentApplicationName -powerbiWorkspaceId $pbiOutPut.powerbiWorkspaceId -seatMapReportID $seatMapReportId -secondaryLocation $secondaryLocation -SearchServiceKey $searchServicePrimaryManagementKey 
+		New-AzureRmResourceGroupDeployment -TemplateFile $DeployWebAppTemplateFile -ResourceGroupName $azureResourceGroupName -wttEnvironmentApplicationName $WTTEnvironmentApplicationName -powerbiWorkspaceId $pbiOutPut.powerbiWorkspaceId -seatMapReportID $seatMapReportId -secondaryLocation $secondaryLocation -SearchServiceKey $searchServicePrimaryManagementKey  -eventHubConnectionString $eventHubString[0]
 	}
 	else
 	{
