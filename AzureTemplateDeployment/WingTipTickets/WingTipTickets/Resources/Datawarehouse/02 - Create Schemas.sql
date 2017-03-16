@@ -1,0 +1,9 @@
+IF (SCHEMA_ID('asb') IS NULL) 
+BEGIN
+	EXEC ('CREATE SCHEMA [asb]')
+END;
+
+IF (SCHEMA_ID('stage') IS NULL) 
+BEGIN
+	EXEC ('CREATE SCHEMA [stage]')
+END;
