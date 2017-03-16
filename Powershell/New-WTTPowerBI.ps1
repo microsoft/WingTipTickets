@@ -41,6 +41,11 @@ function New-WTTPowerBI
 		[Parameter(Mandatory=$true)]
 		[String]
 		$azureSqlDatabaseName,
+        
+        # Azure Tenant SQL Database Name
+		[Parameter(Mandatory=$true)]
+		[String]
+		$azureSqlReportDatabaseName,
 
 		# Azure Power BI Location
 		[Parameter(Mandatory=$true)]
@@ -112,7 +117,7 @@ function New-WTTPowerBI
             # Set Authority to Azure AD Tenant
             $authority = "https://login.windows.net/$tenantId"
             # Create Authentication Context tied to Azure AD Tenant
-            $authContext = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext" -ArgumentList $authority            
+            $authContext = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext" -ArgumentList $authority         
 
             Try
             {
@@ -187,6 +192,7 @@ function New-WTTPowerBI
                     'WTTReports1.pbix' {'TicketSalesDashboard'}                  
                     'WTTReports2.pbix' {'TicketSalesQuantity'}
                     'seatingMap.pbix' {'Seatingmap'}
+                    'CompleteSeatMap.pbix' {'VenueSales'}
                 }
 
                 $header = @{authorization = "AppKey $pbikey"}
@@ -241,7 +247,7 @@ function New-WTTPowerBI
                     #Post All connections
                     $powerBISetAllConnectionsURL = "https://api.powerbi.com/v1.0/collections/$azurePowerBIWorkspaceCollection/workspaces/$powerBIWorkspaceID/datasets/$powerBIDataSetID/Default.SetAllConnections"
                     $powerBISetAllConnectionsConnString = "{
-                                                            ""connectionString"": ""Data source=tcp:$AzureSqlServerName.database.windows.net,1433;initial catalog=CustomerDW;Persist Security info=True;Encrypt=True;TrustServerCertificate=False""
+                                                            ""connectionString"": ""Data source=tcp:$AzureSqlServerName.database.windows.net,1433;initial catalog=$azureSqlReportDatabaseName;Persist Security info=True;Encrypt=True;TrustServerCertificate=False""
                                                             }"
                     $powerBISetAllConnectionsPost = Invoke-RestMethod -Uri $powerBISetAllConnectionsURL -Method POST -ContentType "application/json" -Body $powerBISetAllConnectionsConnString -Headers $header
                 
@@ -311,24 +317,23 @@ function New-WTTPowerBI
                                                 }
                                             }"
 
-                    $powerBIDataSourcesPatch = Invoke-RestMethod -Uri $powerBIDataSourcesPatchURL -Method PATCH -ContentType "application/json" -Body $powerBIDataSourcesPatchBody -Headers $header
-
-                    # Get Seating Chart Report ID
-                    $powerBIGetReportURL = "https://api.powerbi.com/v1.0/collections/$azurePowerBIWorkspaceCollection/workspaces/$powerBIWorkspaceID/reports"
-                    $powerBIGetReport = Invoke-RestMethod -Uri $powerBIGetReportURL -Method GET -ContentType "application/json" -Headers $header
-                    $report = $powerBIGetReport.value | Where-Object {$_.name -eq "seatingmap"}
-                    $reportid = $report.id
-                    $pbiOutPut.Add('SeatMapReportId',$reportid)
-                    
-                        if($report)
-                        {
-                            WriteValue("Successful")
-                        }
-                        else
-                        {
-                            WriteError("Failed")
-                        }
+                    $powerBIDataSourcesPatch = Invoke-RestMethod -Uri $powerBIDataSourcesPatchURL -Method PATCH -ContentType "application/json" -Body $powerBIDataSourcesPatchBody -Headers $header                    
                     }          
+                }
+                # Get Seating Chart Report ID
+                $powerBIGetReportURL = "https://api.powerbi.com/v1.0/collections/$azurePowerBIWorkspaceCollection/workspaces/$powerBIWorkspaceID/reports"
+                $powerBIGetReport = Invoke-RestMethod -Uri $powerBIGetReportURL -Method GET -ContentType "application/json" -Headers $header
+                $report = $powerBIGetReport.value | Where-Object {$_.name -eq "seatingmap"}
+                $reportid = $report.id
+                $pbiOutPut.Add('SeatMapReportId',$reportid)
+                    
+                if($report)
+                {
+                    WriteValue("Successful")
+                }
+                else
+                {
+                    WriteError("Failed")
                 }
             }
             Catch

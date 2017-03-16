@@ -150,7 +150,18 @@ function Populate-DBSchema
 			    $Command.CommandText = "Delete From Tickets"
 			    $Result = $Command.ExecuteNonQuery()
 			    WriteValue("Successful")
+				
+				WriteLabel("Cleaning Discount table")
+			    $Command.CommandText = "Delete From Discount"
+			    $Result = $Command.ExecuteNonQuery()
+			    WriteValue("Successful")
 
+				WriteLabel("Cleaning AllSeats table")
+			    $Command.CommandText = "Delete From AllSeats"
+			    $Result = $Command.ExecuteNonQuery()
+			    WriteValue("Successful")
+
+				
 				# Populate ApplicationDefaults Table
 				WriteLabel("Populating ApplicationDefaults table")
 				$Command.CommandText =
@@ -376,21 +387,22 @@ function Populate-DBSchema
 
 			    # Populate Concerts Table
 			    WriteLabel("Populating Concerts table")
+				$date = (Get-Date -Format "yyyy-MM-dd HH:mm:ss")
 			    $Command.CommandText =
 				    "
 					    Set Identity_Insert [dbo].[Concerts] On 
-					    Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (1, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-01-28 00:54:01.870' AS DateTime), 3, 1, 1, 0)
-					    Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (2, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-01-29 00:54:01.877' AS DateTime), 3, 2, 1, 0)
-					    Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (3, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-01-30 00:54:01.880' AS DateTime), 3, 3, 1, 0)
-					    Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (4, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-01-31 00:54:01.887' AS DateTime), 3, 4, 1, 0)
-					    Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (5, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-02-01 00:54:01.890' AS DateTime), 3, 5, 1, 0)
-					    Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (6, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-02-02 00:54:01.893' AS DateTime), 3, 6, 1, 0)
-					    Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (7, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-02-03 00:54:01.897' AS DateTime), 3, 7, 1, 0)
-					    Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (8, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-02-04 00:54:01.900' AS DateTime), 3, 8, 1, 0)
-					    Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (9, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-02-05 00:54:01.903' AS DateTime), 3, 9, 1, 0)
-					    Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (10, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-02-06 00:54:01.907' AS DateTime), 3, 10, 1, 0)
-					    Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (11, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-02-07 00:54:01.910' AS DateTime), 3, 11, 1, 0)
-					    Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (12, N'Julie and the Plantes Illumination Tour', N'', Cast(N'2015-02-08 00:54:01.910' AS DateTime), 3, 12, 1, 0)
+					    Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (1, N'Julie and the Plantes Illumination Tour', N'', '$date', 3, 1, 1, 0)
+					    Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (2, N'Julie and the Plantes Illumination Tour', N'', '$date', 3, 2, 1, 0)
+					    Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (3, N'Julie and the Plantes Illumination Tour', N'', '$date', 3, 3, 1, 0)
+					    Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (4, N'Julie and the Plantes Illumination Tour', N'', '$date', 3, 4, 1, 0)
+					    Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (5, N'Julie and the Plantes Illumination Tour', N'', '$date', 3, 5, 1, 0)
+					    Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (6, N'Julie and the Plantes Illumination Tour', N'', '$date', 3, 6, 1, 0)
+					    Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (7, N'Julie and the Plantes Illumination Tour', N'', '$date', 3, 7, 1, 0)
+					    Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (8, N'Julie and the Plantes Illumination Tour', N'', '$date', 3, 8, 1, 0)
+					    Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (9, N'Julie and the Plantes Illumination Tour', N'', '$date', 3, 9, 1, 0)
+					    Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (10, N'Julie and the Plantes Illumination Tour', N'', '$date', 3, 10, 1, 0)
+					    Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (11, N'Julie and the Plantes Illumination Tour', N'', '$date', 3, 11, 1, 0)
+					    Insert [dbo].[Concerts] ([ConcertId], [ConcertName], [Description], [ConcertDate], [Duration], [VenueId], [PerformerId], [SaveToDbServerType]) Values (12, N'Julie and the Plantes Illumination Tour', N'', '$date', 3, 12, 1, 0)
 					    Set Identity_Insert [dbo].[Concerts] Off
 				    "
 

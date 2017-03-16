@@ -1,0 +1,182 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "siteName": {
+      "type": "string"
+    },
+    "hostingPlanName": {
+      "type": "string"
+    },
+    "siteLocation": {
+      "type": "string"
+    },
+    "sku": {
+      "type": "string",
+      "allowedValues": [
+        "Free",
+        "Shared",
+        "Basic",
+        "Standard"
+      ]
+    },
+    "packageUri": {
+      "type": "string"
+    },
+    "apiVersion": {
+      "type": "string",
+      "defaultValue": "2014-06-01"
+    },
+    "WTTEnvironmentApplicationName": {
+      "type": "string"
+    },
+    "AzureSqlServerPrimaryName": {
+      "type": "string"
+    },
+    "AzureSqlServerSecondaryName": {
+      "type": "string"
+    },
+    "AdminUserName": {
+      "type": "string",
+      "defaultValue": "developer"
+    },
+    "AdminPassword": {
+      "type": "string",
+      "defaultValue": "P@ssword1"
+    },
+    "AzureSqlDatabase1Name": {
+      "type": "string",
+      "defaultValue": "Customer1"
+    },
+    "AzureSqlDatabase2Name": {
+      "type": "string",
+      "defaultValue": "Customer2"
+    },
+    "SearchName": {
+      "type": "string"
+    },
+    "SearchServicePrimaryManagementKey": {
+      "type": "string"
+    },
+    "azureDocumentDbName": {
+      "type": "string"
+    },
+    "documentDbPrimaryKey": {
+      "type": "string"
+    },
+    "powerbiSigningKey": {
+      "type": "string"
+    },
+    "powerbiWorkspaceCollection": {
+      "type": "string"
+    },
+    "powerbiWorkspaceId": {
+      "type": "string"
+    },
+    "seatMapReportID": {
+      "type": "string"
+    },
+    "TenantEventType": {
+      "type": "string",
+      "defaultValue": "pop",
+      "allowedValues": [
+        "pop",
+        "rock",
+        "classical"
+      ]
+    },
+    "documentDbDatabase": {
+      "type": "string"
+    },
+    "documentDbCollection": {
+      "type": "string"
+    },
+    "wttEventHubName": {
+      "type": "string"
+    },
+    "wttServiceBusName": {
+      "type": "string"
+    },
+    "reportName":{
+      "type": "string"
+    }
+  },
+  "variables":{
+    "docDBName": "[concat('https://',parameters('azureDocumentDbName'),'.documents.azure.com:443/')]"
+  },
+  "resources": [
+    { 
+      "apiVersion": "[parameters('apiVersion')]",
+      "name": "[parameters('hostingPlanName')]",
+      "type": "Microsoft.Web/serverfarms",
+      "location": "[parameters('siteLocation')]",
+      "properties": {
+        "name": "[parameters('hostingPlanName')]",
+        "sku": "[parameters('sku')]"
+      }
+    },
+    {
+      "apiVersion": "[parameters('apiVersion')]",
+      "name": "[parameters('siteName')]",
+      "type": "Microsoft.Web/sites",
+      "location": "[parameters('siteLocation')]",
+      "dependsOn": [
+        "[concat('Microsoft.Web/serverfarms/',parameters('hostingPlanName'))]"
+      ],
+      "properties": {
+        "name": "[parameters('siteName')]",
+        "serverFarm": "[parameters('hostingPlanName')]",
+        "siteConfig": {
+          "appSettings": []
+        }
+      },
+      "resources": [
+        {
+          "name": "MSDeploy",
+          "type": "extensions",
+          "location": "[parameters('siteLocation')]",
+          "apiVersion": "[parameters('apiVersion')]",
+          "dependsOn": [
+            "[concat('Microsoft.Web/Sites/',parameters('siteName'))]"
+          ],
+          "properties": {
+            "packageUri": "[parameters('packageUri')]"
+          }
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "type": "config",
+          "name": "appsettings",
+          "dependsOn": [
+            "MSDeploy",
+            "[concat('Microsoft.Web/Sites/',parameters('siteName'))]"
+          ],
+          "properties": {
+            "TenantName": "[parameters('WTTEnvironmentApplicationName')]",
+            "TenantEventType": "[parameters('TenantEventType')]",
+            "TenantPrimaryDatabaseServer": "[parameters('AzureSqlServerPrimaryName')]",
+            "TenantSecondaryDatabaseServer": "[parameters('AzureSqlServerSecondaryName')]",
+            "TenantDatabase1": "[parameters('AzureSqlDatabase1Name')]",
+            "TenantDatabase2": "[parameters('AzureSqlDatabase2Name')]",
+            "DatabaseUser": "[parameters('AdminUserName')]",
+            "DatabasePassword": "[parameters('AdminPassword')]",
+            "RunningInDev" : "false",
+            "SearchServiceName": "[parameters('SearchName')]",
+            "SearchServiceKey": "[parameters('SearchServicePrimaryManagementKey')]",
+            "DocumentDbUri": "[variables('docDBName')]",
+            "DocumentDbKey": "[parameters('documentDbPrimaryKey')]",
+            "DocumentDbDatabaseName": "[parameters('documentDbDatabase')]",
+            "DocumentDbCollectionName": "[parameters('documentDbCollection')]",
+            "powerbiSigningKey": "[parameters('powerbiSigningKey')]",
+            "powerbiWorkspaceCollection": "[parameters('powerbiWorkspaceCollection')]",
+            "powerbiWorkspaceId": "[parameters('powerbiWorkspaceId')]",
+            "seatMapReportID": "[parameters('seatMapReportID')]",
+            "EventHubName": "[parameters('wttEventHubName')]",
+            "Microsoft.ServiceBus.ConnectionString": "[parameters('wttServiceBusName')]",
+            "reportName": "[parameters('reportname')]"
+          }
+        }
+      ]
+    }
+  ]
+}

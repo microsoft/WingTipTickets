@@ -92,7 +92,7 @@ function New-WTTAzureSearchService
                 $status = (Get-AzureRmResourceProvider -ProviderNamespace Microsoft.Search).RegistrationState
 			    if ($status -ne "Registered")
 			    {
-			        $null = Register-AzureRmResourceProvider -ProviderNamespace Microsoft.Search
+			        $null = Register-AzureRmResourceProvider -ProviderNamespace Microsoft.Search -Force
 			    }
             }Until($status -eq "Registered")
 
