@@ -186,7 +186,6 @@ function New-WTTEnvironment
         $wttEventHubName = $wTTEnvironmentApplicationName
         $wttASAJob = $wTTEnvironmentApplicationName+'asajob'
         $iotEmulatorApp = $wTTEnvironmentApplicationName+'iotemulator'
-        $azureSqlReportDatabaseName = "wingtipreporting"
 
 		Try
 		{
@@ -504,17 +503,6 @@ function New-WTTEnvironment
             }While($dbExists -eq $false)
 
             Start-Sleep -Seconds 30
-            if($azurePrimarySqlDatabaseServer)
-            {
-                $azureSqlDatabase = Find-AzureRmResource -ResourceType "Microsoft.Sql/servers/databases" -ResourceNameContains $azureSqlReportDatabaseName -ResourceGroupNameContains $azureResourceGroupName
-
-                if(!$azureSqlDatabase)
-                {
-                    New-AzureRmSqlDatabase -ResourceGroupName $azureResourceGroupName -DatabaseName $azureSqlReportDatabaseName -Edition Basic -ServerName $azureSqlServerPrimaryName
-                }
-            }
-
-            Start-Sleep -Seconds 30
 			if ($primaryServerLocation -notcontains "" -and $secondaryServerLocation -notcontains "")                 
 			{
 				if ($wttenvironmentapplicationname.length -gt 60)
@@ -531,9 +519,73 @@ function New-WTTEnvironment
 			}
 
 			# Create service plans
-			
-			LineBreak       
+			LineBreak
+
+				# Create primary web application plan
+			WriteLabel("Creating Primary application service plan '$azureSqlServerPrimaryName'")
+			$primaryAppPlan = ""
+			Do
+			{
+				$primaryAppPlan = New-AzureRmAppServicePlan -name $azureSqlServerPrimaryName -location $primaryServerLocation -tier standard -resourcegroupname $azureresourcegroupname
+				if($primaryAppPlan.Name -eq $azureSqlServerPrimaryName)
+				{
+					WriteValue("Successful")
+				}
+			} While ($primaryAppPlan.Name -ne $azureSqlServerPrimaryName)
+
+			# Create secondary web application plan
+			WriteLabel("Creating Secondary application service plan '$azureSqlServerSecondaryName'")
+			$secondaryAppPlan = ""
+			Do
+			{
+				$secondaryAppPlan = New-AzureRmAppServicePlan -name $azureSqlServerSecondaryName -location $secondaryServerLocation -tier standard -resourcegroupname $azureresourcegroupname
+				if($secondaryAppPlan.Name -eq $azureSqlServerSecondaryName)
+				{
+					WriteValue("Successful")
+				}
+			} While($secondaryAppPlan.Name -ne $azureSqlServerSecondaryName)
+			LineBreak
+
+			# Create Primary web application
+			WriteLabel("Creating Primary application '$azureSqlServerPrimaryName'")
+			$primaryWebApp = ""
+			Do
+			{
+				$primaryWebApp = New-AzureRMWebApp -Location $primaryServerLocation -AppServicePlan $azureSqlServerPrimaryName -ResourceGroupName $azureResourceGroupName -Name $azureSqlServerPrimaryName
+				if($primaryWebApp.Name -eq $azureSqlServerPrimaryName)
+				{
+					WriteValue("Successful")
+				}
+			} While($primaryWebApp.Name -ne $azureSqlServerPrimaryName)
+
+			# Create Secondary web application
+			WriteLabel("Creating Secondary application '$azureSqlServerSecondaryName'")
+			$secondaryWebApp = ""
+			Do
+            {
+				$secondaryWebApp = New-AzureRMWebApp -Location $secondaryServerLocation -AppServicePlan $azureSqlServerSecondaryName -ResourceGroupName $azureResourceGroupName -Name $azureSqlServerSecondaryName
+				if($secondaryWebApp.Name -eq $azureSqlServerSecondaryName)
+				{
+					WriteValue("Successful")
+				}
+			} While($secondaryWebApp.Name -ne $azureSqlServerSecondaryName) 
+        
         	start-sleep -s 120
+
+			# Deploy Web Applications
+			LineBreak
+			WriteLabel("Deploying Primary application '$azureSqlServerPrimaryName'")
+            LineBreak
+			Deploy-WTTWebApplication -azureStorageAccountName $azureStorageAccountName -azureResourceGroupName $azureResourceGroupName -Websitename $azureSqlServerPrimaryName -WebAppPackagePath $WebAppPackagePath -webAppPackageName $webAppPrimaryPackageName
+			WriteLabel("Deploying Secondary application '$azureSqlServerSecondaryName'")
+            LineBreak
+			Deploy-WTTWebApplication -azureStorageAccountName $azureStorageAccountName -azureResourceGroupName $azureResourceGroupName -Websitename $azureSqlServerSecondaryName -WebAppPackagePath $WebAppPackagePath -webAppPackageName $webAppSecondaryPackageName
+            
+			# Create Traffic Manager Profile
+			LineBreak
+			New-WTTAzureTrafficManagerProfile -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -AzureResourceGroupName $azureResourceGroupName
+			# Add Azure WebSite Endpoints to Traffic Manager Profile
+			Add-WTTAzureTrafficManagerEndpoint -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -azurePrimaryWebAppName $azureSqlServerPrimaryName -azureSecondaryWebAppName $azureSqlServerSecondaryName -AzureTrafficManagerEndpointStatus "Enabled" -AzureResourceGroupName $azureResourceGroupName
 
 			# Deploy Azure Data Warehouse on the primary database server. This may run for about 15 minutes.
 			if ($azurePrimarySqlDatabaseServer -ne $null)
@@ -543,11 +595,100 @@ function New-WTTEnvironment
 
             Start-Sleep -Seconds 60
 
+			# Deploy ADF environment
+			New-WTTADFEnvironment -ApplicationName $WTTEnvironmentApplicationName -azureStorageAccountName $azureStorageAccountName -azureResourceGroupName $azureResourceGroupName -azureSqlServerName $azureSqlServerPrimaryName -azureSQLDatabaseName "Recommendations" -DatabaseEdition "Basic" -adminUserName $adminUserName -adminPassword $adminPassword
+
+			Start-Sleep -Seconds 30
+            
+            $azurePowerBILocation =
+                Switch ($primaryServerLocation)
+                {
+                    'West US' {'West US'}
+                    'North Europe' {'North Europe'}
+                    'West Europe' {'West Europe'}
+                    'East US' {'East US 2'}
+                    'North Central US' {'North Central US'}
+                    'East US 2' {'East US 2'}
+                    'South Central US' {'South Central US'}
+                    'Central US' {'South Central US'}
+                    'Brazil South' {'Brazil South'}
+                    'Southeast Asia' {'Southeast Asia'}
+                    'Australia Southeast' {'Australia Southeast'}
+                    'Australia East' {'Australia Southeast'}
+                    'East Asia' {'Southeast Asia'}
+                    'Japan East' {'Southeast Asia'}
+                    'Japan West' {'Southeast Asia'}
+                    'Canada Central' {'North Central US'}
+                    'Canada East' {'North Central US'}
+                    'West India' {'Southeast Asia'}
+                    'South India' {'Southeast Asia'}
+                    'Central India' {'Southeast Asia'}
+                    'West US 2' {'West US'}
+                    'UK South' {'North Europe'}
+					'UK West' {'West Europe'}
+                    default {'West US'}
+                }
+
+            # New Azure Power BI Service
+            $pbiOutPut = New-WTTPowerBI -azureResourceGroupName $azureResourceGroupName -AzurePowerBIName $azurePowerBIWorkspaceCollection -azurePowerBILocation $azurePowerBILocation -AzureSqlServerName $azureSqlServerPrimaryName -adminUserName $adminUserName -adminPassword $adminPassword -AzureSqlDatabaseName $AzureSqlDatabaseName -azureDWDatabaseName $AzureSqlDWDatabaseName
+            Start-Sleep -Seconds 30
+
             WriteLabel("Pausing DataWarehouse database")
 	    	$null = Suspend-AzureRMSqlDatabase –ResourceGroupName $azureResourceGroupName –ServerName $azureSqlServerPrimaryName –DatabaseName $AzureSqlDWDatabaseName
 		    writeValue("Successful")
             Start-Sleep -s 240
 
+            #New Azure Service Bus and Event Hub
+            $eventHubConnectionString = New-WTTAzureEventHub -azureResourceGroupName $azureResourceGroupName -wttEventHubName $wttEventHubName -wttServiceBusName $wttServiceBusName -wttEventHubLocation $primaryServerLocation
+            
+            #New Azure Stream Analytics Job
+            #Get wttASALocation setting      
+            $wttASALocation =
+                Switch ($primaryServerLocation)
+                {
+                    'West US' {'West US'}
+                    'North Europe' {'North Europe'}
+                    'West Europe' {'West Europe'}
+                    'East US' {'East US'}
+                    'North Central US' {'North Central US'}
+                    'East US 2' {'East US 2'}
+                    'South Central US' {'South Central US'}
+                    'Central US' {'South Central US'}
+                    'Brazil South' {'Brazil South'}
+                    'Southeast Asia' {'Southeast Asia'}
+                    'East Asia' {'East Asia'}
+                    'Japan East' {'Japan East'}
+                    'Japan West' {'Japan West'}
+                    'Canada Central' {'North Central US'}
+                    'Canada East' {'North Central US'}
+                    'West India' {'Southeast Asia'}
+                    'South India' {'Southeast Asia'}
+                    'Central India' {'Southeast Asia'}
+                    'UK South' {'North Europe'}
+					'UK West' {'West Europe'}
+                    'West US 2' {'West US'}
+                    default {'West US'}
+                }
+            
+            New-WTTAzureStreamAnalyticsJob -azureResourceGroupName $azureResourceGroupName -wttASAJob $wttasajob -wttASALocation $wttASALocation -wttServiceBusName $wttServiceBusName -wttEventHubName $wttEventHubName -azureDocumentDbName $azureDocumentDbName -eventHubConnectionString $eventHubConnectionString
+            
+			# Set the Application Settings
+			$searchName = (Find-AzureRmResource -ResourceType Microsoft.Search/searchServices -ResourceGroupName $azureResourceGroupName -ResourceNameContains $azuresearchservicename).name
+			$searchServicePrimaryManagementKey = (Invoke-AzureRmResourceAction -ResourceGroupName $azureResourceGroupName -ResourceName $searchName -ResourceType Microsoft.Search/searchServices -Action listAdminkeys -Force).PrimaryKey
+            $documentDBPrimaryKey = (Invoke-AzureRmResourceAction -ResourceGroupName $azureResourceGroupName -ResourceName $azureDocumentDbName -ResourceType Microsoft.DocumentDb/databaseAccounts -Action listkeys -Force).primarymasterkey
+            $powerbiWorkspaceCollection = $azurePowerBIWorkspaceCollection
+            $powerbiSigningKey = $pbiOutPut.powerbiSigningKey
+            $powerbiWorkspaceId = $pbiOutPut.powerbiWorkspaceId
+            $seatMapReportID = $pbiOutPut.seatMapReportID
+            
+			Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -azureResourceGroupName $azureResourceGroupName -Websitename $azureSqlServerPrimaryName -SearchName $searchName -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlServerPrimaryName $azureSqlServerPrimaryName -AzureSqlServerSecondaryName $azureSqlServerSecondaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey $documentDbPrimaryKey -powerbiSigningKey $powerbiSigningKey -powerbiWorkspaceCollection $powerbiWorkspaceCollection -powerbiWorkspaceId $powerbiWorkspaceId -seatMapReportID $seatMapReportID -TenantEventType $TenantEventType -documentDbDatabase "iotrawdata" -documentDbCollection "iotrawdata" -wttEventHubName $wttEventHubName -wttServiceBusName $eventHubConnectionString
+			Set-WTTEnvironmentWebConfig -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -azureResourceGroupName $azureResourceGroupName -Websitename $azureSqlServerSecondaryName -SearchName $searchName -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlServerPrimaryName $azureSqlServerSecondaryName -AzureSqlServerSecondaryName $azureSqlServerPrimaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey $documentDbPrimaryKey -powerbiSigningKey $powerbiSigningKey -powerbiWorkspaceCollection $powerbiWorkspaceCollection -powerbiWorkspaceId $powerbiWorkspaceId -seatMapReportID $seatMapReportID -TenantEventType $TenantEventType -documentDbDatabase "iotrawdata" -documentDbCollection "iotrawdata" -wttEventHubName $wttEventHubName -wttServiceBusName $eventHubConnectionString
+            
+            Start-Sleep -Seconds 30
+
+            Start-WTTIOTWebJob -azureResourceGroupName $azureResourceGroupName -Websitename $azureSqlServerPrimaryName -primaryWebAppLocation $primaryServerLocation
+
+            Start-Sleep -Seconds 20
 			# Enable Auditing on Azure SQL Database Server
 			# Appears to be a name resolution issue if Auditing is enabled, as Azure Search will not redirect to the database server
             $auditStorage = Find-AzureRmResource -ResourceType Microsoft.Storage/storageaccounts -ResourceNameContains $azureStorageAccountName -ResourceGroupNameContains $azureResourceGroupName
@@ -599,107 +740,6 @@ function New-WTTEnvironment
                 WriteError("Unable to find Azure Storage Account")
             }
 
-			# Deploy ADF environment
-			New-WTTADFEnvironment -ApplicationName $WTTEnvironmentApplicationName -azureResourceGroupName $azureResourceGroupName
-
-			Start-Sleep -Seconds 180
-
-            $azurePowerBILocation =
-                Switch ($primaryServerLocation)
-                {
-                    'West US' {'West US'}
-                    'North Europe' {'North Europe'}
-                    'West Europe' {'West Europe'}
-                    'East US' {'East US 2'}
-                    'North Central US' {'North Central US'}
-                    'East US 2' {'East US 2'}
-                    'South Central US' {'South Central US'}
-                    'Central US' {'South Central US'}
-                    'Brazil South' {'Brazil South'}
-                    'Southeast Asia' {'Southeast Asia'}
-                    'Australia Southeast' {'Australia Southeast'}
-                    'Australia East' {'Australia Southeast'}
-                    'East Asia' {'Southeast Asia'}
-                    'Japan East' {'Southeast Asia'}
-                    'Japan West' {'Southeast Asia'}
-                    'Canada Central' {'North Central US'}
-                    'Canada East' {'North Central US'}
-                    'West India' {'Southeast Asia'}
-                    'South India' {'Southeast Asia'}
-                    'Central India' {'Southeast Asia'}
-                    'West US 2' {'West US'}
-                    'UK South' {'North Europe'}
-					'UK West' {'West Europe'}
-                    default {'West US'}
-                }
-
-            # New Azure Power BI Service
-            $pbiOutPut = New-WTTPowerBI -azureResourceGroupName $azureResourceGroupName -AzurePowerBIName $azurePowerBIWorkspaceCollection -azurePowerBILocation $azurePowerBILocation -AzureSqlServerName $azureSqlServerPrimaryName -adminUserName $adminUserName -adminPassword $adminPassword -AzureSqlDatabaseName $AzureSqlDatabaseName -azureSqlReportDatabaseName $azureSqlReportDatabaseName
-            Start-Sleep -Seconds 30
-       
-            #New Azure Service Bus and Event Hub
-            $eventHubConnectionString = New-WTTAzureEventHub -azureResourceGroupName $azureResourceGroupName -wttEventHubName $wttEventHubName -wttServiceBusName $wttServiceBusName -wttEventHubLocation $primaryServerLocation
-            
-            #New Azure Stream Analytics Job
-            #Get wttASALocation setting      
-            $wttASALocation =
-                Switch ($primaryServerLocation)
-                {
-                    'West US' {'West US'}
-                    'North Europe' {'North Europe'}
-                    'West Europe' {'West Europe'}
-                    'East US' {'East US'}
-                    'North Central US' {'North Central US'}
-                    'East US 2' {'East US 2'}
-                    'South Central US' {'South Central US'}
-                    'Central US' {'South Central US'}
-                    'Brazil South' {'Brazil South'}
-                    'Southeast Asia' {'Southeast Asia'}
-                    'East Asia' {'East Asia'}
-                    'Japan East' {'Japan East'}
-                    'Japan West' {'Japan West'}
-                    'Canada Central' {'North Central US'}
-                    'Canada East' {'North Central US'}
-                    'West India' {'Southeast Asia'}
-                    'South India' {'Southeast Asia'}
-                    'Central India' {'Southeast Asia'}
-                    'UK South' {'North Europe'}
-					'UK West' {'West Europe'}
-                    'West US 2' {'West US'}
-                    default {'West US'}
-                }
-            
-            New-WTTAzureStreamAnalyticsJob -azureResourceGroupName $azureResourceGroupName -wttASAJob $wttasajob -wttASALocation $wttASALocation -wttServiceBusName $wttServiceBusName -wttEventHubName $wttEventHubName -azureDocumentDbName $azureDocumentDbName -eventHubConnectionString $eventHubConnectionString
-            
-			# Set the Application Settings
-			$searchName = (Find-AzureRmResource -ResourceType Microsoft.Search/searchServices -ResourceGroupName $azureResourceGroupName -ResourceNameContains $azuresearchservicename).name
-			$searchServicePrimaryManagementKey = (Invoke-AzureRmResourceAction -ResourceGroupName $azureResourceGroupName -ResourceName $searchName -ResourceType Microsoft.Search/searchServices -Action listAdminkeys -Force).PrimaryKey
-            $documentDBPrimaryKey = (Invoke-AzureRmResourceAction -ResourceGroupName $azureResourceGroupName -ResourceName $azureDocumentDbName -ResourceType Microsoft.DocumentDb/databaseAccounts -Action listkeys -Force).primarymasterkey
-            $powerbiWorkspaceCollection = $azurePowerBIWorkspaceCollection
-            $powerbiSigningKey = $pbiOutPut.powerbiSigningKey
-            $powerbiWorkspaceId = $pbiOutPut.powerbiWorkspaceId
-            $seatMapReportID = $pbiOutPut.seatMapReportID
-            $reportName = "VenueSales"
-
-            # Deploy Web Applications
-			LineBreak
-			Deploy-WTTWebApplication -azureStorageAccountName $azureStorageAccountName -azureResourceGroupName $azureResourceGroupName -Websitename $azureSqlServerPrimaryName -WebAppPackagePath $WebAppPackagePath -webAppPackageName $webAppPrimaryPackageName -webAppLocation $primaryServerLocation -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -SearchName $searchName -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlServerPrimaryName $azureSqlServerPrimaryName -AzureSqlServerSecondaryName $azureSqlServerSecondaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey $documentDbPrimaryKey -powerbiSigningKey $powerbiSigningKey -powerbiWorkspaceCollection $powerbiWorkspaceCollection -powerbiWorkspaceId $powerbiWorkspaceId -seatMapReportID $seatMapReportID -TenantEventType $TenantEventType -documentDbDatabase "iotrawdata" -documentDbCollection "iotrawdata" -wttEventHubName $wttEventHubName -wttServiceBusName $eventHubConnectionString -reportName $reportName
-            LineBreak
-			Deploy-WTTWebApplication -azureStorageAccountName $azureStorageAccountName -azureResourceGroupName $azureResourceGroupName -Websitename $azureSqlServerSecondaryName -WebAppPackagePath $WebAppPackagePath -webAppPackageName $webAppSecondaryPackageName -webAppLocation $secondaryServerLocation -WTTEnvironmentApplicationName $wTTEnvironmentApplicationName -SearchName $searchName -SearchServicePrimaryManagementKey $searchServicePrimaryManagementKey -AzureSqlServerPrimaryName $azureSqlServerSecondaryName -AzureSqlServerSecondaryName $azureSqlServerPrimaryName -azureDocumentDbName $azureDocumentDbName -documentDbPrimaryKey $documentDbPrimaryKey -powerbiSigningKey $powerbiSigningKey -powerbiWorkspaceCollection $powerbiWorkspaceCollection -powerbiWorkspaceId $powerbiWorkspaceId -seatMapReportID $seatMapReportID -TenantEventType $TenantEventType -documentDbDatabase "iotrawdata" -documentDbCollection "iotrawdata" -wttEventHubName $wttEventHubName -wttServiceBusName $eventHubConnectionString -reportName $reportName
-
-            # Create Traffic Manager Profile
-			LineBreak
-			New-WTTAzureTrafficManagerProfile -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -AzureResourceGroupName $azureResourceGroupName
-			# Add Azure WebSite Endpoints to Traffic Manager Profile
-			Add-WTTAzureTrafficManagerEndpoint -AzureTrafficManagerProfileName $wTTEnvironmentApplicationName -azurePrimaryWebAppName $azureSqlServerPrimaryName -azureSecondaryWebAppName $azureSqlServerSecondaryName -AzureTrafficManagerEndpointStatus "Enabled" -AzureResourceGroupName $azureResourceGroupName
-
-            Start-Sleep -Seconds 30
-
-            Start-WTTIOTWebJob -azureResourceGroupName $azureResourceGroupName -Websitename $azureSqlServerPrimaryName -primaryWebAppLocation $primaryServerLocation
-            
-            # Deploy Azure SQL Reporting database
-            Deploy-WTTReportDB -azureResourceGroupName $azureResourceGroupName -azureSqlServerName $azureSqlServerPrimaryName -adminUserName $adminUserName -adminPassword $adminPassword -azureSqlDatabaseName $azureSqlReportDatabaseName -azureStorageAccountName wttdatacampwestus
-            
             WriteLabel("Traffic Manager URL")
             WriteValue("$wTTEnvironmentApplicationName.trafficmanager.net")
 			LineBreak
