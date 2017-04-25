@@ -1,11 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Web;
 using System.Web.Mvc;
-using Microsoft.PowerBI.Api.Beta;
-using Microsoft.PowerBI.Api.Beta.Models;
+using Microsoft.PowerBI.Api.V1;
+using Microsoft.PowerBI.Api.V1.Models;
 using Microsoft.PowerBI.Security;
 using Microsoft.Rest;
 using Tenant.Mvc.Controllers;
@@ -17,6 +18,11 @@ namespace Tenant.Mvc.Core.Helpers
     {
         #region - Properties -
 
+        private static string ApiUrl
+        {
+            get { return ConfigHelper.PowerbiApiUrl; }
+        }
+
         private static string WorkspaceCollection
         {
             get { return ConfigHelper.PowerbiWorkspaceCollection; }
@@ -27,107 +33,124 @@ namespace Tenant.Mvc.Core.Helpers
             get { return ConfigHelper.PowerbiWorkspaceId.ToString(); }
         }
 
+        private static string AccessKey
+        {
+            get { return ConfigHelper.PowerbiSigningKey.ToString(); }
+        }
+
         #endregion
 
         #region - Public Methods -
 
-        public static SelectList FetchReports(string reportId, string exclude = null)
+        public static List<Report> FetchReports(string excludeReportId = null)
         {
-            // Create a dev token for fetch
-            var devToken = PowerBIToken.CreateDevToken(WorkspaceCollection, WorkspaceId);
-
-            using (var client = CreatePowerBiClient(devToken))
+            using (var client = CreatePowerBiClient())
             {
-                var reportsResponse = ReportsExtensions.GetReports(client.Reports, WorkspaceCollection, WorkspaceId);
+                var reportsResponse = client.Reports.GetReports(WorkspaceCollection, WorkspaceId);
 
-                if (!string.IsNullOrEmpty(exclude))
+                if (!string.IsNullOrEmpty(excludeReportId))
                 {
-                    reportsResponse.Value = reportsResponse.Value.Where(r => !r.Name.Equals(exclude)).ToList();
+                    return reportsResponse.Value.Where(r => !r.Id.Equals(excludeReportId)).ToList();
                 }
 
-                return new SelectList(reportsResponse.Value.ToList(), "Id", "Name", reportId);
+                return reportsResponse.Value.ToList();
             }
+            
         }
 
         public static ReportsController.FetchReportResult FetchReport(string reportId)
         {
-            // Create a dev token for fetch
-            var devToken = PowerBIToken.CreateDevToken(WorkspaceCollection, WorkspaceId);
-
-            using (var client = CreatePowerBiClient(devToken))
+            using (var client = CreatePowerBiClient())
             {
-                var reports = ReportsExtensions.GetReports(client.Reports, WorkspaceCollection, WorkspaceId);
-                var report = reports.Value.FirstOrDefault(r => r.Id == reportId);
+                var reportsResponse =  client.Reports.GetReports(WorkspaceCollection, WorkspaceId);
+                var report = reportsResponse.Value.FirstOrDefault(r => r.Id == reportId);
 
                 if (report != null)
                 {
                     var embedToken = PowerBIToken.CreateReportEmbedToken(WorkspaceCollection, WorkspaceId, report.Id);
 
-                    var result = new ReportsController.FetchReportResult
+                    return new ReportsController.FetchReportResult
                     {
                         Report = report,
-                        AccessToken = embedToken.Generate(ConfigHelper.PowerbiSigningKey)
+                        AccessToken = embedToken.Generate(AccessKey)
                     };
-
-                    return result;
                 }
 
-                return new ReportsController.FetchReportResult()
+                return new ReportsController.FetchReportResult
                 {
-                    AccessToken = string.Empty,
-                    Report = null
+                    Report = null,
+                    AccessToken = null
                 };
-
             }
+        }
+
+        public static string CreatePowerBiToken(string reportId)
+        {
+            return PowerBIToken.CreateReportEmbedToken(WorkspaceCollection, WorkspaceId, reportId).Generate(AccessKey);
         }
 
         public static void UploadReport(HttpPostedFileBase postedFile)
         {
-            // Create a dev token for import
-            var devToken = PowerBIToken.CreateDevToken(WorkspaceCollection, WorkspaceId);
-
-            using (var client = CreatePowerBiClient(devToken))
+            using (var client = CreatePowerBiClient())
             {
                 // Import PBIX file from the file stream
-                var import = ImportsExtensions.PostImportWithFile(client.Imports, WorkspaceCollection, WorkspaceId, postedFile.InputStream, Path.GetFileNameWithoutExtension(postedFile.FileName));
+                var import = client.Imports.PostImportWithFile(WorkspaceCollection, WorkspaceId, postedFile.InputStream, Path.GetFileNameWithoutExtension(postedFile.FileName));
                 
                 // Poll the import to check when succeeded
                 while (import.ImportState != "Succeeded" && import.ImportState != "Failed")
                 {
-                    import = ImportsExtensions.GetImportById(client.Imports, WorkspaceCollection, WorkspaceId, import.Id);
+                    import = client.Imports.GetImportById(WorkspaceCollection, WorkspaceId, import.Id);
                     Thread.Sleep(1000);
+                }
+
+                // Update all DataSet Connections
+                foreach (var dataset in import.Datasets)
+                {
+                    UpdateConnection(dataset.Id);
                 }
             }
         }
 
-        public static void UpdateConnection()
+        public static void UpdateConnection(string datasetId)
         {
-            // Create a dev token for update
-            var devToken = PowerBIToken.CreateDevToken(WorkspaceCollection, WorkspaceId);
-
-            using (var client = CreatePowerBiClient(devToken))
+            using (var client = CreatePowerBiClient())
             {
-                // Get DataSets
-                var dataset = DatasetsExtensions.GetDatasets(client.Datasets, WorkspaceCollection, WorkspaceId).Value.Last();
-                var datasources = DatasetsExtensions.GetGatewayDatasources(client.Datasets, WorkspaceCollection, WorkspaceId, dataset.Id).Value;
+                // Update DataSet Connection
+                var connectionFormat = "Data source=tcp:{0},1433;initial catalog={1};Persist Security info=True;Encrypt=True;TrustServerCertificate=False";
+                var connectionString = string.Format(connectionFormat, WingtipTicketApp.Config.TenantDatabaseServer, WingtipTicketApp.Config.wingtipReporting); //, WingtipTicketApp.Config.DatabaseUser, WingtipTicketApp.Config.DatabasePassword);
 
-                // Build Credentials
+                var connectionParameters = new Dictionary<string, object>
+                {
+                    {
+                        "connectionString", connectionString
+                    }
+                };
+
+                client.Datasets.SetAllConnections(WorkspaceCollection, WorkspaceId, datasetId, connectionParameters);
+
+                // Update DataSource Credentials
+                var datasources = client.Datasets.GetGatewayDatasources(WorkspaceCollection, WorkspaceId, datasetId);
+
                 var delta = new GatewayDatasource
                 {
                     CredentialType = "Basic",
-                    
                     BasicCredentials = new BasicCredentials
                     {
                         Username = WingtipTicketApp.Config.DatabaseUser,
                         Password = WingtipTicketApp.Config.DatabasePassword
-                    }
+                    },
                 };
 
-                // Update each DataSource
-                foreach (var datasource in datasources)
+                foreach (var datasource in datasources.Value)
                 {
-                    // Update the datasource with the specified credentials
-                    GatewaysExtensions.PatchDatasource(client.Gateways, WorkspaceCollection, WorkspaceId, datasource.GatewayId, datasource.Id, delta);
+                    // Copy over existent data
+                    delta.ConnectionDetails = datasource.ConnectionDetails;
+                    delta.GatewayId = datasource.GatewayId;
+                    delta.Id = datasource.Id;
+                    delta.DatasourceType = datasource.DatasourceType;
+
+                    // Update credentials
+                    client.Gateways.PatchDatasource(WorkspaceCollection, WorkspaceId, datasource.GatewayId, datasource.Id, delta);
                 }
             }
         }
@@ -136,14 +159,13 @@ namespace Tenant.Mvc.Core.Helpers
 
         #region - Private Methods -
 
-        private static IPowerBIClient CreatePowerBiClient(PowerBIToken token)
+        private static IPowerBIClient CreatePowerBiClient()
         {
-            var jwt = token.Generate(ConfigHelper.PowerbiSigningKey);
-            var credentials = new TokenCredentials(jwt, "AppToken");
+            var credentials = new TokenCredentials(AccessKey, "AppKey");
 
             var client = new PowerBIClient(credentials)
             {
-                BaseUri = new Uri(ConfigHelper.PowerbiApiUrl)
+                BaseUri = new Uri(ApiUrl)
             };
 
             return client;

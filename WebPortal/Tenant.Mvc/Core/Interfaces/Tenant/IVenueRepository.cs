@@ -9,5 +9,6 @@ namespace Tenant.Mvc.Core.Interfaces.Tenant
         VenueModel GetVenueByVenueId(int venueId);
         //List<SeatSection> GetSeatMapForVenue(int venueId);
         VenueModel AddNewVenue(string venueName, int cityId);
+        int GetVenueIdByVenueName(string venueName);
     }
 }

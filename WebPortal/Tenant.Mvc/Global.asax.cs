@@ -23,10 +23,7 @@ namespace WingTipTickets
         public string TenantDatabaseServer { get; set; }
         public string TenantDatabase1 { get; set; }
         public string TenantDatabase2 { get; set; }
-
-        // Recommendation Settings
-        public string RecommendationDatabaseServer { get; set; }
-        public string RecommendationDatabase { get; set; }
+        public string wingtipReporting { get; set; }
 
         // Shared Settings
         public string DatabaseUser { get; set; }
@@ -39,6 +36,8 @@ namespace WingTipTickets
         public string SearchServiceName { get; set; }
         public string DocumentDbUri { get; set; }
         public string DocumentDbKey { get; set; }
+
+        public string ReportName { get; set; }
     }
 
     #endregion
@@ -100,11 +99,6 @@ namespace WingTipTickets
             return connectionString;
         }
 
-        public static string GetRecommendationConnectionString()
-        {
-            return BuildConnectionString(Config.RecommendationDatabaseServer, Config.RecommendationDatabase, Config.DatabaseUser, Config.DatabasePassword, Config.RunningInDev);
-        }
-
         public static SqlConnection CreateTenantConnectionDatabase1()
         {
             return new SqlConnection(GetTenantConnectionString(Config.TenantDatabase1));
@@ -113,11 +107,6 @@ namespace WingTipTickets
         public static SqlConnection CreateTenantConnectionDatabase2()
         {
             return new SqlConnection(GetTenantConnectionString(Config.TenantDatabase2));
-        }
-
-        public static SqlConnection CreateRecommendationSqlConnection()
-        {
-            return new SqlConnection(GetRecommendationConnectionString()); 
         }
 
         #endregion
@@ -150,9 +139,7 @@ namespace WingTipTickets
                 TenantDatabaseServer = ConfigurationManager.AppSettings["TenantPrimaryDatabaseServer"].Trim(),
                 TenantDatabase1 = ConfigurationManager.AppSettings["TenantDatabase1"].Trim(),
                 TenantDatabase2 = ConfigurationManager.AppSettings["TenantDatabase2"].Trim(),
-
-                RecommendationDatabaseServer = ConfigurationManager.AppSettings["RecommendationDatabaseServer"].Trim(),
-                RecommendationDatabase = ConfigurationManager.AppSettings["RecommendationDatabase"].Trim(),
+                wingtipReporting = ConfigurationManager.AppSettings["wingtipReporting"].Trim(),
 
                 DatabaseUser = ConfigurationManager.AppSettings["DatabaseUser"].Trim(),
                 DatabasePassword = ConfigurationManager.AppSettings["DatabasePassword"].Trim(),
@@ -164,18 +151,13 @@ namespace WingTipTickets
 
                 DocumentDbUri = ConfigurationManager.AppSettings["DocumentDbUri"].Trim(),
                 DocumentDbKey = ConfigurationManager.AppSettings["DocumentDbKey"].Trim(),
+                ReportName = ConfigurationManager.AppSettings["ReportName"].Trim()
             };
                 
             // Adjust Tenant Database Server
             if (!String.IsNullOrEmpty(appConfig.TenantDatabaseServer))
             {
                 appConfig.TenantDatabaseServer += appConfig.AuditingEnabled ? secureDatabaseUrl : unsecuredDatabaseUrl;
-            }
-
-            // Adjust Recommendation Database Server
-            if (!String.IsNullOrEmpty(appConfig.RecommendationDatabaseServer))
-            {
-                appConfig.RecommendationDatabaseServer += appConfig.AuditingEnabled ? secureDatabaseUrl : unsecuredDatabaseUrl;
             }
 
             return appConfig;

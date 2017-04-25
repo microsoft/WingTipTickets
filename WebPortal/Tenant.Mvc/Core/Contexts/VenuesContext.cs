@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using Tenant.Mvc.Core.Helpers;
 using Tenant.Mvc.Core.Models;
+using WingTipTickets;
 
 namespace Tenant.Mvc.Core.Contexts
 {
@@ -75,6 +77,30 @@ namespace Tenant.Mvc.Core.Contexts
                 LogAction("Added New City - " + cityName);
 
                 return GetCitiesInternal().FirstOrDefault(c => c.CityName == cityName);
+            }
+
+            public int GetVenueIdByVenueName(string venueName)
+            {
+                var sqlScript = $"SELECT VenueId FROM Venues WHERE VenueName = '{venueName}'";
+                var venueIds = new List<int>();
+                using (var cmd = new SqlCommand(sqlScript, WingtipTicketApp.CreateTenantConnectionDatabase1()))
+                {
+                    using (var sdAdapter = new SqlDataAdapter(cmd))
+                    {
+                        var dsUser = new DataSet();
+                        sdAdapter.Fill(dsUser);
+
+                        if (dsUser.Tables.Count > 0)
+                        {
+                            foreach (DataRow row in dsUser.Tables[0].Rows)
+                            {
+                                venueIds.Add(Convert.ToInt32(row["VenueId"]));
+                            }
+                        }
+                    }
+                }
+
+                return venueIds.First();
             }
 
             #endregion

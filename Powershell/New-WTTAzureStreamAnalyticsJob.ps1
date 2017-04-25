@@ -40,9 +40,6 @@
 
         $inputEventHubName = $wttEventHubName
         $servicebusnamespace = $wttServiceBusName
-        #$currentNamespace = Get-AzureSBNamespace -Name $wttServiceBusName
-        #$namespaceManager = [Microsoft.ServiceBus.NamespaceManager]::CreateFromConnectionString($CurrentNamespace.ConnectionString)
-        #$serviceBusAuth = (Get-AzureSBAuthorizationRule -Namespace $wttServiceBusName).ConnectionString.Split(';')
         $serviceBusAuth = $eventHubConnectionString.Split(';')
         $sharedaccesspolicykey = $serviceBusAuth[2].Substring(16)
         $sharedaccesspolicyname = $serviceBusAuth[1].Substring(20)
@@ -75,7 +72,7 @@
         }until($status.RegistrationState -eq "Registered")
         
         $newASADirectory = New-Item -ItemType Directory -Name ASA -Path .\Temp\Json -Force
-        $copyASAJob = Copy-Item .\src\AzureStreamAnalytics\ASAJob.json -Destination .\temp\json\asa\ -Force
+        $copyASAJob = Copy-Item .\Resources\AzureStreamAnalytics\ASAJob.json -Destination .\temp\json\asa\ -Force
         $files = Get-ChildItem ".\temp\json\asa\*" -Include ASAJob.json -Recurse -ErrorAction Stop
 
         foreach($file in $files){

@@ -78,11 +78,16 @@ namespace Tenant.Mvc.Core.Repositories.Tenant
                 // Delete ALL tickets for this concert, then delete concert
                 Context.Tickets.DeleteAllTicketsForConcert(concertToDelete.ConcertId);
                 concertDeleted = Context.Concerts.DeleteConcert(concertToDelete.ConcertId);
-            }
 
-            UpdateStatus(concertDeleted
-                             ? string.Format("Successfully deleted concert id #{0} - '{1}'", concertToDelete.ConcertId, concertToDelete.ConcertName)
-                             : string.Format("FAILED to delete concert id #{0} - '{1}'", concertToDelete.ConcertId, concertToDelete.ConcertName));
+                UpdateStatus(concertDeleted
+                            ? string.Format("Successfully deleted concert id #{0} - {1}", concertToDelete.ConcertId, concertToDelete.ConcertName)
+                            : string.Format("FAILED to delete concert id #{0} - {1}", concertToDelete.ConcertId, concertToDelete.ConcertName));
+            }
+            else
+            {
+                UpdateStatus(string.Format("FAILED to delete concert id #{0}", concertId));
+            }
+           
 
             return concertDeleted;
         }

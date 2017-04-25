@@ -4,7 +4,7 @@
 .DESCRIPTION
 	This script is used to create an Azure Data Factory.
 .EXAMPLE
-	New-WTTADFEnvironment -ApplicationName <string> -ResourceGroupName <string> -Location <string> -WebsiteHostingPlanName <string> -DatabaseServerName <string> -DatabaseName <string> -DatabaseEdition <string> -DatabaseUserName <string> -DatabasePassword <string>
+	New-WTTADFEnvironment -ApplicationName <string> -ResourceGroupName <string>
 #>
 function New-WTTADFEnvironment
 {
@@ -53,7 +53,6 @@ function New-WTTADFEnvironment
         }
 	}
 }
-
 function RegisterProvider()
 {
 	WriteLabel("Checking for DataFactory Provider")
@@ -70,8 +69,8 @@ function RegisterProvider()
 	{
 		WriteValue("Found")
 	}
-}
 
+}
 function CreateDataFactory()
 {
 	Try

@@ -31,7 +31,7 @@ namespace Tenant.Mvc
                 "~/Content/Scripts/respond.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/powerbi").Include(
-                "~/Content/Scripts/powerbi.js"));
+                "~/Scripts/powerbi.js"));
         }
 
         private static void RegisterStyles(BundleCollection bundles)
@@ -47,8 +47,7 @@ namespace Tenant.Mvc
                 "~/Content/Stylesheets/powerbi.css"));
 
             bundles.Add(new StyleBundle("~/styles/site").Include(
-                "~/Content/Stylesheets/site.css",
-                "~/Content/Stylesheets/recommendation.css"));
+                "~/Content/Stylesheets/site.css"));
         }
 
         #endregion

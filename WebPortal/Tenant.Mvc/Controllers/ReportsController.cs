@@ -5,14 +5,14 @@ using System.Linq;
 using System.Threading;
 using System.Web;
 using System.Web.Mvc;
-using Microsoft.PowerBI.Api.Beta;
-using Microsoft.PowerBI.Api.Beta.Models;
 using Microsoft.PowerBI.Security;
 using Microsoft.Rest;
 using Tenant.Mvc.Core.Helpers;
 using Tenant.Mvc.Core.Interfaces.Tenant;
 using Tenant.Mvc.Models;
 using WingTipTickets;
+using Microsoft.PowerBI.Api.V1.Models;
+using Tenant.Mvc.Core.Models;
 
 namespace Tenant.Mvc.Controllers
 {
@@ -21,24 +21,30 @@ namespace Tenant.Mvc.Controllers
         #region - Fields -
 
         private const string DefaultReportCode = "DefaultReportId";
-
-        #endregion
-
-        #region - Fields -
-
+        
         private readonly IApplicationDefaultsRepository _defaultsRepository;
+        private readonly IVenueRepository _venueRepository;
+        private readonly ISeatSectionRepository _seatSectionRepository;
+        private readonly IDiscountRepository _discountRepository;
+        private string _defaultReportId = null;
 
         #endregion
 
         #region - Controllers -
 
-        public ReportsController(IApplicationDefaultsRepository defaultsRepository)
+        public ReportsController(IApplicationDefaultsRepository defaultsRepository, IVenueRepository venueRepository, ISeatSectionRepository seatSectionRepository, IDiscountRepository discountRepository)
         {
             // Setup Fields
             _defaultsRepository = defaultsRepository;
+            _venueRepository = venueRepository;
+            _seatSectionRepository = seatSectionRepository;
+            _discountRepository = discountRepository;
 
             // Setup Callbacks
             _defaultsRepository.StatusCallback = DisplayMessage;
+
+            // Setup Default ReportId
+            _defaultReportId = _defaultsRepository.GetApplicationDefault(DefaultReportCode);
         }
 
         #endregion
@@ -51,29 +57,25 @@ namespace Tenant.Mvc.Controllers
             ReportsViewModel viewModel;
 
             // Get the default report
-            var defaultReport = PowerBiHelper.FetchReport(_defaultsRepository.GetApplicationDefault(DefaultReportCode));
-            
+            var reportList = PowerBiHelper.FetchReports(ConfigHelper.SeatMapReportId);
+            var reportDefault = PowerBiHelper.FetchReport(_defaultReportId);
+
             // Build up the view model
-            if (defaultReport.Report != null)
-            {
-                viewModel = new ReportsViewModel()
+            viewModel = reportDefault.Report != null
+                ? new ReportsViewModel()
                 {
-                    SelectedReportId = new Guid(defaultReport.Report.Id),
-                    Reports = PowerBiHelper.FetchReports(defaultReport.Report.Id, "Seatingmap"),
-                    Report = defaultReport.Report,
-                    AccessToken = defaultReport.AccessToken
-                };
-            }
-            else
-            {
-                viewModel = new ReportsViewModel()
+                    SelectedReportId = new Guid(reportDefault.Report.Id),
+                    Reports = new SelectList(reportList, "Id", "Name", _defaultReportId),
+                    Report = reportDefault.Report,
+                    AccessToken = PowerBiHelper.CreatePowerBiToken(reportDefault.Report.Id)
+                }
+                : new ReportsViewModel()
                 {
                     SelectedReportId = Guid.Empty,
-                    Reports = PowerBiHelper.FetchReports(null, "Seatingmap"),
+                    Reports = new SelectList(reportList, "Id", "Name", _defaultReportId),
                     Report = null,
                     AccessToken = string.Empty
                 };
-            }
 
             return View(viewModel);
         }
@@ -82,10 +84,11 @@ namespace Tenant.Mvc.Controllers
         public ActionResult Index(ReportsViewModel viewModel)
         {
             // Get the selected report
+            var reportList = PowerBiHelper.FetchReports(ConfigHelper.SeatMapReportId);
             var reportResult = PowerBiHelper.FetchReport(viewModel.SelectedReportId.ToString());
 
             // Build up the view model
-            viewModel.Reports = PowerBiHelper.FetchReports(viewModel.SelectedReportId.ToString());
+            viewModel.Reports = new SelectList(reportList, "Id", "Name", _defaultReportId);
             viewModel.Report = reportResult.Report;
             viewModel.AccessToken = reportResult.AccessToken;
 
@@ -117,7 +120,6 @@ namespace Tenant.Mvc.Controllers
                 }
 
                 PowerBiHelper.UploadReport(postedFile);
-                PowerBiHelper.UpdateConnection();
 
                 results.Add(new UploadFileViewModel()
                 {
@@ -146,6 +148,33 @@ namespace Tenant.Mvc.Controllers
             return Json(new { succeeded = true }, JsonRequestBehavior.AllowGet);
         }
 
+
+        [HttpPost]
+        public JsonResult ApplyDiscount(string discount, string seatDescription, string venue)
+        {
+            var splittedString = seatDescription.Split(new string[] {"Seat"}, StringSplitOptions.None);
+            venue = "Conrad Fischer Stands";
+
+            //get venueId
+            var venueId = _venueRepository.GetVenueIdByVenueName(venue);
+
+            //get initial price and seat section Id
+            var seatSection = _seatSectionRepository.GetSeatSection(venueId, splittedString[0]);
+
+            DiscountModel model = new DiscountModel
+            {
+                Discount = Convert.ToInt32(discount),
+                SeatNumber = Convert.ToInt32(splittedString[1]),
+                SeatSectionId = seatSection.SeatSectionId,
+                InitialPrice = seatSection.TicketPrice,
+                FinalPrice = seatSection.TicketPrice - (seatSection.TicketPrice*(Convert.ToDecimal(discount)/100))
+            };
+
+            var discountedModel = _discountRepository.ApplyDiscount(model);
+
+            return Json(discountedModel, JsonRequestBehavior.AllowGet);
+        }
+
         #endregion
 
         #region - FetchReportResult Class -
@@ -157,5 +186,7 @@ namespace Tenant.Mvc.Controllers
         }
 
         #endregion
+
+
     }
 }
