@@ -16,7 +16,7 @@ Source-code for the application is also available in the sourcecode sub-director
 * A Microsoft Azure account http://azure.microsoft.com/en-us/pricing/free-trial/
 * Microsoft SQL Server PowerShell tools https://www.microsoft.com/en-us/download/details.aspx?id=52676
 * GitHub client to clone this repo to you local machine so that you can install into your account using PowerShell https://desktop.github.com/
-* Microsoft Power QUery for Excel 2013 (optional) https://www.microsoft.com/en-us/download/details.aspx?id=39379
+* Microsoft Power Query for Excel 2013 (optional) https://www.microsoft.com/en-us/download/details.aspx?id=39379
 * Microsoft Visual Studio (optional) http://go.microsoft.com/?linkid=9832446&clcid=0x409
 * Microsoft Azure .NET SDK http://azure.microsoft.com/en-us/downloads
 
