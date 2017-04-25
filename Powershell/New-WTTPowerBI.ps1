@@ -41,7 +41,7 @@ function New-WTTPowerBI
 		[Parameter(Mandatory=$true)]
 		[String]
 		$azureSqlDatabaseName,
-        
+
         # Azure Tenant SQL Database Name
 		[Parameter(Mandatory=$true)]
 		[String]
@@ -50,7 +50,7 @@ function New-WTTPowerBI
 		# Azure Power BI Location
 		[Parameter(Mandatory=$true)]
 		[String]
-        $azurePowerBILocation
+    $azurePowerBILocation
 	)
 
     # Set environment variables
@@ -168,7 +168,9 @@ function New-WTTPowerBI
                 Start-Sleep -Seconds 30
                 $powerBIWorkspaceGet =  Invoke-RestMethod -Uri $powerBIWorkspaceURL -Method GET -ContentType "application/json" -Headers $header
 
+
                 If($powerBIWorkspaceGet.value.WorkspaceId)
+
                 {
                     WriteValue("Successful")
                 }
@@ -195,10 +197,13 @@ function New-WTTPowerBI
                         'CompleteSeatMap.pbix' {'VenueSales'}
                     }
 
+
                     $header = @{authorization = "AppKey $pbikey"}
+
 
                     WriteLabel("Uploading Power BI Report $report")
                 
+
                     # Configure settings to upload Power BI Report
                     $fileBin = [IO.File]::ReadAllBytes($report)                                                                                                  
                     $enc = [System.Text.Encoding]::GetEncoding("iso-8859-1")                                               
@@ -227,6 +232,7 @@ function New-WTTPowerBI
                     {
                         WriteError("Unable to find Power BI Report")                        
                     }
+
                 
                     # Get Power BI report Import ID
                     $powerBIImportsURL = "https://api.powerbi.com/v1.0/collections/$azurePowerBIWorkspaceCollection/workspaces/$powerBIWorkspaceID/imports"
@@ -254,6 +260,7 @@ function New-WTTPowerBI
                         $powerBIGatewayDataSourcesGet = Invoke-RestMethod -Uri $powerBIGatewayDataSourcesGetURL -Method GET -ContentType "application/json" -Headers $header
                         $powerBIDataSourcesGatewayID = $powerBIGatewayDataSourcesGet.value.gatewayid
                         $powerBIGatewayDataID = $powerBIGatewayDataSourcesGet.value.id
+
                     
                         $powerBIDataSourcesPatchURL = "https://api.powerbi.com/v1.0/collections/$azurePowerBIWorkspaceCollection/workspaces/$powerBIWorkspaceID/gateways/$powerBIDataSourcesGatewayID/datasources/$powerBIGatewayDataID"
                         $powerBIDataSourcesPatchBody = "{

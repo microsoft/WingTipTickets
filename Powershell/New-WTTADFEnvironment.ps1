@@ -53,7 +53,6 @@ function New-WTTADFEnvironment
         }
 	}
 }
-
 function RegisterProvider()
 {
 	WriteLabel("Checking for DataFactory Provider")
@@ -70,8 +69,8 @@ function RegisterProvider()
 	{
 		WriteValue("Found")
 	}
-}
 
+}
 function CreateDataFactory()
 {
 	Try

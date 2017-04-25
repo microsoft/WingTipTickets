@@ -29,7 +29,7 @@ END;
 
 IF (NOT EXISTS(SELECT * FROM sys.external_data_sources WHERE Name = 'wttdatacampwestus'))
 BEGIN
-	CREATE EXTERNAL DATA SOURCE wttdatacampdwwestus
+	CREATE EXTERNAL DATA SOURCE wttdatacampwestus
 	WITH (
 		TYPE = HADOOP,
 		LOCATION ='wasbs://wttdatacampdw@wttdatacampwestus.blob.core.windows.net',
