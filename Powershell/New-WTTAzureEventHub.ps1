@@ -34,8 +34,6 @@ function New-WTTAzureEventHub
         $consumerGroupName = "asajob"
 	)
 
-    WriteLabel("Creating Azure Service Bus")
-    
     try{
         $eventHubConnectionString = ""
         WriteLabel("Checking for Service Bus Provider")
