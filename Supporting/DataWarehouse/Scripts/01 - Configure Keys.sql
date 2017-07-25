@@ -14,7 +14,7 @@ END
 IF (NOT EXISTS(SELECT * FROM sys.database_credentials WHERE Name = 'ASB_WTTCredential'))
 BEGIN
 	CREATE DATABASE SCOPED CREDENTIAL ASB_WTTCredential 
-	WITH IDENTITY = 'wttdatacampwestus', SECRET = 'UFvFpA56CeOKi4Ectf6UEg+XB/ZfTO7GEQgAeYrRsoVM9y1xR4gIwdAqrQbHEFqjmSqAxx1MLNwLiCVg3hik5Q=='
+	WITH IDENTITY = 'wttdatacampdwwestus', SECRET = 'aAmHC7LQYx9Sz3f/wvUb0HW31+HqGC9at6FjqSy+O5TBy7j9Gn9LUO1L12sdoup8L4OBjOhpIQt1fCJ7rMoOyw=='
 END;
 
 -- ================================================================
@@ -27,12 +27,12 @@ END;
 -- Creating external data source (Azure Blob Storage)
 -- ================================================================
 
-IF (NOT EXISTS(SELECT * FROM sys.external_data_sources WHERE Name = 'wttdatacampwestus'))
+IF (NOT EXISTS(SELECT * FROM sys.external_data_sources WHERE Name = 'wttdatacampdwwestus'))
 BEGIN
 	CREATE EXTERNAL DATA SOURCE wttdatacampwestus
 	WITH (
 		TYPE = HADOOP,
-		LOCATION ='wasbs://wttdatacampdw@wttdatacampwestus.blob.core.windows.net',
+		LOCATION ='wasbs://wttdatacampdwwestus@wttdatacampdwwestus.blob.core.windows.net',
 		CREDENTIAL = ASB_WTTCredential
 	)
 END;

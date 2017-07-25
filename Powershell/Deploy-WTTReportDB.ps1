@@ -68,8 +68,8 @@ function Deploy-WTTReportDB
 		$dbServerExists = $true
 		$dbExists = $true
         $StorageKeyType = "StorageAccessKey"
-        $StorageUri = "http://$azureStorageAccountName.blob.core.windows.net/wttreportingdb/wingtipreporting.bacpac"
-        $storageAccountKey = "UFvFpA56CeOKi4Ectf6UEg+XB/ZfTO7GEQgAeYrRsoVM9y1xR4gIwdAqrQbHEFqjmSqAxx1MLNwLiCVg3hik5Q=="
+        $StorageUri = "http://wttdatacampdwwestus.blob.core.windows.net/wttreportingdb/wingtipreporting.bacpac"
+        $storageAccountKey = "aAmHC7LQYx9Sz3f/wvUb0HW31+HqGC9at6FjqSy+O5TBy7j9Gn9LUO1L12sdoup8L4OBjOhpIQt1fCJ7rMoOyw=="
         $sqlAdminPassword = ConvertTo-SecureString -String $adminPassword -AsPlainText -Force
 
 		LineBreak

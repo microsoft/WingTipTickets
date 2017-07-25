@@ -698,7 +698,7 @@ function New-WTTEnvironment
             Start-WTTIOTWebJob -azureResourceGroupName $azureResourceGroupName -Websitename $azureSqlServerPrimaryName -primaryWebAppLocation $primaryServerLocation
             
             # Deploy Azure SQL Reporting database
-            Deploy-WTTReportDB -azureResourceGroupName $azureResourceGroupName -azureSqlServerName $azureSqlServerPrimaryName -adminUserName $adminUserName -adminPassword $adminPassword -azureSqlDatabaseName $azureSqlReportDatabaseName -azureStorageAccountName wttdatacampwestus
+            Deploy-WTTReportDB -azureResourceGroupName $azureResourceGroupName -azureSqlServerName $azureSqlServerPrimaryName -adminUserName $adminUserName -adminPassword $adminPassword -azureSqlDatabaseName $azureSqlReportDatabaseName -azureStorageAccountName wttdatacampdwwestus
             
             WriteLabel("Traffic Manager URL")
             WriteValue("$wTTEnvironmentApplicationName.trafficmanager.net")

@@ -40,7 +40,7 @@ CREATE EXTERNAL TABLE asb.DimCustomer
 )
 WITH (
     LOCATION='DimCustomer.txt.gz'
-  , DATA_SOURCE = wttdatacampwestus
+  , DATA_SOURCE = wttdatacampdwwestus
   , FILE_FORMAT = gzip_tab_delimited_text_file
 );
 -- ================================================================

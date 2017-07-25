@@ -4,16 +4,7 @@
   "parameters": {
     "wttEnvironmentApplicationName": {
       "type": "string"
-    }, 
-    "sqlserverAdminLogin": {
-      "type": "string",
-      "minLength": 1,
-      "defaultValue": "developer"
-    },
-    "sqlserverAdminLoginPassword": {
-      "type": "securestring",
-      "defaultValue": "P@ssword1"
-    },
+    }
     "eventHubSharedAccessPolicy": {
       "type": "string",
       "defaultValue": "RootManageSharedAccessKey"
@@ -32,49 +23,15 @@
         "Standard",
         "Premium"
       ]
-    },
-    "databaseRequestedServiceObjectiveName": {
-      "type": "string",
-      "defaultValue": "Basic",
-      "allowedValues": [
-        "Basic",
-        "S0",
-        "S1",
-        "S2",
-        "P1",
-        "P2",
-        "P3"
-      ],
-      "metadata": {
-        "description": "Describes the performance level for Edition"
-      }
-    }    
+    }
   },
   "variables": {
     "primaryWebAppName": "[concat('primaryWebApp',parameters('wttEnvironmentApplicationName'))]",
     "primaryWebAppUri": "https://wttdatacampwestus.blob.core.windows.net/wttwebapps/PrimaryPackage.zip/",
-    "secondaryWebAppName": "[concat('secondaryWebApp',parameters('wttEnvironmentApplicationName'))]",
-    "secondaryWebAppUri": "https://wttdatacampwestus.blob.core.windows.net/wttwebapps/SecondaryPackage.zip/",
-    "primarysqlserverName": "[concat(parameters('wttEnvironmentApplicationName'),'primary')]",
-    "secondarysqlserverName": "[concat(parameters('wttEnvironmentApplicationName'),'secondary')]",
     "storageAccountName": "[toLower(parameters('wttEnvironmentApplicationName'))]",
-    "dataFactoryName": "[parameters('wttEnvironmentApplicationName')]",
     "documentDBName": "[parameters('wttEnvironmentApplicationName')]",
     "eventHubName": "[parameters('wttEnvironmentApplicationName')]",
-    "customer1Db": "Customer1",
-    "customer2Db": "Customer2",
-    "customer3Db": "Customer3",
-    "wingtipReportingDb": "wingtipReporting",
-    "customer1DbStorageUri": "https://wttdatacampwestus.blob.core.windows.net/wttdatabases/Customer1.bacpac",
-    "customer2DbStorageUri": "https://wttdatacampwestus.blob.core.windows.net/wttdatabases/Customer2.bacpac",
-    "customer3DbStorageUri": "https://wttdatacampwestus.blob.core.windows.net/wttdatabases/Customer3.bacpac",
-    "wingtipReportingDbStorageUri": "https://wttdatacampwestus.blob.core.windows.net/wttreportingdb/wingtipreporting.bacpac",
-    "customerDWDb": "[concat(variables('primarysqlserverName'),'/','CustomerDW')]",
-    "searchServicesName": "[parameters('wttEnvironmentApplicationName')]",
-    "powerBIName": "[parameters('wttEnvironmentApplicationName')]",
-    "trafficManagerProfile": "[parameters('wttEnvironmentApplicationName')]",
     "streamAnalyticsJob": "[concat(parameters('wttEnvironmentApplicationName'),'job')]",
-    "reportName": "VenueSales",
     "consumerGroupsDefaultName": "$Default",
     "consumergroups_asajob_name": "asajob",
     "eventHubAuthRule": "[concat(variables('eventHubName'),'/RootManageSharedAccessKey')]",
@@ -94,13 +51,6 @@
         "accountType": "Standard_GRS"
       }
     },
-      {
-        "name": "[variables('dataFactoryName')]",
-        "type": "Microsoft.DataFactory/dataFactories",
-        "location": "West US",
-        "apiVersion": "2015-10-01",
-        "dependsOn": []
-      },
       {
         "type": "Microsoft.EventHub/namespaces",
         "sku": {
@@ -222,178 +172,6 @@
             }
           ]
         }
-      },
-      {
-        "name": "[variables('primarysqlserverName')]",
-        "type": "Microsoft.Sql/servers",
-        "location": "[resourceGroup().location]",
-        "apiVersion": "2014-04-01-preview",
-        "dependsOn": [],
-        "tags": {
-          "displayName": "primarysqlserver"
-        },
-        "properties": {
-          "administratorLogin": "[parameters('sqlserverAdminLogin')]",
-          "administratorLoginPassword": "[parameters('sqlserverAdminLoginPassword')]"
-        },
-        "resources": [
-          {
-            "name": "AllowAllWindowsAzureIps",
-            "type": "firewallrules",
-            "location": "[resourceGroup().location]",
-            "apiVersion": "2014-04-01-preview",
-            "dependsOn": [
-              "[concat('Microsoft.Sql/servers/', variables('primarysqlserverName'))]"
-            ],
-            "properties": {
-              "startIpAddress": "0.0.0.0",
-              "endIpAddress": "0.0.0.0"
-            }
-          },
-          {
-            "apiVersion": "2014-04-01-preview",
-            "dependsOn": [
-              "[concat('Microsoft.Sql/servers/',variables('primarysqlserverName'))]"
-            ],
-            "name": "Open",
-            "properties": {
-              "startIpAddress": "0.0.0.0",
-              "endIpAddress": "255.255.255.255"
-            },
-            "type": "firewallrules"
-          }
-        ]
-      },
-      {
-        "dependsOn": [
-          "[concat('Microsoft.Sql/servers/',variables('primarysqlserverName'))]"
-        ],
-        "name": "[concat(variables('primarysqlserverName'),'/',variables('customer1Db'))]",
-        "type": "Microsoft.Sql/servers/databases",
-        "apiVersion": "2014-04-01-preview",
-        "location": "[resourceGroup().location]",
-        "properties": {
-          "collation": "[parameters('databaseCollation')]",
-          "edition": "[parameters('databaseEdition')]",
-          "maxSizeBytes": "1073741824",
-          "requestedServiceObjectiveName": "[parameters('databaseRequestedServiceObjectiveName')]"
-        },
-        "resources": [
-          {
-            "name": "Import",
-            "type": "extensions",
-            "apiVersion": "2014-04-01-preview",
-            "dependsOn": [
-              "[concat('Microsoft.Sql/servers/',variables('primarysqlserverName'),'/databases/',variables('customer1Db'))]"
-            ],
-            "properties": {
-              "storageKeyType": "SharedAccessKey",
-              "storageKey": "?",
-              "storageUri": "[variables('customer1DbStorageUri')]",
-              "administratorLogin": "[concat(parameters('sqlserverAdminLogin'),'@',variables('primarysqlserverName'))]",
-              "administratorLoginPassword": "[parameters('sqlserverAdminLoginPassword')]",
-              "operationMode": "Import"
-            }
-          }
-        ]
-      },
-      {
-        "dependsOn": [
-          "[concat('Microsoft.Sql/servers/',variables('primarysqlserverName'))]"
-        ],
-        "name": "[concat(variables('primarysqlserverName'),'/',variables('customer2Db'))]",
-        "type": "Microsoft.Sql/servers/databases",
-        "apiVersion": "2014-04-01-preview",
-        "location": "[resourceGroup().location]",
-        "properties": {
-          "collation": "[parameters('databaseCollation')]",
-          "edition": "[parameters('databaseEdition')]",
-          "maxSizeBytes": "1073741824",
-          "requestedServiceObjectiveName": "[parameters('databaseRequestedServiceObjectiveName')]"
-        },
-        "resources": [
-          {
-            "name": "Import",
-            "type": "extensions",
-            "apiVersion": "2014-04-01-preview",
-            "dependsOn": [
-              "[concat('Microsoft.Sql/servers/',variables('primarysqlserverName'),'/databases/',variables('customer2Db'))]"
-            ],
-            "properties": {
-              "storageKeyType": "SharedAccessKey",
-              "storageKey": "?",
-              "storageUri": "[variables('customer2DbStorageUri')]",
-              "administratorLogin": "[concat(parameters('sqlserverAdminLogin'),'@',variables('primarysqlserverName'))]",
-              "administratorLoginPassword": "[parameters('sqlserverAdminLoginPassword')]",
-              "operationMode": "Import"
-            }
-          }
-        ]
-      },
-      {
-        "dependsOn": [
-          "[concat('Microsoft.Sql/servers/',variables('primarysqlserverName'))]"
-        ],
-        "name": "[concat(variables('primarysqlserverName'),'/',variables('customer3Db'))]",
-        "type": "Microsoft.Sql/servers/databases",
-        "apiVersion": "2014-04-01-preview",
-        "location": "[resourceGroup().location]",
-        "properties": {
-          "collation": "[parameters('databaseCollation')]",
-          "edition": "Standard",
-          "maxSizeBytes": "1073741824",
-          "requestedServiceObjectiveName": "S2"
-        },
-        "resources": [
-          {
-            "name": "Import",
-            "type": "extensions",
-            "apiVersion": "2014-04-01-preview",
-            "dependsOn": [
-              "[concat('Microsoft.Sql/servers/',variables('primarysqlserverName'),'/databases/',variables('customer3Db'))]"
-            ],
-            "properties": {
-              "storageKeyType": "SharedAccessKey",
-              "storageKey": "?",
-              "storageUri": "[variables('customer3DbStorageUri')]",
-              "administratorLogin": "[concat(parameters('sqlserverAdminLogin'),'@',variables('primarysqlserverName'))]",
-              "administratorLoginPassword": "[parameters('sqlserverAdminLoginPassword')]",
-              "operationMode": "Import"
-            }
-          }
-        ]
-      },
-      {
-        "dependsOn": [
-          "[concat('Microsoft.Sql/servers/',variables('primarysqlserverName'))]"
-        ],
-        "name": "[concat(variables('primarysqlserverName'),'/',variables('wingtipReportingDb'))]",
-        "type": "Microsoft.Sql/servers/databases",
-        "apiVersion": "2014-04-01-preview",
-        "location": "[resourceGroup().location]",
-        "properties": {
-          "collation": "[parameters('databaseCollation')]",
-          "edition": "Standard",
-          "requestedServiceObjectiveName": "S3"
-        },
-        "resources": [
-          {
-            "name": "Import",
-            "type": "extensions",
-            "apiVersion": "2014-04-01-preview",
-            "dependsOn": [
-              "[concat('Microsoft.Sql/servers/',variables('primarysqlserverName'),'/databases/',variables('wingtipReportingDb'))]"
-            ],
-            "properties": {
-              "storageKeyType": "SharedAccessKey",
-              "storageKey": "?",
-              "storageUri": "[variables('wingtipReportingDbStorageUri')]",
-              "administratorLogin": "[concat(parameters('sqlserverAdminLogin'),'@',variables('primarysqlserverName'))]",
-              "administratorLoginPassword": "[parameters('sqlserverAdminLoginPassword')]",
-              "operationMode": "Import"
-            }
-          }
-        ]
       }
       ]
     }

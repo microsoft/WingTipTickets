@@ -41,9 +41,9 @@
   },
   "variables": {
     "primaryWebAppName": "[concat(parameters('wttEnvironmentApplicationName'),'primary')]",
-    "primaryWebAppUri": "https://wttdatacampwestus.blob.core.windows.net/wttwebapps/PrimaryPackage.zip",
+    "primaryWebAppUri": "https://wttdatacampdwwestus.blob.core.windows.net/wttwebapps/PrimaryPackage.zip",
     "secondaryWebAppName": "[concat(parameters('wttEnvironmentApplicationName'),'secondary')]",
-    "secondaryWebAppUri": "https://wttdatacampwestus.blob.core.windows.net/wttwebapps/SecondaryPackage.zip",
+    "secondaryWebAppUri": "https://wttdatacampdwwestus.blob.core.windows.net/wttwebapps/SecondaryPackage.zip",
     "webAppSKU": "Standard",
     "webAppWorkerSize": "1",
     "customer1Db": "Customer1",
